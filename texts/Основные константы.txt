@@ -1,0 +1,21 @@
+триггер:
+ income goldmine ini
+  переменные:
+   goldmine_income: кол-во золота в (триггер: income goldmine) сек.
+ 
+ initialization: 
+  перменные:
+   gameset_time: время перерыва.
+   wave_time: время раунда.
+   
+ initialization in game:
+  перменные:
+   gameset_timer: время перед первым раундом (const).
+   
+ boss ini start:
+  переменные:
+   boss_time: время на убийство босса.
+  
+объекты:
+ рудник в центре: масштаб 120,00
+ рудники по краям: мастшаб 100,00
