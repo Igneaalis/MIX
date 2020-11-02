@@ -1,6 +1,7 @@
 # MIX Warcraft 3 custom map
 
 * [Версия](#версия)
+* [Discord](#discord)
 * [ТЗ](#тз)
   * [GitHub](#github)
   * [Тестеры](#тестеры)
@@ -14,6 +15,10 @@
 ## Версия
 
 * Текущая версия карты: 0.0.1
+
+## Discord
+
+* [Приглашение в группу](https://discord.gg/kazvQVA2QN)
 
 ## ТЗ
 
