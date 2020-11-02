@@ -1,5 +1,9 @@
 # MIX Warcraft 3 custom map
 
+## Version
+
+* Текущая версия карты: 0.0.1
+
 ## TODO list
 
 ### GitHub
