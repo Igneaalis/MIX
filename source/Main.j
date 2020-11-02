@@ -5,7 +5,7 @@
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     01.11.2020 18:28       =
-= Дата изменения:    01.11.2020 21:13       =
+= Дата изменения:    02.11.2020 18:03       =
 =============================================
 
 Главный и входной интерфейс карты.
@@ -81,6 +81,10 @@ function map_init takes nothing returns nothing
     set strWarning_EN = null
     set strVar_EN = null
     set Feedback_EN = null
+
+    // Инициализируем базу данных игроков
+    set pdb = Playerdb.create()
+    call pdb.fill_dbarr()
 endfunction
 
 //--------------------------------------------------Post main init---------------------------------------------------

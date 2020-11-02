@@ -5,7 +5,7 @@
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     01.11.2020 18:41       =
-= Дата изменения:    01.11.2020 20:51       =
+= Дата изменения:    02.11.2020 18:03       =
 =============================================
 
 Объявление глобальных переменных
@@ -21,4 +21,5 @@ globals
     constant string strBuild_Time = "1 November 2020"                                           // Время создания билда карты
 
     leaderboard Leaderboard                                                                     // таблица лидеров
+    Playerdb pdb
 endglobals
