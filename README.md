@@ -2,6 +2,10 @@
 
 ## TODO list
 
+### GitHub
+
+* Разобраться с alpha data, data и some data директориями, добавить README.md и отсортировать данные.
+
 ### Code
 
 * Перенос кода в модули при помощи Zinc.
