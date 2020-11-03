@@ -14,8 +14,8 @@ library ReviveUnit /* 2.0.0.0 https://www.hiveworkshop.com/threads/186696/
 *   Configurables
 *       - Remove the ! from //! after saving.
 */
-    //! external ObjectMerger w3a AHre URez anam "Dummy Resurrection" aher 0 acat "" atat "" Hre1 1 1 aare 1 0 aran 1 0 acdn 1 0 amcs 1 0 atar 1 "Air,Dead,Enemy,Friend,Ground,Neutral"
-    //! external ObjectMerger w3u ushd eRez unam "Dummy" uabi "Aloc,Avul" ucbs 0 ucpt 0 umdl ".mdl" usca "0.01" ushu "None" umvh 0 umvs 0 ufoo 0 umpi 100000 umpm 100000 umpr 1000
+    // external ObjectMerger w3a AHre URez anam "Dummy Resurrection" aher 0 acat "" atat "" Hre1 1 1 aare 1 0 aran 1 0 acdn 1 0 amcs 1 0 atar 1 "Air,Dead,Enemy,Friend,Ground,Neutral"
+    // external ObjectMerger w3u ushd eRez unam "Dummy" uabi "Aloc,Avul" ucbs 0 ucpt 0 umdl ".mdl" usca "0.01" ushu "None" umvh 0 umvs 0 ufoo 0 umpi 100000 umpm 100000 umpr 1000 usid 0 usin 0
        
     globals
         private constant integer DUMMY = 'eRez'
@@ -76,7 +76,7 @@ library ReviveUnit /* 2.0.0.0 https://www.hiveworkshop.com/threads/186696/
     endmodule
    
     struct Revive extends array
-        /* For backwards compatibility */
+        // For backwards compatibility
         static method Unit takes unit whichUnit returns boolean
             return ReviveUnit(whichUnit)
         endmethod
