@@ -70,13 +70,13 @@ library ResourcePreloader /* v1.5.0 https://www.hiveworkshop.com/threads/287358/
         public real PRELOAD_UNIT_Y_BOUNDS_EXTENSION             = 0.00
     endglobals
 
-    /*========================================================================================================*/
-    /*            Do not try to change below this line if you're not so sure on what you're doing.            */
-    /*========================================================================================================*/
+    //========================================================================================================
+    //            Do not try to change below this line if you're not so sure on what you're doing.            
+    //========================================================================================================
 
     private keyword S
 
-    /*============================================== TextMacros ==============================================*/
+    //============================================== TextMacros ==============================================
 
     //! textmacro PRELOAD_TYPE takes NAME, ARG, TYPE, INDEX, I
     function Preload$NAME$ takes $ARG$ what returns nothing
@@ -113,7 +113,7 @@ library ResourcePreloader /* v1.5.0 https://www.hiveworkshop.com/threads/287358/
     endfunction
     //! endtextmacro
 
-    /*========================================================================================================*/
+    //========================================================================================================
 
     private function DoUnitPreload takes integer id returns nothing
         static if LIBRARY_UnitRecycler then
@@ -155,7 +155,7 @@ library ResourcePreloader /* v1.5.0 https://www.hiveworkshop.com/threads/287358/
     //! runtextmacro RANGED_PRELOAD_TYPE("Ability")
     endif
 
-    /*========================================================================================================*/
+    //========================================================================================================
 
     private module Init
         private static method onInit takes nothing returns nothing

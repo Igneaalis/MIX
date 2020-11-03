@@ -97,7 +97,7 @@ library UnitRecycler /* v1.4.1 https://www.hiveworkshop.com/threads/286701/
         endfunction
     endif
 
-    /* Filters units allowed for recycling                                              */
+    // Filters units allowed for recycling
     private function UnitTypeFilter takes unit u returns boolean
         return not IsUnitIllusion(u) and not IsUnitType(u, UNIT_TYPE_SUMMONED)
     endfunction
@@ -114,7 +114,7 @@ library UnitRecycler /* v1.4.1 https://www.hiveworkshop.com/threads/286701/
 
     //END OF CONFIGURATION
 
-    /*== Do not do changes below this line if you're not so sure on what you're doing ==*/
+    //== Do not do changes below this line if you're not so sure on what you're doing ==
     native UnitAlive takes unit u returns boolean
 
     globals
@@ -333,7 +333,7 @@ library UnitRecycler /* v1.4.1 https://www.hiveworkshop.com/threads/286701/
 
     endstruct
 
-    /*========================================================================================================*/
+    //========================================================================================================
 
     function GetRecycledUnit takes player owner, integer rawCode, real x, real y, real facing returns unit
         static if DEBUG_MODE and LIBRARY_ErrorMessage then
@@ -413,7 +413,7 @@ library UnitRecycler /* v1.4.1 https://www.hiveworkshop.com/threads/286701/
         return UnitRecycler.stock(rawCode)
     endfunction
 
-    /*========================================================================================================*/
+    //========================================================================================================
 
     private module Init
         private static method onInit takes nothing returns nothing
