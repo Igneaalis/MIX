@@ -1,4 +1,4 @@
-library Table /* made by Bribe, special thanks to Vexorian & Nestharus, version 4.1.0.1.
+library Table /* made by Bribe, special thanks to Vexorian & Nestharus, version 4.1.0.1. http://www.hiveworkshop.com/threads/188084/
    
     One map, one hashtable. Welcome to NewTable 4.1.0.1
    
