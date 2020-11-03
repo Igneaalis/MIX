@@ -33,41 +33,41 @@
 *****************************************************************************/
 library RegisterPlayerUnitEvent requires RegisterNativeEvent
 
-function GetAnyPlayerUnitEventTrigger takes playerunitevent whichEvent returns trigger
-    return GetNativeEventTrigger(GetHandleId(whichEvent))
-endfunction
+    function GetAnyPlayerUnitEventTrigger takes playerunitevent whichEvent returns trigger
+        return GetNativeEventTrigger(GetHandleId(whichEvent))
+    endfunction
 
-function GetPlayerUnitEventTrigger takes player whichPlayer, playerunitevent whichEvent returns trigger
-    return GetIndexNativeEventTrigger(GetPlayerId(whichPlayer), GetHandleId(whichEvent))
-endfunction
+    function GetPlayerUnitEventTrigger takes player whichPlayer, playerunitevent whichEvent returns trigger
+        return GetIndexNativeEventTrigger(GetPlayerId(whichPlayer), GetHandleId(whichEvent))
+    endfunction
 
-function RegisterAnyPlayerUnitEvent takes playerunitevent whichEvent, code func returns nothing
-    local integer eventId = GetHandleId(whichEvent)
-    local integer index = 0
-    local trigger t = null
+    function RegisterAnyPlayerUnitEvent takes playerunitevent whichEvent, code func returns nothing
+        local integer eventId = GetHandleId(whichEvent)
+        local integer index = 0
+        local trigger t = null
 
-    if RegisterNativeEventTrigger(bj_MAX_PLAYER_SLOTS, eventId) then
-        set t = GetNativeEventTrigger(eventId)
-        loop
-            call TriggerRegisterPlayerUnitEvent(t, Player(index), whichEvent, null)
-            set index = index + 1
-            exitwhen index == bj_MAX_PLAYER_SLOTS
-        endloop
-        set t = null
-    endif
+        if RegisterNativeEventTrigger(bj_MAX_PLAYER_SLOTS, eventId) then
+            set t = GetNativeEventTrigger(eventId)
+            loop
+                call TriggerRegisterPlayerUnitEvent(t, Player(index), whichEvent, null)
+                set index = index + 1
+                exitwhen index == bj_MAX_PLAYER_SLOTS
+            endloop
+            set t = null
+        endif
 
-    call RegisterNativeEvent(eventId, func)
-endfunction
+        call RegisterNativeEvent(eventId, func)
+    endfunction
 
-function RegisterPlayerUnitEvent takes player whichPlayer, playerunitevent whichEvent, code func returns nothing
-    local integer playerId = GetPlayerId(whichPlayer)
-    local integer eventId = GetHandleId(whichEvent)
+    function RegisterPlayerUnitEvent takes player whichPlayer, playerunitevent whichEvent, code func returns nothing
+        local integer playerId = GetPlayerId(whichPlayer)
+        local integer eventId = GetHandleId(whichEvent)
 
-    if RegisterNativeEventTrigger(playerId, eventId) then
-        call TriggerRegisterPlayerUnitEvent(GetIndexNativeEventTrigger(playerId, eventId), whichPlayer, whichEvent, null)
-    endif
+        if RegisterNativeEventTrigger(playerId, eventId) then
+            call TriggerRegisterPlayerUnitEvent(GetIndexNativeEventTrigger(playerId, eventId), whichPlayer, whichEvent, null)
+        endif
 
-    call RegisterIndexNativeEvent(playerId, eventId, func)
-endfunction
+        call RegisterIndexNativeEvent(playerId, eventId, func)
+    endfunction
 
 endlibrary

@@ -475,5 +475,4 @@ library UnitRecycler /* v1.4.1 https://www.hiveworkshop.com/threads/286701/
         hook RemoveUnit DisplayError
     endif
 
-
 endlibrary
