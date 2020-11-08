@@ -28,6 +28,7 @@ function initialization_in_game_players takes nothing returns nothing
     if (GetPlayerSlotState(GetEnumPlayer()) == PLAYER_SLOT_STATE_PLAYING and GetPlayerController(GetEnumPlayer()) == MAP_CONTROL_USER) then
         call SetPlayerFlagBJ( PLAYER_STATE_GIVES_BOUNTY, true, GetEnumPlayer() )
         call ForceAddPlayerSimple( GetEnumPlayer(), udg_players_group )
+        // перенесём в pdb
         set udg_players_name[GetConvertedPlayerId(GetEnumPlayer())] = GetPlayerName(GetEnumPlayer())
         set udg_info[GetConvertedPlayerId(GetEnumPlayer())] = true
         set udg_income_gold[GetConvertedPlayerId(GetEnumPlayer())] = 240
@@ -85,6 +86,7 @@ function initialization_in_game takes nothing returns nothing
     
     call TriggerSleepAction(1.00)
 
+    // Миниигра казино
     set udg_r = 0
     set i = 1
     loop
@@ -93,9 +95,16 @@ function initialization_in_game takes nothing returns nothing
         loop
             exitwhen j > 5
             set udg_r = udg_r + 1
+            // 'n001' - Circle of Power
             call CreateNUnitsAtLoc(1, 'n001', Player(PLAYER_NEUTRAL_PASSIVE), PolarProjectionBJ(PolarProjectionBJ(GetRectCenter(gg_rct_circle), ( -256.00 + ( 256.00 * I2R(i) ) ), 270.00), ( -256.00 + ( 256.00 * I2R(j) ) ), 0), bj_UNIT_FACING)
             call SetUnitUserData(GetLastCreatedUnit(), udg_r)
             if (ModuloInteger(udg_r, 2) == 1) then
+                // Z offset = 0
+                // Font size = 11
+                // Red =    100%
+                // Green =  10%
+                // Blue =   10%
+                // Transparency = 0%
                 call CreateTextTagUnitBJ(I2S(udg_r), GetLastCreatedUnit(), 0, 11.00, 100, 10.00, 10.00, 0)
                 call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), udg_players_group)
                 call SetUnitColor(GetLastCreatedUnit(), PLAYER_COLOR_RED)
