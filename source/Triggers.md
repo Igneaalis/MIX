@@ -1,4 +1,34 @@
-# Порядок запуска триггеров
+# 1. Triggers
+
+- [1. Triggers](#1-triggers)
+  - [1.1. Порядок запуска триггеров](#11-порядок-запуска-триггеров)
+    - [1.1.1. faq_start](#111-faq_start)
+    - [1.1.2. faq_active](#112-faq_active)
+    - [1.1.3. faq](#113-faq)
+    - [1.1.4. gameset_end](#114-gameset_end)
+    - [1.1.5. inc_colour](#115-inc_colour)
+    - [1.1.6. set_wave_start_main](#116-set_wave_start_main)
+    - [1.1.7. building_inf](#117-building_inf)
+    - [1.1.8. wave_castle_destr](#118-wave_castle_destr)
+    - [1.1.9. wave_end](#119-wave_end)
+    - [1.1.10. inc_upg](#1110-inc_upg)
+    - [1.1.11. hunter_time](#1111-hunter_time)
+    - [1.1.12. hunter_end](#1112-hunter_end)
+    - [1.1.13. inc_per_second](#1113-inc_per_second)
+    - [1.1.14. wave_end_attack](#1114-wave_end_attack)
+    - [1.1.15. income_effects](#1115-income_effects)
+    - [1.1.16. wave_waiting_timer](#1116-wave_waiting_timer)
+    - [1.1.17. wave_notification](#1117-wave_notification)
+    - [1.1.18. game_end](#1118-game_end)
+    - [1.1.19. Weather](#1119-weather)
+    - [1.1.20. wave_result_rotation](#1120-wave_result_rotation)
+    - [1.1.21. set_wave_timer](#1121-set_wave_timer)
+    - [1.1.22. set_wave_region_rotate](#1122-set_wave_region_rotate)
+    - [1.1.23. set_wave_unit_spawn](#1123-set_wave_unit_spawn)
+    - [1.1.24. gameset_owner](#1124-gameset_owner)
+    - [1.1.25. scoreboard_ini](#1125-scoreboard_ini)
+
+## 1.1. Порядок запуска триггеров
 
 initialization -> wait 0.10 sec -> initialization_in_game -> faq_ini -> wait 0.10 sec -> faq_stop -> faq_active 6.00 sec ->
 
@@ -12,7 +42,7 @@ else:
 
 -> faq_start -> (faq if faq_status == True else Nothing) -> gameset_owner -> wait 53.00 sec -> scoreboard_ini -> wait 7.00 sec -> gameset_end -> set_wave_start_main -> set_wave_timer -> set_wave_region_rotate -> set_wave_unit_spawn
 
-## faq_start
+### 1.1.1. faq_start
 
 ```python
 Turn on gameset_end
@@ -27,7 +57,7 @@ wait 10 sec
 # Multiboard.
 ```
 
-## faq_active
+### 1.1.2. faq_active
 
 ```python
 if (faq_dialog.IsClicked):
@@ -42,7 +72,7 @@ if (faq_dialog.IsClicked):
         stop faq_active (this)
 ```
 
-## faq
+### 1.1.3. faq
 
 ```python
 # Гайд по игре.
@@ -51,7 +81,7 @@ Turn on faq_death
 wait 11 + 8 + 5 + 6 + 8 sec
 ```
 
-## gameset_end
+### 1.1.4. gameset_end
 
 ```python
 Trigger on gameset_timer expires.
@@ -67,14 +97,14 @@ run set_wave_region_rotate
 run set_wave_unit_spawn
 ```
 
-## inc_colour
+### 1.1.5. inc_colour
 
 ```python
 # Когда ломают шахту/флаг
 Trigger on A unit dies.
 ```
 
-## set_wave_start_main
+### 1.1.6. set_wave_start_main
 
 ```python
 Trigger on wave_timer expires.
@@ -86,7 +116,7 @@ if (!boss_wave):
     Turn on wave_end
 ```
 
-## building_inf
+### 1.1.7. building_inf
 
 ```python
 Trigger on Every 1.00 sec of game time.
@@ -94,14 +124,14 @@ if (wave_status):
     EveryBuilding.Invulnerable = True
 ```
 
-## wave_castle_destr
+### 1.1.8. wave_castle_destr
 
 ```python
 # При разрушении замка.
 Trigger on A unit dies.
 ```
 
-## wave_end
+### 1.1.9. wave_end
 
 ```python
 Trigger on Every 0.50 sec of game time.
@@ -127,42 +157,42 @@ if (wave_units == 0):
         run wave_result_rotation
 ```
 
-## inc_upg
+### 1.1.10. inc_upg
 
 ```python
 set inc_pp[0] += 2
 set inc_pp[1] += 1
 ```
 
-## hunter_time
+### 1.1.11. hunter_time
 
 ```python
 # Миниигра с монетками.
 Trigger on Every 1.30 sec of game time.
 ```
 
-## hunter_end
+### 1.1.12. hunter_end
 
 ```python
 # Миниигра с монетками. Удаляем монетки с карты. Требует оптимизацию.
 Trigger on Every 0.04 sec of game time.
 ```
 
-## inc_per_second
+### 1.1.13. inc_per_second
 
 ```python
 # Инком за шахты/флаги.
 Trigger on Every 1.00 sec of game time.
 ```
 
-## wave_end_attack
+### 1.1.14. wave_end_attack
 
 ```python
 # 12 игрок (коричневый) атакует рандомных юнитов из wave_units.
 Trigger on Every 5.00 sec of game time.
 ```
 
-## income_effects
+### 1.1.15. income_effects
 
 ```python
 # Логика инкома при ticket и pillage.
@@ -200,7 +230,7 @@ for i from 1 to 8:
         set Player(i).lumber += pillage_lumber
 ```
 
-## wave_waiting_timer
+### 1.1.16. wave_waiting_timer
 
 ```python
 set wave_winner = False
@@ -212,14 +242,14 @@ else:
     run game_end
 ```
 
-## wave_notification
+### 1.1.17. wave_notification
 
 ```python
 # Показывает инфу о следующей волне
 wait 5.00 sec
 ```
 
-## game_end
+### 1.1.18. game_end
 
 ```python
 # Конец игры
@@ -230,7 +260,7 @@ Turn off income_upgFb
 Turn off income_upgFe
 ```
 
-## Weather
+### 1.1.19. Weather
 
 ```python
 # Очищает все погодные условия.
@@ -241,7 +271,7 @@ for player in Players:
     set weather[player.id] = 0
 ```
 
-## wave_result_rotation
+### 1.1.20. wave_result_rotation
 
 ```python
 # Логика лидерства.
@@ -253,7 +283,7 @@ set leader_player[1] = Player.Neutral
 # TODO: проделать до конца.
 ```
 
-## set_wave_timer
+### 1.1.21. set_wave_timer
 
 ```python
 # Логика таймеров. wave_end_timer и wave_time
@@ -267,7 +297,7 @@ if (leader_num == 2):
     # показывает лидеров в мультиборде
 ```
 
-## set_wave_region_rotate
+### 1.1.22. set_wave_region_rotate
 
 ```python
 # Рандомное место спавна
@@ -295,7 +325,7 @@ for i from 1 to 8:
                         set region_spawn[i] = start8
 ```
 
-## set_wave_unit_spawn
+### 1.1.23. set_wave_unit_spawn
 
 ```python
 # Спавнит построенных юнитов, устанавливает погоду, начинает миниигры, расставляет Свечение.
@@ -303,7 +333,7 @@ Trigger on wave_timer expires.
 wait 0.30 sec
 ```
 
-## gameset_owner
+### 1.1.24. gameset_owner
 
 ```python
 # Выставляем game_owner
@@ -312,7 +342,7 @@ if ((time[2] * 60 + time[1]) < gameset_time_first and info[game_owner.id] == Tru
     # Показываем команды
 ```
 
-## scoreboard_ini
+### 1.1.25. scoreboard_ini
 
 ```python
 # Мультиборд
