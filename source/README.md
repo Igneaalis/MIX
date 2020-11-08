@@ -13,3 +13,7 @@
 ## Units
 
 * 'eRez' - Dummy unit
+
+## Triggers
+
+* [Информация по триггерам](Triggers.md)
