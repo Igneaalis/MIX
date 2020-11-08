@@ -21,4 +21,7 @@ globals
     constant string strBuild_Time = "1 November 2020"                                           // Время создания билда карты
 
     leaderboard Leaderboard                                                                     // таблица лидеров
+
+    constant integer finalWave = 15
+    constant integer numberOfMinigames = 8
 endglobals
