@@ -24,4 +24,6 @@ globals
 
     constant integer finalWave = 15
     constant integer numberOfMinigames = 8
+    constant integer base_gold = 100
+    constant integer base_gems = 0
 endglobals

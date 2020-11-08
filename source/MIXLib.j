@@ -21,8 +21,6 @@ library MIXLib initializer MIXLibInit requires NokladrLib
     struct DB
         private player p
         real scoreboard_result = 0
-        integer base_gold = 100
-        integer base_gems = 0
         integer income_gold = 240
         integer income_gems = 8
         integer leader_coeff = 1
