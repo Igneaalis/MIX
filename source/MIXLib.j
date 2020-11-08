@@ -23,9 +23,11 @@ library MIXLib initializer MIXLibInit requires NokladrLib
         real scoreboard_result = 0
         integer income_gold = 240
         integer income_gems = 8
-        integer leader_coeff = 1
+        real leader_coeff = 1.00
+        integer leader_wins = 0
         integer arena_wins = 1
         integer change_set = 3
+        boolean info = true // показывать команды/полезную инфу
 
         static method create takes player p returns DB
             local DB db = DB.allocate()

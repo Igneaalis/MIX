@@ -89,5 +89,8 @@ function post_map_init takes nothing returns nothing
     
     //Сообщения
     call SetMessagesInit()
+
+    //initialization in game trigger
+    call initialization_in_game()
     
 endfunction
