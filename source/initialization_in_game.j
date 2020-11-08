@@ -1,3 +1,17 @@
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     08.11.2020 19:46       =
+= Дата изменения:    08.11.2020 21:59       =
+=============================================
+
+initialization in game Trigger
+
+*/
+
 function initialization_in_game_wave_mini_condition takes nothing returns boolean
     local integer i = 0
     if (udg_random_log == true) then
