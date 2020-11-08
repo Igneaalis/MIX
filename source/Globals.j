@@ -18,7 +18,7 @@ globals
     constant string strVersion = "0.0.1"                                                        // Версия карты, семантическое версионирование: (Major, Minor, Patch)
     constant string Version = "Test"                                                            // Тип версии {Test, Release}
     constant string strEmail = (LB + "Nostaleal.ru|r" + GOLD + "@|r" + LB + "yandex.ru|r")      // E-Mail адрес
-    constant string strBuild_Time = "1 November 2020"                                           // Время создания билда карты
+    constant string strBuild_Time = "8 November 2020"                                           // Время создания билда карты
 
     leaderboard Leaderboard                                                                     // таблица лидеров
 
