@@ -5,10 +5,10 @@
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     08.11.2020 19:46       =
-= Дата изменения:    20.11.2020 15:55       =
+= Дата изменения:    20.11.2020 16:12       =
 =============================================
 
-initialization in game Trigger○
+initialization in game Trigger
 
 */
 
@@ -105,6 +105,9 @@ function initialization_in_game takes nothing returns nothing
     
     call ForForce(bj_FORCE_ALL_PLAYERS, function initialization_in_game_players)
     
+    //faq ini Trigger
+    call faq_ini()
+
     call TriggerSleepAction(1.00)
 
     // Миниигра казино
