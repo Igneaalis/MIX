@@ -5,10 +5,10 @@
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     08.11.2020 19:46       =
-= Дата изменения:    08.11.2020 21:59       =
+= Дата изменения:    20.11.2020 15:55       =
 =============================================
 
-initialization in game Trigger
+initialization in game Trigger○
 
 */
 
@@ -32,17 +32,20 @@ function not_IsUnitIn_id_group takes nothing returns boolean
 endfunction
 
 function initialization_in_game_set_unit_id takes nothing returns nothing
+    // Opt. begin
     set udg_id = udg_id + 1
     call GroupAddUnitSimple(GetEnumUnit(), udg_id_group)
     call SetUnitUserData(GetEnumUnit(), udg_id)
+    // Opt. end
 endfunction
 
 function initialization_in_game_players takes nothing returns nothing
+    // Opt.begin
     call CameraSetupApplyForPlayer( true, gg_cam_logic, GetEnumPlayer(), 0 )
     if (GetPlayerSlotState(GetEnumPlayer()) == PLAYER_SLOT_STATE_PLAYING and GetPlayerController(GetEnumPlayer()) == MAP_CONTROL_USER) then
         call SetPlayerFlagBJ( PLAYER_STATE_GIVES_BOUNTY, true, GetEnumPlayer() )
         call ForceAddPlayerSimple( GetEnumPlayer(), udg_players_group )
-        // перенесём в pdb
+        // TODO: Нижние переменные надо перенести в pdb
         set udg_players_name[GetConvertedPlayerId(GetEnumPlayer())] = GetPlayerName(GetEnumPlayer())
         set udg_info[GetConvertedPlayerId(GetEnumPlayer())] = true
         set udg_income_gold[GetConvertedPlayerId(GetEnumPlayer())] = 240
@@ -60,13 +63,15 @@ function initialization_in_game_players takes nothing returns nothing
         call CreateFogModifierRectBJ( true, GetEnumPlayer(), FOG_OF_WAR_VISIBLE, gg_rct_horseregion )
         call CreateFogModifierRectBJ( true, GetEnumPlayer(), FOG_OF_WAR_VISIBLE, gg_rct_roulette )
     endif
+    // Opt. end
 endfunction
 
 function initialization_in_game takes nothing returns nothing
     local integer i = 0
     local integer j = 0
+    local unit lastCreatedUnit = null
     set udg_gg = 15 // Финальная волна
-    set udg_mini_game_max = 8 // Кол-во миниигр
+    set udg_mini_game_max = 8 // Максимальное кол-во миниигр за игру
     set udg_wave_mini[1] = 4 // Волна с боссом
     set udg_const_point[0] = 3
     set udg_const_point[1] = 6
@@ -91,9 +96,11 @@ function initialization_in_game takes nothing returns nothing
     set udg_r = 0
     set i = 1
     loop
+        // Opt. begin
         exitwhen i > CountUnitsInGroup(GetUnitsInRectAll(GetPlayableMapRect()))
         call ForGroupBJ(GetUnitsInRectMatching(GetPlayableMapRect(), Condition(function not_IsUnitIn_id_group)), function initialization_in_game_set_unit_id)
         set i = i + 1
+        // Opt. end
     endloop
     
     call ForForce(bj_FORCE_ALL_PLAYERS, function initialization_in_game_players)
@@ -109,9 +116,10 @@ function initialization_in_game takes nothing returns nothing
         loop
             exitwhen j > 5
             set udg_r = udg_r + 1
+            // Opt. begin
             // 'n001' - Circle of Power
-            call CreateNUnitsAtLoc(1, 'n001', Player(PLAYER_NEUTRAL_PASSIVE), PolarProjectionBJ(PolarProjectionBJ(GetRectCenter(gg_rct_circle), ( -256.00 + ( 256.00 * I2R(i) ) ), 270.00), ( -256.00 + ( 256.00 * I2R(j) ) ), 0), bj_UNIT_FACING)
-            call SetUnitUserData(GetLastCreatedUnit(), udg_r)
+            set lastCreatedUnit = CreateUnitAtLoc(Player(PLAYER_NEUTRAL_PASSIVE), 'n001', PolarProjectionBJ(PolarProjectionBJ(GetRectCenter(gg_rct_circle), (-256.00 + (256.00 * I2R(i))), 270.00), (-256.00 + (256.00 * I2R(j))), 0), bj_UNIT_FACING)
+            call SetUnitUserData(lastCreatedUnit, udg_r)
             if (ModuloInteger(udg_r, 2) == 1) then
                 // Z offset = 0
                 // Font size = 11
@@ -119,14 +127,15 @@ function initialization_in_game takes nothing returns nothing
                 // Green =  10%
                 // Blue =   10%
                 // Transparency = 0%
-                call CreateTextTagUnitBJ(I2S(udg_r), GetLastCreatedUnit(), 0, 11.00, 100, 10.00, 10.00, 0)
+                call CreateTextTagUnitBJ(I2S(udg_r), lastCreatedUnit, 0, 11.00, 100, 10.00, 10.00, 0)
                 call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), udg_players_group)
-                call SetUnitColor(GetLastCreatedUnit(), PLAYER_COLOR_RED)
+                call SetUnitColor(lastCreatedUnit, PLAYER_COLOR_RED)
             else
-                call CreateTextTagUnitBJ(I2S(udg_r), GetLastCreatedUnit(), 0, 11.00, 10.00, 10.00, 10.00, 0)
+                call CreateTextTagUnitBJ(I2S(udg_r), lastCreatedUnit, 0, 11.00, 10.00, 10.00, 10.00, 0)
                 call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), udg_players_group)
-                call SetUnitColor(GetLastCreatedUnit(), PLAYER_COLOR_MAROON)
+                call SetUnitColor(lastCreatedUnit, PLAYER_COLOR_MAROON)
             endif
+            // Opt. end
             set j = j + 1
         endloop
         set i = i + 1
