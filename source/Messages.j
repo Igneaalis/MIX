@@ -5,7 +5,7 @@
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     01.11.2020 18:30       =
-= Дата изменения:    02.11.2020 18:02       =
+= Дата изменения:    20.11.2020 21:36       =
 =============================================
 
 Интерфейс внутриигровых сообщений
@@ -39,7 +39,7 @@ function SetLeaveMessages takes nothing returns nothing
     call ForGroup(GetUnitsOfPlayerMatching(p, null), function OnLeave)
     call ForceRemovePlayerSimple( GetTriggerPlayer(), udg_players_group )
     if (p == udg_game_owner) then
-        call TriggerExecute(gg_trg_gameset_owner)
+        call gameset_owner()
     endif
     call MultiboardSetItemValueBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetTriggerPlayer()) ), ( "|cFF9B9B9B" + udg_players_name[GetConvertedPlayerId(GetTriggerPlayer())] ) )
     call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetTriggerPlayer()) ), "ReplaceableTextures\\CommandButtonsDisabled\\DISBTNReplay-Loop.blp" )

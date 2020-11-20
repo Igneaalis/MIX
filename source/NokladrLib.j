@@ -5,7 +5,7 @@
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     18.02.2016             =
-= Дата изменения:    20.11.2020 16:30       =
+= Дата изменения:    20.11.2020 21:33       =
 =============================================
 
 Библиотека общего назначения.
@@ -142,6 +142,11 @@ library NokladrLib
     function C_StartInitTimer takes nothing returns nothing
         local timer t = CreateTimer()
         call TimerStart(t, 1., true, function C_StartCount)
+    endfunction
+
+    // Возвращает состояние счётчика времени в секундах
+    function C_GetTimeInSeconds takes nothing returns integer
+        return time[0] + time[1]*60 + time[2]*3600
     endfunction
 
     // Создаёт и возвращает таблицу лидеров
