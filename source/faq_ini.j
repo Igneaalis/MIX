@@ -30,7 +30,7 @@ function faq_ini takes nothing returns nothing
     set udg_faq_key[0] = DialogAddButton(udg_faq_dialog, "Да", 0)
     set udg_faq_key[1] = DialogAddButton(udg_faq_dialog, "Нет", 0)
     // Opt. begin
-    call DialogSetMessageBJ(udg_faq_dialog, ("Просмотреть туториал |cFFFFFFFF(" + "6 сек.|r)"))
+    call DialogSetMessageBJ(udg_faq_dialog, ("Просмотреть туториал(" + WHITE + "6 сек.|r)"))
     call TriggerSleepAction(0.10)
     call ForForce(udg_players_group, function Trig_faq_ini_Copy_Func014A)
     call TriggerExecute(gg_trg_faq_stop)
