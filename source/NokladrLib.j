@@ -5,7 +5,7 @@
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     18.02.2016             =
-= Дата изменения:    01.11.2020 21:04       =
+= Дата изменения:    20.11.2020 16:30       =
 =============================================
 
 Библиотека общего назначения.
@@ -14,19 +14,20 @@
 
 library NokladrLib
     globals
-        constant string GOLD =      "|cffffcc00"    // gold
-        constant string RED =       "|cffff0202"    // 0
-        constant string BLUE =      "|cff0041ff"    // 1
-        constant string TEAL =      "|cff1be5b8"    // 2
-        constant string PURPLE =    "|cff530080"    // 3
-        constant string YELLOW =    "|cffffff00"    // 4
-        constant string ORANGE =    "|cfffe890D"    // 5
-        constant string GREEN =     "|cff1fbf00"    // 6
-        constant string PINK =      "|cffe45aaa"    // 7
-        constant string GRAY =      "|cff949596"    // 8
-        constant string LB =        "|cff7dbef1"    // 9
-        constant string DG =        "|cff0f6145"    // 10
-        constant string BROWN =     "|cff4d2903"    // 11
+        constant string GOLD =      "|cffffcc00"
+        constant string WHITE =     "|cffffffff"
+        constant string RED =       "|cffff0202"    // Player(0)
+        constant string BLUE =      "|cff0041ff"    // Player(1)
+        constant string TEAL =      "|cff1be5b8"    // Player(2)
+        constant string PURPLE =    "|cff530080"    // Player(3)
+        constant string YELLOW =    "|cffffff00"    // Player(4)
+        constant string ORANGE =    "|cfffe890D"    // Player(5)
+        constant string GREEN =     "|cff1fbf00"    // Player(6)
+        constant string PINK =      "|cffe45aaa"    // Player(7)
+        constant string GRAY =      "|cff949596"    // Player(8)
+        constant string LB =        "|cff7dbef1"    // Player(9)
+        constant string DG =        "|cff0f6145"    // Player(10)
+        constant string BROWN =     "|cff4d2903"    // Player(11)
         integer array time[3] // time[0] - секунды, time[1] - минуты, time[2] - часы
     endglobals
 
