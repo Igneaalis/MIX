@@ -26,7 +26,6 @@ function map_init takes nothing returns nothing
 
     local integer i = 0
 
-
     // Отображает strVar_** в зависимости от типа карты
     set strTestWarning_RU = "В данной версии вы можете увидеть десинхронизацию, баги, неправильную работу способностей и ошиКБи в словах."
     set strWarning_RU = (RED + "Внимание:|r " + "вы играете в " + Version + " версию " + strVersion + ". ")
@@ -70,6 +69,8 @@ function map_init takes nothing returns nothing
         set i = i + 1
     endloop
 
+    // Инициализируем хэш-таблицу
+    set hash = HashTable.create()
 
     // Не забываем обнулить переменные!!!
     set strTestWarning_RU = null
@@ -86,11 +87,11 @@ endfunction
 //--------------------------------------------------Post main init---------------------------------------------------
 
 function post_map_init takes nothing returns nothing
-    
+
     //Сообщения
     call SetMessagesInit()
 
     //initialization in game trigger
-    call initialization_in_game()
+    call initialization_in_game()    
     
 endfunction
