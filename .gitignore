@@ -1,4 +1,7 @@
 test.*
 map backup
+backups
+logs
 .idea
-tools
+tools/!MPQEditor.exe
+tools/!XDI.lnk
