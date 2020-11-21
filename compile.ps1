@@ -1,11 +1,12 @@
 # $SourceFolder = "./source/*"
 $LibrariesFolder = "./source/libraries/*"
-$OutputFolder = "./source"
-$OutputFile = "./source/war3map.j"
+$OutputFolder = "./output"
+$OutputFile = "./output/raw_war3map.j"
 $Libraries = Get-ChildItem -Path $LibrariesFolder -Include *.j
 # $SourceFiles = Get-ChildItem -Path $SourceFolder -Include *.j -Exclude Blizzard.j, common.j, war3map.j, base.j
 
-New-Item -Path $OutputFolder -Name "war3map.j" -ItemType File -Force > $null
+New-Item -Path $OutputFolder -ItemType Directory -Force > $null
+New-Item -Path $OutputFolder -Name "raw_war3map.j" -ItemType File -Force > $null
 
 foreach ($Library in $Libraries) {
     Get-Content -Path $Library | Add-Content $OutputFile
