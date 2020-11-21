@@ -38,13 +38,13 @@ integer Table___more= 8190
         //Configure it if you use more than 8190 "key" variables in your map (this will never happen though).
     
 hashtable Table___ht= InitHashtable()
-constant integer Table___sizeK=11
-constant integer Table___listK=13
+constant integer Table___sizeK=4
+constant integer Table___listK=6
 //endglobals from Table
 //globals from MIXLib:
 constant boolean LIBRARY_MIXLib=true
 integer pdb
-// processed:         DB array MIXLib___dbarr[8]
+// processed:         DB array MIXLib__dbarr[8]
 //endglobals from MIXLib
 //globals from RegisterNativeEvent:
 constant boolean LIBRARY_RegisterNativeEvent=true
@@ -564,7 +564,7 @@ constant integer si__ResourcePreloader___S=58
 integer s__ResourcePreloader___S_tb
 unit s__ResourcePreloader___S_dummy
 integer array s__time
-integer array s__MIXLib___dbarr
+integer array s__MIXLib__dbarr
 trigger array st___prototype30
 unit f__arg_unit1
 
@@ -1071,7 +1071,7 @@ endfunction
     endfunction
 
     // Счётчик времени
-    function NokladrLib___C_StartCount takes nothing returns nothing
+    function NokladrLib__C_StartCount takes nothing returns nothing
         set s__time[0]= s__time[0] + 1
         if ( s__time[0] > 59 ) then
             set s__time[0]= 0
@@ -1091,7 +1091,7 @@ endfunction
     // Инициализация счётчика времени
     function C_StartInitTimer takes nothing returns nothing
         local timer t= CreateTimer()
-        call TimerStart(t, 1., true, function NokladrLib___C_StartCount)
+        call TimerStart(t, 1., true, function NokladrLib__C_StartCount)
     endfunction
 
     // Возвращает состояние счётчика времени в секундах
@@ -2387,23 +2387,23 @@ endfunction
         endfunction
 
         function s__Playerdb__getindex takes integer this,player p returns integer
-            return s__MIXLib___dbarr[GetPlayerId(p)]
+            return s__MIXLib__dbarr[GetPlayerId(p)]
         endfunction
 
-    function MIXLib___fill_dbarr takes nothing returns nothing
+    function MIXLib__fill_dbarr takes nothing returns nothing
         set pdb=s__Playerdb__allocate()
-        set s__MIXLib___dbarr[0]= s__DB_create(Player(0x00))
-        set s__MIXLib___dbarr[1]= s__DB_create(Player(0x01))
-        set s__MIXLib___dbarr[2]= s__DB_create(Player(0x02))
-        set s__MIXLib___dbarr[3]= s__DB_create(Player(0x03))
-        set s__MIXLib___dbarr[4]= s__DB_create(Player(0x04))
-        set s__MIXLib___dbarr[5]= s__DB_create(Player(0x05))
-        set s__MIXLib___dbarr[6]= s__DB_create(Player(0x06))
-        set s__MIXLib___dbarr[7]= s__DB_create(Player(0x07))
+        set s__MIXLib__dbarr[0]= s__DB_create(Player(0x00))
+        set s__MIXLib__dbarr[1]= s__DB_create(Player(0x01))
+        set s__MIXLib__dbarr[2]= s__DB_create(Player(0x02))
+        set s__MIXLib__dbarr[3]= s__DB_create(Player(0x03))
+        set s__MIXLib__dbarr[4]= s__DB_create(Player(0x04))
+        set s__MIXLib__dbarr[5]= s__DB_create(Player(0x05))
+        set s__MIXLib__dbarr[6]= s__DB_create(Player(0x06))
+        set s__MIXLib__dbarr[7]= s__DB_create(Player(0x07))
     endfunction
 
-    function MIXLib___MIXLibInit takes nothing returns nothing
-        call MIXLib___fill_dbarr()
+    function MIXLib__MIXLibInit takes nothing returns nothing
+        call MIXLib__fill_dbarr()
     endfunction
 
 //library MIXLib ends
@@ -17289,8 +17289,8 @@ function main takes nothing returns nothing
     call CreateAllUnits()
     call InitBlizzard()
 
-call ExecuteFunc("jasshelper__initstructs644541968")
-call ExecuteFunc("MIXLib___MIXLibInit")
+call ExecuteFunc("jasshelper__initstructs647560578")
+call ExecuteFunc("MIXLib__MIXLibInit")
 
     call InitGlobals()
     call InitCustomTriggers()
@@ -17338,7 +17338,7 @@ function sa___prototype30_UnitRecycler___DisplayError takes nothing returns bool
     return true
 endfunction
 
-function jasshelper__initstructs644541968 takes nothing returns nothing
+function jasshelper__initstructs647560578 takes nothing returns nothing
     set st___prototype30[1]=CreateTrigger()
     call TriggerAddAction(st___prototype30[1],function sa___prototype30_UnitRecycler___DisplayError)
     call TriggerAddCondition(st___prototype30[1],Condition(function sa___prototype30_UnitRecycler___DisplayError))

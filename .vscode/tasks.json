@@ -16,7 +16,7 @@
                 "${workspaceFolder}/source/common.j",
                 "${workspaceFolder}/source/Blizzard.j",
                 "${workspaceFolder}/output/war3map.j",
-                "${workspaceFolder}/map/MIX 0.0.1.w3x"
+                "${workspaceFolder}/output/MIX 0.0.1.w3x"
             ],
             "dependsOrder": "sequence",
             "dependsOn": ["compile", "jasshelper"],
@@ -83,7 +83,7 @@
             "args": [
                 "-launch",
                 "-loadfile",
-                "${workspaceFolder}/map/MIX 0.0.1.w3x"
+                "${workspaceFolder}/output/MIX 0.0.1.w3x"
             ],
             "dependsOrder": "sequence",
             "dependsOn": ["run"],
