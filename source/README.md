@@ -16,6 +16,7 @@
 - changeset : integer - сколько рабочих
 - gameset - время для ввода команд
 - gameset_time_first : real - когда должна начаться первая волна после faq_start
+- gameset_timer : timer
 - game_owner : player - хост
 - boss_wave : boolean - след. волна boss?
 - wave_units : group - всего юнитов на арене
