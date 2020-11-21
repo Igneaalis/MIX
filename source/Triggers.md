@@ -119,6 +119,7 @@ if (!boss_wave):
 ### 1.1.7. building_inf
 
 ```python
+# Делает все здания неуязвимыми
 Trigger on Every 1.00 sec of game time.
 if (wave_status):
     EveryBuilding.Invulnerable = True
