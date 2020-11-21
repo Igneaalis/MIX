@@ -66,6 +66,11 @@ library NokladrLib
         call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, (RED + "Ошибка: " + s + "|r"))
     endfunction
 
+    // Лог сообщений
+    function C_Log takes string s returns nothing
+        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, (GOLD + "Log:|r " + GREEN + s + "|r"))
+    endfunction
+
     // Устанавливает всем компьютерным игрокам соответствующее имя
     function C_SetComputers takes nothing returns nothing
         local integer i = 0
