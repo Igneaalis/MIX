@@ -5,7 +5,7 @@
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     01.11.2020 18:28       =
-= Дата изменения:    08.11.2020 22:01       =
+= Дата изменения:    22.11.2020 18:00       =
 =============================================
 
 Главный и входной интерфейс карты.
@@ -25,6 +25,7 @@ function map_init takes nothing returns nothing
     local string Feedback_EN
 
     local integer i = 0
+
 
     // Отображает strVar_** в зависимости от типа карты
     set strTestWarning_RU = "В данной версии вы можете увидеть десинхронизацию, баги, неправильную работу способностей и ошиКБи в словах."
@@ -72,6 +73,88 @@ function map_init takes nothing returns nothing
     // Инициализируем хэш-таблицу
     set hash = HashTable.create()
 
+    // Заполнение массива incSpellrc равкодами инкам способностей
+    set incSpellrc[1] = 'R00F'
+    set incSpellrc[2] = 'R00G'
+    set incSpellrc[3] = 'R00H'
+    set incSpellrc[4] = 'R00I'
+    set incSpellrc[5] = 'R00J'
+    set incSpellrc[6] = 'R00Q'
+    set incSpellrc[7] = 'R00R'
+    set incSpellrc[8] = 'R00S'
+    set incSpellrc[9] = 'R027'
+    set incSpellrc[10] = 'R029'
+    set incSpellrc[11] = 'R02I'
+    set incSpellrc[12] = 'R02J'
+    set incSpellrc[13] = 'R02K'
+
+    // Заполнение массивов robbery_pr_f и robbery_pr_s процентами спосоности Грабёж
+    set robbery_pr_f[1] = 5
+    set robbery_pr_f[2] = 10
+    set robbery_pr_f[3] = 15
+    set robbery_pr_f[4] = 20
+    set robbery_pr_f[5] = 30
+    set robbery_pr_f[6] = 40
+
+    set robbery_pr_s[1] = 5
+    set robbery_pr_s[2] = 6
+    set robbery_pr_s[3] = 7
+    set robbery_pr_s[4] = 8
+    set robbery_pr_s[5] = 9
+    set robbery_pr_s[6] = 10
+
+    // Заполнение массивов stab_time_gold и stab_time_lumber периодом инкама
+    set stab_time_gold[1] = 3
+    set stab_time_gold[2] = 3
+    set stab_time_gold[3] = 3
+    set stab_time_gold[4] = 3
+    set stab_time_gold[5] = 3
+    set stab_time_gold[6] = 3
+
+    set stab_time_lumber[1] = 40
+    set stab_time_lumber[2] = 40
+    set stab_time_lumber[3] = 30
+    set stab_time_lumber[4] = 20
+    set stab_time_lumber[5] = 15
+    set stab_time_lumber[6] = 12
+
+    // Заполнение массивов stab_gold и stab_lumber кол-вом инкама
+    set stab_gold[1] = 1
+    set stab_gold[2] = 1
+    set stab_gold[3] = 2
+    set stab_gold[4] = 2
+    set stab_gold[5] = 3
+    set stab_gold[6] = 4
+    
+    set stab_lumber[1] = 0
+    set stab_lumber[2] = 1
+    set stab_lumber[3] = 1
+    set stab_lumber[4] = 1
+    set stab_lumber[5] = 1
+    set stab_lumber[6] = 1
+
+    // Заполнение массивов goldmining_main_mine, goldmining_extra_mine, goldmining_income кол-вом увеличения инкама
+    set goldmining_main_mine[1] = 1
+    set goldmining_main_mine[2] = 1
+    set goldmining_main_mine[3] = 1
+    set goldmining_main_mine[4] = 1
+    set goldmining_main_mine[5] = 1
+    set goldmining_main_mine[6] = 1
+
+    set goldmining_extra_mine[1] = 0
+    set goldmining_extra_mine[2] = 0
+    set goldmining_extra_mine[3] = 1
+    set goldmining_extra_mine[4] = 0
+    set goldmining_extra_mine[5] = 1
+    set goldmining_extra_mine[6] = 1
+
+    set goldmining_income[1] = 10
+    set goldmining_income[2] = 10
+    set goldmining_income[3] = 10
+    set goldmining_income[4] = 10
+    set goldmining_income[5] = 10
+    set goldmining_income[6] = 10
+
     // Не забываем обнулить переменные!!!
     set strTestWarning_RU = null
     set strWarning_RU = null
@@ -87,7 +170,7 @@ endfunction
 //--------------------------------------------------Post main init---------------------------------------------------
 
 function post_map_init takes nothing returns nothing
-
+    
     // Сообщения в чате
     call SetMessagesInit()
 
