@@ -43,10 +43,10 @@ function Trig_income_upgTQ_Actions_group takes nothing returns nothing
     local boolean b1
     local boolean b2
     local player p = GetOwningPlayer(u)
-    local player p_k = LoadPlayerHandle(hash, 0, GetHandleId(trg_income_upgTQ))
-    local player p_v = LoadPlayerHandle(hash, GetHandleId(trg_income_upgTQ), 0)
+    local player p_k = hash[StringHash("income")].player[GetHandleId(trg_income_upgTQ)]
+    local player p_v = hash[StringHash("income1")].player[GetHandleId(trg_income_upgTQ)]
     local real damage = cursed_mine_damage_for_lvl
-    local unit damage_u = LoadUnitHandle(hash, 1, GetHandleId(trg_income_upgTQ))
+    local unit damage_u = hash[StringHash("income2")].unit[GetHandleId(trg_income_upgTQ)]
 
     set b1 = IsUnitInGroup(u, udg_wave_units)
     set b2 = (p == p_k)
@@ -99,9 +99,10 @@ function Trig_income_upgTQ_Actions takes nothing returns nothing
 
     call GroupEnumUnitsInRange(gr, x, y, range_damage, null)
 
-    call SavePlayerHandle(hash, 0, GetHandleId(trg_income_upgTQ), p_k)
-    call SavePlayerHandle(hash, GetHandleId(trg_income_upgTQ), 0, p_v)
-    call SaveUnitHandle(hash, 1, GetHandleId(trg_income_upgTQ), victim)
+    set hash[StringHash("income")].player[GetHandleId(trg_income_upgTQ)] = p_k
+    set hash[StringHash("income1")].player[GetHandleId(trg_income_upgTQ)] = p_v
+    set hash[StringHash("income2")].unit[GetHandleId(trg_income_upgTQ)] = victim
+
     call ForGroup(gr, function Trig_income_upgTQ_Actions_group)
 
     set gold = GetPlayerState(p_k, PLAYER_STATE_RESOURCE_GOLD) * percent / 100
