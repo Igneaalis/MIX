@@ -70,6 +70,9 @@ function map_init takes nothing returns nothing
         set i = i + 1
     endloop
 
+    // Инициализируем хэш-таблицу
+    set hash = HashTable.create()
+
     // Заполнение массива incSpellrc равкодами инкам способностей
     set incSpellrc[1] = 'R00F'
     set incSpellrc[2] = 'R00G'
@@ -168,7 +171,13 @@ endfunction
 
 function post_map_init takes nothing returns nothing
     
-    //Сообщения
+    // Сообщения в чате
     call SetMessagesInit()
+
+    // initialization in game trigger
+    call initialization_in_game()    
+
+    // faq active Trigger
+    call faq_active_init()
     
 endfunction
