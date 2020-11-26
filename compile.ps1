@@ -26,6 +26,10 @@ Get-Content -Path "./source/faq_ini.j" | Add-Content $OutputFile
 Get-Content -Path "./source/faq_start.j" | Add-Content $OutputFile
 Get-Content -Path "./source/faq_active.j" | Add-Content $OutputFile
 Get-Content -Path "./source/initialization_in_game.j" | Add-Content $OutputFile
+Get-Content -Path "./source/Income_upg.j" | Add-Content $OutputFile
+Get-Content -Path "./source/Income_upgA.j" | Add-Content $OutputFile
+Get-Content -Path "./source/Income_upgR.j" | Add-Content $OutputFile
+Get-Content -Path "./source/Income_upgTQ.j" | Add-Content $OutputFile
 Get-Content -Path "./source/Main.j" | Add-Content $OutputFile
 
 Get-Content -Path "./source/base.j" | Add-Content $OutputFile

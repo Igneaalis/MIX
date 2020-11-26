@@ -89,7 +89,7 @@ endfunction
 // Работа таймера Вклад в игрока
 function Timer_contr_to_pl_actions takes nothing returns nothing
     local timer t = GetExpiredTimer()
-    local player p = LoadPlayerHandle(hash, 0, GetHandleId(t))
+    local player p = hash[StringHash("income")].player[GetHandleId(t)]
     local integer count_research = GetPlayerTechCountSimple(contr_to_pl_rc, p)
     local integer gold = contr_to_pl_gold + (contr_to_pl_gold_mod * (count_research - 1))
     local integer lumber = contr_to_pl_lumber + (contr_to_pl_lumber_mod * (count_research - 1))
@@ -144,7 +144,7 @@ function Trig_income_upg_actions_contr_to_pl takes player p, integer count_resea
     call DisplayTimedTextToPlayer(rand_p, 0, 0, 10.00, mes)
 
     set t = CreateTimer()
-    call SavePlayerHandle(hash, 0, GetHandleId(t), p)
+    set hash[StringHash("income")].player[GetHandleId(t)] = rand_p
     call TimerStart(t, contr_to_pl_time, false, function Timer_contr_to_pl_actions)
 
     set mes = null
