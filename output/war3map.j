@@ -38,8 +38,8 @@ integer Table___more= 8190
         //Configure it if you use more than 8190 "key" variables in your map (this will never happen though).
     
 hashtable Table___ht= InitHashtable()
-constant integer Table___sizeK=6
-constant integer Table___listK=8
+constant integer Table___sizeK=11
+constant integer Table___listK=13
 //endglobals from Table
 //globals from MIXLib:
 constant boolean LIBRARY_MIXLib=true
@@ -97,9 +97,6 @@ constant integer max_players= 8
 
 // processed:     integer array incSpellrc[incSpellrc_count]                                                   // Массив инкам способностей(zаполнение в Main.j, function map_init)
 // processed:     player array ticket_list[max_ticket_list]
-
-    // Триггеры
-trigger trg_income_upgTQ
 
     // Равкоды инкам улучшений и связанных с ними способностей
 constant integer t1_research_rc= 'R018'
@@ -1313,7 +1310,7 @@ endfunction
         endfunction
        
 //Implemented from module ReviveUnit___Init:
-        function s__Revive_ReviveUnit___Init__onInit takes nothing returns nothing
+        function s__Revive_ReviveUnit___Init___onInit takes nothing returns nothing
             set ReviveUnit___rx=GetRectMaxX(bj_mapInitialPlayableArea) - 1
             set ReviveUnit___ry=GetRectMaxY(bj_mapInitialPlayableArea) - 1
             set ReviveUnit___reviver=CreateUnit(Player(15), ReviveUnit___DUMMY, ReviveUnit___rx, ReviveUnit___ry, 0)
@@ -2543,7 +2540,7 @@ endfunction
 //#             static hashtable table = InitHashtable()
 //#         endif
 //Implemented from module RegisterNativeEvent___NativeEventInit:
-        function s__RegisterNativeEvent___NativeEvent_RegisterNativeEvent___NativeEventInit__onInit takes nothing returns nothing
+        function s__RegisterNativeEvent___NativeEvent_RegisterNativeEvent___NativeEventInit___onInit takes nothing returns nothing
 //#             static if LIBRARY_Table then
                     set s__RegisterNativeEvent___NativeEvent_table=s__TableArray__staticgetindex(0x2000)
 //#             endif
@@ -2992,7 +2989,7 @@ endfunction
             call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, "|CFFFFCC00UnitRecycler|R library is ready!")
         endfunction
 //Implemented from module UnitRecycler___Init:
-        function s__UnitRecycler___Initializer_UnitRecycler___Init__onInit takes nothing returns nothing
+        function s__UnitRecycler___Initializer_UnitRecycler___Init___onInit takes nothing returns nothing
             call s__UnitRecycler___Initializer_init()
         endfunction
 
@@ -3194,7 +3191,7 @@ endfunction
 //#             static hashtable tb = InitHashtable()
 //#         endif
 //Implemented from module ResourcePreloader___Init:
-        function s__ResourcePreloader___S_ResourcePreloader___Init__onInit takes nothing returns nothing
+        function s__ResourcePreloader___S_ResourcePreloader___Init___onInit takes nothing returns nothing
             local rect world= GetWorldBounds()
 //#             static if LIBRARY_Table then
                     set s__ResourcePreloader___S_tb=s__TableArray__staticgetindex(5)
@@ -4296,10 +4293,9 @@ endfunction
 
 
 function Trig_income_upgTQ_Conditions takes nothing returns boolean
-    local boolean b= false
-    local boolean b1= false
-    local boolean b2= false
-    local boolean b3= false
+    local boolean IsIncomeObjective= false
+    local boolean DoesVictimHasUpgrade= false
+    local boolean DoesVictimsUpgradeGreaterThanKillers= false
     local unit killer= GetKillingUnit()
     local unit victim= GetDyingUnit()
     local integer v_rc= GetUnitTypeId(victim)
@@ -4307,33 +4303,39 @@ function Trig_income_upgTQ_Conditions takes nothing returns boolean
     local player p_v= GetOwningPlayer(victim)
     local player p_k= GetOwningPlayer(killer)
 
-    set b1=( v_rc == 'n003' or v_rc == 'n004' or v_rc == 'n005' )
-    set b2=GetPlayerTechCountSimple(cursed_mine_rc, p_v) > 0
-    set b3=GetPlayerTechCountSimple(cursed_mine_rc, p_k) < ( GetPlayerTechCountSimple(cursed_mine_rc, p_v) - 1 )
-    set b=b1 and b2 and b3
+    // n003 - Gold Mine большой
+    // n004 - Gold Mine маленький
+    // n005 - Флаг
+    set IsIncomeObjective=( v_rc == 'n003' or v_rc == 'n004' or v_rc == 'n005' )
+
+    // Не действует на игроков с уровнем улучшения "Проклятый рудник" ниже вашего на 1 и выше.
+    set DoesVictimHasUpgrade=GetPlayerTechCountSimple(cursed_mine_rc, p_v) > 0
+    set DoesVictimsUpgradeGreaterThanKillers=( GetPlayerTechCountSimple(cursed_mine_rc, p_v) - 1 ) > GetPlayerTechCountSimple(cursed_mine_rc, p_k)
 
     set killer=null
     set victim=null
     set p_v=null
     set p_k=null
-    return b
+    return IsIncomeObjective and DoesVictimHasUpgrade and DoesVictimsUpgradeGreaterThanKillers
 endfunction
 
 // !!! Урон юнитам наносит сам рудник, но после смерти он передаётся убийце, проверить, что урон наносится до передачи
+// Функция вызывается к каждому юниту около погибшего рудника
+// Если юнит принадлежит убившему и юнит находится в группе udg_wave_units(!!! понять, что за группа), ему наносится урон от рудника типа chaos
 function Trig_income_upgTQ_Actions_group takes nothing returns nothing
     local unit u= GetEnumUnit()
     local boolean b1
     local boolean b2
     local player p= GetOwningPlayer(u)
-    local player p_k= s__Table___players__getindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),GetHandleId(trg_income_upgTQ))
-    local player p_v= s__Table___players__getindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income1"))),GetHandleId(trg_income_upgTQ))
+    local player p_k= s__Table___players__getindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),StringHash("player_killer"))
+    local player p_v= s__Table___players__getindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),StringHash("player_victim"))
     local real damage= cursed_mine_damage_for_lvl
-    local unit damage_u= s__Table___units__getindex(s__Table__get_unit(s__HashTable__getindex(hash,StringHash("income2"))),GetHandleId(trg_income_upgTQ))
+    local unit damage_u= s__Table___units__getindex(s__Table__get_unit(s__HashTable__getindex(hash,StringHash("income"))),StringHash("victim"))
 
     set b1=IsUnitInGroup(u, udg_wave_units)
     set b2=( p == p_k )
     if b1 and b2 then
-        set damage=damage * I2R(GetPlayerTechCountSimple(cursed_mine_rc, p_v))
+        set damage=damage * I2R(GetPlayerTechCountSimple(cursed_mine_rc, p_v)) // формула расчёта урона: урон = cursed_mine_damage_for_lvl * уровень улучшения
         // !!!
         call UnitDamageTargetBJ(damage_u, u, damage, ATTACK_TYPE_CHAOS, DAMAGE_TYPE_NORMAL)
         // -----
@@ -4381,9 +4383,9 @@ function Trig_income_upgTQ_Actions takes nothing returns nothing
 
     call GroupEnumUnitsInRange(gr, x, y, range_damage, null)
 
-    call s__Table___players__setindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),GetHandleId(trg_income_upgTQ), p_k)
-    call s__Table___players__setindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income1"))),GetHandleId(trg_income_upgTQ), p_v)
-    call s__Table___units__setindex(s__Table__get_unit(s__HashTable__getindex(hash,StringHash("income2"))),GetHandleId(trg_income_upgTQ), victim)
+    call s__Table___players__setindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),StringHash("player_killer"), p_k)
+    call s__Table___players__setindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),StringHash("player_victim"), p_v)
+    call s__Table___units__setindex(s__Table__get_unit(s__HashTable__getindex(hash,StringHash("income"))),StringHash("victim"), victim)
 
     call ForGroup(gr, function Trig_income_upgTQ_Actions_group)
 
@@ -4411,10 +4413,25 @@ endfunction
 
 //===========================================================================
 function InitTrig_income_upgTQ takes nothing returns nothing
-    set trg_income_upgTQ=CreateTrigger()
-    call TriggerRegisterAnyUnitEventBJ(trg_income_upgTQ, EVENT_PLAYER_UNIT_DEATH)
-    call TriggerAddCondition(trg_income_upgTQ, Condition(function Trig_income_upgTQ_Conditions))
-    call TriggerAddAction(trg_income_upgTQ, function Trig_income_upgTQ_Actions)
+    local trigger t= CreateTrigger()
+
+    // Так быстрее
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerAddCondition(t, Condition(function Trig_income_upgTQ_Conditions))
+    call TriggerAddAction(t, function Trig_income_upgTQ_Actions)
+
+    set t=null
 endfunction
 
 
@@ -17057,7 +17074,7 @@ function main takes nothing returns nothing
     call CreateAllUnits()
     call InitBlizzard()
 
-call ExecuteFunc("jasshelper__initstructs687831750")
+call ExecuteFunc("jasshelper__initstructs53193718")
 call ExecuteFunc("MIXLib___MIXLibInit")
 
     call InitGlobals()
@@ -17106,14 +17123,14 @@ function sa___prototype30_UnitRecycler___DisplayError takes nothing returns bool
     return true
 endfunction
 
-function jasshelper__initstructs687831750 takes nothing returns nothing
+function jasshelper__initstructs53193718 takes nothing returns nothing
     set st___prototype30[1]=CreateTrigger()
     call TriggerAddAction(st___prototype30[1],function sa___prototype30_UnitRecycler___DisplayError)
     call TriggerAddCondition(st___prototype30[1],Condition(function sa___prototype30_UnitRecycler___DisplayError))
 
 
 
-call ExecuteFunc("s__Revive_ReviveUnit___Init__onInit")
+call ExecuteFunc("s__Revive_ReviveUnit___Init___onInit")
 
 
 
@@ -17165,13 +17182,13 @@ call ExecuteFunc("s__Revive_ReviveUnit___Init__onInit")
 
 
 
-call ExecuteFunc("s__RegisterNativeEvent___NativeEvent_RegisterNativeEvent___NativeEventInit__onInit")
+call ExecuteFunc("s__RegisterNativeEvent___NativeEvent_RegisterNativeEvent___NativeEventInit___onInit")
 
 
 
-call ExecuteFunc("s__UnitRecycler___Initializer_UnitRecycler___Init__onInit")
+call ExecuteFunc("s__UnitRecycler___Initializer_UnitRecycler___Init___onInit")
 
-call ExecuteFunc("s__ResourcePreloader___S_ResourcePreloader___Init__onInit")
+call ExecuteFunc("s__ResourcePreloader___S_ResourcePreloader___Init___onInit")
 
     call ExecuteFunc("s__BJObjectId_onInit")
 endfunction
