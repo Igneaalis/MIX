@@ -326,9 +326,11 @@ globals
     trigger                 gg_trg_faq_ini             = null
     trigger                 gg_trg_faq_ini_Copy        = null
     trigger                 gg_trg_faq_active          = null
+    trigger                 gg_trg_faq_active_Copy     = null
     trigger                 gg_trg_faq_stop            = null
     trigger                 gg_trg_faq_stop_Copy       = null
     trigger                 gg_trg_faq_start           = null
+    trigger                 gg_trg_faq_start_Copy      = null
     trigger                 gg_trg_faq                 = null
     trigger                 gg_trg_faq_death           = null
     trigger                 gg_trg_building_ini        = null
@@ -805,27 +807,27 @@ function InitSounds takes nothing returns nothing
     call SetSoundVolume( gg_snd_QuestCompleted, -1 )
     call SetSoundPitch( gg_snd_QuestCompleted, 1.0 )
     set gg_snd_BloodElfMageYesAttack1 = CreateSound( "Units\\Human\\HeroBloodElf\\BloodElfMageYesAttack1.wav", false, false, true, 10, 10, "HeroAcksEAX" )
-    call SetSoundDuration( gg_snd_BloodElfMageYesAttack1, 1718 )
+    call SetSoundDuration( gg_snd_BloodElfMageYesAttack1, 2831 )
     call SetSoundChannel( gg_snd_BloodElfMageYesAttack1, 0 )
     call SetSoundVolume( gg_snd_BloodElfMageYesAttack1, -1 )
     call SetSoundPitch( gg_snd_BloodElfMageYesAttack1, 1.0 )
     set gg_snd_BloodElfMageYesAttack3 = CreateSound( "Units\\Human\\HeroBloodElf\\BloodElfMageYesAttack3.wav", false, false, true, 10, 10, "HeroAcksEAX" )
-    call SetSoundDuration( gg_snd_BloodElfMageYesAttack3, 1938 )
+    call SetSoundDuration( gg_snd_BloodElfMageYesAttack3, 3255 )
     call SetSoundChannel( gg_snd_BloodElfMageYesAttack3, 0 )
     call SetSoundVolume( gg_snd_BloodElfMageYesAttack3, -1 )
     call SetSoundPitch( gg_snd_BloodElfMageYesAttack3, 1.0 )
     set gg_snd_BloodElfMageWarcry1 = CreateSound( "Units\\Human\\HeroBloodElf\\BloodElfMageWarcry1.wav", false, false, true, 10, 10, "HeroAcksEAX" )
-    call SetSoundDuration( gg_snd_BloodElfMageWarcry1, 2002 )
+    call SetSoundDuration( gg_snd_BloodElfMageWarcry1, 2843 )
     call SetSoundChannel( gg_snd_BloodElfMageWarcry1, 0 )
     call SetSoundVolume( gg_snd_BloodElfMageWarcry1, -1 )
     call SetSoundPitch( gg_snd_BloodElfMageWarcry1, 1.0 )
     set gg_snd_BloodElfMageReady1 = CreateSound( "Units\\Human\\HeroBloodElf\\BloodElfMageReady1.wav", false, false, true, 10, 10, "HeroAcksEAX" )
-    call SetSoundDuration( gg_snd_BloodElfMageReady1, 2012 )
+    call SetSoundDuration( gg_snd_BloodElfMageReady1, 3270 )
     call SetSoundChannel( gg_snd_BloodElfMageReady1, 0 )
     call SetSoundVolume( gg_snd_BloodElfMageReady1, -1 )
     call SetSoundPitch( gg_snd_BloodElfMageReady1, 1.0 )
     set gg_snd_BloodElfMagePissed1 = CreateSound( "Units\\Human\\HeroBloodElf\\BloodElfMagePissed1.wav", false, false, true, 10, 10, "HeroAcksEAX" )
-    call SetSoundDuration( gg_snd_BloodElfMagePissed1, 2948 )
+    call SetSoundDuration( gg_snd_BloodElfMagePissed1, 6437 )
     call SetSoundChannel( gg_snd_BloodElfMagePissed1, 0 )
     call SetSoundVolume( gg_snd_BloodElfMagePissed1, -1 )
     call SetSoundPitch( gg_snd_BloodElfMagePissed1, 1.0 )
@@ -1219,70 +1221,67 @@ endfunction
 //===========================================================================
 // Trigger: game end
 //===========================================================================
-function Trig_game_end_Func006A takes nothing returns nothing
+function Trig_game_end_Func003A takes nothing returns nothing
     call PanCameraToTimedLocForPlayer( GetOwningPlayer(GetEnumUnit()), GetPlayerStartLocationLoc(GetOwningPlayer(GetEnumUnit())), 0 )
     call RemoveUnit( GetEnumUnit() )
 endfunction
 
-function Trig_game_end_Func007A takes nothing returns nothing
+function Trig_game_end_Func004A takes nothing returns nothing
     call RemoveUnit( GetEnumUnit() )
 endfunction
 
-function Trig_game_end_Func009Func001Func002001002 takes nothing returns boolean
+function Trig_game_end_Func006Func001Func002001002 takes nothing returns boolean
     return ( IsUnitInGroup(GetFilterUnit(), udg_buildings) == true )
 endfunction
 
-function Trig_game_end_Func009Func001Func002A takes nothing returns nothing
+function Trig_game_end_Func006Func001Func002A takes nothing returns nothing
     call IssueImmediateOrderBJ( GetEnumUnit(), "berserk" )
 endfunction
 
-function Trig_game_end_Func009Func001C takes nothing returns boolean
+function Trig_game_end_Func006Func001C takes nothing returns boolean
     if ( not ( GetPlayerSlotState(ConvertedPlayer(udg_i)) == PLAYER_SLOT_STATE_PLAYING ) ) then
         return false
     endif
     return true
 endfunction
 
-function Trig_game_end_Func012A takes nothing returns nothing
+function Trig_game_end_Func009A takes nothing returns nothing
     set udg_end_result[GetConvertedPlayerId(GetEnumPlayer())] = udg_scoreboard_result[GetConvertedPlayerId(GetEnumPlayer())]
 endfunction
 
-function Trig_game_end_Func013Func001Func001C takes nothing returns boolean
+function Trig_game_end_Func010Func001Func001C takes nothing returns boolean
     if ( not ( udg_scoreboard_result[GetForLoopIndexA()] < udg_scoreboard_result[GetForLoopIndexB()] ) ) then
         return false
     endif
     return true
 endfunction
 
-function Trig_game_end_Func015Func001C takes nothing returns boolean
+function Trig_game_end_Func012Func001C takes nothing returns boolean
     if ( not ( udg_end_result[GetConvertedPlayerId(GetEnumPlayer())] == udg_scoreboard_result[1] ) ) then
         return false
     endif
     return true
 endfunction
 
-function Trig_game_end_Func015A takes nothing returns nothing
-    if ( Trig_game_end_Func015Func001C() ) then
+function Trig_game_end_Func012A takes nothing returns nothing
+    if ( Trig_game_end_Func012Func001C() ) then
         call DisplayTimedTextToForce( GetPlayersAll(), 900.00, ( "Победил игрок " + ( udg_players_colour[GetConvertedPlayerId(GetEnumPlayer())] + ( udg_players_name[GetConvertedPlayerId(GetEnumPlayer())] + "|r !" ) ) ) )
     else
     endif
 endfunction
 
 function Trig_game_end_Actions takes nothing returns nothing
-    call DisableTrigger( gg_trg_income_upgFa )
-    call DisableTrigger( gg_trg_income_upgFb )
-    call DisableTrigger( gg_trg_income_upgFe )
     call ClearTextMessagesBJ( GetPlayersAll() )
     call SetDayNightModels( "", "" )
-    call ForGroupBJ( GetUnitsOfTypeIdAll('hbla'), function Trig_game_end_Func006A )
-    call ForGroupBJ( GetUnitsOfTypeIdAll('hwtw'), function Trig_game_end_Func007A )
+    call ForGroupBJ( GetUnitsOfTypeIdAll('hbla'), function Trig_game_end_Func003A )
+    call ForGroupBJ( GetUnitsOfTypeIdAll('hwtw'), function Trig_game_end_Func004A )
     call DisplayTimedTextToForce( GetPlayersAll(), 900.00, "TRIGSTR_1138" )
     set udg_i = 1
     loop
         exitwhen udg_i > udg_scoreboard_limit
-        if ( Trig_game_end_Func009Func001C() ) then
+        if ( Trig_game_end_Func006Func001C() ) then
             set udg_end_result[udg_i] = udg_scoreboard_result[udg_i]
-            call ForGroupBJ( GetUnitsOfPlayerMatching(ConvertedPlayer(udg_i), Condition(function Trig_game_end_Func009Func001Func002001002)), function Trig_game_end_Func009Func001Func002A )
+            call ForGroupBJ( GetUnitsOfPlayerMatching(ConvertedPlayer(udg_i), Condition(function Trig_game_end_Func006Func001Func002001002)), function Trig_game_end_Func006Func001Func002A )
             call CreateDestructableLoc( 'B008', GetPlayerStartLocationLoc(ConvertedPlayer(udg_i)), GetRandomDirectionDeg(), 2.00, 0 )
             set udg_k = 1
             loop
@@ -1297,7 +1296,7 @@ function Trig_game_end_Actions takes nothing returns nothing
     endloop
     call TriggerSleepAction( 3.00 )
     call ClearTextMessagesBJ( GetPlayersAll() )
-    call ForForce( udg_players_group, function Trig_game_end_Func012A )
+    call ForForce( udg_players_group, function Trig_game_end_Func009A )
     set bj_forLoopAIndex = 1
     set bj_forLoopAIndexEnd = 7
     loop
@@ -1306,7 +1305,7 @@ function Trig_game_end_Actions takes nothing returns nothing
         set bj_forLoopBIndexEnd = 8
         loop
             exitwhen bj_forLoopBIndex > bj_forLoopBIndexEnd
-            if ( Trig_game_end_Func013Func001Func001C() ) then
+            if ( Trig_game_end_Func010Func001Func001C() ) then
                 set udg_scoreboard_result[GetForLoopIndexA()] = ( udg_scoreboard_result[GetForLoopIndexA()] + udg_scoreboard_result[GetForLoopIndexB()] )
                 set udg_scoreboard_result[GetForLoopIndexB()] = ( udg_scoreboard_result[GetForLoopIndexA()] - udg_scoreboard_result[GetForLoopIndexB()] )
                 set udg_scoreboard_result[GetForLoopIndexA()] = ( udg_scoreboard_result[GetForLoopIndexA()] - udg_scoreboard_result[GetForLoopIndexB()] )
@@ -1317,7 +1316,7 @@ function Trig_game_end_Actions takes nothing returns nothing
         set bj_forLoopAIndex = bj_forLoopAIndex + 1
     endloop
     call PlaySoundBJ( gg_snd_ClanInvitation )
-    call ForForce( udg_players_group, function Trig_game_end_Func015A )
+    call ForForce( udg_players_group, function Trig_game_end_Func012A )
     call DisplayTimedTextToForce( GetPlayersAll(), 900.00, "TRIGSTR_1148" )
 endfunction
 
@@ -6595,848 +6594,6 @@ function InitTrig_inc_upg takes nothing returns nothing
 endfunction
 
 //===========================================================================
-// Trigger: income upgQ
-//===========================================================================
-function Trig_income_upgQ_Conditions takes nothing returns boolean
-    if ( not ( GetResearched() == 'R00F' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgQ_Func003Func001C takes nothing returns boolean
-    if ( ( GetPlayerTechCountSimple(GetResearched(), GetOwningPlayer(GetTriggerUnit())) == 3 ) ) then
-        return true
-    endif
-    if ( ( GetPlayerTechCountSimple(GetResearched(), GetOwningPlayer(GetTriggerUnit())) == 5 ) ) then
-        return true
-    endif
-    if ( ( GetPlayerTechCountSimple(GetResearched(), GetOwningPlayer(GetTriggerUnit())) == 6 ) ) then
-        return true
-    endif
-    return false
-endfunction
-
-function Trig_income_upgQ_Func003C takes nothing returns boolean
-    if ( not Trig_income_upgQ_Func003Func001C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgQ_Actions takes nothing returns nothing
-    set udg_income_gold[GetConvertedPlayerId(GetOwningPlayer(GetTriggerUnit()))] = ( udg_income_gold[GetConvertedPlayerId(GetOwningPlayer(GetTriggerUnit()))] + 10 )
-    set udg_income_goldmine_c[GetConvertedPlayerId(GetOwningPlayer(GetTriggerUnit()))] = ( udg_income_goldmine_c[GetConvertedPlayerId(GetOwningPlayer(GetTriggerUnit()))] + 1 )
-    if ( Trig_income_upgQ_Func003C() ) then
-        set udg_income_goldmine_l[GetConvertedPlayerId(GetOwningPlayer(GetTriggerUnit()))] = ( udg_income_goldmine_l[GetConvertedPlayerId(GetOwningPlayer(GetTriggerUnit()))] + 1 )
-    else
-    endif
-endfunction
-
-//===========================================================================
-function InitTrig_income_upgQ takes nothing returns nothing
-    set gg_trg_income_upgQ = CreateTrigger(  )
-    call TriggerRegisterAnyUnitEventBJ( gg_trg_income_upgQ, EVENT_PLAYER_UNIT_RESEARCH_FINISH )
-    call TriggerAddCondition( gg_trg_income_upgQ, Condition( function Trig_income_upgQ_Conditions ) )
-    call TriggerAddAction( gg_trg_income_upgQ, function Trig_income_upgQ_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: income upgW
-//
-// Сделано на прозапас (можно было ограничиться и проверкой до 5 места).
-//===========================================================================
-function Trig_income_upgW_Conditions takes nothing returns boolean
-    if ( not ( GetResearched() == 'R00G' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgW_Func002Func001Func002C takes nothing returns boolean
-    if ( not ( GetForLoopIndexB() == 1 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgW_Func002Func001Func003C takes nothing returns boolean
-    if ( not ( GetForLoopIndexB() == 2 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgW_Func002Func001Func004C takes nothing returns boolean
-    if ( not ( GetForLoopIndexB() == 3 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgW_Func002Func001Func005C takes nothing returns boolean
-    if ( not ( GetForLoopIndexB() == 4 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgW_Func002Func001Func006C takes nothing returns boolean
-    if ( not ( GetForLoopIndexB() == 5 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgW_Func002Func001Func007C takes nothing returns boolean
-    if ( not ( GetForLoopIndexB() == 6 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgW_Func002Func001Func008C takes nothing returns boolean
-    if ( not ( GetForLoopIndexB() == 7 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgW_Func002Func001Func009C takes nothing returns boolean
-    if ( not ( GetForLoopIndexB() == 8 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgW_Func002Func001C takes nothing returns boolean
-    if ( not ( udg_ticket_players[GetForLoopIndexB()] == GetOwningPlayer(GetTriggerUnit()) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgW_Func003C takes nothing returns boolean
-    if ( not ( udg_ticket == false ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgW_Actions takes nothing returns nothing
-    set udg_ticket = false
-    set bj_forLoopBIndex = 1
-    set bj_forLoopBIndexEnd = 8
-    loop
-        exitwhen bj_forLoopBIndex > bj_forLoopBIndexEnd
-        if ( Trig_income_upgW_Func002Func001C() ) then
-            set udg_ticket = true
-            if ( Trig_income_upgW_Func002Func001Func002C() ) then
-                call DisplayTextToForce( GetForceOfPlayer(GetOwningPlayer(GetTriggerUnit())), "TRIGSTR_859" )
-            else
-            endif
-            if ( Trig_income_upgW_Func002Func001Func003C() ) then
-                set udg_ticket_players[2] = udg_ticket_players[1]
-            else
-            endif
-            if ( Trig_income_upgW_Func002Func001Func004C() ) then
-                set udg_ticket_players[3] = udg_ticket_players[2]
-                set udg_ticket_players[2] = udg_ticket_players[1]
-            else
-            endif
-            if ( Trig_income_upgW_Func002Func001Func005C() ) then
-                set udg_ticket_players[4] = udg_ticket_players[3]
-                set udg_ticket_players[3] = udg_ticket_players[2]
-                set udg_ticket_players[2] = udg_ticket_players[1]
-            else
-            endif
-            if ( Trig_income_upgW_Func002Func001Func006C() ) then
-                set udg_ticket_players[5] = udg_ticket_players[4]
-                set udg_ticket_players[4] = udg_ticket_players[3]
-                set udg_ticket_players[3] = udg_ticket_players[2]
-                set udg_ticket_players[2] = udg_ticket_players[1]
-            else
-            endif
-            if ( Trig_income_upgW_Func002Func001Func007C() ) then
-                set udg_ticket_players[6] = udg_ticket_players[5]
-                set udg_ticket_players[5] = udg_ticket_players[4]
-                set udg_ticket_players[4] = udg_ticket_players[3]
-                set udg_ticket_players[3] = udg_ticket_players[2]
-                set udg_ticket_players[2] = udg_ticket_players[1]
-            else
-            endif
-            if ( Trig_income_upgW_Func002Func001Func008C() ) then
-                set udg_ticket_players[7] = udg_ticket_players[6]
-                set udg_ticket_players[6] = udg_ticket_players[5]
-                set udg_ticket_players[5] = udg_ticket_players[4]
-                set udg_ticket_players[4] = udg_ticket_players[3]
-                set udg_ticket_players[3] = udg_ticket_players[2]
-                set udg_ticket_players[2] = udg_ticket_players[1]
-            else
-            endif
-            if ( Trig_income_upgW_Func002Func001Func009C() ) then
-                set udg_ticket_players[8] = udg_ticket_players[7]
-                set udg_ticket_players[7] = udg_ticket_players[6]
-                set udg_ticket_players[6] = udg_ticket_players[5]
-                set udg_ticket_players[5] = udg_ticket_players[4]
-                set udg_ticket_players[4] = udg_ticket_players[3]
-                set udg_ticket_players[3] = udg_ticket_players[2]
-                set udg_ticket_players[2] = udg_ticket_players[1]
-            else
-            endif
-        else
-        endif
-        set bj_forLoopBIndex = bj_forLoopBIndex + 1
-    endloop
-    if ( Trig_income_upgW_Func003C() ) then
-        set udg_ticket_players[8] = udg_ticket_players[7]
-        set udg_ticket_players[7] = udg_ticket_players[6]
-        set udg_ticket_players[6] = udg_ticket_players[5]
-        set udg_ticket_players[5] = udg_ticket_players[4]
-        set udg_ticket_players[4] = udg_ticket_players[3]
-        set udg_ticket_players[3] = udg_ticket_players[2]
-        set udg_ticket_players[2] = udg_ticket_players[1]
-    else
-    endif
-    set udg_ticket_players[1] = GetOwningPlayer(GetTriggerUnit())
-endfunction
-
-//===========================================================================
-function InitTrig_income_upgW takes nothing returns nothing
-    set gg_trg_income_upgW = CreateTrigger(  )
-    call TriggerRegisterAnyUnitEventBJ( gg_trg_income_upgW, EVENT_PLAYER_UNIT_RESEARCH_FINISH )
-    call TriggerAddCondition( gg_trg_income_upgW, Condition( function Trig_income_upgW_Conditions ) )
-    call TriggerAddAction( gg_trg_income_upgW, function Trig_income_upgW_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: income upgE
-//===========================================================================
-function Trig_income_upgE_Conditions takes nothing returns boolean
-    if ( not ( GetResearched() == 'R00H' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgE_Actions takes nothing returns nothing
-    set udg_income_wood[GetConvertedPlayerId(GetOwningPlayer(GetTriggerUnit()))] = ( udg_income_wood[GetConvertedPlayerId(GetOwningPlayer(GetTriggerUnit()))] + 1 )
-endfunction
-
-//===========================================================================
-function InitTrig_income_upgE takes nothing returns nothing
-    set gg_trg_income_upgE = CreateTrigger(  )
-    call TriggerRegisterAnyUnitEventBJ( gg_trg_income_upgE, EVENT_PLAYER_UNIT_RESEARCH_FINISH )
-    call TriggerAddCondition( gg_trg_income_upgE, Condition( function Trig_income_upgE_Conditions ) )
-    call TriggerAddAction( gg_trg_income_upgE, function Trig_income_upgE_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: income upgR
-//===========================================================================
-function Trig_income_upgR_Func001C takes nothing returns boolean
-    if ( not ( GetPlayerTechCountSimple('R00I', GetOwningPlayer(GetKillingUnitBJ())) > 0 ) ) then
-        return false
-    endif
-    if ( not ( IsUnitInGroup(GetKillingUnitBJ(), udg_wave_units) == true ) ) then
-        return false
-    endif
-    if ( not ( IsPlayerEnemy(GetOwningPlayer(GetDyingUnit()), GetOwningPlayer(GetKillingUnitBJ())) == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgR_Conditions takes nothing returns boolean
-    if ( not Trig_income_upgR_Func001C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgR_Actions takes nothing returns nothing
-    call AdjustPlayerStateBJ( ( 8 * GetPlayerTechCountSimple('R00I', GetOwningPlayer(GetKillingUnitBJ())) ), GetOwningPlayer(GetKillingUnitBJ()), PLAYER_STATE_RESOURCE_GOLD )
-endfunction
-
-//===========================================================================
-function InitTrig_income_upgR takes nothing returns nothing
-    set gg_trg_income_upgR = CreateTrigger(  )
-    call TriggerRegisterAnyUnitEventBJ( gg_trg_income_upgR, EVENT_PLAYER_UNIT_DEATH )
-    call TriggerAddCondition( gg_trg_income_upgR, Condition( function Trig_income_upgR_Conditions ) )
-    call TriggerAddAction( gg_trg_income_upgR, function Trig_income_upgR_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: income upgA
-//===========================================================================
-function Trig_income_upgA_Func001C takes nothing returns boolean
-    if ( not ( GetPlayerTechCountSimple('R00J', GetOwningPlayer(GetKillingUnitBJ())) > 0 ) ) then
-        return false
-    endif
-    if ( not ( IsUnitInGroup(GetKillingUnitBJ(), udg_wave_units) == true ) ) then
-        return false
-    endif
-    if ( not ( IsPlayerEnemy(GetOwningPlayer(GetDyingUnit()), GetOwningPlayer(GetKillingUnitBJ())) == true ) ) then
-        return false
-    endif
-    if ( not ( GetUnitTypeId(GetDyingUnit()) == 'h01O' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgA_Conditions takes nothing returns boolean
-    if ( not Trig_income_upgA_Func001C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgA_Func005Func001Func001Func001Func001Func001C takes nothing returns boolean
-    if ( not ( GetPlayerTechCountSimple('R00J', GetOwningPlayer(GetKillingUnitBJ())) == 6 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgA_Func005Func001Func001Func001Func001C takes nothing returns boolean
-    if ( not ( GetPlayerTechCountSimple('R00J', GetOwningPlayer(GetKillingUnitBJ())) == 5 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgA_Func005Func001Func001Func001C takes nothing returns boolean
-    if ( not ( GetPlayerTechCountSimple('R00J', GetOwningPlayer(GetKillingUnitBJ())) == 4 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgA_Func005Func001Func001C takes nothing returns boolean
-    if ( not ( GetPlayerTechCountSimple('R00J', GetOwningPlayer(GetKillingUnitBJ())) == 3 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgA_Func005Func001C takes nothing returns boolean
-    if ( not ( GetPlayerTechCountSimple('R00J', GetOwningPlayer(GetKillingUnitBJ())) == 2 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgA_Func005C takes nothing returns boolean
-    if ( not ( GetPlayerTechCountSimple('R00J', GetOwningPlayer(GetKillingUnitBJ())) == 1 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgA_Func010C takes nothing returns boolean
-    if ( not ( udg_info[GetConvertedPlayerId(GetOwningPlayer(GetKillingUnitBJ()))] == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgA_Func011C takes nothing returns boolean
-    if ( not ( udg_info[GetConvertedPlayerId(udg_pillage_player)] == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgA_Actions takes nothing returns nothing
-    set udg_pillage_player = GetOwningPlayer(GetDyingUnit())
-    set udg_pillage_resources = 0
-    set udg_pillage_resources = ( udg_pillage_resources + ( GetPlayerState(udg_pillage_player, PLAYER_STATE_RESOURCE_GOLD) + ( GetPlayerState(udg_pillage_player, PLAYER_STATE_RESOURCE_LUMBER) * 10 ) ) )
-    if ( Trig_income_upgA_Func005C() ) then
-        set udg_pillage_gold = ( ( I2R(udg_pillage_resources) * 0.90 ) * 0.05 )
-        set udg_pillage_lumber = ( ( I2R(udg_pillage_resources) * 0.01 ) * 0.05 )
-    else
-        if ( Trig_income_upgA_Func005Func001C() ) then
-            set udg_pillage_gold = ( ( I2R(udg_pillage_resources) * 0.90 ) * 0.10 )
-            set udg_pillage_lumber = ( ( I2R(udg_pillage_resources) * 0.01 ) * 0.10 )
-        else
-            if ( Trig_income_upgA_Func005Func001Func001C() ) then
-                set udg_pillage_gold = ( ( I2R(udg_pillage_resources) * 0.90 ) * 0.15 )
-                set udg_pillage_lumber = ( ( I2R(udg_pillage_resources) * 0.01 ) * 0.15 )
-            else
-                if ( Trig_income_upgA_Func005Func001Func001Func001C() ) then
-                    set udg_pillage_gold = ( ( I2R(udg_pillage_resources) * 0.90 ) * 0.20 )
-                    set udg_pillage_lumber = ( ( I2R(udg_pillage_resources) * 0.01 ) * 0.20 )
-                else
-                    if ( Trig_income_upgA_Func005Func001Func001Func001Func001C() ) then
-                        set udg_pillage_gold = ( ( I2R(udg_pillage_resources) * 0.90 ) * 0.30 )
-                        set udg_pillage_lumber = ( ( I2R(udg_pillage_resources) * 0.01 ) * 0.30 )
-                    else
-                        if ( Trig_income_upgA_Func005Func001Func001Func001Func001Func001C() ) then
-                            set udg_pillage_gold = ( ( I2R(udg_pillage_resources) * 0.90 ) * 0.40 )
-                            set udg_pillage_lumber = ( ( I2R(udg_pillage_resources) * 0.01 ) * 0.40 )
-                        else
-                        endif
-                    endif
-                endif
-            endif
-        endif
-    endif
-    call AdjustPlayerStateBJ( ( -1 * R2I(udg_pillage_gold) ), udg_pillage_player, PLAYER_STATE_RESOURCE_GOLD )
-    call AdjustPlayerStateBJ( ( -1 * R2I(udg_pillage_lumber) ), udg_pillage_player, PLAYER_STATE_RESOURCE_LUMBER )
-    call AdjustPlayerStateBJ( R2I(udg_pillage_gold), GetOwningPlayer(GetKillingUnitBJ()), PLAYER_STATE_RESOURCE_GOLD )
-    call AdjustPlayerStateBJ( R2I(udg_pillage_lumber), GetOwningPlayer(GetKillingUnitBJ()), PLAYER_STATE_RESOURCE_LUMBER )
-    if ( Trig_income_upgA_Func010C() ) then
-        call DisplayTimedTextToForce( GetForceOfPlayer(GetOwningPlayer(GetKillingUnitBJ())), 10.00, ( "Вы украли |cFFFFCD00" + ( I2S(R2I(udg_pillage_gold)) + ( "|r ед. золота и |cFFB23AEE" + ( I2S(R2I(udg_pillage_lumber)) + ( "|r ед. самоцветов у игрока " + ( udg_players_colour[GetConvertedPlayerId(udg_pillage_player)] + udg_players_name[GetConvertedPlayerId(udg_pillage_player)] ) ) ) ) ) ) )
-    else
-    endif
-    if ( Trig_income_upgA_Func011C() ) then
-        call DisplayTimedTextToForce( GetForceOfPlayer(udg_pillage_player), 10.00, ( "Вас ограбил игрок " + ( udg_players_colour[GetConvertedPlayerId(GetOwningPlayer(GetKillingUnitBJ()))] + udg_players_name[GetConvertedPlayerId(GetOwningPlayer(GetKillingUnitBJ()))] ) ) )
-    else
-    endif
-endfunction
-
-//===========================================================================
-function InitTrig_income_upgA takes nothing returns nothing
-    set gg_trg_income_upgA = CreateTrigger(  )
-    call TriggerRegisterAnyUnitEventBJ( gg_trg_income_upgA, EVENT_PLAYER_UNIT_DEATH )
-    call TriggerAddCondition( gg_trg_income_upgA, Condition( function Trig_income_upgA_Conditions ) )
-    call TriggerAddAction( gg_trg_income_upgA, function Trig_income_upgA_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: income upgS
-//===========================================================================
-function Trig_income_upgS_Conditions takes nothing returns boolean
-    if ( not ( GetResearched() == 'R00Q' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgS_Actions takes nothing returns nothing
-    call AdjustPlayerStateBJ( ( 150 + ( 150 * GetPlayerTechCountSimple('R00Q', GetOwningPlayer(GetTriggerUnit())) ) ), GetOwningPlayer(GetTriggerUnit()), PLAYER_STATE_RESOURCE_GOLD )
-    call AdjustPlayerStateBJ( ( 3 + ( 9 * GetPlayerTechCountSimple('R00Q', GetOwningPlayer(GetTriggerUnit())) ) ), GetOwningPlayer(GetTriggerUnit()), PLAYER_STATE_RESOURCE_LUMBER )
-    call DisplayTimedTextToForce( GetForceOfPlayer(GetOwningPlayer(GetTriggerUnit())), 10.00, ( "Доход с вклада: |cFFFFCD00" + I2S(( 150 + ( GetPlayerTechCountSimple('R00Q', GetOwningPlayer(GetTriggerUnit())) * 150 ) )) ) )
-    call DisplayTimedTextToForce( GetForceOfPlayer(GetOwningPlayer(GetTriggerUnit())), 10.00, ( "Доход за вклад: |cFFB23AEE" + I2S(( 3 + ( 9 * GetPlayerTechCountSimple('R00Q', GetOwningPlayer(GetTriggerUnit())) ) )) ) )
-endfunction
-
-//===========================================================================
-function InitTrig_income_upgS takes nothing returns nothing
-    set gg_trg_income_upgS = CreateTrigger(  )
-    call TriggerRegisterAnyUnitEventBJ( gg_trg_income_upgS, EVENT_PLAYER_UNIT_RESEARCH_FINISH )
-    call TriggerAddCondition( gg_trg_income_upgS, Condition( function Trig_income_upgS_Conditions ) )
-    call TriggerAddAction( gg_trg_income_upgS, function Trig_income_upgS_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: income upgFa
-//===========================================================================
-function Trig_income_upgFa_Func001Func001Func001Func001Func001C takes nothing returns boolean
-    if ( not ( GetPlayerTechCountSimple('R00S', GetEnumPlayer()) == 6 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgFa_Func001Func001Func001Func001C takes nothing returns boolean
-    if ( not ( GetPlayerTechCountSimple('R00S', GetEnumPlayer()) == 5 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgFa_Func001Func001Func001Func003C takes nothing returns boolean
-    if ( ( GetPlayerTechCountSimple('R00S', GetEnumPlayer()) == 3 ) ) then
-        return true
-    endif
-    if ( ( GetPlayerTechCountSimple('R00S', GetEnumPlayer()) == 4 ) ) then
-        return true
-    endif
-    return false
-endfunction
-
-function Trig_income_upgFa_Func001Func001Func001C takes nothing returns boolean
-    if ( not Trig_income_upgFa_Func001Func001Func001Func003C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgFa_Func001Func001Func002C takes nothing returns boolean
-    if ( ( GetPlayerTechCountSimple('R00S', GetEnumPlayer()) == 1 ) ) then
-        return true
-    endif
-    if ( ( GetPlayerTechCountSimple('R00S', GetEnumPlayer()) == 2 ) ) then
-        return true
-    endif
-    return false
-endfunction
-
-function Trig_income_upgFa_Func001Func001C takes nothing returns boolean
-    if ( not Trig_income_upgFa_Func001Func001Func002C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgFa_Func001A takes nothing returns nothing
-    if ( Trig_income_upgFa_Func001Func001C() ) then
-        call AdjustPlayerStateBJ( 1, GetEnumPlayer(), PLAYER_STATE_RESOURCE_GOLD )
-    else
-        if ( Trig_income_upgFa_Func001Func001Func001C() ) then
-            call AdjustPlayerStateBJ( 2, GetEnumPlayer(), PLAYER_STATE_RESOURCE_GOLD )
-        else
-            if ( Trig_income_upgFa_Func001Func001Func001Func001C() ) then
-                call AdjustPlayerStateBJ( 3, GetEnumPlayer(), PLAYER_STATE_RESOURCE_GOLD )
-            else
-                if ( Trig_income_upgFa_Func001Func001Func001Func001Func001C() ) then
-                    call AdjustPlayerStateBJ( 5, GetEnumPlayer(), PLAYER_STATE_RESOURCE_GOLD )
-                else
-                endif
-            endif
-        endif
-    endif
-endfunction
-
-function Trig_income_upgFa_Actions takes nothing returns nothing
-    call ForForce( udg_players_group, function Trig_income_upgFa_Func001A )
-endfunction
-
-//===========================================================================
-function InitTrig_income_upgFa takes nothing returns nothing
-    set gg_trg_income_upgFa = CreateTrigger(  )
-    call TriggerRegisterTimerEventPeriodic( gg_trg_income_upgFa, 3.00 )
-    call TriggerAddAction( gg_trg_income_upgFa, function Trig_income_upgFa_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: income upgFb
-//===========================================================================
-function Trig_income_upgFb_Func001Func001C takes nothing returns boolean
-    if ( not ( GetPlayerTechCountSimple('R00S', GetEnumPlayer()) == 2 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgFb_Func001A takes nothing returns nothing
-    if ( Trig_income_upgFb_Func001Func001C() ) then
-        call AdjustPlayerStateBJ( 1, GetEnumPlayer(), PLAYER_STATE_RESOURCE_LUMBER )
-    else
-    endif
-endfunction
-
-function Trig_income_upgFb_Actions takes nothing returns nothing
-    call ForForce( udg_players_group, function Trig_income_upgFb_Func001A )
-endfunction
-
-//===========================================================================
-function InitTrig_income_upgFb takes nothing returns nothing
-    set gg_trg_income_upgFb = CreateTrigger(  )
-    call TriggerRegisterTimerEventPeriodic( gg_trg_income_upgFb, 40.00 )
-    call TriggerAddAction( gg_trg_income_upgFb, function Trig_income_upgFb_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: income upgFc
-//===========================================================================
-function Trig_income_upgFc_Func001Func001C takes nothing returns boolean
-    if ( not ( GetPlayerTechCountSimple('R00S', GetEnumPlayer()) == 3 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgFc_Func001A takes nothing returns nothing
-    if ( Trig_income_upgFc_Func001Func001C() ) then
-        call AdjustPlayerStateBJ( 1, GetEnumPlayer(), PLAYER_STATE_RESOURCE_LUMBER )
-    else
-    endif
-endfunction
-
-function Trig_income_upgFc_Actions takes nothing returns nothing
-    call ForForce( udg_players_group, function Trig_income_upgFc_Func001A )
-endfunction
-
-//===========================================================================
-function InitTrig_income_upgFc takes nothing returns nothing
-    set gg_trg_income_upgFc = CreateTrigger(  )
-    call TriggerRegisterTimerEventPeriodic( gg_trg_income_upgFc, 30.00 )
-    call TriggerAddAction( gg_trg_income_upgFc, function Trig_income_upgFc_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: income upgFd
-//===========================================================================
-function Trig_income_upgFd_Func001Func001C takes nothing returns boolean
-    if ( not ( GetPlayerTechCountSimple('R00S', GetEnumPlayer()) == 4 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgFd_Func001A takes nothing returns nothing
-    if ( Trig_income_upgFd_Func001Func001C() ) then
-        call AdjustPlayerStateBJ( 1, GetEnumPlayer(), PLAYER_STATE_RESOURCE_LUMBER )
-    else
-    endif
-endfunction
-
-function Trig_income_upgFd_Actions takes nothing returns nothing
-    call ForForce( udg_players_group, function Trig_income_upgFd_Func001A )
-endfunction
-
-//===========================================================================
-function InitTrig_income_upgFd takes nothing returns nothing
-    set gg_trg_income_upgFd = CreateTrigger(  )
-    call TriggerRegisterTimerEventPeriodic( gg_trg_income_upgFd, 20.00 )
-    call TriggerAddAction( gg_trg_income_upgFd, function Trig_income_upgFd_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: income upgFe
-//===========================================================================
-function Trig_income_upgFe_Func001Func001C takes nothing returns boolean
-    if ( not ( GetPlayerTechCountSimple('R00S', GetEnumPlayer()) == 5 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgFe_Func001A takes nothing returns nothing
-    if ( Trig_income_upgFe_Func001Func001C() ) then
-        call AdjustPlayerStateBJ( 1, GetEnumPlayer(), PLAYER_STATE_RESOURCE_LUMBER )
-    else
-    endif
-endfunction
-
-function Trig_income_upgFe_Actions takes nothing returns nothing
-    call ForForce( udg_players_group, function Trig_income_upgFe_Func001A )
-endfunction
-
-//===========================================================================
-function InitTrig_income_upgFe takes nothing returns nothing
-    set gg_trg_income_upgFe = CreateTrigger(  )
-    call TriggerRegisterTimerEventPeriodic( gg_trg_income_upgFe, 15.00 )
-    call TriggerAddAction( gg_trg_income_upgFe, function Trig_income_upgFe_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: income upgFf
-//===========================================================================
-function Trig_income_upgFf_Func001Func001C takes nothing returns boolean
-    if ( not ( GetPlayerTechCountSimple('R00S', GetEnumPlayer()) == 6 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgFf_Func001A takes nothing returns nothing
-    if ( Trig_income_upgFf_Func001Func001C() ) then
-        call AdjustPlayerStateBJ( 1, GetEnumPlayer(), PLAYER_STATE_RESOURCE_LUMBER )
-    else
-    endif
-endfunction
-
-function Trig_income_upgFf_Actions takes nothing returns nothing
-    call ForForce( udg_players_group, function Trig_income_upgFf_Func001A )
-endfunction
-
-//===========================================================================
-function InitTrig_income_upgFf takes nothing returns nothing
-    set gg_trg_income_upgFf = CreateTrigger(  )
-    call TriggerRegisterTimerEventPeriodic( gg_trg_income_upgFf, 12.00 )
-    call TriggerAddAction( gg_trg_income_upgFf, function Trig_income_upgFf_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: income upgZ
-//===========================================================================
-function Trig_income_upgZ_Func001Func001Func002C takes nothing returns boolean
-    if ( not ( udg_vklad_timer[GetConvertedPlayerId(GetEnumPlayer())] == 0 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgZ_Func001Func001C takes nothing returns boolean
-    if ( not ( udg_vklad_timer[GetConvertedPlayerId(GetEnumPlayer())] > 0 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgZ_Func001A takes nothing returns nothing
-    if ( Trig_income_upgZ_Func001Func001C() ) then
-        set udg_vklad_timer[GetConvertedPlayerId(GetEnumPlayer())] = ( udg_vklad_timer[GetConvertedPlayerId(GetEnumPlayer())] - 1 )
-        if ( Trig_income_upgZ_Func001Func001Func002C() ) then
-            call SetPlayerTechResearchedSwap( 'R028', GetPlayerTechCountSimple('R027', GetEnumPlayer()), GetEnumPlayer() )
-            call AdjustPlayerStateBJ( ( 400 + ( 200 * GetPlayerTechCountSimple('R027', GetEnumPlayer()) ) ), GetEnumPlayer(), PLAYER_STATE_RESOURCE_GOLD )
-            call AdjustPlayerStateBJ( ( 10 + ( 10 * GetPlayerTechCountSimple('R027', GetEnumPlayer()) ) ), GetEnumPlayer(), PLAYER_STATE_RESOURCE_LUMBER )
-            call DisplayTimedTextToForce( GetForceOfPlayer(GetEnumPlayer()), 10.00, ( "Доход с вложения в игрока: |cFFFFCD00" + I2S(R2I(( 400.00 + ( 200.00 * I2R(GetPlayerTechCountSimple('R027', GetEnumPlayer())) ) ))) ) )
-            call DisplayTimedTextToForce( GetForceOfPlayer(GetEnumPlayer()), 10.00, ( "Доход с вложения в игрока: |cFFB23AEE" + I2S(R2I(( 10.00 + ( 10.00 * I2R(GetPlayerTechCountSimple('R027', GetEnumPlayer())) ) ))) ) )
-        else
-        endif
-    else
-    endif
-endfunction
-
-function Trig_income_upgZ_Actions takes nothing returns nothing
-    call ForForce( udg_players_group, function Trig_income_upgZ_Func001A )
-endfunction
-
-//===========================================================================
-function InitTrig_income_upgZ takes nothing returns nothing
-    set gg_trg_income_upgZ = CreateTrigger(  )
-    call DisableTrigger( gg_trg_income_upgZ )
-    call TriggerRegisterTimerEventPeriodic( gg_trg_income_upgZ, 1.00 )
-    call TriggerAddAction( gg_trg_income_upgZ, function Trig_income_upgZ_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: income upgX
-//===========================================================================
-function Trig_income_upgX_Conditions takes nothing returns boolean
-    if ( not ( GetResearched() == 'R029' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_income_upgX_Func002001002001 takes nothing returns boolean
-    return ( GetUnitTypeId(GetFilterUnit()) == 'h024' )
-endfunction
-
-function Trig_income_upgX_Func002001002002 takes nothing returns boolean
-    return ( GetUnitTypeId(GetFilterUnit()) == 'h023' )
-endfunction
-
-function Trig_income_upgX_Func002001002 takes nothing returns boolean
-    return GetBooleanOr( Trig_income_upgX_Func002001002001(), Trig_income_upgX_Func002001002002() )
-endfunction
-
-function Trig_income_upgX_Func002A takes nothing returns nothing
-    call RemoveUnit( GetEnumUnit() )
-endfunction
-
-function Trig_income_upgX_Actions takes nothing returns nothing
-    set udg_leader_kf[GetConvertedPlayerId(GetOwningPlayer(GetTriggerUnit()))] = ( udg_leader_kf[GetConvertedPlayerId(GetOwningPlayer(GetTriggerUnit()))] + 0.20 )
-    call ForGroupBJ( GetUnitsOfPlayerMatching(GetOwningPlayer(GetTriggerUnit()), Condition(function Trig_income_upgX_Func002001002)), function Trig_income_upgX_Func002A )
-endfunction
-
-//===========================================================================
-function InitTrig_income_upgX takes nothing returns nothing
-    set gg_trg_income_upgX = CreateTrigger(  )
-    call TriggerRegisterAnyUnitEventBJ( gg_trg_income_upgX, EVENT_PLAYER_UNIT_RESEARCH_FINISH )
-    call TriggerAddCondition( gg_trg_income_upgX, Condition( function Trig_income_upgX_Conditions ) )
-    call TriggerAddAction( gg_trg_income_upgX, function Trig_income_upgX_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: Income T upgQ
-//===========================================================================
-function Trig_Income_T_upgQ_Func014Func001C takes nothing returns boolean
-    if ( ( GetUnitTypeId(GetDyingUnit()) == 'n003' ) ) then
-        return true
-    endif
-    if ( ( GetUnitTypeId(GetDyingUnit()) == 'n004' ) ) then
-        return true
-    endif
-    if ( ( GetUnitTypeId(GetDyingUnit()) == 'n005' ) ) then
-        return true
-    endif
-    return false
-endfunction
-
-function Trig_Income_T_upgQ_Func014C takes nothing returns boolean
-    if ( not Trig_Income_T_upgQ_Func014Func001C() ) then
-        return false
-    endif
-    if ( not ( GetPlayerTechCountSimple('R02I', GetOwningPlayer(GetDyingUnit())) > 0 ) ) then
-        return false
-    endif
-    if ( not ( GetPlayerTechCountSimple('R02I', GetOwningPlayer(GetKillingUnitBJ())) < ( GetPlayerTechCountSimple('R02I', GetOwningPlayer(GetDyingUnit())) - 1 ) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_Income_T_upgQ_Conditions takes nothing returns boolean
-    if ( not Trig_Income_T_upgQ_Func014C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_Income_T_upgQ_Func002001003001 takes nothing returns boolean
-    return ( IsUnitInGroup(GetFilterUnit(), udg_wave_units) == true )
-endfunction
-
-function Trig_Income_T_upgQ_Func002001003002 takes nothing returns boolean
-    return ( GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetKillingUnitBJ()) )
-endfunction
-
-function Trig_Income_T_upgQ_Func002001003 takes nothing returns boolean
-    return GetBooleanAnd( Trig_Income_T_upgQ_Func002001003001(), Trig_Income_T_upgQ_Func002001003002() )
-endfunction
-
-function Trig_Income_T_upgQ_Func002A takes nothing returns nothing
-    call UnitDamageTargetBJ( GroupPickRandomUnit(GetUnitsOfPlayerAll(GetOwningPlayer(GetDyingUnit()))), GetEnumUnit(), ( 100.00 * I2R(GetPlayerTechCountSimple('R02I', GetOwningPlayer(GetDyingUnit()))) ), ATTACK_TYPE_CHAOS, DAMAGE_TYPE_NORMAL )
-endfunction
-
-function Trig_Income_T_upgQ_Func012C takes nothing returns boolean
-    if ( not ( udg_info[GetConvertedPlayerId(GetOwningPlayer(GetDyingUnit()))] == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_Income_T_upgQ_Func013C takes nothing returns boolean
-    if ( not ( udg_info[GetConvertedPlayerId(udg_pillage_player)] == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_Income_T_upgQ_Actions takes nothing returns nothing
-    set bj_forLoopAIndex = 1
-    set bj_forLoopAIndexEnd = 8
-    loop
-        exitwhen bj_forLoopAIndex > bj_forLoopAIndexEnd
-        call AddSpecialEffectLocBJ( PolarProjectionBJ(GetUnitLoc(GetDyingUnit()), 468.00, ( 40.00 * I2R(GetForLoopIndexA()) )), "Objects\\Spawnmodels\\Undead\\UndeadDissipate\\UndeadDissipate.mdl" )
-        call DestroyEffectBJ( GetLastCreatedEffectBJ() )
-        set bj_forLoopAIndex = bj_forLoopAIndex + 1
-    endloop
-    call ForGroupBJ( GetUnitsInRangeOfLocMatching(700.00, GetUnitLoc(GetDyingUnit()), Condition(function Trig_Income_T_upgQ_Func002001003)), function Trig_Income_T_upgQ_Func002A )
-    set udg_pillage_player = GetOwningPlayer(GetKillingUnitBJ())
-    set udg_pillage_resources = 0
-    set udg_pillage_resources = ( udg_pillage_resources + ( GetPlayerState(udg_pillage_player, PLAYER_STATE_RESOURCE_GOLD) + ( GetPlayerState(udg_pillage_player, PLAYER_STATE_RESOURCE_LUMBER) * 10 ) ) )
-    set udg_pillage_gold = ( ( I2R(udg_pillage_resources) * 0.90 ) * ( 0.00 + ( 0.03 * I2R(GetPlayerTechCountSimple('R02I', GetOwningPlayer(GetDyingUnit()))) ) ) )
-    set udg_pillage_lumber = ( ( I2R(udg_pillage_resources) * 0.01 ) * ( 0.00 + ( 0.03 * I2R(GetPlayerTechCountSimple('R02I', GetOwningPlayer(GetDyingUnit()))) ) ) )
-    call AdjustPlayerStateBJ( ( -1 * R2I(udg_pillage_gold) ), udg_pillage_player, PLAYER_STATE_RESOURCE_GOLD )
-    call AdjustPlayerStateBJ( ( -1 * R2I(udg_pillage_lumber) ), udg_pillage_player, PLAYER_STATE_RESOURCE_LUMBER )
-    call AdjustPlayerStateBJ( R2I(udg_pillage_gold), GetOwningPlayer(GetDyingUnit()), PLAYER_STATE_RESOURCE_GOLD )
-    call AdjustPlayerStateBJ( R2I(udg_pillage_lumber), GetOwningPlayer(GetDyingUnit()), PLAYER_STATE_RESOURCE_LUMBER )
-    if ( Trig_Income_T_upgQ_Func012C() ) then
-        call DisplayTimedTextToForce( GetForceOfPlayer(GetOwningPlayer(GetDyingUnit())), 10.00, ( "Вы украли |cFFFFCD00" + ( I2S(R2I(udg_pillage_gold)) + ( "|r ед. золота и |cFFB23AEE" + ( I2S(R2I(udg_pillage_lumber)) + ( "|r ед. самоцветов у игрока " + ( udg_players_colour[GetConvertedPlayerId(udg_pillage_player)] + udg_players_name[GetConvertedPlayerId(udg_pillage_player)] ) ) ) ) ) ) )
-    else
-    endif
-    if ( Trig_Income_T_upgQ_Func013C() ) then
-        call DisplayTimedTextToForce( GetForceOfPlayer(udg_pillage_player), 10.00, ( "Вас ограбил игрок " + ( udg_players_colour[GetConvertedPlayerId(GetOwningPlayer(GetDyingUnit()))] + udg_players_name[GetConvertedPlayerId(GetOwningPlayer(GetDyingUnit()))] ) ) )
-    else
-    endif
-endfunction
-
-//===========================================================================
-function InitTrig_Income_T_upgQ takes nothing returns nothing
-    set gg_trg_Income_T_upgQ = CreateTrigger(  )
-    call TriggerRegisterAnyUnitEventBJ( gg_trg_Income_T_upgQ, EVENT_PLAYER_UNIT_DEATH )
-    call TriggerAddCondition( gg_trg_Income_T_upgQ, Condition( function Trig_Income_T_upgQ_Conditions ) )
-    call TriggerAddAction( gg_trg_Income_T_upgQ, function Trig_Income_T_upgQ_Actions )
-endfunction
-
-//===========================================================================
 // Trigger: income effects
 //===========================================================================
 function Trig_income_effects_Func004Func005C takes nothing returns boolean
@@ -7865,211 +7022,6 @@ function InitTrig_Armageddon_effect_2 takes nothing returns nothing
     call TriggerRegisterEnterRectSimple( gg_trg_Armageddon_effect_2, gg_rct_all )
     call TriggerAddCondition( gg_trg_Armageddon_effect_2, Condition( function Trig_Armageddon_effect_2_Conditions ) )
     call TriggerAddAction( gg_trg_Armageddon_effect_2, function Trig_Armageddon_effect_2_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: faq active
-//
-// faq_key[0] - "Да"
-// faq_key[1] - "Нет"
-//===========================================================================
-function Trig_faq_active_Func001Func005Func005A takes nothing returns nothing
-    call DialogDisplayBJ( false, udg_faq_dialog, GetEnumPlayer() )
-    call CameraSetupApplyForPlayer( true, gg_cam_Camera_003, GetEnumPlayer(), 0 )
-    call PanCameraToTimedLocForPlayer( GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), 0 )
-    call SelectUnitForPlayerSingle( GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(GetEnumPlayer(), 'ntav')), GetEnumPlayer() )
-endfunction
-
-function Trig_faq_active_Func001Func005C takes nothing returns boolean
-    if ( not ( udg_cycle_i > ( CountPlayersInForceBJ(udg_players_group) / 2 ) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_active_Func001Func010Func005A takes nothing returns nothing
-    call DialogDisplayBJ( false, udg_faq_dialog, GetEnumPlayer() )
-endfunction
-
-function Trig_faq_active_Func001Func010C takes nothing returns boolean
-    if ( not ( udg_faq_vote >= ( CountPlayersInForceBJ(udg_players_group) / 2 ) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_active_Func001C takes nothing returns boolean
-    if ( not ( GetClickedButtonBJ() == udg_faq_key[0] ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_active_Actions takes nothing returns nothing
-    if ( Trig_faq_active_Func001C() ) then
-        set udg_faq_vote = ( udg_faq_vote + 1 )
-        call DestroyTextTagBJ( udg_faq_text[2] )
-        call CreateTextTagLocBJ( I2S(udg_faq_vote), GetRectCenter(gg_rct_guideyesvote), 0, 10.00, 100, 100, 100, 0 )
-        set udg_faq_text[2] = GetLastCreatedTextTag()
-        if ( Trig_faq_active_Func001Func010C() ) then
-            set udg_gameset_time_first = 102.00
-            set udg_faq_status = true
-            call TriggerExecute( gg_trg_faq_start )
-            call SetDayNightModels("Environment\\DNC\\DNCLordaeron\\DNCLordaeronTerrain\\DNCLordaeronTerrain.mdl" , "Environment\\DNC\\DNCLordaeron\\DNCLordaeronUnit\\DNCLordaeronUnit.mdl")
-            call ForForce( udg_players_group, function Trig_faq_active_Func001Func010Func005A )
-            call DestroyTextTagBJ( udg_faq_text[0] )
-            call DestroyTextTagBJ( udg_faq_text[1] )
-            call DestroyTextTagBJ( udg_faq_text[2] )
-            call DestroyTextTagBJ( udg_faq_text[3] )
-            call TriggerExecute( gg_trg_faq )
-            call DisableTrigger( GetTriggeringTrigger() )
-            set udg_cycle_i = 0
-            set udg_faq_vote = 0
-        else
-        endif
-    else
-        set udg_cycle_i = ( udg_cycle_i + 1 )
-        call DestroyTextTagBJ( udg_faq_text[3] )
-        call CreateTextTagLocBJ( I2S(udg_cycle_i), GetRectCenter(gg_rct_guidenovote), 0, 10.00, 100, 100, 100, 0 )
-        set udg_faq_text[3] = GetLastCreatedTextTag()
-        if ( Trig_faq_active_Func001Func005C() ) then
-            set udg_gameset_time_first = 60.00
-            set udg_faq_status = true
-            call TriggerExecute( gg_trg_faq_start )
-            call SetDayNightModels("Environment\\DNC\\DNCLordaeron\\DNCLordaeronTerrain\\DNCLordaeronTerrain.mdl" , "Environment\\DNC\\DNCLordaeron\\DNCLordaeronUnit\\DNCLordaeronUnit.mdl")
-            call ForForce( udg_players_group, function Trig_faq_active_Func001Func005Func005A )
-            call DestroyTextTagBJ( udg_faq_text[0] )
-            call DestroyTextTagBJ( udg_faq_text[1] )
-            call DestroyTextTagBJ( udg_faq_text[2] )
-            call DestroyTextTagBJ( udg_faq_text[3] )
-            call DisableTrigger( GetTriggeringTrigger() )
-            set udg_cycle_i = 0
-            set udg_faq_vote = 0
-        else
-        endif
-    endif
-endfunction
-
-//===========================================================================
-function InitTrig_faq_active takes nothing returns nothing
-    set gg_trg_faq_active = CreateTrigger(  )
-    call TriggerRegisterDialogEventBJ( gg_trg_faq_active, udg_faq_dialog )
-    call TriggerAddAction( gg_trg_faq_active, function Trig_faq_active_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: faq start
-//===========================================================================
-function Trig_faq_start_Func005C takes nothing returns boolean
-    if ( not ( udg_gameset_time_first < 61.00 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Func008C takes nothing returns boolean
-    if ( not ( udg_gameset_time_first > 30.00 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Func011001002 takes nothing returns boolean
-    return ( IsUnitType(GetFilterUnit(), UNIT_TYPE_PEON) == true )
-endfunction
-
-function Trig_faq_start_Func011Func001C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'hpea' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Func011Func002C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'h015' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Func011Func003C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'h01G' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Func011Func004C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'h01U' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Func011Func005C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'h025' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Func011Func006C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'h02H' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Func011A takes nothing returns nothing
-    if ( Trig_faq_start_Func011Func001C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNPeasant.blp" )
-    else
-    endif
-    if ( Trig_faq_start_Func011Func002C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNAcolyte.blp" )
-    else
-    endif
-    if ( Trig_faq_start_Func011Func003C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNWisp.blp" )
-    else
-    endif
-    if ( Trig_faq_start_Func011Func004C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNPeon.blp" )
-    else
-    endif
-    if ( Trig_faq_start_Func011Func005C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNMurgalSlave.blp" )
-    else
-    endif
-    if ( Trig_faq_start_Func011Func006C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNMedivh.blp" )
-    else
-    endif
-endfunction
-
-function Trig_faq_start_Actions takes nothing returns nothing
-    call TimerStart(udg_gameset_timer, udg_gameset_time_first, false, function gameset_end)
-    call CreateTimerDialogBJ( udg_gameset_timer, "TRIGSTR_2629" )
-    call TimerDialogDisplayBJ( true, GetLastCreatedTimerDialogBJ() )
-    if ( Trig_faq_start_Func005C() ) then
-        call gameset_owner()
-    else
-    endif
-    call TriggerSleepAction( 53.00 )
-    call TriggerExecute( gg_trg_scoreboard_ini )
-    if ( Trig_faq_start_Func008C() ) then
-        call gameset_owner()
-    else
-    endif
-    call TriggerSleepAction( 10.00 )
-    call DisplayTimedTextToForce( GetPlayersAll(), 60.00, "TRIGSTR_2656" )
-    call ForGroupBJ( GetUnitsInRectMatching(GetPlayableMapRect(), Condition(function Trig_faq_start_Func011001002)), function Trig_faq_start_Func011A )
-endfunction
-
-//===========================================================================
-function InitTrig_faq_start takes nothing returns nothing
-    set gg_trg_faq_start = CreateTrigger(  )
-    call TriggerAddAction( gg_trg_faq_start, function Trig_faq_start_Actions )
 endfunction
 
 //===========================================================================
@@ -13664,21 +12616,6 @@ function InitCustomTriggers takes nothing returns nothing
     call InitTrig_inc_per_second(  )
     call InitTrig_inc_colour(  )
     call InitTrig_inc_upg(  )
-    call InitTrig_income_upgQ(  )
-    call InitTrig_income_upgW(  )
-    call InitTrig_income_upgE(  )
-    call InitTrig_income_upgR(  )
-    call InitTrig_income_upgA(  )
-    call InitTrig_income_upgS(  )
-    call InitTrig_income_upgFa(  )
-    call InitTrig_income_upgFb(  )
-    call InitTrig_income_upgFc(  )
-    call InitTrig_income_upgFd(  )
-    call InitTrig_income_upgFe(  )
-    call InitTrig_income_upgFf(  )
-    call InitTrig_income_upgZ(  )
-    call InitTrig_income_upgX(  )
-    call InitTrig_Income_T_upgQ(  )
     call InitTrig_income_effects(  )
     call InitTrig_Weather(  )
     call InitTrig_Blizzard(  )
@@ -13687,8 +12624,6 @@ function InitCustomTriggers takes nothing returns nothing
     call InitTrig_Armageddon(  )
     call InitTrig_Armageddon_effect(  )
     call InitTrig_Armageddon_effect_2(  )
-    call InitTrig_faq_active(  )
-    call InitTrig_faq_start(  )
     call InitTrig_faq(  )
     call InitTrig_faq_death(  )
     call InitTrig_building_ini(  )

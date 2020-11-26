@@ -38,20 +38,22 @@ function Trig_income_upgTQ_Conditions takes nothing returns boolean
 endfunction
 
 // !!! Урон юнитам наносит сам рудник, но после смерти он передаётся убийце, проверить, что урон наносится до передачи
+// Функция вызывается к каждому юниту около погибшего рудника
+// Если юнит принадлежит убившему и юнит находится в группе udg_wave_units(!!! понять, что за группа), ему наносится урон от рудника типа chaos
 function Trig_income_upgTQ_Actions_group takes nothing returns nothing
-    local unit u = GetEnumUnit()
+    local unit u = GetEnumUnit()                                                              // сам юнит
     local boolean b1
     local boolean b2
-    local player p = GetOwningPlayer(u)
-    local player p_k = LoadPlayerHandle(hash, 0, GetHandleId(trg_income_upgTQ))
-    local player p_v = LoadPlayerHandle(hash, GetHandleId(trg_income_upgTQ), 0)
-    local real damage = cursed_mine_damage_for_lvl
-    local unit damage_u = LoadUnitHandle(hash, 1, GetHandleId(trg_income_upgTQ))
+    local player p = GetOwningPlayer(u)                                                       // владелец юнита
+    local player p_k = hash[StringHash("income")].player[StringHash("player_killer")]         // владелец убийцы
+    local player p_v = hash[StringHash("income")].player[StringHash("player_victim")]         // владелец рудника(жертвы)
+    local real damage = cursed_mine_damage_for_lvl                                            // урон за уровень улучшения, переменная устанавливается в Globals.j
+    local unit damage_u = hash[StringHash("income")].unit[StringHash("victim")]               // рудник
 
     set b1 = IsUnitInGroup(u, udg_wave_units)
     set b2 = (p == p_k)
     if b1 and b2 then
-        set damage = damage * I2R(GetPlayerTechCountSimple(cursed_mine_rc, p_v))
+        set damage = damage * I2R(GetPlayerTechCountSimple(cursed_mine_rc, p_v))              // формула расчёта урона: урон = cursed_mine_damage_for_lvl * уровень улучшения
         // !!!
         call UnitDamageTargetBJ(damage_u, u, damage, ATTACK_TYPE_CHAOS, DAMAGE_TYPE_NORMAL)
         // -----
@@ -99,9 +101,10 @@ function Trig_income_upgTQ_Actions takes nothing returns nothing
 
     call GroupEnumUnitsInRange(gr, x, y, range_damage, null)
 
-    call SavePlayerHandle(hash, 0, GetHandleId(trg_income_upgTQ), p_k)
-    call SavePlayerHandle(hash, GetHandleId(trg_income_upgTQ), 0, p_v)
-    call SaveUnitHandle(hash, 1, GetHandleId(trg_income_upgTQ), victim)
+    set hash[StringHash("income")].player[StringHash("player_killer")] = p_k
+    set hash[StringHash("income")].player[StringHash("player_victim")] = p_v
+    set hash[StringHash("income")].unit[StringHash("victim")] = victim
+
     call ForGroup(gr, function Trig_income_upgTQ_Actions_group)
 
     set gold = GetPlayerState(p_k, PLAYER_STATE_RESOURCE_GOLD) * percent / 100
@@ -128,8 +131,9 @@ endfunction
 
 //===========================================================================
 function InitTrig_income_upgTQ takes nothing returns nothing
-    set trg_income_upgTQ = CreateTrigger( )
+    local trigger trg_income_upgTQ = CreateTrigger( )
     call TriggerRegisterAnyUnitEventBJ( trg_income_upgTQ, EVENT_PLAYER_UNIT_DEATH )
     call TriggerAddCondition( trg_income_upgTQ, Condition( function Trig_income_upgTQ_Conditions ) )
     call TriggerAddAction( trg_income_upgTQ, function Trig_income_upgTQ_Actions )
+    set trg_income_upgTQ = null
 endfunction

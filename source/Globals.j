@@ -35,9 +35,6 @@ globals
     integer array incSpellrc[incSpellrc_count]                                                   // Массив инкам способностей(zаполнение в Main.j, function map_init)
     player array ticket_list[max_ticket_list]
 
-    // Триггеры
-    trigger trg_income_upgTQ
-
     // Равкоды инкам улучшений и связанных с ними способностей
     constant integer t1_research_rc = 'R018'                                                              // 12 исследований
     constant integer t2_research_rc = 'R019'                                                              // 20 исследований
