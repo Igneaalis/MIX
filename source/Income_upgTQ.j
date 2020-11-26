@@ -5,7 +5,7 @@
 = Discord:           ! ! Gladiator#3635     =
 = E-Mail:            glady007rus@gmail.com  =
 = Дата создания:     22.11.2020 18:00       =
-= Дата изменения:    22.11.2020 18:00       =
+= Дата изменения:    26.11.2020 13:49       =
 =============================================
 
 Улучшение инкома Проклятый рудник.
@@ -14,27 +14,30 @@
 */
 
 function Trig_income_upgTQ_Conditions takes nothing returns boolean
-    local boolean b = false
-    local boolean b1 = false
-    local boolean b2 = false
-    local boolean b3 = false
-    local unit killer = GetKillingUnit()
-    local unit victim = GetDyingUnit()
-    local integer v_rc = GetUnitTypeId(victim)
-    local integer k_rc = GetUnitTypeId(killer)
-    local player p_v = GetOwningPlayer(victim)
-    local player p_k = GetOwningPlayer(killer)
+    local boolean IsIncomeObjective = false
+    local boolean DoesVictimHasUpgrade = false
+    local boolean DoesVictimsUpgradeGreaterThanKillers = false
+    local unit killer = GetKillingUnit()        // unit who has killed victim
+    local unit victim = GetDyingUnit()          // unit who was killed by killer
+    local integer v_rc = GetUnitTypeId(victim)  // raw code of victim unit
+    local integer k_rc = GetUnitTypeId(killer)  // raw code of killer unit
+    local player p_v = GetOwningPlayer(victim)  // owner of victim unit
+    local player p_k = GetOwningPlayer(killer)  // owner of killer unit
 
-    set b1 = (v_rc == 'n003' or v_rc == 'n004' or v_rc == 'n005')
-    set b2 = GetPlayerTechCountSimple(cursed_mine_rc, p_v) > 0
-    set b3 = GetPlayerTechCountSimple(cursed_mine_rc, p_k) < (GetPlayerTechCountSimple(cursed_mine_rc, p_v) - 1)
-    set b = b1 and b2 and b3
+    // n003 - Gold Mine большой
+    // n004 - Gold Mine маленький
+    // n005 - Флаг
+    set IsIncomeObjective = (v_rc == 'n003' or v_rc == 'n004' or v_rc == 'n005')
+
+    // Не действует на игроков с уровнем улучшения "Проклятый рудник" ниже вашего на 1 и выше.
+    set DoesVictimHasUpgrade = GetPlayerTechCountSimple(cursed_mine_rc, p_v) > 0
+    set DoesVictimsUpgradeGreaterThanKillers = (GetPlayerTechCountSimple(cursed_mine_rc, p_v) - 1) > GetPlayerTechCountSimple(cursed_mine_rc, p_k)
 
     set killer = null
     set victim = null
     set p_v = null
     set p_k = null
-    return b
+    return IsIncomeObjective and DoesVictimHasUpgrade and DoesVictimsUpgradeGreaterThanKillers
 endfunction
 
 // !!! Урон юнитам наносит сам рудник, но после смерти он передаётся убийце, проверить, что урон наносится до передачи
@@ -131,9 +134,23 @@ endfunction
 
 //===========================================================================
 function InitTrig_income_upgTQ takes nothing returns nothing
-    local trigger trg_income_upgTQ = CreateTrigger( )
-    call TriggerRegisterAnyUnitEventBJ( trg_income_upgTQ, EVENT_PLAYER_UNIT_DEATH )
-    call TriggerAddCondition( trg_income_upgTQ, Condition( function Trig_income_upgTQ_Conditions ) )
-    call TriggerAddAction( trg_income_upgTQ, function Trig_income_upgTQ_Actions )
-    set trg_income_upgTQ = null
+    local trigger t = CreateTrigger()
+
+    // Так быстрее
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerAddCondition(t, Condition(function Trig_income_upgTQ_Conditions))
+    call TriggerAddAction(t, function Trig_income_upgTQ_Actions)
+
+    set t = null
 endfunction
