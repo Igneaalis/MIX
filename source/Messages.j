@@ -49,7 +49,7 @@ function SetLeaveMessages takes nothing returns nothing
 endfunction
 
 function SetMessagesInit takes nothing returns nothing
-	local trigger t = CreateTrigger()
+    local trigger t = CreateTrigger()
 
     call TriggerRegisterPlayerEvent(t, Player(0x00), EVENT_PLAYER_LEAVE)
     call TriggerRegisterPlayerEvent(t, Player(0x01), EVENT_PLAYER_LEAVE)
