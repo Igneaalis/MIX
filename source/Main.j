@@ -179,9 +179,9 @@ function post_map_init takes nothing returns nothing
 
     // income upg trigger
     call InitTrig_income_upg()
-	call InitTrig_income_upgR()
-	call InitTrig_income_upgA()
-	call InitTrig_income_upgTQ()
+    call InitTrig_income_upgR()
+    call InitTrig_income_upgA()
+    call InitTrig_income_upgTQ()
 
     // faq active Trigger
     call faq_active_init()
