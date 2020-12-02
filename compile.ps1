@@ -21,9 +21,9 @@ Get-Content -Path "./source/gameset_end.j" | Add-Content $OutputFile
 Get-Content -Path "./source/gameset_owner.j" | Add-Content $OutputFile
 Get-Content -Path "./source/Messages.j" | Add-Content $OutputFile
 Get-Content -Path "./source/faq.j" | Add-Content $OutputFile
+Get-Content -Path "./source/faq_start.j" | Add-Content $OutputFile
 Get-Content -Path "./source/faq_stop.j" | Add-Content $OutputFile
 Get-Content -Path "./source/faq_ini.j" | Add-Content $OutputFile
-Get-Content -Path "./source/faq_start.j" | Add-Content $OutputFile
 Get-Content -Path "./source/faq_active.j" | Add-Content $OutputFile
 Get-Content -Path "./source/initialization_in_game.j" | Add-Content $OutputFile
 Get-Content -Path "./source/Income_upg.j" | Add-Content $OutputFile
