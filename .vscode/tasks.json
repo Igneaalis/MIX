@@ -12,8 +12,8 @@
             "command": "${workspaceFolder}/tools/JassHelper/jasshelper.exe",
             "group": "build",
             "args": [
-                "${workspaceFolder}/source/common.j",
-                "${workspaceFolder}/source/Blizzard.j",
+                "${workspaceFolder}/tools/common.j",
+                "${workspaceFolder}/tools/Blizzard.j",
                 "${workspaceFolder}/output/war3map.j",
                 "${workspaceFolder}/output/MIX 0.0.1.w3x"
             ],
@@ -34,8 +34,8 @@
             "command": "${workspaceFolder}/tools/JassHelper/jasshelper.exe",
             "group": "build",
             "args": [
-                "${workspaceFolder}/source/common.j",
-                "${workspaceFolder}/source/Blizzard.j",
+                "${workspaceFolder}/tools/common.j",
+                "${workspaceFolder}/tools/Blizzard.j",
                 "${workspaceFolder}/output/war3map.j",
                 "${workspaceFolder}/output/MIX 0.0.1.w3x"
             ],
@@ -58,8 +58,8 @@
             "args": [
                 "--debug",
                 "--scriptonly",
-                "${workspaceFolder}/source/common.j",
-                "${workspaceFolder}/source/Blizzard.j",
+                "${workspaceFolder}/tools/common.j",
+                "${workspaceFolder}/tools/Blizzard.j",
                 "${workspaceFolder}/output/raw_war3map.j",
                 "${workspaceFolder}/output/war3map.j"
             ],
@@ -79,8 +79,8 @@
             "group": "test",
             "args": [
                 "--scriptonly",
-                "${workspaceFolder}/source/common.j",
-                "${workspaceFolder}/source/Blizzard.j",
+                "${workspaceFolder}/tools/common.j",
+                "${workspaceFolder}/tools/Blizzard.j",
                 "${workspaceFolder}/output/raw_war3map.j",
                 "${workspaceFolder}/output/war3map.j"
             ],
