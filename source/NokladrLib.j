@@ -5,7 +5,7 @@
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     18.02.2016             =
-= Дата изменения:    20.11.2020 21:33       =
+= Дата изменения:    20.11.2020 21:37       =
 =============================================
 
 Библиотека общего назначения.
@@ -63,12 +63,12 @@ library NokladrLib
 
     // Отображает сообщение об ошибке
     function C_ErrorMsg takes string s returns nothing
-        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, (RED + "Ошибка: " + s + "|r"))
+        debug call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, (RED + "Ошибка: " + s + "|r"))
     endfunction
 
     // Лог сообщений
     function C_Log takes string s returns nothing
-        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, (GOLD + "Log:|r " + GREEN + s + "|r"))
+        debug call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, (GOLD + "Log:|r " + GREEN + s + "|r"))
     endfunction
 
     // Устанавливает всем компьютерным игрокам соответствующее имя
@@ -209,6 +209,18 @@ library NokladrLib
         local real x = GetUnitX(u)
         local real y = GetUnitY(u)
         return ((GetRectMinX(r)-32 <= x) and (x <= GetRectMaxX(r)+32) and (GetRectMinY(r)-32 <= y) and (y <= GetRectMaxY(r)+32))
+    endfunction
+
+    // Создаёт texttag, упрощённая и оптимизированная версия CreateTextTagLocBJ
+    function NewTextTag takes string s, rect rct, real size returns texttag
+        local texttag tt = CreateTextTag()
+        // SetTextTagTextBJ
+        call SetTextTagText(tt, s, TextTagSize2Height(size))
+        // SetTextTagPosBJ
+        call SetTextTagPos(tt, GetRectCenterX(rct), GetRectCenterY(rct), 0)
+        // SetTextTagColorBJ
+        call SetTextTagColor(tt, 255, 255, 255, 255)
+        return tt
     endfunction
 
 endlibrary
