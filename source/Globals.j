@@ -5,7 +5,7 @@
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     01.11.2020 18:41       =
-= Дата изменения:    22.11.2020 18:00       =
+= Дата изменения:    03.12.2020 02:07       =
 =============================================
 
 Объявление глобальных переменных
@@ -14,7 +14,7 @@
 
 globals
     boolean IsDevInGame = false                                                                 // Условие: один из разработчиков в игре?
-    HashTable hash                                                            // Инициализация хэш-таблицы
+    HashTable hash                                                                              // Инициализация хэш-таблицы
     constant string strVersion = "0.0.1"                                                        // Версия карты, семантическое версионирование: (Major, Minor, Patch)
     constant string Version = "Test"                                                            // Тип версии {Test, Release}
     constant string strEmail = (LB + "Nostaleal.ru|r" + GOLD + "@|r" + LB + "yandex.ru|r")      // E-Mail адрес
