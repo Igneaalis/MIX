@@ -7,12 +7,11 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "run",
+            "label": "Build",
             "type": "shell",
             "command": "${workspaceFolder}/tools/JassHelper/jasshelper.exe",
             "group": "build",
             "args": [
-                "--debug",
                 "${workspaceFolder}/source/common.j",
                 "${workspaceFolder}/source/Blizzard.j",
                 "${workspaceFolder}/output/war3map.j",
@@ -30,12 +29,55 @@
             }
         },
         {
-            "label": "jasshelper",
+            "label": "Build debug",
             "type": "shell",
             "command": "${workspaceFolder}/tools/JassHelper/jasshelper.exe",
             "group": "build",
             "args": [
+                "${workspaceFolder}/source/common.j",
+                "${workspaceFolder}/source/Blizzard.j",
+                "${workspaceFolder}/output/war3map.j",
+                "${workspaceFolder}/output/MIX 0.0.1.w3x"
+            ],
+            "dependsOrder": "sequence",
+            "dependsOn": ["compile", "jasshelper debug"],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "jasshelper debug",
+            "type": "shell",
+            "command": "${workspaceFolder}/tools/JassHelper/jasshelper.exe",
+            "group": "test",
+            "args": [
                 "--debug",
+                "--scriptonly",
+                "${workspaceFolder}/source/common.j",
+                "${workspaceFolder}/source/Blizzard.j",
+                "${workspaceFolder}/output/raw_war3map.j",
+                "${workspaceFolder}/output/war3map.j"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "jasshelper",
+            "type": "shell",
+            "command": "${workspaceFolder}/tools/JassHelper/jasshelper.exe",
+            "group": "test",
+            "args": [
                 "--scriptonly",
                 "${workspaceFolder}/source/common.j",
                 "${workspaceFolder}/source/Blizzard.j",
@@ -76,7 +118,7 @@
             }
         },
         {
-            "label": "test",
+            "label": "Play",
             "type": "shell",
             "command": "D:/Games/Warcraft III/_retail_/x86_64/World Editor.exe",
             "group": "test",
@@ -86,7 +128,28 @@
                 "${workspaceFolder}/output/MIX 0.0.1.w3x"
             ],
             "dependsOrder": "sequence",
-            "dependsOn": ["run"],
+            "dependsOn": ["Build"],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Play debug",
+            "type": "shell",
+            "command": "D:/Games/Warcraft III/_retail_/x86_64/World Editor.exe",
+            "group": "test",
+            "args": [
+                "-launch",
+                "-loadfile",
+                "${workspaceFolder}/output/MIX 0.0.1.w3x"
+            ],
+            "dependsOrder": "sequence",
+            "dependsOn": ["Build debug"],
             "presentation": {
                 "echo": true,
                 "reveal": "always",
