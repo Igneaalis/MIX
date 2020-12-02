@@ -2718,10 +2718,12 @@ endfunction
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     08.11.2020 19:46       =
-= Дата изменения:    20.11.2020 16:12       =
+= Дата изменения:    02.12.2020 21:49       =
 =============================================
 
 initialization in game Trigger
+
+Sets mini games' waves, players' constants and units.
 
 */
 
@@ -2818,8 +2820,7 @@ function initialization_in_game takes nothing returns nothing
     
     call ForForce(bj_FORCE_ALL_PLAYERS, function initialization_in_game_players)
     
-    //faq ini Trigger
-    call faq_ini()
+    call faq_ini() // Starts voting for faq guide
 
     // Миниигра казино
     set udg_r = 0
@@ -3553,7 +3554,7 @@ endfunction
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     01.11.2020 18:28       =
-= Дата изменения:    02.12.2020 14:23       =
+= Дата изменения:    02.12.2020 21:50       =
 =============================================
 
 Главный и входной интерфейс карты.
@@ -3706,6 +3707,8 @@ scope Main initializer MainInit
         set goldmining_income[4] = 10
         set goldmining_income[5] = 10
         set goldmining_income[6] = 10
+
+        call C_Log("map_init finished!")
 
         // Не забываем обнулить переменные!!!
         set strTestWarning_RU = null
