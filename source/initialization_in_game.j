@@ -5,10 +5,12 @@
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     08.11.2020 19:46       =
-= Дата изменения:    20.11.2020 16:12       =
+= Дата изменения:    02.12.2020 21:49       =
 =============================================
 
 initialization in game Trigger
+
+Sets mini games' waves, players' constants and units.
 
 */
 
@@ -105,10 +107,7 @@ function initialization_in_game takes nothing returns nothing
     
     call ForForce(bj_FORCE_ALL_PLAYERS, function initialization_in_game_players)
     
-    //faq ini Trigger
-    call faq_ini()
-
-    call TriggerSleepAction(1.00)
+    call faq_ini() // Starts voting for faq guide
 
     // Миниигра казино
     set udg_r = 0
