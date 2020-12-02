@@ -1,21 +1,28 @@
-function Trig_faq_stop_Copy_Func012Func004A takes nothing returns nothing
-    call DialogDisplayBJ( false, udg_faq_dialog, GetEnumPlayer() )
-    call CameraSetupApplyForPlayer( true, gg_cam_Camera_003, GetEnumPlayer(), 0 )
-    call PanCameraToTimedLocForPlayer( GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), 0 )
-    call SelectUnitForPlayerSingle( GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(GetEnumPlayer(), 'ntav')), GetEnumPlayer() )
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     20.11.2020 16:00       =
+= Дата изменения:    02.12.2020 20:56       =
+=============================================
+
+faq stop Trigger
+
+Stops voting for faq guide
+
+*/
+
+function faq_get_castle takes nothing returns nothing
+    call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, GetEnumPlayer(), 0) // Resets camera angle
+    call PanCameraToTimedLocForPlayer(GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), 0) // Focuses camera at castle you own
+    call SelectUnitForPlayerSingle(GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(GetEnumPlayer(), 'ntav')), GetEnumPlayer()) // Selects tavern
 endfunction
 
 function faq_stop takes nothing returns nothing
-    if (udg_faq_status == false) then
-        call TriggerExecute( gg_trg_faq_start )
-        call SetDayNightModels("Environment\\DNC\\DNCLordaeron\\DNCLordaeronTerrain\\DNCLordaeronTerrain.mdl" , "Environment\\DNC\\DNCLordaeron\\DNCLordaeronUnit\\DNCLordaeronUnit.mdl")
-        call ForForce( udg_players_group, function Trig_faq_stop_Copy_Func012Func004A )
-        set udg_faq_vote = 0
-        set udg_cycle_i = 0
-        call DestroyTextTagBJ( udg_faq_text[0] )
-        call DestroyTextTagBJ( udg_faq_text[1] )
-        call DestroyTextTagBJ( udg_faq_text[2] )
-        call DestroyTextTagBJ( udg_faq_text[3] )
-    endif
-    call DisableTrigger( gg_trg_faq_active )
+    set IsFaqActive = false // Disables faq_counter() and faq_active()
+    call faq_flush() // Destroys all texttags, hides faq_dialog, reveals map
+    call ForForce(udg_players_group, function faq_get_castle) // Focuses camera at castle you own
+    call faq_start() // Commands and settings
 endfunction

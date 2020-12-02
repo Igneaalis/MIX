@@ -1,104 +1,34 @@
-function Trig_faq_start_Copy_Func004C takes nothing returns boolean
-    if ( not ( udg_gameset_time_first < 61.00 ) ) then
-        return false
-    endif
-    return true
-endfunction
+/*
 
-function Trig_faq_start_Copy_Func007C takes nothing returns boolean
-    if ( not ( udg_gameset_time_first > 30.00 ) ) then
-        return false
-    endif
-    return true
-endfunction
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     21.11.2020 21:03       =
+= Дата изменения:    02.12.2020 21:04       =
+=============================================
 
-function Trig_faq_start_Copy_Func010001002 takes nothing returns boolean
-    return ( IsUnitType(GetFilterUnit(), UNIT_TYPE_PEON) == true )
-endfunction
+faq start Trigger
 
-function Trig_faq_start_Copy_Func010Func001C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'hpea' ) ) then
-        return false
-    endif
-    return true
-endfunction
+Shows all available commands and settings.
 
-function Trig_faq_start_Copy_Func010Func002C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'h015' ) ) then
-        return false
-    endif
-    return true
-endfunction
+*/
 
-function Trig_faq_start_Copy_Func010Func003C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'h01G' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Copy_Func010Func004C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'h01U' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Copy_Func010Func005C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'h025' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Copy_Func010Func006C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'h02H' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Copy_Func010A takes nothing returns nothing
-    if ( Trig_faq_start_Copy_Func010Func001C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNPeasant.blp" )
-    else
-    endif
-    if ( Trig_faq_start_Copy_Func010Func002C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNAcolyte.blp" )
-    else
-    endif
-    if ( Trig_faq_start_Copy_Func010Func003C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNWisp.blp" )
-    else
-    endif
-    if ( Trig_faq_start_Copy_Func010Func004C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNPeon.blp" )
-    else
-    endif
-    if ( Trig_faq_start_Copy_Func010Func005C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNMurgalSlave.blp" )
-    else
-    endif
-    if ( Trig_faq_start_Copy_Func010Func006C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNMedivh.blp" )
-    else
-    endif
+function faq_start_timer_actions takes nothing returns nothing
+    call gameset_end()
+    call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, "|cFFFF0000Команда |cFFFFFFFF-info|r |cFFFF0000отключит сообщения о штрафах и мини-арене.|r")
+    call DestroyTimerDialog(faq_timerdialog) // Destroys timer dialog for commands and settings
 endfunction
 
 function faq_start takes nothing returns nothing
-    call TimerStart(udg_gameset_timer, udg_gameset_time_first, false, function gameset_end)
-    call CreateTimerDialogBJ( udg_gameset_timer, "TRIGSTR_3815" )
-    call TimerDialogDisplayBJ( true, GetLastCreatedTimerDialogBJ() )
-    if ( Trig_faq_start_Copy_Func004C() ) then
-        call gameset_owner()
-    endif
-    call TriggerSleepAction( 53.00 )
-    call TriggerExecute( gg_trg_scoreboard_ini )
-    if ( Trig_faq_start_Copy_Func007C() ) then
-        call gameset_owner()
-    endif
-    call TriggerSleepAction( 10.00 )
-    call DisplayTimedTextToForce( GetPlayersAll(), 60.00, "TRIGSTR_3816" )
-    call ForGroupBJ( GetUnitsInRectMatching(GetPlayableMapRect(), Condition(function Trig_faq_start_Copy_Func010001002)), function Trig_faq_start_Copy_Func010A )
+    call TimerStart(udg_gameset_timer, udg_gameset_time_first, false, function faq_start_timer_actions) // After settings were set
+
+    set faq_timerdialog = CreateTimerDialog(udg_gameset_timer) // Timer dialog in upper-left corner for commands and settings
+    call TimerDialogSetTitle(faq_timerdialog, "Настройка карты") // Title of timer dialog
+    call TimerDialogDisplay(faq_timerdialog, true) // Shows timer dialog
+
+    call gameset_owner() // Sets owner of game
+    call TriggerExecute(gg_trg_scoreboard_ini) // Shows scoreboard
+
 endfunction
 
