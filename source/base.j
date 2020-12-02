@@ -807,27 +807,27 @@ function InitSounds takes nothing returns nothing
     call SetSoundVolume( gg_snd_QuestCompleted, -1 )
     call SetSoundPitch( gg_snd_QuestCompleted, 1.0 )
     set gg_snd_BloodElfMageYesAttack1 = CreateSound( "Units\\Human\\HeroBloodElf\\BloodElfMageYesAttack1.wav", false, false, true, 10, 10, "HeroAcksEAX" )
-    call SetSoundDuration( gg_snd_BloodElfMageYesAttack1, 2831 )
+    call SetSoundDuration( gg_snd_BloodElfMageYesAttack1, 1718 )
     call SetSoundChannel( gg_snd_BloodElfMageYesAttack1, 0 )
     call SetSoundVolume( gg_snd_BloodElfMageYesAttack1, -1 )
     call SetSoundPitch( gg_snd_BloodElfMageYesAttack1, 1.0 )
     set gg_snd_BloodElfMageYesAttack3 = CreateSound( "Units\\Human\\HeroBloodElf\\BloodElfMageYesAttack3.wav", false, false, true, 10, 10, "HeroAcksEAX" )
-    call SetSoundDuration( gg_snd_BloodElfMageYesAttack3, 3255 )
+    call SetSoundDuration( gg_snd_BloodElfMageYesAttack3, 1938 )
     call SetSoundChannel( gg_snd_BloodElfMageYesAttack3, 0 )
     call SetSoundVolume( gg_snd_BloodElfMageYesAttack3, -1 )
     call SetSoundPitch( gg_snd_BloodElfMageYesAttack3, 1.0 )
     set gg_snd_BloodElfMageWarcry1 = CreateSound( "Units\\Human\\HeroBloodElf\\BloodElfMageWarcry1.wav", false, false, true, 10, 10, "HeroAcksEAX" )
-    call SetSoundDuration( gg_snd_BloodElfMageWarcry1, 2843 )
+    call SetSoundDuration( gg_snd_BloodElfMageWarcry1, 2002 )
     call SetSoundChannel( gg_snd_BloodElfMageWarcry1, 0 )
     call SetSoundVolume( gg_snd_BloodElfMageWarcry1, -1 )
     call SetSoundPitch( gg_snd_BloodElfMageWarcry1, 1.0 )
     set gg_snd_BloodElfMageReady1 = CreateSound( "Units\\Human\\HeroBloodElf\\BloodElfMageReady1.wav", false, false, true, 10, 10, "HeroAcksEAX" )
-    call SetSoundDuration( gg_snd_BloodElfMageReady1, 3270 )
+    call SetSoundDuration( gg_snd_BloodElfMageReady1, 2012 )
     call SetSoundChannel( gg_snd_BloodElfMageReady1, 0 )
     call SetSoundVolume( gg_snd_BloodElfMageReady1, -1 )
     call SetSoundPitch( gg_snd_BloodElfMageReady1, 1.0 )
     set gg_snd_BloodElfMagePissed1 = CreateSound( "Units\\Human\\HeroBloodElf\\BloodElfMagePissed1.wav", false, false, true, 10, 10, "HeroAcksEAX" )
-    call SetSoundDuration( gg_snd_BloodElfMagePissed1, 6437 )
+    call SetSoundDuration( gg_snd_BloodElfMagePissed1, 2948 )
     call SetSoundChannel( gg_snd_BloodElfMagePissed1, 0 )
     call SetSoundVolume( gg_snd_BloodElfMagePissed1, -1 )
     call SetSoundPitch( gg_snd_BloodElfMagePissed1, 1.0 )
@@ -1056,17 +1056,6 @@ endfunction
 //*
 //***************************************************************************
 
-//===========================================================================
-// Trigger: main
-//===========================================================================
-function InitTrig_main takes nothing returns nothing
-    local trigger t = CreateTrigger()
-    call map_init()
-    call TriggerRegisterTimerEventSingle(t, 0.01)
-    call TriggerAddAction(t, function post_map_init)
-    call C_SetComputers()
-    call C_StartInitTimer()
-endfunction
 //===========================================================================
 // Trigger: initialization
 //
@@ -12574,7 +12563,6 @@ endfunction
 
 //===========================================================================
 function InitCustomTriggers takes nothing returns nothing
-    call InitTrig_main(  )
     call InitTrig_initialization(  )
     call InitTrig_ini_id(  )
     call InitTrig_game_end(  )
