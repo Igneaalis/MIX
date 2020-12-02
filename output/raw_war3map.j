@@ -340,71 +340,71 @@ endlibrary
 library ErrorMessage /* v1.0.2.0 https://github.com/nestharus/JASS/blob/master/jass/Systems/ErrorMessage/main.j
 *************************************************************************************
 *
-*	Issue Compliant Error Messages
+*    Issue Compliant Error Messages
 *
 ************************************************************************************
 *
-*	function ThrowError takes boolean expression, string libraryName, string functionName, string objectName, integer objectInstance, string description returns nothing
-*		-	In the event of an error the game will be permanently paused
+*    function ThrowError takes boolean expression, string libraryName, string functionName, string objectName, integer objectInstance, string description returns nothing
+*        -    In the event of an error the game will be permanently paused
 *
-*	function ThrowWarning takes boolean expression, string libraryName, string functionName, string objectName, integer objectInstance, string description returns nothing
+*    function ThrowWarning takes boolean expression, string libraryName, string functionName, string objectName, integer objectInstance, string description returns nothing
 *
 ************************************************************************************/
-	private struct Fields extends array
-		static constant string COLOR_RED = "|cffff0000"
-		static constant string COLOR_YELLOW = "|cffffff00"
-		static string lastError = null
-	endstruct
-	
-	private function Pause takes nothing returns nothing
-		call PauseGame(true)
-	endfunction
-	
-	private function ThrowMessage takes string libraryName, string functionName, string objectName, integer objectInstance, string description, string errorType, string color returns nothing
-		local string str
-		
-		local string color_braces = "|cff66FF99"
-		local string orange = "|cffff6600"
-		
-		set str = "->\n-> " + color_braces + "{|r " + "Library" + color_braces + "(" + orange + libraryName + color_braces + ")"
-		if (objectName != null) then
-			if (objectInstance != 0) then
-				set str = str + "|r.Object" + color_braces + "(" + orange + objectName + color_braces + " (|rinstance = " + orange + I2S(objectInstance) + color_braces + ") )" + "|r." + "Method" + color_braces + "(" + orange + functionName + color_braces + ")"
-			else
-				set str = str + "|r.Object" + color_braces + "(" + orange + objectName + color_braces + ")|r." + "Method" + color_braces + "(" + orange + functionName + color_braces + ")"
-			endif
-		else
-			set str = str + "|r." + "Function" + color_braces + "(" + orange + functionName + color_braces + ")"
-		endif
-		
-		set str = str + color_braces + " }|r " + "has thrown an exception of type " + color_braces + "(" + color + errorType + color_braces + ")|r."
-		
-		set Fields.lastError = str + "\n->\n" + "->	" + color + description + "|r\n->"
-	endfunction
-	
-	function ThrowError takes boolean expression, string libraryName, string functionName, string objectName, integer objectInstance, string description returns nothing
-		if (Fields.lastError != null) then
-			set objectInstance = 1/0
-		endif
-	
-		if (expression) then
-			call ThrowMessage(libraryName, functionName, objectName, objectInstance, description, "Error", Fields.COLOR_RED)
-			call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,60000,Fields.lastError)
-			call TimerStart(CreateTimer(), 0, true, function Pause)
-			set objectInstance = 1/0
-		endif
-	endfunction
-	function ThrowWarning takes boolean expression, string libraryName, string functionName, string objectName, integer objectInstance, string description returns nothing
-		if (Fields.lastError != null) then
-			set objectInstance = 1/0
-		endif
-	
-		if (expression) then
-			call ThrowMessage(libraryName, functionName, objectName, objectInstance, description, "Warning", Fields.COLOR_YELLOW)
-			call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,60000,Fields.lastError)
-			set Fields.lastError = null
-		endif
-	endfunction
+    private struct Fields extends array
+        static constant string COLOR_RED = "|cffff0000"
+        static constant string COLOR_YELLOW = "|cffffff00"
+        static string lastError = null
+    endstruct
+    
+    private function Pause takes nothing returns nothing
+        call PauseGame(true)
+    endfunction
+    
+    private function ThrowMessage takes string libraryName, string functionName, string objectName, integer objectInstance, string description, string errorType, string color returns nothing
+        local string str
+        
+        local string color_braces = "|cff66FF99"
+        local string orange = "|cffff6600"
+        
+        set str = "->\n-> " + color_braces + "{|r " + "Library" + color_braces + "(" + orange + libraryName + color_braces + ")"
+        if (objectName != null) then
+            if (objectInstance != 0) then
+                set str = str + "|r.Object" + color_braces + "(" + orange + objectName + color_braces + " (|rinstance = " + orange + I2S(objectInstance) + color_braces + ") )" + "|r." + "Method" + color_braces + "(" + orange + functionName + color_braces + ")"
+            else
+                set str = str + "|r.Object" + color_braces + "(" + orange + objectName + color_braces + ")|r." + "Method" + color_braces + "(" + orange + functionName + color_braces + ")"
+            endif
+        else
+            set str = str + "|r." + "Function" + color_braces + "(" + orange + functionName + color_braces + ")"
+        endif
+        
+        set str = str + color_braces + " }|r " + "has thrown an exception of type " + color_braces + "(" + color + errorType + color_braces + ")|r."
+        
+        set Fields.lastError = str + "\n->\n" + "->    " + color + description + "|r\n->"
+    endfunction
+    
+    function ThrowError takes boolean expression, string libraryName, string functionName, string objectName, integer objectInstance, string description returns nothing
+        if (Fields.lastError != null) then
+            set objectInstance = 1/0
+        endif
+    
+        if (expression) then
+            call ThrowMessage(libraryName, functionName, objectName, objectInstance, description, "Error", Fields.COLOR_RED)
+            call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,60000,Fields.lastError)
+            call TimerStart(CreateTimer(), 0, true, function Pause)
+            set objectInstance = 1/0
+        endif
+    endfunction
+    function ThrowWarning takes boolean expression, string libraryName, string functionName, string objectName, integer objectInstance, string description returns nothing
+        if (Fields.lastError != null) then
+            set objectInstance = 1/0
+        endif
+    
+        if (expression) then
+            call ThrowMessage(libraryName, functionName, objectName, objectInstance, description, "Warning", Fields.COLOR_YELLOW)
+            call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,60000,Fields.lastError)
+            set Fields.lastError = null
+        endif
+    endfunction
 endlibrary
 /*****************************************************************************
 *
@@ -1841,7 +1841,7 @@ endlibrary
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     18.02.2016             =
-= Дата изменения:    20.11.2020 21:33       =
+= Дата изменения:    20.11.2020 21:37       =
 =============================================
 
 Библиотека общего назначения.
@@ -1899,12 +1899,12 @@ library NokladrLib
 
     // Отображает сообщение об ошибке
     function C_ErrorMsg takes string s returns nothing
-        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, (RED + "Ошибка: " + s + "|r"))
+        debug call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, (RED + "Ошибка: " + s + "|r"))
     endfunction
 
     // Лог сообщений
     function C_Log takes string s returns nothing
-        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, (GOLD + "Log:|r " + GREEN + s + "|r"))
+        debug call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, (GOLD + "Log:|r " + GREEN + s + "|r"))
     endfunction
 
     // Устанавливает всем компьютерным игрокам соответствующее имя
@@ -2045,6 +2045,18 @@ library NokladrLib
         local real x = GetUnitX(u)
         local real y = GetUnitY(u)
         return ((GetRectMinX(r)-32 <= x) and (x <= GetRectMaxX(r)+32) and (GetRectMinY(r)-32 <= y) and (y <= GetRectMaxY(r)+32))
+    endfunction
+
+    // Создаёт texttag, упрощённая и оптимизированная версия CreateTextTagLocBJ
+    function NewTextTag takes string s, rect rct, real size returns texttag
+        local texttag tt = CreateTextTag()
+        // SetTextTagTextBJ
+        call SetTextTagText(tt, s, TextTagSize2Height(size))
+        // SetTextTagPosBJ
+        call SetTextTagPos(tt, GetRectCenterX(rct), GetRectCenterY(rct), 0)
+        // SetTextTagColorBJ
+        call SetTextTagColor(tt, 255, 255, 255, 255)
+        return tt
     endfunction
 
 endlibrary
@@ -2360,31 +2372,40 @@ endfunction
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     20.11.2020 21:07       =
-= Дата изменения:    20.11.2020 17:25       =
+= Дата изменения:    02.12.2020 21:45       =
 =============================================
 
 gameset owner Trigger
+
+Sets owner of game.
+Shows all available commands and settings
+Owner can modify game settings.
 
 */
 
 //===========================================================================
 function gameset_owner takes nothing returns nothing
     local integer i = 0
-    set udg_game_owner = null
-    loop
-        if (GetPlayerSlotState(Player(i)) == PLAYER_SLOT_STATE_PLAYING) then
+    set udg_game_owner = null // Game owner
+    loop // Sets game owner to a first available player
+        if (GetPlayerSlotState(Player(i)) == PLAYER_SLOT_STATE_PLAYING) then // Must be playing player
             set udg_game_owner = Player(0)
         endif
-        exitwhen (udg_game_owner != null or i > 7) // Может вызвать баги, не проверял
+        exitwhen (udg_game_owner != null or i > 7) // TODO: test
         set i = i + 1
     endloop
-    call DisplayTimedTextToPlayer(udg_game_owner, 0., 0., 10., "Вы получили права " + GREEN + "владельца игры|r.")
-    // Opt. begin
-    if  (C_GetTimeInSeconds() < R2I(udg_gameset_time_first)) then
-        if (udg_info[GetConvertedPlayerId(udg_game_owner)] == true) then
-            call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "Настройка карты (доступно первые " + ( I2S(R2I(udg_gameset_time_first)) + " сек.)" ) ) )
 
+    static if (not DEBUG_MODE) then
+        // Notification for game owner
+        call DisplayTimedTextToPlayer(udg_game_owner, 0., 0., 10., "Вы получили права " + GREEN + "владельца игры|r.")
+    endif
+
+    // Opt. begin
+    if  (C_GetTimeInSeconds() < R2I(udg_gameset_time_first)) then // Shows commands and settings only at game start
+        if (udg_info[GetConvertedPlayerId(udg_game_owner)] == true) then // Checks Info flag of game owner
             static if (not DEBUG_MODE) then
+                // Shows all available commands and settings
+                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "Настройка карты (доступно первые " + ( I2S(R2I(udg_gameset_time_first)) + " сек.)" ) ) )
                 call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_gameset_time) ) + " ) " ) + "|cFFFF0000-time xxx|r, где xxx - время перед началом нового раунда (от 20 до 60 сек.)" ) )
                 call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_wave_time) ) + " ) " ) + "|cFFFF0000-arena xxx|r. Где xxx - начальное время раунда на арене (от 60 сек. до 150 сек.)" ) )
                 if (udg_building_status == true) then
@@ -2393,9 +2414,9 @@ function gameset_owner takes nothing returns nothing
                     call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( 0 ) " + "|cFFFF0000-build x|r, при x=0 - во время раунда можно строить/улучшать юнитов при x=1 - нельзя" ) )
                 endif
                 call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( " + ( I2S(udg_const_point[0]) + ( "-" + ( I2S(udg_const_point[1]) + " ) |cFFFF0000-point ##|r." ) ) ) ) )
-                call DisplayTextToForce( GetForceOfPlayer(udg_game_owner), "TRIGSTR_3812" )
+                call DisplayTextToForce( GetForceOfPlayer(udg_game_owner), "Первый # - минимальное число контрольных точек, появляющихся на арене. Второй # - максимальное число контрольных точек, оно не может превышать первый номер, а также число 9." )
                 call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_mode) ) + " ) " ) + "|cFFFF0000-mode #. |r" ) )
-                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, "TRIGSTR_3813" )
+                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, "Если # = 1, то мини-игры будут чередоваться каждую вторую волну.\nЕсли # = 2, то мини-игр не будет совсем.\nЕсли # = 3, то мини-игры буду каждые 3 волны." )
                 call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( ( "( " + I2S(udg_gg) ) + " ) " ) + "|cFFFF0000-gg ##|r. Где ## - волна, после которой закончится игра (от 9 до " ) + ( I2S(( ( udg_mini_game_max * 2 ) + 3 )) + " )." ) ) )
             endif
 
@@ -2455,7 +2476,7 @@ function SetLeaveMessages takes nothing returns nothing
 endfunction
 
 function SetMessagesInit takes nothing returns nothing
-	local trigger t = CreateTrigger()
+    local trigger t = CreateTrigger()
 
     call TriggerRegisterPlayerEvent(t, Player(0x00), EVENT_PLAYER_LEAVE)
     call TriggerRegisterPlayerEvent(t, Player(0x01), EVENT_PLAYER_LEAVE)
@@ -2469,33 +2490,108 @@ function SetMessagesInit takes nothing returns nothing
     call TriggerAddAction(t, function SetLeaveMessages)
     set t = null
 endfunction
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     20.11.2020 22:46       =
+= Дата изменения:    02.12.2020 21:33       =
+=============================================
+
+faq library-ish
+
+Globals and common functions for faq
+
+*/
+
+globals
+    boolean IsFaqActive = true // Disables faq_counter() and faq_active() if false
+    timerdialog faq_timerdialog // Timer dialog in upper-left corner for commands and settings
+    integer faq_vote_yes = 0 // Голосов "За"
+    integer faq_vote_no = 0 // Голосов "Против"
+endglobals
+
 function faq_show_dialog takes nothing returns nothing
-    call DialogDisplay(GetEnumPlayer(), udg_faq_dialog, true)
+    call DialogDisplay(GetEnumPlayer(), udg_faq_dialog, true) // Shows voting dialog
 endfunction
 
 function faq_hide_dialog takes nothing returns nothing
-    call DialogDisplay(GetEnumPlayer(), udg_faq_dialog, false)
+    call DialogDisplay(GetEnumPlayer(), udg_faq_dialog, false) // Hides voting dialog
 endfunction
-function Trig_faq_stop_Copy_Func012Func004A takes nothing returns nothing
-    call DialogDisplayBJ( false, udg_faq_dialog, GetEnumPlayer() )
-    call CameraSetupApplyForPlayer( true, gg_cam_Camera_003, GetEnumPlayer(), 0 )
-    call PanCameraToTimedLocForPlayer( GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), 0 )
-    call SelectUnitForPlayerSingle( GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(GetEnumPlayer(), 'ntav')), GetEnumPlayer() )
+
+function faq_flush takes nothing returns nothing
+    // Unfades map
+    call SetDayNightModels("Environment\\DNC\\DNCLordaeron\\DNCLordaeronTerrain\\DNCLordaeronTerrain.mdl", "Environment\\DNC\\DNCLordaeron\\DNCLordaeronUnit\\DNCLordaeronUnit.mdl")
+
+    call ForForce(udg_players_group, function faq_hide_dialog) // Hides voting dialog
+    call DestroyTextTagBJ(udg_faq_text[0]) // Уничтожает плавающий текст с голосами "За"
+    call DestroyTextTagBJ(udg_faq_text[1]) // Уничтожает плавающий текст с голосами "За"
+    call DestroyTextTagBJ(udg_faq_text[2]) // Уничтожает плавающий текст с голосами "Против"
+    call DestroyTextTagBJ(udg_faq_text[3]) // Уничтожает плавающий текст с голосами "Против"
+endfunction
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     21.11.2020 21:03       =
+= Дата изменения:    02.12.2020 21:04       =
+=============================================
+
+faq start Trigger
+
+Shows all available commands and settings.
+
+*/
+
+function faq_start_timer_actions takes nothing returns nothing
+    call gameset_end()
+    call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, "|cFFFF0000Команда |cFFFFFFFF-info|r |cFFFF0000отключит сообщения о штрафах и мини-арене.|r")
+    call DestroyTimerDialog(faq_timerdialog) // Destroys timer dialog for commands and settings
+endfunction
+
+function faq_start takes nothing returns nothing
+    call TimerStart(udg_gameset_timer, udg_gameset_time_first, false, function faq_start_timer_actions) // After settings were set
+
+    set faq_timerdialog = CreateTimerDialog(udg_gameset_timer) // Timer dialog in upper-left corner for commands and settings
+    call TimerDialogSetTitle(faq_timerdialog, "Настройка карты") // Title of timer dialog
+    call TimerDialogDisplay(faq_timerdialog, true) // Shows timer dialog
+
+    call gameset_owner() // Sets owner of game
+    call TriggerExecute(gg_trg_scoreboard_ini) // Shows scoreboard
+
+endfunction
+
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     20.11.2020 16:00       =
+= Дата изменения:    02.12.2020 20:56       =
+=============================================
+
+faq stop Trigger
+
+Stops voting for faq guide
+
+*/
+
+function faq_get_castle takes nothing returns nothing
+    call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, GetEnumPlayer(), 0) // Resets camera angle
+    call PanCameraToTimedLocForPlayer(GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), 0) // Focuses camera at castle you own
+    call SelectUnitForPlayerSingle(GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(GetEnumPlayer(), 'ntav')), GetEnumPlayer()) // Selects tavern
 endfunction
 
 function faq_stop takes nothing returns nothing
-    if (udg_faq_status == false) then
-        call TriggerExecute( gg_trg_faq_start )
-        call SetDayNightModels("Environment\\DNC\\DNCLordaeron\\DNCLordaeronTerrain\\DNCLordaeronTerrain.mdl" , "Environment\\DNC\\DNCLordaeron\\DNCLordaeronUnit\\DNCLordaeronUnit.mdl")
-        call ForForce( udg_players_group, function Trig_faq_stop_Copy_Func012Func004A )
-        set udg_faq_vote = 0
-        set udg_cycle_i = 0
-        call DestroyTextTagBJ( udg_faq_text[0] )
-        call DestroyTextTagBJ( udg_faq_text[1] )
-        call DestroyTextTagBJ( udg_faq_text[2] )
-        call DestroyTextTagBJ( udg_faq_text[3] )
-    endif
-    call DisableTrigger( gg_trg_faq_active )
+    set IsFaqActive = false // Disables faq_counter() and faq_active()
+    call faq_flush() // Destroys all texttags, hides faq_dialog, reveals map
+    call ForForce(udg_players_group, function faq_get_castle) // Focuses camera at castle you own
+    call faq_start() // Commands and settings
 endfunction
 /*
 
@@ -2504,33 +2600,28 @@ endfunction
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     20.11.2020 16:00       =
-= Дата изменения:    20.11.2020 16:20       =
+= Дата изменения:    02.12.2020 21:31       =
 =============================================
 
 faq ini Trigger
+
+Starts voting for faq guide
 
 */
 
 function faq_counter takes nothing returns nothing
     local timer t = GetExpiredTimer()
 
-    static if DEBUG_MODE then
-        if (udg_faq_status) then
-            call C_Log("faq_status = true")
-        else
-            call C_Log("faq_status = false")
-        endif
-    endif
-
-    if (hash[StringHash("faq")].real[StringHash("counter")] >= 1 and udg_faq_status == false) then
+    if (hash[StringHash("faq")].real[StringHash("counter")] >= 1 and IsFaqActive) then // If voting exists
         call DialogSetMessage(udg_faq_dialog, ("Посмотреть обучение (" + WHITE + R2S(hash[StringHash("faq")].real[StringHash("counter")]) + " сек.|r)"))
         set hash[StringHash("faq")].real[StringHash("counter")] = hash[StringHash("faq")].real[StringHash("counter")] - 1
     else
-        call ForForce(udg_players_group, function faq_hide_dialog)
-        call hash.remove(StringHash("faq"))
         call PauseTimer(t)
         call DestroyTimer(t)
-        call faq_stop()
+        call hash.remove(StringHash("faq"))
+        if (IsFaqActive) then // If there are not enough votes
+            call faq_stop() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
+        endif
     endif
 
     set t = null
@@ -2538,214 +2629,86 @@ endfunction
 
 //===========================================================================
 function faq_ini takes nothing returns nothing
-    local timer t = CreateTimer()
-
-    set udg_faq_status = false
     call SetDayNightModels("", "") // Сделать всю карту чёрной
-    set udg_cycle_i = 0
-    // Opt. begin
-    call CreateTextTagLocBJ((GREEN + "\"ЗА\"|r нужно " + I2S((CountPlayersInForceBJ(udg_players_group) / 2 ))), GetRectCenter(gg_rct_guideyes), 0, 14.00, 100, 100, 100, 0 )
-    set udg_faq_text[0] = GetLastCreatedTextTag()
-    call CreateTextTagLocBJ((RED + "\"ПРОТИВ\"|r нужно более " + I2S((CountPlayersInForceBJ(udg_players_group) / 2))), GetRectCenter(gg_rct_guideno), 0, 14.00, 100, 100, 100, 0 )
-    set udg_faq_text[1] = GetLastCreatedTextTag()
-    // Opt. end
+
+    // ---За---
+    // Плавающий текст с требуемым кол-вом голосов "За"
+    set udg_faq_text[0] = NewTextTag((GREEN + "\"ЗА\"|r нужно " + I2S(CountPlayersInForceBJ(udg_players_group) / 2)), gg_rct_guideyes, 14.00)
+    
+    // Плавающий текст с кол-вом голосов "За"
+    set udg_faq_text[2] = NewTextTag(I2S(faq_vote_yes), gg_rct_guideyesvote, 10.00)
+
+    // Кнопка подтверждения просмотра обучения
     set udg_faq_key[0] = DialogAddButton(udg_faq_dialog, "Да", 0)
+
+    // ---Против---
+    // Плавающий текст с требуемым кол-вом голосов "Против"
+    set udg_faq_text[1] = NewTextTag((RED + "\"ПРОТИВ\"|r нужно более " + I2S(CountPlayersInForceBJ(udg_players_group) / 2)), gg_rct_guideno, 14.00)
+
+    // Плавающий текст с кол-вом голосов "Против"
+    set udg_faq_text[3] = NewTextTag(I2S(faq_vote_no), gg_rct_guidenovote, 10.00)
+
+    // Кнопка отклонения просмотра обучения
     set udg_faq_key[1] = DialogAddButton(udg_faq_dialog, "Нет", 0)
-    // Opt. begin
-    set hash[StringHash("faq")].real[StringHash("counter")] = 6.00
-    call faq_counter()
-    call TimerStart(t, 1.00, true, function faq_counter)
-    call ForForce(udg_players_group, function faq_show_dialog)
-    set t = null
-    // Opt. end
-endfunction
-function Trig_faq_start_Copy_Func004C takes nothing returns boolean
-    if ( not ( udg_gameset_time_first < 61.00 ) ) then
-        return false
-    endif
-    return true
-endfunction
 
-function Trig_faq_start_Copy_Func007C takes nothing returns boolean
-    if ( not ( udg_gameset_time_first > 30.00 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Copy_Func010001002 takes nothing returns boolean
-    return ( IsUnitType(GetFilterUnit(), UNIT_TYPE_PEON) == true )
-endfunction
-
-function Trig_faq_start_Copy_Func010Func001C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'hpea' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Copy_Func010Func002C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'h015' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Copy_Func010Func003C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'h01G' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Copy_Func010Func004C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'h01U' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Copy_Func010Func005C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'h025' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Copy_Func010Func006C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'h02H' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Copy_Func010A takes nothing returns nothing
-    if ( Trig_faq_start_Copy_Func010Func001C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNPeasant.blp" )
+    static if DEBUG_MODE then
+        call faq_stop() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
     else
-    endif
-    if ( Trig_faq_start_Copy_Func010Func002C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNAcolyte.blp" )
-    else
-    endif
-    if ( Trig_faq_start_Copy_Func010Func003C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNWisp.blp" )
-    else
-    endif
-    if ( Trig_faq_start_Copy_Func010Func004C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNPeon.blp" )
-    else
-    endif
-    if ( Trig_faq_start_Copy_Func010Func005C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNMurgalSlave.blp" )
-    else
-    endif
-    if ( Trig_faq_start_Copy_Func010Func006C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNMedivh.blp" )
-    else
+        set hash[StringHash("faq")].real[StringHash("counter")] = 6.00 // Duration of voting
+        call TimerStart(CreateTimer(), 1.00, true, function faq_counter) // Makes duration of voting visible in faq dialog's title
+        call faq_counter() // First tick of counter
+        call ForForce(udg_players_group, function faq_show_dialog) // Shows faq dialog to all players
     endif
 endfunction
+/*
 
-function faq_start takes nothing returns nothing
-    call TimerStart(udg_gameset_timer, udg_gameset_time_first, false, function gameset_end)
-    call CreateTimerDialogBJ( udg_gameset_timer, "TRIGSTR_3815" )
-    call TimerDialogDisplayBJ( true, GetLastCreatedTimerDialogBJ() )
-    if ( Trig_faq_start_Copy_Func004C() ) then
-        call gameset_owner()
-    endif
-    call TriggerSleepAction( 53.00 )
-    call TriggerExecute( gg_trg_scoreboard_ini )
-    if ( Trig_faq_start_Copy_Func007C() ) then
-        call gameset_owner()
-    endif
-    call TriggerSleepAction( 10.00 )
-    call DisplayTimedTextToForce( GetPlayersAll(), 60.00, "TRIGSTR_3816" )
-    call ForGroupBJ( GetUnitsInRectMatching(GetPlayableMapRect(), Condition(function Trig_faq_start_Copy_Func010001002)), function Trig_faq_start_Copy_Func010A )
-endfunction
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     21.11.2020 21:02       =
+= Дата изменения:    02.12.2020 21:07       =
+=============================================
 
-function Trig_faq_active_Copy_Func001Func005Func005A takes nothing returns nothing
-    call DialogDisplayBJ( false, udg_faq_dialog, GetEnumPlayer() )
-    call CameraSetupApplyForPlayer( true, gg_cam_Camera_003, GetEnumPlayer(), 0 )
-    call PanCameraToTimedLocForPlayer( GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), 0 )
-    call SelectUnitForPlayerSingle( GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(GetEnumPlayer(), 'ntav')), GetEnumPlayer() )
-endfunction
+faq active Trigger
 
-function Trig_faq_active_Copy_Func001Func005C takes nothing returns boolean
-    if ( not ( udg_cycle_i > ( CountPlayersInForceBJ(udg_players_group) / 2 ) ) ) then
-        return false
-    endif
-    return true
-endfunction
+Voting for viewing faq guide.
 
-function Trig_faq_active_Copy_Func001Func010Func005A takes nothing returns nothing
-    call DialogDisplayBJ( false, udg_faq_dialog, GetEnumPlayer() )
-endfunction
+*/
 
-function Trig_faq_active_Copy_Func001Func010C takes nothing returns boolean
-    if ( not ( udg_faq_vote >= ( CountPlayersInForceBJ(udg_players_group) / 2 ) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_active_Copy_Func001C takes nothing returns boolean
-    if ( not ( GetClickedButtonBJ() == udg_faq_key[0] ) ) then
-        return false
-    endif
-    return true
+function faq_active_condition takes nothing returns boolean
+    // Disables faq_counter() and faq_active() if false
+    return IsFaqActive
 endfunction
 
 function faq_active takes nothing returns nothing
-    if ( Trig_faq_active_Copy_Func001C() ) then
-        set udg_faq_vote = ( udg_faq_vote + 1 )
-        call DestroyTextTagBJ( udg_faq_text[2] )
-        call CreateTextTagLocBJ( I2S(udg_faq_vote), GetRectCenter(gg_rct_guideyesvote), 0, 10.00, 100, 100, 100, 0 )
-        set udg_faq_text[2] = GetLastCreatedTextTag()
-        if ( Trig_faq_active_Copy_Func001Func010C() ) then
-            set udg_gameset_time_first = 102.00
-            set udg_faq_status = true
-            call faq_start()
-            call SetDayNightModels("Environment\\DNC\\DNCLordaeron\\DNCLordaeronTerrain\\DNCLordaeronTerrain.mdl" , "Environment\\DNC\\DNCLordaeron\\DNCLordaeronUnit\\DNCLordaeronUnit.mdl")
-            call ForForce( udg_players_group, function Trig_faq_active_Copy_Func001Func010Func005A )
-            call DestroyTextTagBJ( udg_faq_text[0] )
-            call DestroyTextTagBJ( udg_faq_text[1] )
-            call DestroyTextTagBJ( udg_faq_text[2] )
-            call DestroyTextTagBJ( udg_faq_text[3] )
-            call TriggerExecute( gg_trg_faq )
-            call DisableTrigger( GetTriggeringTrigger() )
-            set udg_cycle_i = 0
-            set udg_faq_vote = 0
+    if (GetClickedButton() == udg_faq_key[0]) then // Кнопка "Да"
+        set faq_vote_yes = faq_vote_yes + 1 // Голосов "За"
+        call SetTextTagText(udg_faq_text[2], I2S(faq_vote_yes), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "За"
+        if (faq_vote_yes >= (CountPlayersInForceBJ(udg_players_group) / 2)) then // Если голосов "За" 1/1, 1/2, 1/3, 2/4, 2/5, 3/6, 3/7, 4/8 
+            set IsFaqActive = false // Disables faq_counter() and faq_active()
+            call faq_flush() // Destroys all texttags, hides faq_dialog, reveals map
+            call TriggerExecute(gg_trg_faq) // Enables faq guide
+            call TriggerSleepAction(51.8) // Duration of faq guide
+            call ForForce(udg_players_group, function faq_get_castle) // Focuses camera at castle you own
+            call faq_start() // Commands and settings
         endif
-    else
-        set udg_cycle_i = ( udg_cycle_i + 1 )
-        call DestroyTextTagBJ( udg_faq_text[3] )
-        call CreateTextTagLocBJ( I2S(udg_cycle_i), GetRectCenter(gg_rct_guidenovote), 0, 10.00, 100, 100, 100, 0 )
-        set udg_faq_text[3] = GetLastCreatedTextTag()
-        if ( Trig_faq_active_Copy_Func001Func005C() ) then
-            set udg_gameset_time_first = 60.00
-            set udg_faq_status = true
-            call faq_start()
-            call SetDayNightModels("Environment\\DNC\\DNCLordaeron\\DNCLordaeronTerrain\\DNCLordaeronTerrain.mdl" , "Environment\\DNC\\DNCLordaeron\\DNCLordaeronUnit\\DNCLordaeronUnit.mdl")
-            call ForForce( udg_players_group, function Trig_faq_active_Copy_Func001Func005Func005A )
-            call DestroyTextTagBJ( udg_faq_text[0] )
-            call DestroyTextTagBJ( udg_faq_text[1] )
-            call DestroyTextTagBJ( udg_faq_text[2] )
-            call DestroyTextTagBJ( udg_faq_text[3] )
-            call DisableTrigger( GetTriggeringTrigger() )
-            set udg_cycle_i = 0
-            set udg_faq_vote = 0
+    else // Кнопка "Нет"
+        set faq_vote_no = faq_vote_no + 1 // Голосов "Против"
+        call SetTextTagText(udg_faq_text[3], I2S(faq_vote_no), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "Против"
+        if (faq_vote_no > (CountPlayersInForceBJ(udg_players_group) / 2)) then  // Если голосов "За" 1/1, 2/2, 2/3, 3/4, 3/5, 4/6, 4/7, 5/8 
+            call faq_stop() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
         endif
     endif
 endfunction
 
-//===========================================================================
 function faq_active_init takes nothing returns nothing
     local trigger t = CreateTrigger()
 
-    call TriggerRegisterDialogEventBJ(t, udg_faq_dialog)
+    // Triggers if faq_dialog's buttons were clicked
+    call TriggerRegisterDialogEvent(t, udg_faq_dialog)
     call TriggerAddAction(t, function faq_active)
-
-    set t = null
+    call TriggerAddCondition(t, Condition(function faq_active_condition))
 endfunction
 
 /*
@@ -2857,8 +2820,6 @@ function initialization_in_game takes nothing returns nothing
     
     //faq ini Trigger
     call faq_ini()
-
-    call TriggerSleepAction(1.00)
 
     // Миниигра казино
     set udg_r = 0
@@ -3436,7 +3397,7 @@ endfunction
 = Discord:           ! ! Gladiator#3635     =
 = E-Mail:            glady007rus@gmail.com  =
 = Дата создания:     22.11.2020 18:00       =
-= Дата изменения:    22.11.2020 18:00       =
+= Дата изменения:    26.11.2020 13:49       =
 =============================================
 
 Улучшение инкома Проклятый рудник.
@@ -3592,188 +3553,210 @@ endfunction
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     01.11.2020 18:28       =
-= Дата изменения:    22.11.2020 18:00       =
+= Дата изменения:    02.12.2020 14:23       =
 =============================================
 
 Главный и входной интерфейс карты.
 
 */
 
-function map_init takes nothing returns nothing
-    local string strTestWarning_RU  // Предупреждение к тестовому типу карты
-    local string strWarning_RU      // Предупреждение к тестовому типу карты
-    local string strVar_RU          // Итоговое сообщение о типе карты
-    local string Feedback_RU        // Сообщение об обратной связи с создателями карты
+scope Main initializer MainInit
+  
+    function map_init takes nothing returns nothing
+        local string strTestWarning_RU  // Предупреждение к тестовому типу карты
+        local string strWarning_RU      // Предупреждение к тестовому типу карты
+        local string strVar_RU          // Итоговое сообщение о типе карты
+        local string Feedback_RU        // Сообщение об обратной связи с создателями карты
 
-    // Аналогично, но только по-английски.
-    local string strTestWarning_EN
-    local string strWarning_EN
-    local string strVar_EN
-    local string Feedback_EN
+        // Аналогично, но только по-английски.
+        local string strTestWarning_EN
+        local string strWarning_EN
+        local string strVar_EN
+        local string Feedback_EN
 
-    local integer i = 0
+        local integer i = 0
 
 
-    // Отображает strVar_** в зависимости от типа карты
-    set strTestWarning_RU = "В данной версии вы можете увидеть десинхронизацию, баги, неправильную работу способностей и ошиКБи в словах."
-    set strWarning_RU = (RED + "Внимание:|r " + "вы играете в " + Version + " версию " + strVersion + ". ")
-    set strTestWarning_EN = "In this version you can experience desyncs, bugs, and miTSakes in localization."
-    set strWarning_EN = (RED + "Caution:|r " + "you are playing in " + Version + " version " + strVersion + ". ")
-    if (Version != "" and strVersion != "") then
-        if (Version == "Test") then
-            set strVar_RU = strWarning_RU + strTestWarning_RU + "\n "
-            set strVar_EN = strWarning_EN + strTestWarning_EN + "\n "
-        elseif (Version == "Release") then
-            set strVar_RU = "Вы играете в " + GREEN + "стабильную|r " + strVersion + " версию.\n "
-            set strVar_EN = "You are playing in " + GREEN + "stable|r " + strVersion + " version.\n "
-        endif
-        if (Locale() == "RU") then
-            call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 25, strVar_RU)
-        else
-            call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 25, strVar_EN)
-        endif
-    endif
-
-    // Сообщение об обратной связи
-    set Feedback_RU = "Связаться со мной можно по электронной почте, буду рад ответить на любые вопросы: " + strEmail + "\n "
-    set Feedback_EN = "If you see an issue, please, leave the feedback/suggestions in the E-Mail: " + strEmail + "\n "
-    if (Locale() == "RU") then
-        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_RU)
-    else
-        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_EN)
-    endif
-
-    // Условие: один из разработчиков в игре?
-    loop
-        exitwhen (i > 11)
-        if (GetPlayerName(Player(i)) == "Nokladr" or GetPlayerName(Player(i)) == "Nokladr#2429") then
-            if (Locale() == "RU") then
-                call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 35, ("С вами играет создатель данной карты, " + C_IntToColor(i) + "Nokladr#2429" + "|r. Критика приветствуется :)\n "))
-            else
-                call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 35, ("You are playing with author, " + C_IntToColor(i) + "Nokladr#2429" + "|r. Any feedback is welcome :)\n "))
+        static if (not DEBUG_MODE) then
+            // Отображает strVar_** в зависимости от типа карты
+            set strTestWarning_RU = "В данной версии вы можете увидеть десинхронизацию, баги, неправильную работу способностей и ошиКБи в словах."
+            set strWarning_RU = (RED + "Внимание:|r " + "вы играете в " + Version + " версию " + strVersion + ". ")
+            set strTestWarning_EN = "In this version you can experience desyncs, bugs, and miTSakes in localization."
+            set strWarning_EN = (RED + "Caution:|r " + "you are playing in " + Version + " version " + strVersion + ". ")
+            if (Version != "" and strVersion != "") then
+                if (Version == "Test") then
+                    set strVar_RU = strWarning_RU + strTestWarning_RU + "\n "
+                    set strVar_EN = strWarning_EN + strTestWarning_EN + "\n "
+                elseif (Version == "Release") then
+                    set strVar_RU = "Вы играете в " + GREEN + "стабильную|r " + strVersion + " версию.\n "
+                    set strVar_EN = "You are playing in " + GREEN + "stable|r " + strVersion + " version.\n "
+                endif
+                if (Locale() == "RU") then
+                    call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 25, strVar_RU)
+                else
+                    call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 25, strVar_EN)
+                endif
             endif
-            set IsDevInGame = true
+
+            // Сообщение об обратной связи
+            set Feedback_RU = "Связаться со мной можно по электронной почте, буду рад ответить на любые вопросы: " + strEmail + "\n "
+            set Feedback_EN = "If you see an issue, please, leave the feedback/suggestions in the E-Mail: " + strEmail + "\n "
+            if (Locale() == "RU") then
+                call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_RU)
+            else
+                call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_EN)
+            endif
+
+            // Условие: один из разработчиков в игре?
+            loop
+                exitwhen (i > 11)
+                if (GetPlayerName(Player(i)) == "Nokladr" or GetPlayerName(Player(i)) == "Nokladr#2429") then
+                    if (Locale() == "RU") then
+                        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 35, ("С вами играет создатель данной карты, " + C_IntToColor(i) + "Nokladr#2429" + "|r. Критика приветствуется :)\n "))
+                    else
+                        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 35, ("You are playing with author, " + C_IntToColor(i) + "Nokladr#2429" + "|r. Any feedback is welcome :)\n "))
+                    endif
+                    set IsDevInGame = true
+                endif
+                set i = i + 1
+            endloop
         endif
-        set i = i + 1
-    endloop
 
-    // Инициализируем хэш-таблицу
-    set hash = HashTable.create()
+        // Инициализируем хэш-таблицу
+        set hash = HashTable.create()
 
-    // Заполнение массива incSpellrc равкодами инкам способностей
-    set incSpellrc[1] = 'R00F'
-    set incSpellrc[2] = 'R00G'
-    set incSpellrc[3] = 'R00H'
-    set incSpellrc[4] = 'R00I'
-    set incSpellrc[5] = 'R00J'
-    set incSpellrc[6] = 'R00Q'
-    set incSpellrc[7] = 'R00R'
-    set incSpellrc[8] = 'R00S'
-    set incSpellrc[9] = 'R027'
-    set incSpellrc[10] = 'R029'
-    set incSpellrc[11] = 'R02I'
-    set incSpellrc[12] = 'R02J'
-    set incSpellrc[13] = 'R02K'
+        // Заполнение массива incSpellrc равкодами инкам способностей
+        set incSpellrc[1] = 'R00F'
+        set incSpellrc[2] = 'R00G'
+        set incSpellrc[3] = 'R00H'
+        set incSpellrc[4] = 'R00I'
+        set incSpellrc[5] = 'R00J'
+        set incSpellrc[6] = 'R00Q'
+        set incSpellrc[7] = 'R00R'
+        set incSpellrc[8] = 'R00S'
+        set incSpellrc[9] = 'R027'
+        set incSpellrc[10] = 'R029'
+        set incSpellrc[11] = 'R02I'
+        set incSpellrc[12] = 'R02J'
+        set incSpellrc[13] = 'R02K'
 
-    // Заполнение массивов robbery_pr_f и robbery_pr_s процентами спосоности Грабёж
-    set robbery_pr_f[1] = 5
-    set robbery_pr_f[2] = 10
-    set robbery_pr_f[3] = 15
-    set robbery_pr_f[4] = 20
-    set robbery_pr_f[5] = 30
-    set robbery_pr_f[6] = 40
+        // Заполнение массивов robbery_pr_f и robbery_pr_s процентами спосоности Грабёж
+        set robbery_pr_f[1] = 5
+        set robbery_pr_f[2] = 10
+        set robbery_pr_f[3] = 15
+        set robbery_pr_f[4] = 20
+        set robbery_pr_f[5] = 30
+        set robbery_pr_f[6] = 40
 
-    set robbery_pr_s[1] = 5
-    set robbery_pr_s[2] = 6
-    set robbery_pr_s[3] = 7
-    set robbery_pr_s[4] = 8
-    set robbery_pr_s[5] = 9
-    set robbery_pr_s[6] = 10
+        set robbery_pr_s[1] = 5
+        set robbery_pr_s[2] = 6
+        set robbery_pr_s[3] = 7
+        set robbery_pr_s[4] = 8
+        set robbery_pr_s[5] = 9
+        set robbery_pr_s[6] = 10
 
-    // Заполнение массивов stab_time_gold и stab_time_lumber периодом инкама
-    set stab_time_gold[1] = 3
-    set stab_time_gold[2] = 3
-    set stab_time_gold[3] = 3
-    set stab_time_gold[4] = 3
-    set stab_time_gold[5] = 3
-    set stab_time_gold[6] = 3
+        // Заполнение массивов stab_time_gold и stab_time_lumber периодом инкама
+        set stab_time_gold[1] = 3
+        set stab_time_gold[2] = 3
+        set stab_time_gold[3] = 3
+        set stab_time_gold[4] = 3
+        set stab_time_gold[5] = 3
+        set stab_time_gold[6] = 3
 
-    set stab_time_lumber[1] = 40
-    set stab_time_lumber[2] = 40
-    set stab_time_lumber[3] = 30
-    set stab_time_lumber[4] = 20
-    set stab_time_lumber[5] = 15
-    set stab_time_lumber[6] = 12
+        set stab_time_lumber[1] = 40
+        set stab_time_lumber[2] = 40
+        set stab_time_lumber[3] = 30
+        set stab_time_lumber[4] = 20
+        set stab_time_lumber[5] = 15
+        set stab_time_lumber[6] = 12
 
-    // Заполнение массивов stab_gold и stab_lumber кол-вом инкама
-    set stab_gold[1] = 1
-    set stab_gold[2] = 1
-    set stab_gold[3] = 2
-    set stab_gold[4] = 2
-    set stab_gold[5] = 3
-    set stab_gold[6] = 4
-    
-    set stab_lumber[1] = 0
-    set stab_lumber[2] = 1
-    set stab_lumber[3] = 1
-    set stab_lumber[4] = 1
-    set stab_lumber[5] = 1
-    set stab_lumber[6] = 1
+        // Заполнение массивов stab_gold и stab_lumber кол-вом инкама
+        set stab_gold[1] = 1
+        set stab_gold[2] = 1
+        set stab_gold[3] = 2
+        set stab_gold[4] = 2
+        set stab_gold[5] = 3
+        set stab_gold[6] = 4
+        
+        set stab_lumber[1] = 0
+        set stab_lumber[2] = 1
+        set stab_lumber[3] = 1
+        set stab_lumber[4] = 1
+        set stab_lumber[5] = 1
+        set stab_lumber[6] = 1
 
-    // Заполнение массивов goldmining_main_mine, goldmining_extra_mine, goldmining_income кол-вом увеличения инкама
-    set goldmining_main_mine[1] = 1
-    set goldmining_main_mine[2] = 1
-    set goldmining_main_mine[3] = 1
-    set goldmining_main_mine[4] = 1
-    set goldmining_main_mine[5] = 1
-    set goldmining_main_mine[6] = 1
+        // Заполнение массивов goldmining_main_mine, goldmining_extra_mine, goldmining_income кол-вом увеличения инкама
+        set goldmining_main_mine[1] = 1
+        set goldmining_main_mine[2] = 1
+        set goldmining_main_mine[3] = 1
+        set goldmining_main_mine[4] = 1
+        set goldmining_main_mine[5] = 1
+        set goldmining_main_mine[6] = 1
 
-    set goldmining_extra_mine[1] = 0
-    set goldmining_extra_mine[2] = 0
-    set goldmining_extra_mine[3] = 1
-    set goldmining_extra_mine[4] = 0
-    set goldmining_extra_mine[5] = 1
-    set goldmining_extra_mine[6] = 1
+        set goldmining_extra_mine[1] = 0
+        set goldmining_extra_mine[2] = 0
+        set goldmining_extra_mine[3] = 1
+        set goldmining_extra_mine[4] = 0
+        set goldmining_extra_mine[5] = 1
+        set goldmining_extra_mine[6] = 1
 
-    set goldmining_income[1] = 10
-    set goldmining_income[2] = 10
-    set goldmining_income[3] = 10
-    set goldmining_income[4] = 10
-    set goldmining_income[5] = 10
-    set goldmining_income[6] = 10
+        set goldmining_income[1] = 10
+        set goldmining_income[2] = 10
+        set goldmining_income[3] = 10
+        set goldmining_income[4] = 10
+        set goldmining_income[5] = 10
+        set goldmining_income[6] = 10
 
-    // Не забываем обнулить переменные!!!
-    set strTestWarning_RU = null
-    set strWarning_RU = null
-    set strVar_RU = null
-    set Feedback_RU = null
-    
-    set strTestWarning_EN = null
-    set strWarning_EN = null
-    set strVar_EN = null
-    set Feedback_EN = null
-endfunction
+        // Не забываем обнулить переменные!!!
+        set strTestWarning_RU = null
+        set strWarning_RU = null
+        set strVar_RU = null
+        set Feedback_RU = null
+        
+        set strTestWarning_EN = null
+        set strWarning_EN = null
+        set strVar_EN = null
+        set Feedback_EN = null
+    endfunction
 
-//--------------------------------------------------Post main init---------------------------------------------------
+    //-----------------------------Post main init------------------------------
 
-function post_map_init takes nothing returns nothing
-    
-    // Сообщения в чате
-    call SetMessagesInit()
+    function post_map_init takes nothing returns nothing
 
-    // initialization in game trigger
-    call initialization_in_game()
+        // Сообщения в чате
+        call SetMessagesInit()
 
-    // income upg trigger
-    call InitTrig_income_upg()
-	call InitTrig_income_upgR()
-	call InitTrig_income_upgA()
-	call InitTrig_income_upgTQ()
+        // initialization in game trigger
+        call initialization_in_game()
 
-    // faq active Trigger
-    call faq_active_init()
-    
-endfunction
+        // income upg trigger
+        call InitTrig_income_upg()
+        call InitTrig_income_upgR()
+        call InitTrig_income_upgA()
+        call InitTrig_income_upgTQ()
+
+        // faq active Trigger
+        call faq_active_init()
+
+        call C_Log("post_map_init finished!")
+        
+    endfunction
+
+    //-------------------------The very first function-------------------------
+    // Starts map initialization
+    function MainInit takes nothing returns nothing
+        local trigger t = CreateTrigger()
+
+        call map_init()
+        call TriggerRegisterTimerEventSingle(t, 0.01)
+        call TriggerAddAction(t, function post_map_init)
+        call C_SetComputers()
+        call C_StartInitTimer()
+
+        set t = null
+    endfunction
+
+endscope
 //===========================================================================
 // 
 // MIX |cffffffff0.0.1|r
@@ -4583,27 +4566,27 @@ function InitSounds takes nothing returns nothing
     call SetSoundVolume( gg_snd_QuestCompleted, -1 )
     call SetSoundPitch( gg_snd_QuestCompleted, 1.0 )
     set gg_snd_BloodElfMageYesAttack1 = CreateSound( "Units\\Human\\HeroBloodElf\\BloodElfMageYesAttack1.wav", false, false, true, 10, 10, "HeroAcksEAX" )
-    call SetSoundDuration( gg_snd_BloodElfMageYesAttack1, 2831 )
+    call SetSoundDuration( gg_snd_BloodElfMageYesAttack1, 1718 )
     call SetSoundChannel( gg_snd_BloodElfMageYesAttack1, 0 )
     call SetSoundVolume( gg_snd_BloodElfMageYesAttack1, -1 )
     call SetSoundPitch( gg_snd_BloodElfMageYesAttack1, 1.0 )
     set gg_snd_BloodElfMageYesAttack3 = CreateSound( "Units\\Human\\HeroBloodElf\\BloodElfMageYesAttack3.wav", false, false, true, 10, 10, "HeroAcksEAX" )
-    call SetSoundDuration( gg_snd_BloodElfMageYesAttack3, 3255 )
+    call SetSoundDuration( gg_snd_BloodElfMageYesAttack3, 1938 )
     call SetSoundChannel( gg_snd_BloodElfMageYesAttack3, 0 )
     call SetSoundVolume( gg_snd_BloodElfMageYesAttack3, -1 )
     call SetSoundPitch( gg_snd_BloodElfMageYesAttack3, 1.0 )
     set gg_snd_BloodElfMageWarcry1 = CreateSound( "Units\\Human\\HeroBloodElf\\BloodElfMageWarcry1.wav", false, false, true, 10, 10, "HeroAcksEAX" )
-    call SetSoundDuration( gg_snd_BloodElfMageWarcry1, 2843 )
+    call SetSoundDuration( gg_snd_BloodElfMageWarcry1, 2002 )
     call SetSoundChannel( gg_snd_BloodElfMageWarcry1, 0 )
     call SetSoundVolume( gg_snd_BloodElfMageWarcry1, -1 )
     call SetSoundPitch( gg_snd_BloodElfMageWarcry1, 1.0 )
     set gg_snd_BloodElfMageReady1 = CreateSound( "Units\\Human\\HeroBloodElf\\BloodElfMageReady1.wav", false, false, true, 10, 10, "HeroAcksEAX" )
-    call SetSoundDuration( gg_snd_BloodElfMageReady1, 3270 )
+    call SetSoundDuration( gg_snd_BloodElfMageReady1, 2012 )
     call SetSoundChannel( gg_snd_BloodElfMageReady1, 0 )
     call SetSoundVolume( gg_snd_BloodElfMageReady1, -1 )
     call SetSoundPitch( gg_snd_BloodElfMageReady1, 1.0 )
     set gg_snd_BloodElfMagePissed1 = CreateSound( "Units\\Human\\HeroBloodElf\\BloodElfMagePissed1.wav", false, false, true, 10, 10, "HeroAcksEAX" )
-    call SetSoundDuration( gg_snd_BloodElfMagePissed1, 6437 )
+    call SetSoundDuration( gg_snd_BloodElfMagePissed1, 2948 )
     call SetSoundChannel( gg_snd_BloodElfMagePissed1, 0 )
     call SetSoundVolume( gg_snd_BloodElfMagePissed1, -1 )
     call SetSoundPitch( gg_snd_BloodElfMagePissed1, 1.0 )
@@ -4832,17 +4815,6 @@ endfunction
 //*
 //***************************************************************************
 
-//===========================================================================
-// Trigger: main
-//===========================================================================
-function InitTrig_main takes nothing returns nothing
-    local trigger t = CreateTrigger()
-    call map_init()
-    call TriggerRegisterTimerEventSingle(t, 0.01)
-    call TriggerAddAction(t, function post_map_init)
-    call C_SetComputers()
-    call C_StartInitTimer()
-endfunction
 //===========================================================================
 // Trigger: initialization
 //
@@ -16350,7 +16322,6 @@ endfunction
 
 //===========================================================================
 function InitCustomTriggers takes nothing returns nothing
-    call InitTrig_main(  )
     call InitTrig_initialization(  )
     call InitTrig_ini_id(  )
     call InitTrig_game_end(  )

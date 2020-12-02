@@ -25,30 +25,30 @@ constant string BROWN=     "|cff4d2903"
 //endglobals from NokladrLib
 //globals from ReviveUnit:
 constant boolean LIBRARY_ReviveUnit=true
-constant integer ReviveUnit___DUMMY= 'eRez'
-constant integer ReviveUnit___RESURRECT= 'URez'
-unit ReviveUnit___reviver
-real ReviveUnit___rx
-real ReviveUnit___ry
+constant integer ReviveUnit__DUMMY= 'eRez'
+constant integer ReviveUnit__RESURRECT= 'URez'
+unit ReviveUnit__reviver
+real ReviveUnit__rx
+real ReviveUnit__ry
 //endglobals from ReviveUnit
 //globals from Table:
 constant boolean LIBRARY_Table=true
-integer Table___less= 0
-integer Table___more= 8190
+integer Table__less= 0
+integer Table__more= 8190
         //Configure it if you use more than 8190 "key" variables in your map (this will never happen though).
     
-hashtable Table___ht= InitHashtable()
-constant integer Table___sizeK=11
-constant integer Table___listK=13
+hashtable Table__ht= InitHashtable()
+constant integer Table__sizeK=5
+constant integer Table__listK=6
 //endglobals from Table
 //globals from MIXLib:
 constant boolean LIBRARY_MIXLib=true
 integer pdb
-// processed:         DB array MIXLib___dbarr[8]
+// processed:         DB array MIXLib__dbarr[8]
 //endglobals from MIXLib
 //globals from RegisterNativeEvent:
 constant boolean LIBRARY_RegisterNativeEvent=true
-integer RegisterNativeEvent___eventIndex= 500
+integer RegisterNativeEvent__eventIndex= 500
 //endglobals from RegisterNativeEvent
 //globals from RegisterPlayerUnitEvent:
 constant boolean LIBRARY_RegisterPlayerUnitEvent=true
@@ -56,16 +56,16 @@ constant boolean LIBRARY_RegisterPlayerUnitEvent=true
 //globals from UnitRecycler:
 constant boolean LIBRARY_UnitRecycler=true
     
-constant player UnitRecycler___OWNER= Player(15)
+constant player UnitRecycler__OWNER= Player(15)
     
-constant boolean UnitRecycler___AUTO_RECYCLE_DEAD= true
+constant boolean UnitRecycler__AUTO_RECYCLE_DEAD= true
     
-constant integer UnitRecycler___ANGLE_COUNT= 8
+constant integer UnitRecycler__ANGLE_COUNT= 8
 
-constant real UnitRecycler___ANGLE_INTERVAL= 360.00 / UnitRecycler___ANGLE_COUNT
-constant real UnitRecycler___HALF_INTERVAL= UnitRecycler___ANGLE_INTERVAL / 2.00
-real UnitRecycler___unitCampX
-real UnitRecycler___unitCampY
+constant real UnitRecycler__ANGLE_INTERVAL= 360.00 / UnitRecycler__ANGLE_COUNT
+constant real UnitRecycler__HALF_INTERVAL= UnitRecycler__ANGLE_INTERVAL / 2.00
+real UnitRecycler__unitCampX
+real UnitRecycler__unitCampY
 //endglobals from UnitRecycler
 //globals from ResourcePreloader:
 constant boolean LIBRARY_ResourcePreloader=true
@@ -198,6 +198,10 @@ constant real evforev_bonus_res_mod= 0.01
     // Настройки улучшения Агрессивная игра
     // аура - aggrgame_aura_rc, внутри неё менять скорость боя и перемещения
     //------------------------------------
+boolean IsFaqActive= true
+timerdialog faq_timerdialog
+integer faq_vote_yes= 0
+integer faq_vote_no= 0
     // User-defined
 real array udg_dmg_player_inflicted
 real array udg_dmg_player_taken
@@ -582,56 +586,56 @@ trigger l__library_init
 constant integer si__BJObjectId=1
 integer array s__BJObjectId_first_unit_oid
 integer array s__BJObjectId_first_cunit_oid
-constant integer si__ErrorMessage___Fields=2
-constant string s__ErrorMessage___Fields_COLOR_RED= "|cffff0000"
-constant string s__ErrorMessage___Fields_COLOR_YELLOW= "|cffffff00"
-string s__ErrorMessage___Fields_lastError= null
+constant integer si__ErrorMessage__Fields=2
+constant string s__ErrorMessage__Fields_COLOR_RED= "|cffff0000"
+constant string s__ErrorMessage__Fields_COLOR_YELLOW= "|cffffff00"
+string s__ErrorMessage__Fields_lastError= null
 constant integer si__Revive=3
-constant integer si__Table___dex=4
-constant integer si__Table___handles=5
-constant integer si__Table___agents=6
-constant integer si__Table___reals=7
-constant integer si__Table___booleans=8
-constant integer si__Table___strings=9
-constant integer si__Table___integers=10
-constant integer si__Table___players=11
-constant integer si__Table___widgets=12
-constant integer si__Table___destructables=13
-constant integer si__Table___items=14
-constant integer si__Table___units=15
-constant integer si__Table___abilitys=16
-constant integer si__Table___timers=17
-constant integer si__Table___triggers=18
-constant integer si__Table___triggerconditions=19
-constant integer si__Table___triggeractions=20
-constant integer si__Table___events=21
-constant integer si__Table___forces=22
-constant integer si__Table___groups=23
-constant integer si__Table___locations=24
-constant integer si__Table___rects=25
-constant integer si__Table___boolexprs=26
-constant integer si__Table___sounds=27
-constant integer si__Table___effects=28
-constant integer si__Table___unitpools=29
-constant integer si__Table___itempools=30
-constant integer si__Table___quests=31
-constant integer si__Table___questitems=32
-constant integer si__Table___defeatconditions=33
-constant integer si__Table___timerdialogs=34
-constant integer si__Table___leaderboards=35
-constant integer si__Table___multiboards=36
-constant integer si__Table___multiboarditems=37
-constant integer si__Table___trackables=38
-constant integer si__Table___dialogs=39
-constant integer si__Table___buttons=40
-constant integer si__Table___texttags=41
-constant integer si__Table___lightnings=42
-constant integer si__Table___images=43
-constant integer si__Table___ubersplats=44
-constant integer si__Table___regions=45
-constant integer si__Table___fogstates=46
-constant integer si__Table___fogmodifiers=47
-constant integer si__Table___hashtables=48
+constant integer si__Table__dex=4
+constant integer si__Table__handles=5
+constant integer si__Table__agents=6
+constant integer si__Table__reals=7
+constant integer si__Table__booleans=8
+constant integer si__Table__strings=9
+constant integer si__Table__integers=10
+constant integer si__Table__players=11
+constant integer si__Table__widgets=12
+constant integer si__Table__destructables=13
+constant integer si__Table__items=14
+constant integer si__Table__units=15
+constant integer si__Table__abilitys=16
+constant integer si__Table__timers=17
+constant integer si__Table__triggers=18
+constant integer si__Table__triggerconditions=19
+constant integer si__Table__triggeractions=20
+constant integer si__Table__events=21
+constant integer si__Table__forces=22
+constant integer si__Table__groups=23
+constant integer si__Table__locations=24
+constant integer si__Table__rects=25
+constant integer si__Table__boolexprs=26
+constant integer si__Table__sounds=27
+constant integer si__Table__effects=28
+constant integer si__Table__unitpools=29
+constant integer si__Table__itempools=30
+constant integer si__Table__quests=31
+constant integer si__Table__questitems=32
+constant integer si__Table__defeatconditions=33
+constant integer si__Table__timerdialogs=34
+constant integer si__Table__leaderboards=35
+constant integer si__Table__multiboards=36
+constant integer si__Table__multiboarditems=37
+constant integer si__Table__trackables=38
+constant integer si__Table__dialogs=39
+constant integer si__Table__buttons=40
+constant integer si__Table__texttags=41
+constant integer si__Table__lightnings=42
+constant integer si__Table__images=43
+constant integer si__Table__ubersplats=44
+constant integer si__Table__regions=45
+constant integer si__Table__fogstates=46
+constant integer si__Table__fogmodifiers=47
+constant integer si__Table__hashtables=48
 constant integer si__Table=49
 constant integer si__TableArray=50
 integer s__TableArray_tempTable
@@ -654,28 +658,28 @@ constant integer si__Playerdb=53
 integer si__Playerdb_F=0
 integer si__Playerdb_I=0
 integer array si__Playerdb_V
-constant integer si__RegisterNativeEvent___NativeEvent=54
-integer s__RegisterNativeEvent___NativeEvent_table
-constant integer si__UnitRecycler___List=55
-unit array s__UnitRecycler___List_unit
-integer array s__UnitRecycler___List_recycler
-integer array s__UnitRecycler___List_prev
-integer array s__UnitRecycler___List_next
-integer s__UnitRecycler___List_stocked
-constant integer si__UnitRecycler___UnitRecycler=56
-integer s__UnitRecycler___UnitRecycler_rawCodeIdTable
-integer s__UnitRecycler___UnitRecycler_timerTable
-integer s__UnitRecycler___UnitRecycler_rawCodeCount= 0
-integer array s__UnitRecycler___UnitRecycler_position
-integer array s__UnitRecycler___UnitRecycler_stackSize
-integer array s__UnitRecycler___UnitRecycler_indexStack
-integer array s__UnitRecycler___UnitRecycler_head
-constant integer si__UnitRecycler___Initializer=57
-constant integer si__ResourcePreloader___S=58
-integer s__ResourcePreloader___S_tb
-unit s__ResourcePreloader___S_dummy
+constant integer si__RegisterNativeEvent__NativeEvent=54
+integer s__RegisterNativeEvent__NativeEvent_table
+constant integer si__UnitRecycler__List=55
+unit array s__UnitRecycler__List_unit
+integer array s__UnitRecycler__List_recycler
+integer array s__UnitRecycler__List_prev
+integer array s__UnitRecycler__List_next
+integer s__UnitRecycler__List_stocked
+constant integer si__UnitRecycler__UnitRecycler=56
+integer s__UnitRecycler__UnitRecycler_rawCodeIdTable
+integer s__UnitRecycler__UnitRecycler_timerTable
+integer s__UnitRecycler__UnitRecycler_rawCodeCount= 0
+integer array s__UnitRecycler__UnitRecycler_position
+integer array s__UnitRecycler__UnitRecycler_stackSize
+integer array s__UnitRecycler__UnitRecycler_indexStack
+integer array s__UnitRecycler__UnitRecycler_head
+constant integer si__UnitRecycler__Initializer=57
+constant integer si__ResourcePreloader__S=58
+integer s__ResourcePreloader__S_tb
+unit s__ResourcePreloader__S_dummy
 integer array s__time
-integer array s__MIXLib___dbarr
+integer array s__MIXLib__dbarr
 integer array s__incSpellrc
 player array s__ticket_list
 real array s__robbery_pr_f
@@ -689,7 +693,7 @@ timer array s__stab_timer_lumber
 integer array s__goldmining_main_mine
 integer array s__goldmining_extra_mine
 integer array s__goldmining_income
-trigger array st___prototype30
+trigger array st___prototype31
 unit f__arg_unit1
 
 endglobals
@@ -765,20 +769,20 @@ function s__DB_deallocate takes integer this returns nothing
     set si__DB_V[this]=si__DB_F
     set si__DB_F=this
 endfunction
-function sc___prototype30_execute takes integer i,unit a1 returns nothing
+function sc___prototype31_execute takes integer i,unit a1 returns nothing
     set f__arg_unit1=a1
 
-    call TriggerExecute(st___prototype30[i])
+    call TriggerExecute(st___prototype31[i])
 endfunction
-function sc___prototype30_evaluate takes integer i,unit a1 returns nothing
+function sc___prototype31_evaluate takes integer i,unit a1 returns nothing
     set f__arg_unit1=a1
 
-    call TriggerEvaluate(st___prototype30[i])
+    call TriggerEvaluate(st___prototype31[i])
 
 endfunction
 function h__RemoveUnit takes unit a0 returns nothing
-    //hook: UnitRecycler___DisplayError
-    call sc___prototype30_evaluate(1,a0)
+    //hook: UnitRecycler__DisplayError
+    call sc___prototype31_evaluate(1,a0)
 call RemoveUnit(a0)
 endfunction
 
@@ -1046,56 +1050,56 @@ endfunction
 
 //library BJObjectId ends
 //library ErrorMessage:
-	
- function ErrorMessage___Pause takes nothing returns nothing
-		call PauseGame(true)
-	endfunction
-	
- function ErrorMessage___ThrowMessage takes string libraryName,string functionName,string objectName,integer objectInstance,string description,string errorType,string color returns nothing
-  local string str
-		
-  local string color_braces= "|cff66FF99"
-  local string orange= "|cffff6600"
-		
-		set str="->\n-> " + color_braces + "{|r Library" + color_braces + "(" + orange + libraryName + color_braces + ")"
-		if ( objectName != null ) then
-			if ( objectInstance != 0 ) then
-				set str=str + "|r.Object" + color_braces + "(" + orange + objectName + color_braces + " (|rinstance = " + orange + I2S(objectInstance) + color_braces + ") )|r.Method" + color_braces + "(" + orange + functionName + color_braces + ")"
-			else
-				set str=str + "|r.Object" + color_braces + "(" + orange + objectName + color_braces + ")|r.Method" + color_braces + "(" + orange + functionName + color_braces + ")"
-			endif
-		else
-			set str=str + "|r.Function" + color_braces + "(" + orange + functionName + color_braces + ")"
-		endif
-		
-		set str=str + color_braces + " }|r has thrown an exception of type " + color_braces + "(" + color + errorType + color_braces + ")|r."
-		
-		set s__ErrorMessage___Fields_lastError=str + "\n->\n->	" + color + description + "|r\n->"
-	endfunction
-	
- function ThrowError takes boolean expression,string libraryName,string functionName,string objectName,integer objectInstance,string description returns nothing
-		if ( s__ErrorMessage___Fields_lastError != null ) then
-			set objectInstance=1 / 0
-		endif
-	
-		if ( expression ) then
-			call ErrorMessage___ThrowMessage(libraryName , functionName , objectName , objectInstance , description , "Error" , s__ErrorMessage___Fields_COLOR_RED)
-			call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60000, s__ErrorMessage___Fields_lastError)
-			call TimerStart(CreateTimer(), 0, true, function ErrorMessage___Pause)
-			set objectInstance=1 / 0
-		endif
-	endfunction
- function ThrowWarning takes boolean expression,string libraryName,string functionName,string objectName,integer objectInstance,string description returns nothing
-		if ( s__ErrorMessage___Fields_lastError != null ) then
-			set objectInstance=1 / 0
-		endif
-	
-		if ( expression ) then
-			call ErrorMessage___ThrowMessage(libraryName , functionName , objectName , objectInstance , description , "Warning" , s__ErrorMessage___Fields_COLOR_YELLOW)
-			call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60000, s__ErrorMessage___Fields_lastError)
-			set s__ErrorMessage___Fields_lastError=null
-		endif
-	endfunction
+    
+    function ErrorMessage__Pause takes nothing returns nothing
+        call PauseGame(true)
+    endfunction
+    
+    function ErrorMessage__ThrowMessage takes string libraryName,string functionName,string objectName,integer objectInstance,string description,string errorType,string color returns nothing
+        local string str
+        
+        local string color_braces= "|cff66FF99"
+        local string orange= "|cffff6600"
+        
+        set str="->\n-> " + color_braces + "{|r Library" + color_braces + "(" + orange + libraryName + color_braces + ")"
+        if ( objectName != null ) then
+            if ( objectInstance != 0 ) then
+                set str=str + "|r.Object" + color_braces + "(" + orange + objectName + color_braces + " (|rinstance = " + orange + I2S(objectInstance) + color_braces + ") )|r.Method" + color_braces + "(" + orange + functionName + color_braces + ")"
+            else
+                set str=str + "|r.Object" + color_braces + "(" + orange + objectName + color_braces + ")|r.Method" + color_braces + "(" + orange + functionName + color_braces + ")"
+            endif
+        else
+            set str=str + "|r.Function" + color_braces + "(" + orange + functionName + color_braces + ")"
+        endif
+        
+        set str=str + color_braces + " }|r has thrown an exception of type " + color_braces + "(" + color + errorType + color_braces + ")|r."
+        
+        set s__ErrorMessage__Fields_lastError=str + "\n->\n->    " + color + description + "|r\n->"
+    endfunction
+    
+    function ThrowError takes boolean expression,string libraryName,string functionName,string objectName,integer objectInstance,string description returns nothing
+        if ( s__ErrorMessage__Fields_lastError != null ) then
+            set objectInstance=1 / 0
+        endif
+    
+        if ( expression ) then
+            call ErrorMessage__ThrowMessage(libraryName , functionName , objectName , objectInstance , description , "Error" , s__ErrorMessage__Fields_COLOR_RED)
+            call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60000, s__ErrorMessage__Fields_lastError)
+            call TimerStart(CreateTimer(), 0, true, function ErrorMessage__Pause)
+            set objectInstance=1 / 0
+        endif
+    endfunction
+    function ThrowWarning takes boolean expression,string libraryName,string functionName,string objectName,integer objectInstance,string description returns nothing
+        if ( s__ErrorMessage__Fields_lastError != null ) then
+            set objectInstance=1 / 0
+        endif
+    
+        if ( expression ) then
+            call ErrorMessage__ThrowMessage(libraryName , functionName , objectName , objectInstance , description , "Warning" , s__ErrorMessage__Fields_COLOR_YELLOW)
+            call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60000, s__ErrorMessage__Fields_lastError)
+            set s__ErrorMessage__Fields_lastError=null
+        endif
+    endfunction
 
 //library ErrorMessage ends
 //library NokladrLib:
@@ -1132,12 +1136,12 @@ endfunction
 
     // Отображает сообщение об ошибке
     function C_ErrorMsg takes string s returns nothing
-        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, ( RED + "Ошибка: " + s + "|r" ))
+         call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, ( RED + "Ошибка: " + s + "|r" ))
     endfunction
 
     // Лог сообщений
     function C_Log takes string s returns nothing
-        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, ( GOLD + "Log:|r " + GREEN + s + "|r" ))
+         call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, ( GOLD + "Log:|r " + GREEN + s + "|r" ))
     endfunction
 
     // Устанавливает всем компьютерным игрокам соответствующее имя
@@ -1195,7 +1199,7 @@ endfunction
     endfunction
 
     // Счётчик времени
-    function NokladrLib___C_StartCount takes nothing returns nothing
+    function NokladrLib__C_StartCount takes nothing returns nothing
         set s__time[0]= s__time[0] + 1
         if ( s__time[0] > 59 ) then
             set s__time[0]= 0
@@ -1215,7 +1219,7 @@ endfunction
     // Инициализация счётчика времени
     function C_StartInitTimer takes nothing returns nothing
         local timer t= CreateTimer()
-        call TimerStart(t, 1., true, function NokladrLib___C_StartCount)
+        call TimerStart(t, 1., true, function NokladrLib__C_StartCount)
     endfunction
 
     // Возвращает состояние счётчика времени в секундах
@@ -1280,6 +1284,18 @@ endfunction
         return ( ( GetRectMinX(r) - 32 <= x ) and ( x <= GetRectMaxX(r) + 32 ) and ( GetRectMinY(r) - 32 <= y ) and ( y <= GetRectMaxY(r) + 32 ) )
     endfunction
 
+    // Создаёт texttag, упрощённая и оптимизированная версия CreateTextTagLocBJ
+    function NewTextTag takes string s,rect rct,real size returns texttag
+        local texttag tt= CreateTextTag()
+        // SetTextTagTextBJ
+        call SetTextTagText(tt, s, TextTagSize2Height(size))
+        // SetTextTagPosBJ
+        call SetTextTagPos(tt, GetRectCenterX(rct), GetRectCenterY(rct), 0)
+        // SetTextTagColorBJ
+        call SetTextTagColor(tt, 255, 255, 255, 255)
+        return tt
+    endfunction
+
 
 //library NokladrLib ends
 //library ReviveUnit:
@@ -1294,11 +1310,11 @@ endfunction
         if IsUnitType(u, UNIT_TYPE_HERO) == true then
             return ReviveHero(u, GetUnitX(u), GetUnitY(u), false)
         else
-            call SetUnitX(ReviveUnit___reviver, GetUnitX(u))
-            call SetUnitY(ReviveUnit___reviver, GetUnitY(u))
-            set success=IssueImmediateOrderById(ReviveUnit___reviver, 852094)
-            call SetUnitX(ReviveUnit___reviver, ReviveUnit___rx)
-            call SetUnitY(ReviveUnit___reviver, ReviveUnit___ry)
+            call SetUnitX(ReviveUnit__reviver, GetUnitX(u))
+            call SetUnitY(ReviveUnit__reviver, GetUnitY(u))
+            set success=IssueImmediateOrderById(ReviveUnit__reviver, 852094)
+            call SetUnitX(ReviveUnit__reviver, ReviveUnit__rx)
+            call SetUnitY(ReviveUnit__reviver, ReviveUnit__ry)
         endif
         return success
     endfunction
@@ -1309,37 +1325,37 @@ endfunction
             return ReviveUnit(whichUnit)
         endfunction
        
-//Implemented from module ReviveUnit___Init:
-        function s__Revive_ReviveUnit___Init___onInit takes nothing returns nothing
-            set ReviveUnit___rx=GetRectMaxX(bj_mapInitialPlayableArea) - 1
-            set ReviveUnit___ry=GetRectMaxY(bj_mapInitialPlayableArea) - 1
-            set ReviveUnit___reviver=CreateUnit(Player(15), ReviveUnit___DUMMY, ReviveUnit___rx, ReviveUnit___ry, 0)
-            call SetUnitPathing(ReviveUnit___reviver, false)
-            call UnitAddAbility(ReviveUnit___reviver, ReviveUnit___RESURRECT)
+//Implemented from module ReviveUnit__Init:
+        function s__Revive_ReviveUnit__Init__onInit takes nothing returns nothing
+            set ReviveUnit__rx=GetRectMaxX(bj_mapInitialPlayableArea) - 1
+            set ReviveUnit__ry=GetRectMaxY(bj_mapInitialPlayableArea) - 1
+            set ReviveUnit__reviver=CreateUnit(Player(15), ReviveUnit__DUMMY, ReviveUnit__rx, ReviveUnit__ry, 0)
+            call SetUnitPathing(ReviveUnit__reviver, false)
+            call UnitAddAbility(ReviveUnit__reviver, ReviveUnit__RESURRECT)
         endfunction
 
 //library ReviveUnit ends
 //library Table:
    
     
-        function s__Table___dex__get_size takes nothing returns integer
-            return Table___sizeK
+        function s__Table__dex__get_size takes nothing returns integer
+            return Table__sizeK
         endfunction
 
-        function s__Table___dex__get_list takes nothing returns integer
-            return Table___listK
+        function s__Table__dex__get_list takes nothing returns integer
+            return Table__listK
         endfunction
    
-        function s__Table___handles_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__handles_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___handles_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__handles_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
    
-        function s__Table___agents__setindex takes integer this,integer key,agent value returns nothing
-            call SaveAgentHandle(Table___ht, this, key, value)
+        function s__Table__agents__setindex takes integer this,integer key,agent value returns nothing
+            call SaveAgentHandle(Table__ht, this, key, value)
         endfunction
    
    
@@ -1348,931 +1364,931 @@ endfunction
 //Don't be intimidated by the number of macros - Vexorian's map optimizer is
 //supposed to kill functions which inline (all of these functions inline).
 //textmacro instance: NEW_ARRAY_BASIC("Real", "Real", "real")
-        function s__Table___reals__getindex takes integer this,integer key returns real
-            return LoadReal(Table___ht, this, key)
+        function s__Table__reals__getindex takes integer this,integer key returns real
+            return LoadReal(Table__ht, this, key)
         endfunction
 
-        function s__Table___reals__setindex takes integer this,integer key,real value returns nothing
-            call SaveReal(Table___ht, this, key, value)
+        function s__Table__reals__setindex takes integer this,integer key,real value returns nothing
+            call SaveReal(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___reals_has takes integer this,integer key returns boolean
-            return HaveSavedReal(Table___ht, this, key)
+        function s__Table__reals_has takes integer this,integer key returns boolean
+            return HaveSavedReal(Table__ht, this, key)
         endfunction
 
-        function s__Table___reals_remove takes integer this,integer key returns nothing
-            call RemoveSavedReal(Table___ht, this, key)
+        function s__Table__reals_remove takes integer this,integer key returns nothing
+            call RemoveSavedReal(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY_BASIC("Real", "Real", "real")
 //textmacro instance: NEW_ARRAY_BASIC("Boolean", "Boolean", "boolean")
-        function s__Table___booleans__getindex takes integer this,integer key returns boolean
-            return LoadBoolean(Table___ht, this, key)
+        function s__Table__booleans__getindex takes integer this,integer key returns boolean
+            return LoadBoolean(Table__ht, this, key)
         endfunction
 
-        function s__Table___booleans__setindex takes integer this,integer key,boolean value returns nothing
-            call SaveBoolean(Table___ht, this, key, value)
+        function s__Table__booleans__setindex takes integer this,integer key,boolean value returns nothing
+            call SaveBoolean(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___booleans_has takes integer this,integer key returns boolean
-            return HaveSavedBoolean(Table___ht, this, key)
+        function s__Table__booleans_has takes integer this,integer key returns boolean
+            return HaveSavedBoolean(Table__ht, this, key)
         endfunction
 
-        function s__Table___booleans_remove takes integer this,integer key returns nothing
-            call RemoveSavedBoolean(Table___ht, this, key)
+        function s__Table__booleans_remove takes integer this,integer key returns nothing
+            call RemoveSavedBoolean(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY_BASIC("Boolean", "Boolean", "boolean")
 //textmacro instance: NEW_ARRAY_BASIC("String", "Str", "string")
-        function s__Table___strings__getindex takes integer this,integer key returns string
-            return LoadStr(Table___ht, this, key)
+        function s__Table__strings__getindex takes integer this,integer key returns string
+            return LoadStr(Table__ht, this, key)
         endfunction
 
-        function s__Table___strings__setindex takes integer this,integer key,string value returns nothing
-            call SaveStr(Table___ht, this, key, value)
+        function s__Table__strings__setindex takes integer this,integer key,string value returns nothing
+            call SaveStr(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___strings_has takes integer this,integer key returns boolean
-            return HaveSavedString(Table___ht, this, key)
+        function s__Table__strings_has takes integer this,integer key returns boolean
+            return HaveSavedString(Table__ht, this, key)
         endfunction
 
-        function s__Table___strings_remove takes integer this,integer key returns nothing
-            call RemoveSavedString(Table___ht, this, key)
+        function s__Table__strings_remove takes integer this,integer key returns nothing
+            call RemoveSavedString(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY_BASIC("String", "Str", "string")
 //New textmacro to allow table.integer[] syntax for compatibility with textmacros that might desire it.
 //textmacro instance: NEW_ARRAY_BASIC("Integer", "Integer", "integer")
-        function s__Table___integers__getindex takes integer this,integer key returns integer
-            return LoadInteger(Table___ht, this, key)
+        function s__Table__integers__getindex takes integer this,integer key returns integer
+            return LoadInteger(Table__ht, this, key)
         endfunction
 
-        function s__Table___integers__setindex takes integer this,integer key,integer value returns nothing
-            call SaveInteger(Table___ht, this, key, value)
+        function s__Table__integers__setindex takes integer this,integer key,integer value returns nothing
+            call SaveInteger(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___integers_has takes integer this,integer key returns boolean
-            return HaveSavedInteger(Table___ht, this, key)
+        function s__Table__integers_has takes integer this,integer key returns boolean
+            return HaveSavedInteger(Table__ht, this, key)
         endfunction
 
-        function s__Table___integers_remove takes integer this,integer key returns nothing
-            call RemoveSavedInteger(Table___ht, this, key)
+        function s__Table__integers_remove takes integer this,integer key returns nothing
+            call RemoveSavedInteger(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY_BASIC("Integer", "Integer", "integer")
    
 //textmacro instance: NEW_ARRAY("Player", "player")
-        function s__Table___players__getindex takes integer this,integer key returns player
-            return LoadPlayerHandle(Table___ht, this, key)
+        function s__Table__players__getindex takes integer this,integer key returns player
+            return LoadPlayerHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___players__setindex takes integer this,integer key,player value returns nothing
-            call SavePlayerHandle(Table___ht, this, key, value)
+        function s__Table__players__setindex takes integer this,integer key,player value returns nothing
+            call SavePlayerHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___players_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__players_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___players_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__players_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Player", "player")
 //textmacro instance: NEW_ARRAY("Widget", "widget")
-        function s__Table___widgets__getindex takes integer this,integer key returns widget
-            return LoadWidgetHandle(Table___ht, this, key)
+        function s__Table__widgets__getindex takes integer this,integer key returns widget
+            return LoadWidgetHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___widgets__setindex takes integer this,integer key,widget value returns nothing
-            call SaveWidgetHandle(Table___ht, this, key, value)
+        function s__Table__widgets__setindex takes integer this,integer key,widget value returns nothing
+            call SaveWidgetHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___widgets_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__widgets_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___widgets_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__widgets_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Widget", "widget")
 //textmacro instance: NEW_ARRAY("Destructable", "destructable")
-        function s__Table___destructables__getindex takes integer this,integer key returns destructable
-            return LoadDestructableHandle(Table___ht, this, key)
+        function s__Table__destructables__getindex takes integer this,integer key returns destructable
+            return LoadDestructableHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___destructables__setindex takes integer this,integer key,destructable value returns nothing
-            call SaveDestructableHandle(Table___ht, this, key, value)
+        function s__Table__destructables__setindex takes integer this,integer key,destructable value returns nothing
+            call SaveDestructableHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___destructables_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__destructables_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___destructables_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__destructables_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Destructable", "destructable")
 //textmacro instance: NEW_ARRAY("Item", "item")
-        function s__Table___items__getindex takes integer this,integer key returns item
-            return LoadItemHandle(Table___ht, this, key)
+        function s__Table__items__getindex takes integer this,integer key returns item
+            return LoadItemHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___items__setindex takes integer this,integer key,item value returns nothing
-            call SaveItemHandle(Table___ht, this, key, value)
+        function s__Table__items__setindex takes integer this,integer key,item value returns nothing
+            call SaveItemHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___items_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__items_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___items_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__items_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Item", "item")
 //textmacro instance: NEW_ARRAY("Unit", "unit")
-        function s__Table___units__getindex takes integer this,integer key returns unit
-            return LoadUnitHandle(Table___ht, this, key)
+        function s__Table__units__getindex takes integer this,integer key returns unit
+            return LoadUnitHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___units__setindex takes integer this,integer key,unit value returns nothing
-            call SaveUnitHandle(Table___ht, this, key, value)
+        function s__Table__units__setindex takes integer this,integer key,unit value returns nothing
+            call SaveUnitHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___units_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__units_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___units_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__units_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Unit", "unit")
 //textmacro instance: NEW_ARRAY("Ability", "ability")
-        function s__Table___abilitys__getindex takes integer this,integer key returns ability
-            return LoadAbilityHandle(Table___ht, this, key)
+        function s__Table__abilitys__getindex takes integer this,integer key returns ability
+            return LoadAbilityHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___abilitys__setindex takes integer this,integer key,ability value returns nothing
-            call SaveAbilityHandle(Table___ht, this, key, value)
+        function s__Table__abilitys__setindex takes integer this,integer key,ability value returns nothing
+            call SaveAbilityHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___abilitys_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__abilitys_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___abilitys_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__abilitys_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Ability", "ability")
 //textmacro instance: NEW_ARRAY("Timer", "timer")
-        function s__Table___timers__getindex takes integer this,integer key returns timer
-            return LoadTimerHandle(Table___ht, this, key)
+        function s__Table__timers__getindex takes integer this,integer key returns timer
+            return LoadTimerHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___timers__setindex takes integer this,integer key,timer value returns nothing
-            call SaveTimerHandle(Table___ht, this, key, value)
+        function s__Table__timers__setindex takes integer this,integer key,timer value returns nothing
+            call SaveTimerHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___timers_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__timers_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___timers_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__timers_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Timer", "timer")
 //textmacro instance: NEW_ARRAY("Trigger", "trigger")
-        function s__Table___triggers__getindex takes integer this,integer key returns trigger
-            return LoadTriggerHandle(Table___ht, this, key)
+        function s__Table__triggers__getindex takes integer this,integer key returns trigger
+            return LoadTriggerHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___triggers__setindex takes integer this,integer key,trigger value returns nothing
-            call SaveTriggerHandle(Table___ht, this, key, value)
+        function s__Table__triggers__setindex takes integer this,integer key,trigger value returns nothing
+            call SaveTriggerHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___triggers_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__triggers_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___triggers_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__triggers_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Trigger", "trigger")
 //textmacro instance: NEW_ARRAY("TriggerCondition", "triggercondition")
-        function s__Table___triggerconditions__getindex takes integer this,integer key returns triggercondition
-            return LoadTriggerConditionHandle(Table___ht, this, key)
+        function s__Table__triggerconditions__getindex takes integer this,integer key returns triggercondition
+            return LoadTriggerConditionHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___triggerconditions__setindex takes integer this,integer key,triggercondition value returns nothing
-            call SaveTriggerConditionHandle(Table___ht, this, key, value)
+        function s__Table__triggerconditions__setindex takes integer this,integer key,triggercondition value returns nothing
+            call SaveTriggerConditionHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___triggerconditions_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__triggerconditions_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___triggerconditions_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__triggerconditions_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("TriggerCondition", "triggercondition")
 //textmacro instance: NEW_ARRAY("TriggerAction", "triggeraction")
-        function s__Table___triggeractions__getindex takes integer this,integer key returns triggeraction
-            return LoadTriggerActionHandle(Table___ht, this, key)
+        function s__Table__triggeractions__getindex takes integer this,integer key returns triggeraction
+            return LoadTriggerActionHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___triggeractions__setindex takes integer this,integer key,triggeraction value returns nothing
-            call SaveTriggerActionHandle(Table___ht, this, key, value)
+        function s__Table__triggeractions__setindex takes integer this,integer key,triggeraction value returns nothing
+            call SaveTriggerActionHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___triggeractions_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__triggeractions_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___triggeractions_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__triggeractions_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("TriggerAction", "triggeraction")
 //textmacro instance: NEW_ARRAY("TriggerEvent", "event")
-        function s__Table___events__getindex takes integer this,integer key returns event
-            return LoadTriggerEventHandle(Table___ht, this, key)
+        function s__Table__events__getindex takes integer this,integer key returns event
+            return LoadTriggerEventHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___events__setindex takes integer this,integer key,event value returns nothing
-            call SaveTriggerEventHandle(Table___ht, this, key, value)
+        function s__Table__events__setindex takes integer this,integer key,event value returns nothing
+            call SaveTriggerEventHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___events_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__events_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___events_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__events_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("TriggerEvent", "event")
 //textmacro instance: NEW_ARRAY("Force", "force")
-        function s__Table___forces__getindex takes integer this,integer key returns force
-            return LoadForceHandle(Table___ht, this, key)
+        function s__Table__forces__getindex takes integer this,integer key returns force
+            return LoadForceHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___forces__setindex takes integer this,integer key,force value returns nothing
-            call SaveForceHandle(Table___ht, this, key, value)
+        function s__Table__forces__setindex takes integer this,integer key,force value returns nothing
+            call SaveForceHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___forces_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__forces_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___forces_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__forces_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Force", "force")
 //textmacro instance: NEW_ARRAY("Group", "group")
-        function s__Table___groups__getindex takes integer this,integer key returns group
-            return LoadGroupHandle(Table___ht, this, key)
+        function s__Table__groups__getindex takes integer this,integer key returns group
+            return LoadGroupHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___groups__setindex takes integer this,integer key,group value returns nothing
-            call SaveGroupHandle(Table___ht, this, key, value)
+        function s__Table__groups__setindex takes integer this,integer key,group value returns nothing
+            call SaveGroupHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___groups_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__groups_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___groups_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__groups_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Group", "group")
 //textmacro instance: NEW_ARRAY("Location", "location")
-        function s__Table___locations__getindex takes integer this,integer key returns location
-            return LoadLocationHandle(Table___ht, this, key)
+        function s__Table__locations__getindex takes integer this,integer key returns location
+            return LoadLocationHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___locations__setindex takes integer this,integer key,location value returns nothing
-            call SaveLocationHandle(Table___ht, this, key, value)
+        function s__Table__locations__setindex takes integer this,integer key,location value returns nothing
+            call SaveLocationHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___locations_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__locations_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___locations_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__locations_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Location", "location")
 //textmacro instance: NEW_ARRAY("Rect", "rect")
-        function s__Table___rects__getindex takes integer this,integer key returns rect
-            return LoadRectHandle(Table___ht, this, key)
+        function s__Table__rects__getindex takes integer this,integer key returns rect
+            return LoadRectHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___rects__setindex takes integer this,integer key,rect value returns nothing
-            call SaveRectHandle(Table___ht, this, key, value)
+        function s__Table__rects__setindex takes integer this,integer key,rect value returns nothing
+            call SaveRectHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___rects_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__rects_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___rects_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__rects_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Rect", "rect")
 //textmacro instance: NEW_ARRAY("BooleanExpr", "boolexpr")
-        function s__Table___boolexprs__getindex takes integer this,integer key returns boolexpr
-            return LoadBooleanExprHandle(Table___ht, this, key)
+        function s__Table__boolexprs__getindex takes integer this,integer key returns boolexpr
+            return LoadBooleanExprHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___boolexprs__setindex takes integer this,integer key,boolexpr value returns nothing
-            call SaveBooleanExprHandle(Table___ht, this, key, value)
+        function s__Table__boolexprs__setindex takes integer this,integer key,boolexpr value returns nothing
+            call SaveBooleanExprHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___boolexprs_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__boolexprs_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___boolexprs_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__boolexprs_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("BooleanExpr", "boolexpr")
 //textmacro instance: NEW_ARRAY("Sound", "sound")
-        function s__Table___sounds__getindex takes integer this,integer key returns sound
-            return LoadSoundHandle(Table___ht, this, key)
+        function s__Table__sounds__getindex takes integer this,integer key returns sound
+            return LoadSoundHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___sounds__setindex takes integer this,integer key,sound value returns nothing
-            call SaveSoundHandle(Table___ht, this, key, value)
+        function s__Table__sounds__setindex takes integer this,integer key,sound value returns nothing
+            call SaveSoundHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___sounds_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__sounds_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___sounds_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__sounds_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Sound", "sound")
 //textmacro instance: NEW_ARRAY("Effect", "effect")
-        function s__Table___effects__getindex takes integer this,integer key returns effect
-            return LoadEffectHandle(Table___ht, this, key)
+        function s__Table__effects__getindex takes integer this,integer key returns effect
+            return LoadEffectHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___effects__setindex takes integer this,integer key,effect value returns nothing
-            call SaveEffectHandle(Table___ht, this, key, value)
+        function s__Table__effects__setindex takes integer this,integer key,effect value returns nothing
+            call SaveEffectHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___effects_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__effects_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___effects_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__effects_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Effect", "effect")
 //textmacro instance: NEW_ARRAY("UnitPool", "unitpool")
-        function s__Table___unitpools__getindex takes integer this,integer key returns unitpool
-            return LoadUnitPoolHandle(Table___ht, this, key)
+        function s__Table__unitpools__getindex takes integer this,integer key returns unitpool
+            return LoadUnitPoolHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___unitpools__setindex takes integer this,integer key,unitpool value returns nothing
-            call SaveUnitPoolHandle(Table___ht, this, key, value)
+        function s__Table__unitpools__setindex takes integer this,integer key,unitpool value returns nothing
+            call SaveUnitPoolHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___unitpools_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__unitpools_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___unitpools_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__unitpools_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("UnitPool", "unitpool")
 //textmacro instance: NEW_ARRAY("ItemPool", "itempool")
-        function s__Table___itempools__getindex takes integer this,integer key returns itempool
-            return LoadItemPoolHandle(Table___ht, this, key)
+        function s__Table__itempools__getindex takes integer this,integer key returns itempool
+            return LoadItemPoolHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___itempools__setindex takes integer this,integer key,itempool value returns nothing
-            call SaveItemPoolHandle(Table___ht, this, key, value)
+        function s__Table__itempools__setindex takes integer this,integer key,itempool value returns nothing
+            call SaveItemPoolHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___itempools_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__itempools_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___itempools_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__itempools_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("ItemPool", "itempool")
 //textmacro instance: NEW_ARRAY("Quest", "quest")
-        function s__Table___quests__getindex takes integer this,integer key returns quest
-            return LoadQuestHandle(Table___ht, this, key)
+        function s__Table__quests__getindex takes integer this,integer key returns quest
+            return LoadQuestHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___quests__setindex takes integer this,integer key,quest value returns nothing
-            call SaveQuestHandle(Table___ht, this, key, value)
+        function s__Table__quests__setindex takes integer this,integer key,quest value returns nothing
+            call SaveQuestHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___quests_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__quests_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___quests_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__quests_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Quest", "quest")
 //textmacro instance: NEW_ARRAY("QuestItem", "questitem")
-        function s__Table___questitems__getindex takes integer this,integer key returns questitem
-            return LoadQuestItemHandle(Table___ht, this, key)
+        function s__Table__questitems__getindex takes integer this,integer key returns questitem
+            return LoadQuestItemHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___questitems__setindex takes integer this,integer key,questitem value returns nothing
-            call SaveQuestItemHandle(Table___ht, this, key, value)
+        function s__Table__questitems__setindex takes integer this,integer key,questitem value returns nothing
+            call SaveQuestItemHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___questitems_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__questitems_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___questitems_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__questitems_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("QuestItem", "questitem")
 //textmacro instance: NEW_ARRAY("DefeatCondition", "defeatcondition")
-        function s__Table___defeatconditions__getindex takes integer this,integer key returns defeatcondition
-            return LoadDefeatConditionHandle(Table___ht, this, key)
+        function s__Table__defeatconditions__getindex takes integer this,integer key returns defeatcondition
+            return LoadDefeatConditionHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___defeatconditions__setindex takes integer this,integer key,defeatcondition value returns nothing
-            call SaveDefeatConditionHandle(Table___ht, this, key, value)
+        function s__Table__defeatconditions__setindex takes integer this,integer key,defeatcondition value returns nothing
+            call SaveDefeatConditionHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___defeatconditions_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__defeatconditions_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___defeatconditions_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__defeatconditions_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("DefeatCondition", "defeatcondition")
 //textmacro instance: NEW_ARRAY("TimerDialog", "timerdialog")
-        function s__Table___timerdialogs__getindex takes integer this,integer key returns timerdialog
-            return LoadTimerDialogHandle(Table___ht, this, key)
+        function s__Table__timerdialogs__getindex takes integer this,integer key returns timerdialog
+            return LoadTimerDialogHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___timerdialogs__setindex takes integer this,integer key,timerdialog value returns nothing
-            call SaveTimerDialogHandle(Table___ht, this, key, value)
+        function s__Table__timerdialogs__setindex takes integer this,integer key,timerdialog value returns nothing
+            call SaveTimerDialogHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___timerdialogs_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__timerdialogs_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___timerdialogs_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__timerdialogs_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("TimerDialog", "timerdialog")
 //textmacro instance: NEW_ARRAY("Leaderboard", "leaderboard")
-        function s__Table___leaderboards__getindex takes integer this,integer key returns leaderboard
-            return LoadLeaderboardHandle(Table___ht, this, key)
+        function s__Table__leaderboards__getindex takes integer this,integer key returns leaderboard
+            return LoadLeaderboardHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___leaderboards__setindex takes integer this,integer key,leaderboard value returns nothing
-            call SaveLeaderboardHandle(Table___ht, this, key, value)
+        function s__Table__leaderboards__setindex takes integer this,integer key,leaderboard value returns nothing
+            call SaveLeaderboardHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___leaderboards_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__leaderboards_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___leaderboards_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__leaderboards_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Leaderboard", "leaderboard")
 //textmacro instance: NEW_ARRAY("Multiboard", "multiboard")
-        function s__Table___multiboards__getindex takes integer this,integer key returns multiboard
-            return LoadMultiboardHandle(Table___ht, this, key)
+        function s__Table__multiboards__getindex takes integer this,integer key returns multiboard
+            return LoadMultiboardHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___multiboards__setindex takes integer this,integer key,multiboard value returns nothing
-            call SaveMultiboardHandle(Table___ht, this, key, value)
+        function s__Table__multiboards__setindex takes integer this,integer key,multiboard value returns nothing
+            call SaveMultiboardHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___multiboards_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__multiboards_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___multiboards_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__multiboards_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Multiboard", "multiboard")
 //textmacro instance: NEW_ARRAY("MultiboardItem", "multiboarditem")
-        function s__Table___multiboarditems__getindex takes integer this,integer key returns multiboarditem
-            return LoadMultiboardItemHandle(Table___ht, this, key)
+        function s__Table__multiboarditems__getindex takes integer this,integer key returns multiboarditem
+            return LoadMultiboardItemHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___multiboarditems__setindex takes integer this,integer key,multiboarditem value returns nothing
-            call SaveMultiboardItemHandle(Table___ht, this, key, value)
+        function s__Table__multiboarditems__setindex takes integer this,integer key,multiboarditem value returns nothing
+            call SaveMultiboardItemHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___multiboarditems_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__multiboarditems_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___multiboarditems_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__multiboarditems_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("MultiboardItem", "multiboarditem")
 //textmacro instance: NEW_ARRAY("Trackable", "trackable")
-        function s__Table___trackables__getindex takes integer this,integer key returns trackable
-            return LoadTrackableHandle(Table___ht, this, key)
+        function s__Table__trackables__getindex takes integer this,integer key returns trackable
+            return LoadTrackableHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___trackables__setindex takes integer this,integer key,trackable value returns nothing
-            call SaveTrackableHandle(Table___ht, this, key, value)
+        function s__Table__trackables__setindex takes integer this,integer key,trackable value returns nothing
+            call SaveTrackableHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___trackables_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__trackables_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___trackables_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__trackables_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Trackable", "trackable")
 //textmacro instance: NEW_ARRAY("Dialog", "dialog")
-        function s__Table___dialogs__getindex takes integer this,integer key returns dialog
-            return LoadDialogHandle(Table___ht, this, key)
+        function s__Table__dialogs__getindex takes integer this,integer key returns dialog
+            return LoadDialogHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___dialogs__setindex takes integer this,integer key,dialog value returns nothing
-            call SaveDialogHandle(Table___ht, this, key, value)
+        function s__Table__dialogs__setindex takes integer this,integer key,dialog value returns nothing
+            call SaveDialogHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___dialogs_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__dialogs_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___dialogs_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__dialogs_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Dialog", "dialog")
 //textmacro instance: NEW_ARRAY("Button", "button")
-        function s__Table___buttons__getindex takes integer this,integer key returns button
-            return LoadButtonHandle(Table___ht, this, key)
+        function s__Table__buttons__getindex takes integer this,integer key returns button
+            return LoadButtonHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___buttons__setindex takes integer this,integer key,button value returns nothing
-            call SaveButtonHandle(Table___ht, this, key, value)
+        function s__Table__buttons__setindex takes integer this,integer key,button value returns nothing
+            call SaveButtonHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___buttons_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__buttons_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___buttons_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__buttons_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Button", "button")
 //textmacro instance: NEW_ARRAY("TextTag", "texttag")
-        function s__Table___texttags__getindex takes integer this,integer key returns texttag
-            return LoadTextTagHandle(Table___ht, this, key)
+        function s__Table__texttags__getindex takes integer this,integer key returns texttag
+            return LoadTextTagHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___texttags__setindex takes integer this,integer key,texttag value returns nothing
-            call SaveTextTagHandle(Table___ht, this, key, value)
+        function s__Table__texttags__setindex takes integer this,integer key,texttag value returns nothing
+            call SaveTextTagHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___texttags_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__texttags_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___texttags_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__texttags_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("TextTag", "texttag")
 //textmacro instance: NEW_ARRAY("Lightning", "lightning")
-        function s__Table___lightnings__getindex takes integer this,integer key returns lightning
-            return LoadLightningHandle(Table___ht, this, key)
+        function s__Table__lightnings__getindex takes integer this,integer key returns lightning
+            return LoadLightningHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___lightnings__setindex takes integer this,integer key,lightning value returns nothing
-            call SaveLightningHandle(Table___ht, this, key, value)
+        function s__Table__lightnings__setindex takes integer this,integer key,lightning value returns nothing
+            call SaveLightningHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___lightnings_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__lightnings_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___lightnings_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__lightnings_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Lightning", "lightning")
 //textmacro instance: NEW_ARRAY("Image", "image")
-        function s__Table___images__getindex takes integer this,integer key returns image
-            return LoadImageHandle(Table___ht, this, key)
+        function s__Table__images__getindex takes integer this,integer key returns image
+            return LoadImageHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___images__setindex takes integer this,integer key,image value returns nothing
-            call SaveImageHandle(Table___ht, this, key, value)
+        function s__Table__images__setindex takes integer this,integer key,image value returns nothing
+            call SaveImageHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___images_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__images_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___images_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__images_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Image", "image")
 //textmacro instance: NEW_ARRAY("Ubersplat", "ubersplat")
-        function s__Table___ubersplats__getindex takes integer this,integer key returns ubersplat
-            return LoadUbersplatHandle(Table___ht, this, key)
+        function s__Table__ubersplats__getindex takes integer this,integer key returns ubersplat
+            return LoadUbersplatHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___ubersplats__setindex takes integer this,integer key,ubersplat value returns nothing
-            call SaveUbersplatHandle(Table___ht, this, key, value)
+        function s__Table__ubersplats__setindex takes integer this,integer key,ubersplat value returns nothing
+            call SaveUbersplatHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___ubersplats_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__ubersplats_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___ubersplats_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__ubersplats_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Ubersplat", "ubersplat")
 //textmacro instance: NEW_ARRAY("Region", "region")
-        function s__Table___regions__getindex takes integer this,integer key returns region
-            return LoadRegionHandle(Table___ht, this, key)
+        function s__Table__regions__getindex takes integer this,integer key returns region
+            return LoadRegionHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___regions__setindex takes integer this,integer key,region value returns nothing
-            call SaveRegionHandle(Table___ht, this, key, value)
+        function s__Table__regions__setindex takes integer this,integer key,region value returns nothing
+            call SaveRegionHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___regions_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__regions_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___regions_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__regions_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Region", "region")
 //textmacro instance: NEW_ARRAY("FogState", "fogstate")
-        function s__Table___fogstates__getindex takes integer this,integer key returns fogstate
-            return LoadFogStateHandle(Table___ht, this, key)
+        function s__Table__fogstates__getindex takes integer this,integer key returns fogstate
+            return LoadFogStateHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___fogstates__setindex takes integer this,integer key,fogstate value returns nothing
-            call SaveFogStateHandle(Table___ht, this, key, value)
+        function s__Table__fogstates__setindex takes integer this,integer key,fogstate value returns nothing
+            call SaveFogStateHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___fogstates_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__fogstates_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___fogstates_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__fogstates_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("FogState", "fogstate")
 //textmacro instance: NEW_ARRAY("FogModifier", "fogmodifier")
-        function s__Table___fogmodifiers__getindex takes integer this,integer key returns fogmodifier
-            return LoadFogModifierHandle(Table___ht, this, key)
+        function s__Table__fogmodifiers__getindex takes integer this,integer key returns fogmodifier
+            return LoadFogModifierHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___fogmodifiers__setindex takes integer this,integer key,fogmodifier value returns nothing
-            call SaveFogModifierHandle(Table___ht, this, key, value)
+        function s__Table__fogmodifiers__setindex takes integer this,integer key,fogmodifier value returns nothing
+            call SaveFogModifierHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___fogmodifiers_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__fogmodifiers_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___fogmodifiers_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__fogmodifiers_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("FogModifier", "fogmodifier")
 //textmacro instance: NEW_ARRAY("Hashtable", "hashtable")
-        function s__Table___hashtables__getindex takes integer this,integer key returns hashtable
-            return LoadHashtableHandle(Table___ht, this, key)
+        function s__Table__hashtables__getindex takes integer this,integer key returns hashtable
+            return LoadHashtableHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___hashtables__setindex takes integer this,integer key,hashtable value returns nothing
-            call SaveHashtableHandle(Table___ht, this, key, value)
+        function s__Table__hashtables__setindex takes integer this,integer key,hashtable value returns nothing
+            call SaveHashtableHandle(Table__ht, this, key, value)
         endfunction
 
-        function s__Table___hashtables_has takes integer this,integer key returns boolean
-            return HaveSavedHandle(Table___ht, this, key)
+        function s__Table__hashtables_has takes integer this,integer key returns boolean
+            return HaveSavedHandle(Table__ht, this, key)
         endfunction
 
-        function s__Table___hashtables_remove takes integer this,integer key returns nothing
-            call RemoveSavedHandle(Table___ht, this, key)
+        function s__Table__hashtables_remove takes integer this,integer key returns nothing
+            call RemoveSavedHandle(Table__ht, this, key)
         endfunction
 
 //end of: NEW_ARRAY("Hashtable", "hashtable")
    
     
         // Implement modules for intuitive syntax (tb.handle; tb.unit; etc.)
-//Implemented from module Table___realm:
+//Implemented from module Table__realm:
         function s__Table__get_real takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___integerm:
+//Implemented from module Table__integerm:
         function s__Table__get_integer takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___booleanm:
+//Implemented from module Table__booleanm:
         function s__Table__get_boolean takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___stringm:
+//Implemented from module Table__stringm:
         function s__Table__get_string takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___playerm:
+//Implemented from module Table__playerm:
         function s__Table__get_player takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___widgetm:
+//Implemented from module Table__widgetm:
         function s__Table__get_widget takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___destructablem:
+//Implemented from module Table__destructablem:
         function s__Table__get_destructable takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___itemm:
+//Implemented from module Table__itemm:
         function s__Table__get_item takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___unitm:
+//Implemented from module Table__unitm:
         function s__Table__get_unit takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___abilitym:
+//Implemented from module Table__abilitym:
         function s__Table__get_ability takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___timerm:
+//Implemented from module Table__timerm:
         function s__Table__get_timer takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___triggerm:
+//Implemented from module Table__triggerm:
         function s__Table__get_trigger takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___triggerconditionm:
+//Implemented from module Table__triggerconditionm:
         function s__Table__get_triggercondition takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___triggeractionm:
+//Implemented from module Table__triggeractionm:
         function s__Table__get_triggeraction takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___eventm:
+//Implemented from module Table__eventm:
         function s__Table__get_event takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___forcem:
+//Implemented from module Table__forcem:
         function s__Table__get_force takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___groupm:
+//Implemented from module Table__groupm:
         function s__Table__get_group takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___locationm:
+//Implemented from module Table__locationm:
         function s__Table__get_location takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___rectm:
+//Implemented from module Table__rectm:
         function s__Table__get_rect takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___boolexprm:
+//Implemented from module Table__boolexprm:
         function s__Table__get_boolexpr takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___soundm:
+//Implemented from module Table__soundm:
         function s__Table__get_sound takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___effectm:
+//Implemented from module Table__effectm:
         function s__Table__get_effect takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___unitpoolm:
+//Implemented from module Table__unitpoolm:
         function s__Table__get_unitpool takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___itempoolm:
+//Implemented from module Table__itempoolm:
         function s__Table__get_itempool takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___questm:
+//Implemented from module Table__questm:
         function s__Table__get_quest takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___questitemm:
+//Implemented from module Table__questitemm:
         function s__Table__get_questitem takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___defeatconditionm:
+//Implemented from module Table__defeatconditionm:
         function s__Table__get_defeatcondition takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___timerdialogm:
+//Implemented from module Table__timerdialogm:
         function s__Table__get_timerdialog takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___leaderboardm:
+//Implemented from module Table__leaderboardm:
         function s__Table__get_leaderboard takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___multiboardm:
+//Implemented from module Table__multiboardm:
         function s__Table__get_multiboard takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___multiboarditemm:
+//Implemented from module Table__multiboarditemm:
         function s__Table__get_multiboarditem takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___trackablem:
+//Implemented from module Table__trackablem:
         function s__Table__get_trackable takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___dialogm:
+//Implemented from module Table__dialogm:
         function s__Table__get_dialog takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___buttonm:
+//Implemented from module Table__buttonm:
         function s__Table__get_button takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___texttagm:
+//Implemented from module Table__texttagm:
         function s__Table__get_texttag takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___lightningm:
+//Implemented from module Table__lightningm:
         function s__Table__get_lightning takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___imagem:
+//Implemented from module Table__imagem:
         function s__Table__get_image takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___ubersplatm:
+//Implemented from module Table__ubersplatm:
         function s__Table__get_ubersplat takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___regionm:
+//Implemented from module Table__regionm:
         function s__Table__get_region takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___fogstatem:
+//Implemented from module Table__fogstatem:
         function s__Table__get_fogstate takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___fogmodifierm:
+//Implemented from module Table__fogmodifierm:
         function s__Table__get_fogmodifier takes integer this returns integer
             return this
         endfunction
-//Implemented from module Table___hashtablem:
+//Implemented from module Table__hashtablem:
         function s__Table__get_hashtable takes integer this returns integer
             return this
         endfunction
@@ -2287,42 +2303,42 @@ endfunction
     
         //set this = tb[GetSpellAbilityId()]
         function s__Table__getindex takes integer this,integer key returns integer
-            return LoadInteger(Table___ht, this, key) //return this.integer[key]
+            return LoadInteger(Table__ht, this, key) //return this.integer[key]
         endfunction
     
         //set tb[389034] = 8192
         function s__Table__setindex takes integer this,integer key,integer tb returns nothing
-            call SaveInteger(Table___ht, this, key, tb) //set this.integer[key] = tb
+            call SaveInteger(Table__ht, this, key, tb) //set this.integer[key] = tb
         endfunction
     
         //set b = tb.has(2493223)
         function s__Table_has takes integer this,integer key returns boolean
-            return HaveSavedInteger(Table___ht, this, key) //return this.integer.has(key)
+            return HaveSavedInteger(Table__ht, this, key) //return this.integer.has(key)
         endfunction
     
         //call tb.remove(294080)
         function s__Table_remove takes integer this,integer key returns nothing
-            call RemoveSavedInteger(Table___ht, this, key) //call this.integer.remove(key)
+            call RemoveSavedInteger(Table__ht, this, key) //call this.integer.remove(key)
         endfunction
     
         //Remove all data from a Table instance
         function s__Table_flush takes integer this returns nothing
-            call FlushChildHashtable(Table___ht, this)
+            call FlushChildHashtable(Table__ht, this)
         endfunction
     
         //local Table tb = Table.create()
         function s__Table_create takes nothing returns integer
-            local integer this= s__Table__getindex(s__Table___dex__get_list(),0)
+            local integer this= s__Table__getindex(s__Table__dex__get_list(),0)
         
             if this == 0 then
-                set this=Table___more + 1
-                set Table___more=this
+                set this=Table__more + 1
+                set Table__more=this
             else
-                call s__Table__setindex(s__Table___dex__get_list(),0, s__Table__getindex(s__Table___dex__get_list(),this))
-                call s__Table_remove(s__Table___dex__get_list(),this) //Clear hashed memory
+                call s__Table__setindex(s__Table__dex__get_list(),0, s__Table__getindex(s__Table__dex__get_list(),this))
+                call s__Table_remove(s__Table__dex__get_list(),this) //Clear hashed memory
             endif
         
-             call s__Table__setindex(s__Table___dex__get_list(),this, - 1)
+             call s__Table__setindex(s__Table__dex__get_list(),this, - 1)
             return this
         endfunction
     
@@ -2331,15 +2347,15 @@ endfunction
         //     call tb.destroy()
         //
         function s__Table_destroy takes integer this returns nothing
-             if s__Table__getindex(s__Table___dex__get_list(),this) != - 1 then
+             if s__Table__getindex(s__Table__dex__get_list(),this) != - 1 then
                  call BJDebugMsg("Table Error: Tried to double-free instance: " + I2S(this))
                  return
              endif
         
             call s__Table_flush(this)
         
-            call s__Table__setindex(s__Table___dex__get_list(),this, s__Table__getindex(s__Table___dex__get_list(),0))
-            call s__Table__setindex(s__Table___dex__get_list(),0, this)
+            call s__Table__setindex(s__Table__dex__get_list(),this, s__Table__getindex(s__Table__dex__get_list(),0))
+            call s__Table__setindex(s__Table__dex__get_list(),0, this)
         endfunction
     
 //ignored textmacro command: TABLE_BC_METHODS()
@@ -2352,7 +2368,7 @@ endfunction
         //    local TableArray ta = TableArray[array_size]
         //
         function s__TableArray__staticgetindex takes integer array_size returns integer
-            local integer tb= s__Table__getindex(s__Table___dex__get_size(),array_size)
+            local integer tb= s__Table__getindex(s__Table__dex__get_size(),array_size)
             local integer this= s__Table__getindex(tb,0)
         
              if array_size <= 0 then
@@ -2361,20 +2377,20 @@ endfunction
              endif
         
             if this == 0 then
-                set this=Table___less - array_size
-                set Table___less=this
+                set this=Table__less - array_size
+                set Table__less=this
             else
                 call s__Table__setindex(tb,0, s__Table__getindex(tb,this)) //Set the last destroyed to the last-last destroyed
                 call s__Table_remove(tb,this) //Clear hashed memory
             endif
         
-            call s__Table__setindex(s__Table___dex__get_size(),this, array_size) //This remembers the array size
+            call s__Table__setindex(s__Table__dex__get_size(),this, array_size) //This remembers the array size
             return this
         endfunction
     
         //Returns the size of the TableArray
         function s__TableArray__get_size takes integer this returns integer
-            return s__Table__getindex(s__Table___dex__get_size(),this)
+            return s__Table__getindex(s__Table__dex__get_size(),this)
         endfunction
     
         //This magic method enables two-dimensional[array][syntax] for Tables,
@@ -2406,7 +2422,7 @@ endfunction
         //need to (ie. if you were flushing all child-keys as you used them).
         //
         function s__TableArray_destroy takes integer this returns nothing
-            local integer tb= s__Table__getindex(s__Table___dex__get_size(),s__TableArray__get_size(this))
+            local integer tb= s__Table__getindex(s__Table__dex__get_size(),s__TableArray__get_size(this))
         
              if s__TableArray__get_size(this) == 0 then
                  call BJDebugMsg("TypeError: Tried to destroy an invalid TableArray: " + I2S(this))
@@ -2416,10 +2432,10 @@ endfunction
             if tb == 0 then
                 //Create a Table to index recycled instances with their array size
                 set tb=s__Table_create()
-                call s__Table__setindex(s__Table___dex__get_size(),s__TableArray__get_size(this), tb)
+                call s__Table__setindex(s__Table__dex__get_size(),s__TableArray__get_size(this), tb)
             endif
         
-            call s__Table_remove(s__Table___dex__get_size(),this) //Clear the array size from hash memory
+            call s__Table_remove(s__Table__dex__get_size(),this) //Clear the array size from hash memory
         
             call s__Table__setindex(tb,this, s__Table__getindex(tb,0))
             call s__Table__setindex(tb,0, this)
@@ -2511,23 +2527,23 @@ endfunction
         endfunction
 
         function s__Playerdb__getindex takes integer this,player p returns integer
-            return s__MIXLib___dbarr[GetPlayerId(p)]
+            return s__MIXLib__dbarr[GetPlayerId(p)]
         endfunction
 
-    function MIXLib___fill_dbarr takes nothing returns nothing
+    function MIXLib__fill_dbarr takes nothing returns nothing
         set pdb=s__Playerdb__allocate()
-        set s__MIXLib___dbarr[0]= s__DB_create(Player(0x00))
-        set s__MIXLib___dbarr[1]= s__DB_create(Player(0x01))
-        set s__MIXLib___dbarr[2]= s__DB_create(Player(0x02))
-        set s__MIXLib___dbarr[3]= s__DB_create(Player(0x03))
-        set s__MIXLib___dbarr[4]= s__DB_create(Player(0x04))
-        set s__MIXLib___dbarr[5]= s__DB_create(Player(0x05))
-        set s__MIXLib___dbarr[6]= s__DB_create(Player(0x06))
-        set s__MIXLib___dbarr[7]= s__DB_create(Player(0x07))
+        set s__MIXLib__dbarr[0]= s__DB_create(Player(0x00))
+        set s__MIXLib__dbarr[1]= s__DB_create(Player(0x01))
+        set s__MIXLib__dbarr[2]= s__DB_create(Player(0x02))
+        set s__MIXLib__dbarr[3]= s__DB_create(Player(0x03))
+        set s__MIXLib__dbarr[4]= s__DB_create(Player(0x04))
+        set s__MIXLib__dbarr[5]= s__DB_create(Player(0x05))
+        set s__MIXLib__dbarr[6]= s__DB_create(Player(0x06))
+        set s__MIXLib__dbarr[7]= s__DB_create(Player(0x07))
     endfunction
 
-    function MIXLib___MIXLibInit takes nothing returns nothing
-        call MIXLib___fill_dbarr()
+    function MIXLib__MIXLibInit takes nothing returns nothing
+        call MIXLib__fill_dbarr()
     endfunction
 
 //library MIXLib ends
@@ -2539,27 +2555,27 @@ endfunction
 //#         else
 //#             static hashtable table = InitHashtable()
 //#         endif
-//Implemented from module RegisterNativeEvent___NativeEventInit:
-        function s__RegisterNativeEvent___NativeEvent_RegisterNativeEvent___NativeEventInit___onInit takes nothing returns nothing
+//Implemented from module RegisterNativeEvent__NativeEventInit:
+        function s__RegisterNativeEvent__NativeEvent_RegisterNativeEvent__NativeEventInit__onInit takes nothing returns nothing
 //#             static if LIBRARY_Table then
-                    set s__RegisterNativeEvent___NativeEvent_table=s__TableArray__staticgetindex(0x2000)
+                    set s__RegisterNativeEvent__NativeEvent_table=s__TableArray__staticgetindex(0x2000)
 //#             endif
         endfunction
 
     function IsNativeEventRegistered takes integer whichIndex,integer whichEvent returns boolean
 //#         static if LIBRARY_Table then
-                return s__Table___triggers_has(s__Table__get_trigger(s__TableArray__getindex(s__RegisterNativeEvent___NativeEvent_table,whichEvent)),whichIndex)
+                return s__Table__triggers_has(s__Table__get_trigger(s__TableArray__getindex(s__RegisterNativeEvent__NativeEvent_table,whichEvent)),whichIndex)
 //#         else
-//#             return HaveSavedHandle(RegisterNativeEvent___NativeEvent.table, whichEvent, whichIndex)
+//#             return HaveSavedHandle(RegisterNativeEvent__NativeEvent.table, whichEvent, whichIndex)
 //#         endif
     endfunction
 
     function RegisterNativeEventTrigger takes integer whichIndex,integer whichEvent returns boolean
         if not IsNativeEventRegistered(whichIndex , whichEvent) then
 //#             static if LIBRARY_Table then
-                    call s__Table___triggers__setindex(s__Table__get_trigger(s__TableArray__getindex(s__RegisterNativeEvent___NativeEvent_table,whichEvent)),whichIndex, CreateTrigger())
+                    call s__Table__triggers__setindex(s__Table__get_trigger(s__TableArray__getindex(s__RegisterNativeEvent__NativeEvent_table,whichEvent)),whichIndex, CreateTrigger())
 //#             else
-//#                 call SaveTriggerHandle(RegisterNativeEvent___NativeEvent.table, whichEvent, whichIndex, CreateTrigger())
+//#                 call SaveTriggerHandle(RegisterNativeEvent__NativeEvent.table, whichEvent, whichIndex, CreateTrigger())
 //#             endif
             return true
         endif
@@ -2568,9 +2584,9 @@ endfunction
 
     function GetIndexNativeEventTrigger takes integer whichIndex,integer whichEvent returns trigger
 //#         static if LIBRARY_Table then
-                return s__Table___triggers__getindex(s__Table__get_trigger(s__TableArray__getindex(s__RegisterNativeEvent___NativeEvent_table,whichEvent)),whichIndex)
+                return s__Table__triggers__getindex(s__Table__get_trigger(s__TableArray__getindex(s__RegisterNativeEvent__NativeEvent_table,whichEvent)),whichIndex)
 //#         else
-//#             return LoadTriggerHandle(RegisterNativeEvent___NativeEvent.table, whichEvent, whichIndex)
+//#             return LoadTriggerHandle(RegisterNativeEvent__NativeEvent.table, whichEvent, whichIndex)
 //#         endif
     endfunction
 
@@ -2579,9 +2595,9 @@ endfunction
     endfunction
 
     function CreateNativeEvent takes nothing returns integer
-        local integer eventId= RegisterNativeEvent___eventIndex
+        local integer eventId= RegisterNativeEvent__eventIndex
         call RegisterNativeEventTrigger(bj_MAX_PLAYER_SLOTS , eventId)
-        set RegisterNativeEvent___eventIndex=RegisterNativeEvent___eventIndex + 1
+        set RegisterNativeEvent__eventIndex=RegisterNativeEvent__eventIndex + 1
         return eventId
     endfunction
 
@@ -2647,15 +2663,15 @@ endfunction
 
 
     
-//#     static if UnitRecycler___AUTO_RECYCLE_DEAD then
-            function UnitRecycler___DeathTime takes unit u returns real
+//#     static if UnitRecycler__AUTO_RECYCLE_DEAD then
+            function UnitRecycler__DeathTime takes unit u returns real
                 
                 return 8.00
             endfunction
 //#     endif
 
     // Filters units allowed for recycling
-    function UnitRecycler___UnitTypeFilter takes unit u returns boolean
+    function UnitRecycler__UnitTypeFilter takes unit u returns boolean
         return not IsUnitIllusion(u) and not IsUnitType(u, UNIT_TYPE_SUMMONED)
     endfunction
 
@@ -2670,39 +2686,39 @@ endfunction
 
 
 
-        constant function s__UnitRecycler___List__get_head takes nothing returns integer
+        constant function s__UnitRecycler__List__get_head takes nothing returns integer
             return 0
         endfunction
 
-        function s__UnitRecycler___List_stockUnit takes integer this,unit u returns nothing
-            local integer node= s__UnitRecycler___List_recycler[s__UnitRecycler___List__get_head()]
-            local integer last= s__UnitRecycler___List_prev[this]
-            set s__UnitRecycler___List_recycler[s__UnitRecycler___List__get_head()]=s__UnitRecycler___List_recycler[node]
-            set s__UnitRecycler___List_prev[this]=node
-            set s__UnitRecycler___List_next[last]=node
-            set s__UnitRecycler___List_prev[node]=last
-            set s__UnitRecycler___List_next[node]=this
-            set s__UnitRecycler___List_unit[node]=u
+        function s__UnitRecycler__List_stockUnit takes integer this,unit u returns nothing
+            local integer node= s__UnitRecycler__List_recycler[s__UnitRecycler__List__get_head()]
+            local integer last= s__UnitRecycler__List_prev[this]
+            set s__UnitRecycler__List_recycler[s__UnitRecycler__List__get_head()]=s__UnitRecycler__List_recycler[node]
+            set s__UnitRecycler__List_prev[this]=node
+            set s__UnitRecycler__List_next[last]=node
+            set s__UnitRecycler__List_prev[node]=last
+            set s__UnitRecycler__List_next[node]=this
+            set s__UnitRecycler__List_unit[node]=u
             call PauseUnit(u, true)
-            call SetUnitX(u, UnitRecycler___unitCampX)
-            call SetUnitY(u, UnitRecycler___unitCampY)
-             call s__Table___booleans__setindex(s__Table__get_boolean(s__UnitRecycler___List_stocked),GetHandleId(u), true)
+            call SetUnitX(u, UnitRecycler__unitCampX)
+            call SetUnitY(u, UnitRecycler__unitCampY)
+             call s__Table__booleans__setindex(s__Table__get_boolean(s__UnitRecycler__List_stocked),GetHandleId(u), true)
         endfunction
 
-        function s__UnitRecycler___List_addUnit takes integer this,unit u,real angle returns boolean
-            if u != null and not IsUnitType(u, UNIT_TYPE_HERO) and UnitRecycler___UnitTypeFilter(u) then
+        function s__UnitRecycler__List_addUnit takes integer this,unit u,real angle returns boolean
+            if u != null and not IsUnitType(u, UNIT_TYPE_HERO) and UnitRecycler__UnitTypeFilter(u) then
                 if not UnitAlive(u) and not ReviveUnit(u) then
 //#                     static if LIBRARY_ErrorMessage then
-                             call ThrowWarning(true , "UnitRecycler" , "addUnit()" , "UnitRecycler___List" , GetHandleId(u) , "Unable to recycle unit: Unable to revive dead unit")
+                             call ThrowWarning(true , "UnitRecycler" , "addUnit()" , "UnitRecycler__List" , GetHandleId(u) , "Unable to recycle unit: Unable to revive dead unit")
 //#                     endif
                     return false
                 endif
-                call s__UnitRecycler___List_stockUnit(this,u)
+                call s__UnitRecycler__List_stockUnit(this,u)
                 call SetUnitFacing(u, angle)
-                call SetUnitOwner(u, UnitRecycler___OWNER, true)
+                call SetUnitOwner(u, UnitRecycler__OWNER, true)
                 call SetWidgetLife(u, GetUnitState(u, UNIT_STATE_MAX_LIFE))
                 call SetUnitState(u, UNIT_STATE_MANA, GetUnitState(u, UNIT_STATE_MAX_MANA))
-//Implemented from module UnitRecycler___UnitRecyclerResets:
+//Implemented from module UnitRecycler__UnitRecyclerResets:
         call SetUnitScale(u, 1, 0, 0)
         call SetUnitVertexColor(u, 255, 255, 255, 255)
         call SetUnitFlyHeight(u, GetUnitDefaultFlyHeight(u), 0)
@@ -2711,95 +2727,95 @@ endfunction
             return false
         endfunction
 
-        function s__UnitRecycler___List_getUnit takes integer this,player owner,integer id,real x,real y,real angle returns unit
+        function s__UnitRecycler__List_getUnit takes integer this,player owner,integer id,real x,real y,real angle returns unit
             local integer first
             local integer next
             local real facing
             local real deltaAngle
             if not IsHeroUnitId(id) then
-                set first=s__UnitRecycler___List_next[this]
-                set deltaAngle=RAbsBJ(GetUnitFacing(s__UnitRecycler___List_unit[first]) - angle)
+                set first=s__UnitRecycler__List_next[this]
+                set deltaAngle=RAbsBJ(GetUnitFacing(s__UnitRecycler__List_unit[first]) - angle)
                 if deltaAngle > 180.00 then
                     set deltaAngle=360.00 - deltaAngle
                 endif
-                if first == this or deltaAngle > UnitRecycler___HALF_INTERVAL then
+                if first == this or deltaAngle > UnitRecycler__HALF_INTERVAL then
                     set bj_lastCreatedUnit=CreateUnit(owner, id, x, y, angle)
                 else
-                    set bj_lastCreatedUnit=s__UnitRecycler___List_unit[first]
-                    set s__UnitRecycler___List_unit[first]=null
-                    set next=s__UnitRecycler___List_next[first]
-                    set s__UnitRecycler___List_prev[next]=this
-                    set s__UnitRecycler___List_next[this]=next
+                    set bj_lastCreatedUnit=s__UnitRecycler__List_unit[first]
+                    set s__UnitRecycler__List_unit[first]=null
+                    set next=s__UnitRecycler__List_next[first]
+                    set s__UnitRecycler__List_prev[next]=this
+                    set s__UnitRecycler__List_next[this]=next
                     call SetUnitOwner(bj_lastCreatedUnit, owner, true)
                     call SetUnitPosition(bj_lastCreatedUnit, x, y)
                     call SetUnitFacing(bj_lastCreatedUnit, angle)
                     call PauseUnit(bj_lastCreatedUnit, false)
-                     call s__Table___booleans_remove(s__Table__get_boolean(s__UnitRecycler___List_stocked),GetHandleId(bj_lastCreatedUnit))
+                     call s__Table__booleans_remove(s__Table__get_boolean(s__UnitRecycler__List_stocked),GetHandleId(bj_lastCreatedUnit))
                 endif
                 return bj_lastCreatedUnit
             endif
             return null
         endfunction
 
-        function s__UnitRecycler___List_init takes nothing returns nothing
+        function s__UnitRecycler__List_init takes nothing returns nothing
             local integer this= 0
-            set s__UnitRecycler___List_recycler[(8190)]=0
+            set s__UnitRecycler__List_recycler[(8190)]=0
             loop
-                set s__UnitRecycler___List_recycler[this]=this + 1
+                set s__UnitRecycler__List_recycler[this]=this + 1
                 set this=this + 1
                 exitwhen this == 8190
             endloop
-             set s__UnitRecycler___List_stocked=s__Table_create()
+             set s__UnitRecycler__List_stocked=s__Table_create()
         endfunction
 
 
 
 
-        function s__UnitRecycler___UnitRecycler_getRawCodeId takes integer rawCode returns integer
-            local integer i= s__Table__getindex(s__UnitRecycler___UnitRecycler_rawCodeIdTable,rawCode)
+        function s__UnitRecycler__UnitRecycler_getRawCodeId takes integer rawCode returns integer
+            local integer i= s__Table__getindex(s__UnitRecycler__UnitRecycler_rawCodeIdTable,rawCode)
             if i == 0 then
-                set s__UnitRecycler___UnitRecycler_rawCodeCount=s__UnitRecycler___UnitRecycler_rawCodeCount + 1
-                call s__Table__setindex(s__UnitRecycler___UnitRecycler_rawCodeIdTable,rawCode, s__UnitRecycler___UnitRecycler_rawCodeCount)
-                set i=s__UnitRecycler___UnitRecycler_rawCodeCount
+                set s__UnitRecycler__UnitRecycler_rawCodeCount=s__UnitRecycler__UnitRecycler_rawCodeCount + 1
+                call s__Table__setindex(s__UnitRecycler__UnitRecycler_rawCodeIdTable,rawCode, s__UnitRecycler__UnitRecycler_rawCodeCount)
+                set i=s__UnitRecycler__UnitRecycler_rawCodeCount
             endif
             return i
         endfunction
 
-        function s__UnitRecycler___UnitRecycler_getHead takes integer id,integer index returns integer
-            local integer this= s__UnitRecycler___UnitRecycler_head[id * UnitRecycler___ANGLE_COUNT + index]
+        function s__UnitRecycler__UnitRecycler_getHead takes integer id,integer index returns integer
+            local integer this= s__UnitRecycler__UnitRecycler_head[id * UnitRecycler__ANGLE_COUNT + index]
             if this == 0 then
-                set this=s__UnitRecycler___List_recycler[s__UnitRecycler___List__get_head()]
-                set s__UnitRecycler___List_recycler[s__UnitRecycler___List__get_head()]=s__UnitRecycler___List_recycler[this]
-                set s__UnitRecycler___List_prev[this]=this
-                set s__UnitRecycler___List_next[this]=this
-                set s__UnitRecycler___UnitRecycler_head[id * UnitRecycler___ANGLE_COUNT + index]=this
+                set this=s__UnitRecycler__List_recycler[s__UnitRecycler__List__get_head()]
+                set s__UnitRecycler__List_recycler[s__UnitRecycler__List__get_head()]=s__UnitRecycler__List_recycler[this]
+                set s__UnitRecycler__List_prev[this]=this
+                set s__UnitRecycler__List_next[this]=this
+                set s__UnitRecycler__UnitRecycler_head[id * UnitRecycler__ANGLE_COUNT + index]=this
             endif
             return this
         endfunction
 
-        function s__UnitRecycler___UnitRecycler_getListIndex takes integer id returns integer
-            if s__UnitRecycler___UnitRecycler_stackSize[id] == 0 then
-                if s__UnitRecycler___UnitRecycler_position[id] < UnitRecycler___ANGLE_COUNT - 1 then
-                    set s__UnitRecycler___UnitRecycler_position[id]=s__UnitRecycler___UnitRecycler_position[id] + 1
-                    return s__UnitRecycler___UnitRecycler_position[id]
+        function s__UnitRecycler__UnitRecycler_getListIndex takes integer id returns integer
+            if s__UnitRecycler__UnitRecycler_stackSize[id] == 0 then
+                if s__UnitRecycler__UnitRecycler_position[id] < UnitRecycler__ANGLE_COUNT - 1 then
+                    set s__UnitRecycler__UnitRecycler_position[id]=s__UnitRecycler__UnitRecycler_position[id] + 1
+                    return s__UnitRecycler__UnitRecycler_position[id]
                 endif
-                set s__UnitRecycler___UnitRecycler_position[id]=0
+                set s__UnitRecycler__UnitRecycler_position[id]=0
                 return 0
             endif
-            set s__UnitRecycler___UnitRecycler_stackSize[id]=s__UnitRecycler___UnitRecycler_stackSize[id] - 1
-            return s__UnitRecycler___UnitRecycler_indexStack[id * UnitRecycler___ANGLE_COUNT + s__UnitRecycler___UnitRecycler_stackSize[id]]
+            set s__UnitRecycler__UnitRecycler_stackSize[id]=s__UnitRecycler__UnitRecycler_stackSize[id] - 1
+            return s__UnitRecycler__UnitRecycler_indexStack[id * UnitRecycler__ANGLE_COUNT + s__UnitRecycler__UnitRecycler_stackSize[id]]
         endfunction
 
-        function s__UnitRecycler___UnitRecycler_stock takes integer rawCode returns boolean
+        function s__UnitRecycler__UnitRecycler_stock takes integer rawCode returns boolean
             local integer id
             local integer index
             local unit u
             if not IsHeroUnitId(rawCode) then
-                set id=s__UnitRecycler___UnitRecycler_getRawCodeId(rawCode)
-                set index=s__UnitRecycler___UnitRecycler_getListIndex(id)
-                set u=CreateUnit(UnitRecycler___OWNER, rawCode, 0.00, 0.00, index * UnitRecycler___ANGLE_INTERVAL)
-                if u != null and not IsUnitType(u, UNIT_TYPE_HERO) and UnitRecycler___UnitTypeFilter(u) then
-                    call s__UnitRecycler___List_stockUnit(s__UnitRecycler___UnitRecycler_getHead(id , index),u)
+                set id=s__UnitRecycler__UnitRecycler_getRawCodeId(rawCode)
+                set index=s__UnitRecycler__UnitRecycler_getListIndex(id)
+                set u=CreateUnit(UnitRecycler__OWNER, rawCode, 0.00, 0.00, index * UnitRecycler__ANGLE_INTERVAL)
+                if u != null and not IsUnitType(u, UNIT_TYPE_HERO) and UnitRecycler__UnitTypeFilter(u) then
+                    call s__UnitRecycler__List_stockUnit(s__UnitRecycler__UnitRecycler_getHead(id , index),u)
                     set u=null
                     return true
                 endif
@@ -2807,60 +2823,60 @@ endfunction
             return false
         endfunction
 
-        function s__UnitRecycler___UnitRecycler_add takes unit u returns boolean
-            local integer id= s__UnitRecycler___UnitRecycler_getRawCodeId(GetUnitTypeId(u))
-            local integer index= s__UnitRecycler___UnitRecycler_getListIndex(id)
-            return s__UnitRecycler___List_addUnit(s__UnitRecycler___UnitRecycler_getHead(id , index),u , index * UnitRecycler___ANGLE_INTERVAL)
+        function s__UnitRecycler__UnitRecycler_add takes unit u returns boolean
+            local integer id= s__UnitRecycler__UnitRecycler_getRawCodeId(GetUnitTypeId(u))
+            local integer index= s__UnitRecycler__UnitRecycler_getListIndex(id)
+            return s__UnitRecycler__List_addUnit(s__UnitRecycler__UnitRecycler_getHead(id , index),u , index * UnitRecycler__ANGLE_INTERVAL)
         endfunction
 
-        function s__UnitRecycler___UnitRecycler_get takes player owner,integer rawCode,real x,real y,real angle returns unit
-            local integer id= s__UnitRecycler___UnitRecycler_getRawCodeId(rawCode)
-            local integer index= R2I(angle / UnitRecycler___ANGLE_INTERVAL)
-            if angle - UnitRecycler___ANGLE_INTERVAL * index > UnitRecycler___ANGLE_INTERVAL / 2.00 then
-                if index < UnitRecycler___ANGLE_COUNT - 1 then
+        function s__UnitRecycler__UnitRecycler_get takes player owner,integer rawCode,real x,real y,real angle returns unit
+            local integer id= s__UnitRecycler__UnitRecycler_getRawCodeId(rawCode)
+            local integer index= R2I(angle / UnitRecycler__ANGLE_INTERVAL)
+            if angle - UnitRecycler__ANGLE_INTERVAL * index > UnitRecycler__ANGLE_INTERVAL / 2.00 then
+                if index < UnitRecycler__ANGLE_COUNT - 1 then
                     set index=index + 1
                 else
                     set index=0
                 endif
             endif
-            set s__UnitRecycler___UnitRecycler_indexStack[id * UnitRecycler___ANGLE_COUNT + s__UnitRecycler___UnitRecycler_stackSize[id]]=index
-            set s__UnitRecycler___UnitRecycler_stackSize[id]=s__UnitRecycler___UnitRecycler_stackSize[id] + 1
-            return s__UnitRecycler___List_getUnit(s__UnitRecycler___UnitRecycler_getHead(id , index),owner , rawCode , x , y , angle)
+            set s__UnitRecycler__UnitRecycler_indexStack[id * UnitRecycler__ANGLE_COUNT + s__UnitRecycler__UnitRecycler_stackSize[id]]=index
+            set s__UnitRecycler__UnitRecycler_stackSize[id]=s__UnitRecycler__UnitRecycler_stackSize[id] + 1
+            return s__UnitRecycler__List_getUnit(s__UnitRecycler__UnitRecycler_getHead(id , index),owner , rawCode , x , y , angle)
         endfunction
 
-        function s__UnitRecycler___UnitRecycler_delayedRecycle takes nothing returns nothing
+        function s__UnitRecycler__UnitRecycler_delayedRecycle takes nothing returns nothing
             local timer t= GetExpiredTimer()
             local integer key= GetHandleId(t)
-            call s__UnitRecycler___UnitRecycler_add(s__Table___units__getindex(s__Table__get_unit(s__UnitRecycler___UnitRecycler_timerTable),key))
-            call s__Table___units_remove(s__Table__get_unit(s__UnitRecycler___UnitRecycler_timerTable),key)
+            call s__UnitRecycler__UnitRecycler_add(s__Table__units__getindex(s__Table__get_unit(s__UnitRecycler__UnitRecycler_timerTable),key))
+            call s__Table__units_remove(s__Table__get_unit(s__UnitRecycler__UnitRecycler_timerTable),key)
             call DestroyTimer(t)
             set t=null
         endfunction
-        function s__UnitRecycler___UnitRecycler_delayedRecycleEx takes nothing returns nothing
+        function s__UnitRecycler__UnitRecycler_delayedRecycleEx takes nothing returns nothing
             local timer t= GetExpiredTimer()
             local integer key= GetHandleId(t)
-            call s__UnitRecycler___UnitRecycler_add(s__Table___units__getindex(s__Table__get_unit(s__UnitRecycler___UnitRecycler_timerTable),key))
-            call s__Table___units_remove(s__Table__get_unit(s__UnitRecycler___UnitRecycler_timerTable),key)
+            call s__UnitRecycler__UnitRecycler_add(s__Table__units__getindex(s__Table__get_unit(s__UnitRecycler__UnitRecycler_timerTable),key))
+            call s__Table__units_remove(s__Table__get_unit(s__UnitRecycler__UnitRecycler_timerTable),key)
             call DestroyTimer(t)
             set t=null
         endfunction
 
-        function s__UnitRecycler___UnitRecycler_addDelayed takes unit u,real delay,code callback returns nothing
+        function s__UnitRecycler__UnitRecycler_addDelayed takes unit u,real delay,code callback returns nothing
             local timer t= CreateTimer()
-            call s__Table___units__setindex(s__Table__get_unit(s__UnitRecycler___UnitRecycler_timerTable),GetHandleId(t), u)
+            call s__Table__units__setindex(s__Table__get_unit(s__UnitRecycler__UnitRecycler_timerTable),GetHandleId(t), u)
             call TimerStart(t, delay, false, callback)
             set t=null
         endfunction
 
-        function s__UnitRecycler___UnitRecycler_init takes nothing returns nothing
+        function s__UnitRecycler__UnitRecycler_init takes nothing returns nothing
             local rect bounds= GetWorldBounds()
             // Hide recycled units at the top of the map beyond reach of the camera
-            set UnitRecycler___unitCampX=0.00
-            set UnitRecycler___unitCampY=GetRectMaxY(bounds) + 1000.00
+            set UnitRecycler__unitCampX=0.00
+            set UnitRecycler__unitCampY=GetRectMaxY(bounds) + 1000.00
             call RemoveRect(bounds)
             set bounds=null
-            set s__UnitRecycler___UnitRecycler_rawCodeIdTable=s__Table_create()
-            set s__UnitRecycler___UnitRecycler_timerTable=s__Table_create()
+            set s__UnitRecycler__UnitRecycler_rawCodeIdTable=s__Table_create()
+            set s__UnitRecycler__UnitRecycler_timerTable=s__Table_create()
         endfunction
 
 
@@ -2868,18 +2884,18 @@ endfunction
 
     function GetRecycledUnit takes player owner,integer rawCode,real x,real y,real facing returns unit
 //#         static if true and LIBRARY_ErrorMessage then
-                call s__UnitRecycler___UnitRecycler_get(owner , rawCode , x , y , facing)
+                call s__UnitRecycler__UnitRecycler_get(owner , rawCode , x , y , facing)
                 call ThrowError(bj_lastCreatedUnit == null , "UnitRecycler" , "GetRecycledUnit()" , "" , 0 , "Specified unit type does not exist")
                 call ThrowError(IsHeroUnitId(rawCode) , "UnitRecycler" , "GetRecycledUnit()" , GetUnitName(bj_lastCreatedUnit) , 0 , "Specified unit type is a hero")
                 return bj_lastCreatedUnit
 //#         else
-//#             return UnitRecycler___UnitRecycler.get(owner, rawCode, x, y, facing)
+//#             return UnitRecycler__UnitRecycler.get(owner, rawCode, x, y, facing)
 //#         endif
     endfunction
 
     function GetRecycledUnitEx takes player owner,integer rawCode,real x,real y,real facing returns unit
         if not IsHeroUnitId(rawCode) then
-            return s__UnitRecycler___UnitRecycler_get(owner , rawCode , x , y , facing)
+            return s__UnitRecycler__UnitRecycler_get(owner , rawCode , x , y , facing)
         endif
 //#         static if LIBRARY_ErrorMessage then
                  call ThrowWarning(true , "UnitRecycler" , "GetRecycledUnitEx()" , "" , 0 , "Cannot retrieve a hero unit, creating new unit")
@@ -2889,21 +2905,21 @@ endfunction
 
     function RecycleUnit takes unit u returns boolean
 //#         static if LIBRARY_ErrorMessage then
-                 call ThrowError(s__Table___booleans__getindex(s__Table__get_boolean(s__UnitRecycler___List_stocked),GetHandleId(u)) , "UnitRecycler" , "RecycleUnit()" , GetUnitName(u) , 0 , "Attempted to recycle an already recycled unit")
+                 call ThrowError(s__Table__booleans__getindex(s__Table__get_boolean(s__UnitRecycler__List_stocked),GetHandleId(u)) , "UnitRecycler" , "RecycleUnit()" , GetUnitName(u) , 0 , "Attempted to recycle an already recycled unit")
                  call ThrowWarning(u == null , "UnitRecycler" , "RecycleUnit()" , "" , 0 , "Attempted to recycle a null unit")
                  call ThrowWarning(IsHeroUnitId(GetUnitTypeId(u)) , "UnitRecycler" , "RecycleUnit()" , GetUnitName(u) , 0 , "Attempted to recycle a hero unit")
-                 call ThrowWarning(not UnitRecycler___UnitTypeFilter(u) , "UnitRecycler" , "RecycleUnit()" , GetUnitName(u) , 0 , "Attempted to recycle an invalid unit type")
+                 call ThrowWarning(not UnitRecycler__UnitTypeFilter(u) , "UnitRecycler" , "RecycleUnit()" , GetUnitName(u) , 0 , "Attempted to recycle an invalid unit type")
 //#         endif
-        return s__UnitRecycler___UnitRecycler_add(u)
+        return s__UnitRecycler__UnitRecycler_add(u)
     endfunction
 
     function RecycleUnitEx takes unit u returns boolean
 //#         static if LIBRARY_ErrorMessage then
-                 call ThrowError(s__Table___booleans__getindex(s__Table__get_boolean(s__UnitRecycler___List_stocked),GetHandleId(u)) , "UnitRecycler" , "RecycleUnitEx()" , GetUnitName(u) , 0 , "Attempted to recycle an already recycled unit")
+                 call ThrowError(s__Table__booleans__getindex(s__Table__get_boolean(s__UnitRecycler__List_stocked),GetHandleId(u)) , "UnitRecycler" , "RecycleUnitEx()" , GetUnitName(u) , 0 , "Attempted to recycle an already recycled unit")
                  call ThrowWarning(u == null , "UnitRecycler" , "RecycleUnitEx()" , "" , 0 , "Attempted to recycle a null unit")
-                 call ThrowWarning(not UnitRecycler___UnitTypeFilter(u) , "UnitRecycler" , "RecycleUnitEx()" , GetUnitName(u) , 0 , "Attempted to recycle an invalid unit type")
+                 call ThrowWarning(not UnitRecycler__UnitTypeFilter(u) , "UnitRecycler" , "RecycleUnitEx()" , GetUnitName(u) , 0 , "Attempted to recycle an invalid unit type")
 //#         endif
-        if not s__UnitRecycler___UnitRecycler_add(u) then
+        if not s__UnitRecycler__UnitRecycler_add(u) then
             call h__RemoveUnit(u)
 //#             static if LIBRARY_ErrorMessage then
                      call ThrowWarning(u != null , "UnitRecycler" , "RecycleUnitEx()" , GetUnitName(u) , 0 , "Cannot recycle the specified unit, removing unit")
@@ -2915,58 +2931,58 @@ endfunction
 
     function RecycleUnitDelayed takes unit u,real delay returns nothing
 //#         static if LIBRARY_ErrorMessage then
-                 call ThrowError(s__Table___booleans__getindex(s__Table__get_boolean(s__UnitRecycler___List_stocked),GetHandleId(u)) , "UnitRecycler" , "RecycleUnitDelayed()" , GetUnitName(u) , 0 , "Attempted to recycle an already recycled unit")
+                 call ThrowError(s__Table__booleans__getindex(s__Table__get_boolean(s__UnitRecycler__List_stocked),GetHandleId(u)) , "UnitRecycler" , "RecycleUnitDelayed()" , GetUnitName(u) , 0 , "Attempted to recycle an already recycled unit")
                  call ThrowWarning(u == null , "UnitRecycler" , "RecycleUnitDelayed()" , "" , 0 , "Attempted to recycle a null unit")
                  call ThrowWarning(IsHeroUnitId(GetUnitTypeId(u)) , "UnitRecycler" , "RecycleUnitDelayed()" , GetUnitName(u) , 0 , "Attempted to recycle a hero unit")
-                 call ThrowWarning(not UnitRecycler___UnitTypeFilter(u) , "UnitRecycler" , "RecycleUnitDelayed()" , GetUnitName(u) , 0 , "Attempted to recycle an invalid unit type")
+                 call ThrowWarning(not UnitRecycler__UnitTypeFilter(u) , "UnitRecycler" , "RecycleUnitDelayed()" , GetUnitName(u) , 0 , "Attempted to recycle an invalid unit type")
 //#         endif
-        call s__UnitRecycler___UnitRecycler_addDelayed(u , delay , function s__UnitRecycler___UnitRecycler_delayedRecycle)
+        call s__UnitRecycler__UnitRecycler_addDelayed(u , delay , function s__UnitRecycler__UnitRecycler_delayedRecycle)
     endfunction
 
     function RecycleUnitDelayedEx takes unit u,real delay returns nothing
 //#         static if LIBRARY_ErrorMessage then
-                 call ThrowError(s__Table___booleans__getindex(s__Table__get_boolean(s__UnitRecycler___List_stocked),GetHandleId(u)) , "UnitRecycler" , "RecycleUnitDelayedEx()" , GetUnitName(u) , 0 , "Attempted to recycle an already recycled unit")
+                 call ThrowError(s__Table__booleans__getindex(s__Table__get_boolean(s__UnitRecycler__List_stocked),GetHandleId(u)) , "UnitRecycler" , "RecycleUnitDelayedEx()" , GetUnitName(u) , 0 , "Attempted to recycle an already recycled unit")
                  call ThrowWarning(u == null , "UnitRecycler" , "RecycleUnitDelayedEx()" , "" , 0 , "Attempted to recycle a null unit")
-                 call ThrowWarning(not UnitRecycler___UnitTypeFilter(u) , "UnitRecycler" , "RecycleUnitDelayedEx()" , GetUnitName(u) , 0 , "Attempted to recycle an invalid unit type")
+                 call ThrowWarning(not UnitRecycler__UnitTypeFilter(u) , "UnitRecycler" , "RecycleUnitDelayedEx()" , GetUnitName(u) , 0 , "Attempted to recycle an invalid unit type")
 //#         endif
-        call s__UnitRecycler___UnitRecycler_addDelayed(u , delay , function s__UnitRecycler___UnitRecycler_delayedRecycleEx)
+        call s__UnitRecycler__UnitRecycler_addDelayed(u , delay , function s__UnitRecycler__UnitRecycler_delayedRecycleEx)
     endfunction
 
     function UnitAddToStock takes integer rawCode returns boolean
 //#         static if LIBRARY_ErrorMessage then
-                 local unit u= CreateUnit(UnitRecycler___OWNER, rawCode, 0, 0, 0)
+                 local unit u= CreateUnit(UnitRecycler__OWNER, rawCode, 0, 0, 0)
                  call ThrowWarning(u == null , "UnitRecycler" , "UnitAddToStock()" , "" , 0 , "Attempted to stock a non-existent unit type")
                  call ThrowWarning(IsHeroUnitId(rawCode) , "UnitRecycler" , "UnitAddToStock()" , GetUnitName(u) , 0 , "Attempted to stock a hero unit")
-                 call ThrowWarning(not UnitRecycler___UnitTypeFilter(u) , "UnitRecycler" , "UnitAddToStock()" , GetUnitName(u) , 0 , "Attempted to stock an invalid unit type")
+                 call ThrowWarning(not UnitRecycler__UnitTypeFilter(u) , "UnitRecycler" , "UnitAddToStock()" , GetUnitName(u) , 0 , "Attempted to stock an invalid unit type")
                  call h__RemoveUnit(u)
                  set u=null
 //#         endif
-        return s__UnitRecycler___UnitRecycler_stock(rawCode)
+        return s__UnitRecycler__UnitRecycler_stock(rawCode)
     endfunction
 
     //========================================================================================================
 
 
 
-//#         static if UnitRecycler___AUTO_RECYCLE_DEAD then
-                function s__UnitRecycler___Initializer_onDeath takes nothing returns nothing
+//#         static if UnitRecycler__AUTO_RECYCLE_DEAD then
+                function s__UnitRecycler__Initializer_onDeath takes nothing returns nothing
                     local unit u= GetTriggerUnit()
 //#                 static if LIBRARY_ErrorMessage then
-                         call ThrowError(s__Table___booleans__getindex(s__Table__get_boolean(s__UnitRecycler___List_stocked),GetHandleId(u)) , "UnitRecycler" , "" , GetUnitName(u) , 0 , "A unit in stock has been killed!")
+                         call ThrowError(s__Table__booleans__getindex(s__Table__get_boolean(s__UnitRecycler__List_stocked),GetHandleId(u)) , "UnitRecycler" , "" , GetUnitName(u) , 0 , "A unit in stock has been killed!")
 //#                 endif
-                    if UnitRecycler___UnitTypeFilter(u) and not IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitType(u, UNIT_TYPE_STRUCTURE) then
-                        call RecycleUnitDelayedEx(u , UnitRecycler___DeathTime(u))
+                    if UnitRecycler__UnitTypeFilter(u) and not IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitType(u, UNIT_TYPE_STRUCTURE) then
+                        call RecycleUnitDelayedEx(u , UnitRecycler__DeathTime(u))
                     endif
                     set u=null
                 endfunction
     
-                function s__UnitRecycler___Initializer_autoRecycler takes nothing returns nothing
-//#                 static if UnitRecycler___AUTO_RECYCLE_DEAD then
+                function s__UnitRecycler__Initializer_autoRecycler takes nothing returns nothing
+//#                 static if UnitRecycler__AUTO_RECYCLE_DEAD then
 //#                     static if LIBRARY_RegisterPlayerUnitEvent then
-                            call RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_DEATH , function s__UnitRecycler___Initializer_onDeath)
+                            call RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_DEATH , function s__UnitRecycler__Initializer_onDeath)
 //#                     else
 //#                         local trigger t = CreateTrigger()
-//#                         local code c = function UnitRecycler___Initializer.onDeath
+//#                         local code c = function UnitRecycler__Initializer.onDeath
 //#                         local integer i = 16
 //#                         loop
 //#                             set i = i - 1
@@ -2980,26 +2996,26 @@ endfunction
                 endfunction
 //#         endif
 
-        function s__UnitRecycler___Initializer_init takes nothing returns nothing
-            call s__UnitRecycler___List_init()
-            call s__UnitRecycler___UnitRecycler_init()
-//#             static if UnitRecycler___AUTO_RECYCLE_DEAD then
-                    call s__UnitRecycler___Initializer_autoRecycler()
+        function s__UnitRecycler__Initializer_init takes nothing returns nothing
+            call s__UnitRecycler__List_init()
+            call s__UnitRecycler__UnitRecycler_init()
+//#             static if UnitRecycler__AUTO_RECYCLE_DEAD then
+                    call s__UnitRecycler__Initializer_autoRecycler()
 //#             endif
             call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, "|CFFFFCC00UnitRecycler|R library is ready!")
         endfunction
-//Implemented from module UnitRecycler___Init:
-        function s__UnitRecycler___Initializer_UnitRecycler___Init___onInit takes nothing returns nothing
-            call s__UnitRecycler___Initializer_init()
+//Implemented from module UnitRecycler__Init:
+        function s__UnitRecycler__Initializer_UnitRecycler__Init__onInit takes nothing returns nothing
+            call s__UnitRecycler__Initializer_init()
         endfunction
 
 
 //#     static if true and LIBRARY_ErrorMessage then
-            function UnitRecycler___DisplayError takes unit removedUnit returns nothing
-                call ThrowError(s__Table___booleans__getindex(s__Table__get_boolean(s__UnitRecycler___List_stocked),GetHandleId(removedUnit)) , "UnitRecycler" , "RemoveUnit()" , GetUnitName(removedUnit) , 0 , "Attempted to remove a stocked unit")
+            function UnitRecycler__DisplayError takes unit removedUnit returns nothing
+                call ThrowError(s__Table__booleans__getindex(s__Table__get_boolean(s__UnitRecycler__List_stocked),GetHandleId(removedUnit)) , "UnitRecycler" , "RemoveUnit()" , GetUnitName(removedUnit) , 0 , "Attempted to remove a stocked unit")
             endfunction
     
-//processed hook:             hook RemoveUnit UnitRecycler___DisplayError
+//processed hook:             hook RemoveUnit UnitRecycler__DisplayError
 //#     endif
 
 
@@ -3018,7 +3034,7 @@ endfunction
 
     //========================================================================================================
 
-    function ResourcePreloader___DoUnitPreload takes integer id returns nothing
+    function ResourcePreloader__DoUnitPreload takes integer id returns nothing
 //#         static if LIBRARY_UnitRecycler then
                 call RecycleUnitEx(CreateUnit(Player(PLAYER_NEUTRAL_PASSIVE), id, 0, 0, 270))
 //#         else
@@ -3026,19 +3042,19 @@ endfunction
 //#         endif
     endfunction
 
-    function ResourcePreloader___DoItemPreload takes integer id returns nothing
-        call RemoveItem(UnitAddItemById(s__ResourcePreloader___S_dummy, id))
+    function ResourcePreloader__DoItemPreload takes integer id returns nothing
+        call RemoveItem(UnitAddItemById(s__ResourcePreloader__S_dummy, id))
     endfunction
 
-    function ResourcePreloader___DoAbilityPreload takes integer id returns boolean
-        return UnitAddAbility(s__ResourcePreloader___S_dummy, id) and UnitRemoveAbility(s__ResourcePreloader___S_dummy, id)
+    function ResourcePreloader__DoAbilityPreload takes integer id returns boolean
+        return UnitAddAbility(s__ResourcePreloader__S_dummy, id) and UnitRemoveAbility(s__ResourcePreloader__S_dummy, id)
     endfunction
 
-    function ResourcePreloader___DoEffectPreload takes string path returns nothing
-        call DestroyEffect(AddSpecialEffect(path, GetUnitX(s__ResourcePreloader___S_dummy), GetUnitY(s__ResourcePreloader___S_dummy)))
+    function ResourcePreloader__DoEffectPreload takes string path returns nothing
+        call DestroyEffect(AddSpecialEffect(path, GetUnitX(s__ResourcePreloader__S_dummy), GetUnitY(s__ResourcePreloader__S_dummy)))
     endfunction
 
-    function ResourcePreloader___DoSoundPreload takes string path returns nothing
+    function ResourcePreloader__DoSoundPreload takes string path returns nothing
         local sound s= CreateSound(path, false, false, false, 10, 10, "")
         call SetSoundVolume(s, 0)
         call StartSound(s)
@@ -3049,85 +3065,85 @@ endfunction
 //textmacro instance: PRELOAD_TYPE("Unit", "integer", "unit", "what", "0")
     function PreloadUnit takes integer what returns nothing
 //#         static if LIBRARY_Table then
-                if s__Table___booleans__getindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader___S_tb,0)),what) then
+                if s__Table__booleans__getindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader__S_tb,0)),what) then
                     return
                 endif
-                call s__Table___booleans__setindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader___S_tb,0)),what, true)
-                call ResourcePreloader___DoUnitPreload(what)
+                call s__Table__booleans__setindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader__S_tb,0)),what, true)
+                call ResourcePreloader__DoUnitPreload(what)
 //#         else
-//#             if LoadBoolean(ResourcePreloader___S.tb, 0, what) then
+//#             if LoadBoolean(ResourcePreloader__S.tb, 0, what) then
 //#                 return
 //#             endif
-//#             call SaveBoolean(ResourcePreloader___S.tb, 0, what, true)
-//#             call ResourcePreloader___DoUnitPreload(what)
+//#             call SaveBoolean(ResourcePreloader__S.tb, 0, what, true)
+//#             call ResourcePreloader__DoUnitPreload(what)
 //#         endif
     endfunction
 //end of: PRELOAD_TYPE("Unit", "integer", "unit", "what", "0")
 //textmacro instance: PRELOAD_TYPE("Item", "integer", "item", "what", "1")
     function PreloadItem takes integer what returns nothing
 //#         static if LIBRARY_Table then
-                if s__Table___booleans__getindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader___S_tb,1)),what) then
+                if s__Table__booleans__getindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader__S_tb,1)),what) then
                     return
                 endif
-                call s__Table___booleans__setindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader___S_tb,1)),what, true)
-                call ResourcePreloader___DoItemPreload(what)
+                call s__Table__booleans__setindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader__S_tb,1)),what, true)
+                call ResourcePreloader__DoItemPreload(what)
 //#         else
-//#             if LoadBoolean(ResourcePreloader___S.tb, 1, what) then
+//#             if LoadBoolean(ResourcePreloader__S.tb, 1, what) then
 //#                 return
 //#             endif
-//#             call SaveBoolean(ResourcePreloader___S.tb, 1, what, true)
-//#             call ResourcePreloader___DoItemPreload(what)
+//#             call SaveBoolean(ResourcePreloader__S.tb, 1, what, true)
+//#             call ResourcePreloader__DoItemPreload(what)
 //#         endif
     endfunction
 //end of: PRELOAD_TYPE("Item", "integer", "item", "what", "1")
 //textmacro instance: PRELOAD_TYPE("Ability", "integer", "ability", "what", "2")
     function PreloadAbility takes integer what returns nothing
 //#         static if LIBRARY_Table then
-                if s__Table___booleans__getindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader___S_tb,2)),what) then
+                if s__Table__booleans__getindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader__S_tb,2)),what) then
                     return
                 endif
-                call s__Table___booleans__setindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader___S_tb,2)),what, true)
-                call ResourcePreloader___DoAbilityPreload(what)
+                call s__Table__booleans__setindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader__S_tb,2)),what, true)
+                call ResourcePreloader__DoAbilityPreload(what)
 //#         else
-//#             if LoadBoolean(ResourcePreloader___S.tb, 2, what) then
+//#             if LoadBoolean(ResourcePreloader__S.tb, 2, what) then
 //#                 return
 //#             endif
-//#             call SaveBoolean(ResourcePreloader___S.tb, 2, what, true)
-//#             call ResourcePreloader___DoAbilityPreload(what)
+//#             call SaveBoolean(ResourcePreloader__S.tb, 2, what, true)
+//#             call ResourcePreloader__DoAbilityPreload(what)
 //#         endif
     endfunction
 //end of: PRELOAD_TYPE("Ability", "integer", "ability", "what", "2")
 //textmacro instance: PRELOAD_TYPE("Effect", "string", "effect", "StringHash(what)", "3")
     function PreloadEffect takes string what returns nothing
 //#         static if LIBRARY_Table then
-                if s__Table___booleans__getindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader___S_tb,3)),StringHash(what)) then
+                if s__Table__booleans__getindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader__S_tb,3)),StringHash(what)) then
                     return
                 endif
-                call s__Table___booleans__setindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader___S_tb,3)),StringHash(what), true)
-                call ResourcePreloader___DoEffectPreload(what)
+                call s__Table__booleans__setindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader__S_tb,3)),StringHash(what), true)
+                call ResourcePreloader__DoEffectPreload(what)
 //#         else
-//#             if LoadBoolean(ResourcePreloader___S.tb, 3, StringHash(what)) then
+//#             if LoadBoolean(ResourcePreloader__S.tb, 3, StringHash(what)) then
 //#                 return
 //#             endif
-//#             call SaveBoolean(ResourcePreloader___S.tb, 3, StringHash(what), true)
-//#             call ResourcePreloader___DoEffectPreload(what)
+//#             call SaveBoolean(ResourcePreloader__S.tb, 3, StringHash(what), true)
+//#             call ResourcePreloader__DoEffectPreload(what)
 //#         endif
     endfunction
 //end of: PRELOAD_TYPE("Effect", "string", "effect", "StringHash(what)", "3")
 //textmacro instance: PRELOAD_TYPE("Sound", "string", "sound", "StringHash(what)", "4")
     function PreloadSound takes string what returns nothing
 //#         static if LIBRARY_Table then
-                if s__Table___booleans__getindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader___S_tb,4)),StringHash(what)) then
+                if s__Table__booleans__getindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader__S_tb,4)),StringHash(what)) then
                     return
                 endif
-                call s__Table___booleans__setindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader___S_tb,4)),StringHash(what), true)
-                call ResourcePreloader___DoSoundPreload(what)
+                call s__Table__booleans__setindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader__S_tb,4)),StringHash(what), true)
+                call ResourcePreloader__DoSoundPreload(what)
 //#         else
-//#             if LoadBoolean(ResourcePreloader___S.tb, 4, StringHash(what)) then
+//#             if LoadBoolean(ResourcePreloader__S.tb, 4, StringHash(what)) then
 //#                 return
 //#             endif
-//#             call SaveBoolean(ResourcePreloader___S.tb, 4, StringHash(what), true)
-//#             call ResourcePreloader___DoSoundPreload(what)
+//#             call SaveBoolean(ResourcePreloader__S.tb, 4, StringHash(what), true)
+//#             call ResourcePreloader__DoSoundPreload(what)
 //#         endif
     endfunction
 //end of: PRELOAD_TYPE("Sound", "string", "sound", "StringHash(what)", "4")
@@ -3190,17 +3206,17 @@ endfunction
 //#         else
 //#             static hashtable tb = InitHashtable()
 //#         endif
-//Implemented from module ResourcePreloader___Init:
-        function s__ResourcePreloader___S_ResourcePreloader___Init___onInit takes nothing returns nothing
+//Implemented from module ResourcePreloader__Init:
+        function s__ResourcePreloader__S_ResourcePreloader__Init__onInit takes nothing returns nothing
             local rect world= GetWorldBounds()
 //#             static if LIBRARY_Table then
-                    set s__ResourcePreloader___S_tb=s__TableArray__staticgetindex(5)
+                    set s__ResourcePreloader__S_tb=s__TableArray__staticgetindex(5)
 //#             endif
-            set s__ResourcePreloader___S_dummy=CreateUnit(ResourcePreloader_PRELOAD_UNIT_OWNER, ResourcePreloader_PRELOAD_UNIT_TYPE_ID, 0, 0, 0)
-            call SetUnitY(s__ResourcePreloader___S_dummy, GetRectMaxY(world) + ResourcePreloader_PRELOAD_UNIT_Y_BOUNDS_EXTENSION)
-            call UnitAddAbility(s__ResourcePreloader___S_dummy, 'AInv')
-            call UnitAddAbility(s__ResourcePreloader___S_dummy, 'Avul')
-            call UnitRemoveAbility(s__ResourcePreloader___S_dummy, 'Amov')
+            set s__ResourcePreloader__S_dummy=CreateUnit(ResourcePreloader_PRELOAD_UNIT_OWNER, ResourcePreloader_PRELOAD_UNIT_TYPE_ID, 0, 0, 0)
+            call SetUnitY(s__ResourcePreloader__S_dummy, GetRectMaxY(world) + ResourcePreloader_PRELOAD_UNIT_Y_BOUNDS_EXTENSION)
+            call UnitAddAbility(s__ResourcePreloader__S_dummy, 'AInv')
+            call UnitAddAbility(s__ResourcePreloader__S_dummy, 'Avul')
+            call UnitRemoveAbility(s__ResourcePreloader__S_dummy, 'Amov')
             call RemoveRect(world)
             set world=null
         endfunction
@@ -3306,21 +3322,26 @@ endfunction
 //===========================================================================
 function gameset_owner takes nothing returns nothing
     local integer i= 0
-    set udg_game_owner=null
-    loop
-        if ( GetPlayerSlotState(Player(i)) == PLAYER_SLOT_STATE_PLAYING ) then
+    set udg_game_owner=null // Game owner
+    loop // Sets game owner to a first available player
+        if ( GetPlayerSlotState(Player(i)) == PLAYER_SLOT_STATE_PLAYING ) then // Must be playing player
             set udg_game_owner=Player(0)
         endif
-        exitwhen ( udg_game_owner != null or i > 7 ) // Может вызвать баги, не проверял
+        exitwhen ( udg_game_owner != null or i > 7 ) // TODO: test
         set i=i + 1
     endloop
-    call DisplayTimedTextToPlayer(udg_game_owner, 0., 0., 10., "Вы получили права " + GREEN + "владельца игры|r.")
-    // Opt. begin
-    if ( C_GetTimeInSeconds() < R2I(udg_gameset_time_first) ) then
-        if ( udg_info[GetConvertedPlayerId(udg_game_owner)] == true ) then
-            call DisplayTimedTextToForce(GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "Настройка карты (доступно первые " + ( I2S(R2I(udg_gameset_time_first)) + " сек.)" ) ))
 
+//#     static if  not true  then
+//#         // Notification for game owner
+//#         call DisplayTimedTextToPlayer(udg_game_owner, 0., 0., 10., "Вы получили права " + GREEN + "владельца игры|r.")
+//#     endif
+
+    // Opt. begin
+    if ( C_GetTimeInSeconds() < R2I(udg_gameset_time_first) ) then // Shows commands and settings only at game start
+        if ( udg_info[GetConvertedPlayerId(udg_game_owner)] == true ) then // Checks Info flag of game owner
 //#             static if  not true  then
+//#                 // Shows all available commands and settings
+//#                 call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "Настройка карты (доступно первые " + ( I2S(R2I(udg_gameset_time_first)) + " сек.)" ) ) )
 //#                 call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_gameset_time) ) + " ) " ) + "|cFFFF0000-time xxx|r, где xxx - время перед началом нового раунда (от 20 до 60 сек.)" ) )
 //#                 call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_wave_time) ) + " ) " ) + "|cFFFF0000-arena xxx|r. Где xxx - начальное время раунда на арене (от 60 сек. до 150 сек.)" ) )
 //#                 if (udg_building_status == true) then
@@ -3329,9 +3350,9 @@ function gameset_owner takes nothing returns nothing
 //#                     call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( 0 ) " + "|cFFFF0000-build x|r, при x=0 - во время раунда можно строить/улучшать юнитов при x=1 - нельзя" ) )
 //#                 endif
 //#                 call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( " + ( I2S(udg_const_point[0]) + ( "-" + ( I2S(udg_const_point[1]) + " ) |cFFFF0000-point ##|r." ) ) ) ) )
-//#                 call DisplayTextToForce( GetForceOfPlayer(udg_game_owner), "TRIGSTR_3812" )
+//#                 call DisplayTextToForce( GetForceOfPlayer(udg_game_owner), "Первый # - минимальное число контрольных точек, появляющихся на арене. Второй # - максимальное число контрольных точек, оно не может превышать первый номер, а также число 9." )
 //#                 call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_mode) ) + " ) " ) + "|cFFFF0000-mode #. |r" ) )
-//#                 call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, "TRIGSTR_3813" )
+//#                 call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, "Если # = 1, то мини-игры будут чередоваться каждую вторую волну.\nЕсли # = 2, то мини-игр не будет совсем.\nЕсли # = 3, то мини-игры буду каждые 3 волны." )
 //#                 call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( ( "( " + I2S(udg_gg) ) + " ) " ) + "|cFFFF0000-gg ##|r. Где ## - волна, после которой закончится игра (от 9 до " ) + ( I2S(( ( udg_mini_game_max * 2 ) + 3 )) + " )." ) ) )
 //#             endif
 
@@ -3379,7 +3400,7 @@ function SetLeaveMessages takes nothing returns nothing
 endfunction
 
 function SetMessagesInit takes nothing returns nothing
- local trigger t= CreateTrigger()
+    local trigger t= CreateTrigger()
 
     call TriggerRegisterPlayerEvent(t, Player(0x00), EVENT_PLAYER_LEAVE)
     call TriggerRegisterPlayerEvent(t, Player(0x01), EVENT_PLAYER_LEAVE)
@@ -3393,56 +3414,76 @@ function SetMessagesInit takes nothing returns nothing
     call TriggerAddAction(t, function SetLeaveMessages)
     set t=null
 endfunction
+
+
+
 function faq_show_dialog takes nothing returns nothing
-    call DialogDisplay(GetEnumPlayer(), udg_faq_dialog, true)
+    call DialogDisplay(GetEnumPlayer(), udg_faq_dialog, true) // Shows voting dialog
 endfunction
 
 function faq_hide_dialog takes nothing returns nothing
-    call DialogDisplay(GetEnumPlayer(), udg_faq_dialog, false)
+    call DialogDisplay(GetEnumPlayer(), udg_faq_dialog, false) // Hides voting dialog
 endfunction
-function Trig_faq_stop_Copy_Func012Func004A takes nothing returns nothing
-    call DialogDisplayBJ(false, udg_faq_dialog, GetEnumPlayer())
-    call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, GetEnumPlayer(), 0)
-    call PanCameraToTimedLocForPlayer(GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), 0)
-    call SelectUnitForPlayerSingle(GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(GetEnumPlayer(), 'ntav')), GetEnumPlayer())
+
+function faq_flush takes nothing returns nothing
+    // Unfades map
+    call SetDayNightModels("Environment\\DNC\\DNCLordaeron\\DNCLordaeronTerrain\\DNCLordaeronTerrain.mdl", "Environment\\DNC\\DNCLordaeron\\DNCLordaeronUnit\\DNCLordaeronUnit.mdl")
+
+    call ForForce(udg_players_group, function faq_hide_dialog) // Hides voting dialog
+    call DestroyTextTagBJ(udg_faq_text[0]) // Уничтожает плавающий текст с голосами "За"
+    call DestroyTextTagBJ(udg_faq_text[1]) // Уничтожает плавающий текст с голосами "За"
+    call DestroyTextTagBJ(udg_faq_text[2]) // Уничтожает плавающий текст с голосами "Против"
+    call DestroyTextTagBJ(udg_faq_text[3]) // Уничтожает плавающий текст с голосами "Против"
+endfunction
+
+
+function faq_start_timer_actions takes nothing returns nothing
+    call gameset_end()
+    call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, "|cFFFF0000Команда |cFFFFFFFF-info|r |cFFFF0000отключит сообщения о штрафах и мини-арене.|r")
+    call DestroyTimerDialog(faq_timerdialog) // Destroys timer dialog for commands and settings
+endfunction
+
+function faq_start takes nothing returns nothing
+    call TimerStart(udg_gameset_timer, udg_gameset_time_first, false, function faq_start_timer_actions) // After settings were set
+
+    set faq_timerdialog=CreateTimerDialog(udg_gameset_timer) // Timer dialog in upper-left corner for commands and settings
+    call TimerDialogSetTitle(faq_timerdialog, "Настройка карты") // Title of timer dialog
+    call TimerDialogDisplay(faq_timerdialog, true) // Shows timer dialog
+
+    call gameset_owner() // Sets owner of game
+    call TriggerExecute(gg_trg_scoreboard_ini) // Shows scoreboard
+
+endfunction
+
+
+
+function faq_get_castle takes nothing returns nothing
+    call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, GetEnumPlayer(), 0) // Resets camera angle
+    call PanCameraToTimedLocForPlayer(GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), 0) // Focuses camera at castle you own
+    call SelectUnitForPlayerSingle(GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(GetEnumPlayer(), 'ntav')), GetEnumPlayer()) // Selects tavern
 endfunction
 
 function faq_stop takes nothing returns nothing
-    if ( udg_faq_status == false ) then
-        call TriggerExecute(gg_trg_faq_start)
-        call SetDayNightModels("Environment\\DNC\\DNCLordaeron\\DNCLordaeronTerrain\\DNCLordaeronTerrain.mdl", "Environment\\DNC\\DNCLordaeron\\DNCLordaeronUnit\\DNCLordaeronUnit.mdl")
-        call ForForce(udg_players_group, function Trig_faq_stop_Copy_Func012Func004A)
-        set udg_faq_vote=0
-        set udg_cycle_i=0
-        call DestroyTextTagBJ(udg_faq_text[0])
-        call DestroyTextTagBJ(udg_faq_text[1])
-        call DestroyTextTagBJ(udg_faq_text[2])
-        call DestroyTextTagBJ(udg_faq_text[3])
-    endif
-    call DisableTrigger(gg_trg_faq_active)
+    set IsFaqActive=false // Disables faq_counter() and faq_active()
+    call faq_flush() // Destroys all texttags, hides faq_dialog, reveals map
+    call ForForce(udg_players_group, function faq_get_castle) // Focuses camera at castle you own
+    call faq_start() // Commands and settings
 endfunction
 
 
 function faq_counter takes nothing returns nothing
     local timer t= GetExpiredTimer()
 
-//#     static if true then
-            if ( udg_faq_status ) then
-                call C_Log("faq_status = true")
-            else
-                call C_Log("faq_status = false")
-            endif
-//#     endif
-
-    if ( s__Table___reals__getindex(s__Table__get_real(s__HashTable__getindex(hash,StringHash("faq"))),StringHash("counter")) >= 1 and udg_faq_status == false ) then
-        call DialogSetMessage(udg_faq_dialog, ( "Посмотреть обучение (" + WHITE + R2S(s__Table___reals__getindex(s__Table__get_real(s__HashTable__getindex(hash,StringHash("faq"))),StringHash("counter"))) + " сек.|r)" ))
-        call s__Table___reals__setindex(s__Table__get_real(s__HashTable__getindex(hash,StringHash("faq"))),StringHash("counter"), s__Table___reals__getindex(s__Table__get_real(s__HashTable__getindex(hash,StringHash("faq"))),StringHash("counter")) - 1)
+    if ( s__Table__reals__getindex(s__Table__get_real(s__HashTable__getindex(hash,StringHash("faq"))),StringHash("counter")) >= 1 and IsFaqActive ) then // If voting exists
+        call DialogSetMessage(udg_faq_dialog, ( "Посмотреть обучение (" + WHITE + R2S(s__Table__reals__getindex(s__Table__get_real(s__HashTable__getindex(hash,StringHash("faq"))),StringHash("counter"))) + " сек.|r)" ))
+        call s__Table__reals__setindex(s__Table__get_real(s__HashTable__getindex(hash,StringHash("faq"))),StringHash("counter"), s__Table__reals__getindex(s__Table__get_real(s__HashTable__getindex(hash,StringHash("faq"))),StringHash("counter")) - 1)
     else
-        call ForForce(udg_players_group, function faq_hide_dialog)
-        call s__HashTable_remove(hash,StringHash("faq"))
         call PauseTimer(t)
         call DestroyTimer(t)
-        call faq_stop()
+        call s__HashTable_remove(hash,StringHash("faq"))
+        if ( IsFaqActive ) then // If there are not enough votes
+            call faq_stop() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
+        endif
     endif
 
     set t=null
@@ -3450,214 +3491,72 @@ endfunction
 
 //===========================================================================
 function faq_ini takes nothing returns nothing
-    local timer t= CreateTimer()
-
-    set udg_faq_status=false
     call SetDayNightModels("", "") // Сделать всю карту чёрной
-    set udg_cycle_i=0
-    // Opt. begin
-    call CreateTextTagLocBJ(( GREEN + "\"ЗА\"|r нужно " + I2S(( CountPlayersInForceBJ(udg_players_group) / 2 )) ), GetRectCenter(gg_rct_guideyes), 0, 14.00, 100, 100, 100, 0)
-    set udg_faq_text[0]=GetLastCreatedTextTag()
-    call CreateTextTagLocBJ(( RED + "\"ПРОТИВ\"|r нужно более " + I2S(( CountPlayersInForceBJ(udg_players_group) / 2 )) ), GetRectCenter(gg_rct_guideno), 0, 14.00, 100, 100, 100, 0)
-    set udg_faq_text[1]=GetLastCreatedTextTag()
-    // Opt. end
+
+    // ---За---
+    // Плавающий текст с требуемым кол-вом голосов "За"
+    set udg_faq_text[0]=NewTextTag(( GREEN + "\"ЗА\"|r нужно " + I2S(CountPlayersInForceBJ(udg_players_group) / 2) ) , gg_rct_guideyes , 14.00)
+    
+    // Плавающий текст с кол-вом голосов "За"
+    set udg_faq_text[2]=NewTextTag(I2S(faq_vote_yes) , gg_rct_guideyesvote , 10.00)
+
+    // Кнопка подтверждения просмотра обучения
     set udg_faq_key[0]=DialogAddButton(udg_faq_dialog, "Да", 0)
+
+    // ---Против---
+    // Плавающий текст с требуемым кол-вом голосов "Против"
+    set udg_faq_text[1]=NewTextTag(( RED + "\"ПРОТИВ\"|r нужно более " + I2S(CountPlayersInForceBJ(udg_players_group) / 2) ) , gg_rct_guideno , 14.00)
+
+    // Плавающий текст с кол-вом голосов "Против"
+    set udg_faq_text[3]=NewTextTag(I2S(faq_vote_no) , gg_rct_guidenovote , 10.00)
+
+    // Кнопка отклонения просмотра обучения
     set udg_faq_key[1]=DialogAddButton(udg_faq_dialog, "Нет", 0)
-    // Opt. begin
-    call s__Table___reals__setindex(s__Table__get_real(s__HashTable__getindex(hash,StringHash("faq"))),StringHash("counter"), 6.00)
-    call faq_counter()
-    call TimerStart(t, 1.00, true, function faq_counter)
-    call ForForce(udg_players_group, function faq_show_dialog)
-    set t=null
-    // Opt. end
-endfunction
-function Trig_faq_start_Copy_Func004C takes nothing returns boolean
-    if ( not ( udg_gameset_time_first < 61.00 ) ) then
-        return false
-    endif
-    return true
+
+//#     static if true then
+            call faq_stop() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
+//#     else
+//#         set hash[StringHash("faq")].real[StringHash("counter")] = 6.00 // Duration of voting
+//#         call TimerStart(CreateTimer(), 1.00, true, function faq_counter) // Makes duration of voting visible in faq dialog's title
+//#         call faq_counter() // First tick of counter
+//#         call ForForce(udg_players_group, function faq_show_dialog) // Shows faq dialog to all players
+//#     endif
 endfunction
 
-function Trig_faq_start_Copy_Func007C takes nothing returns boolean
-    if ( not ( udg_gameset_time_first > 30.00 ) ) then
-        return false
-    endif
-    return true
-endfunction
 
-function Trig_faq_start_Copy_Func010001002 takes nothing returns boolean
-    return ( IsUnitType(GetFilterUnit(), UNIT_TYPE_PEON) == true )
-endfunction
-
-function Trig_faq_start_Copy_Func010Func001C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'hpea' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Copy_Func010Func002C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'h015' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Copy_Func010Func003C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'h01G' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Copy_Func010Func004C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'h01U' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Copy_Func010Func005C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'h025' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Copy_Func010Func006C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnumUnit()) == 'h02H' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_start_Copy_Func010A takes nothing returns nothing
-    if ( Trig_faq_start_Copy_Func010Func001C() ) then
-        call MultiboardSetItemIconBJ(udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNPeasant.blp")
-    else
-    endif
-    if ( Trig_faq_start_Copy_Func010Func002C() ) then
-        call MultiboardSetItemIconBJ(udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNAcolyte.blp")
-    else
-    endif
-    if ( Trig_faq_start_Copy_Func010Func003C() ) then
-        call MultiboardSetItemIconBJ(udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNWisp.blp")
-    else
-    endif
-    if ( Trig_faq_start_Copy_Func010Func004C() ) then
-        call MultiboardSetItemIconBJ(udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNPeon.blp")
-    else
-    endif
-    if ( Trig_faq_start_Copy_Func010Func005C() ) then
-        call MultiboardSetItemIconBJ(udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNMurgalSlave.blp")
-    else
-    endif
-    if ( Trig_faq_start_Copy_Func010Func006C() ) then
-        call MultiboardSetItemIconBJ(udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnumUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNMedivh.blp")
-    else
-    endif
-endfunction
-
-function faq_start takes nothing returns nothing
-    call TimerStart(udg_gameset_timer, udg_gameset_time_first, false, function gameset_end)
-    call CreateTimerDialogBJ(udg_gameset_timer, "TRIGSTR_3815")
-    call TimerDialogDisplayBJ(true, GetLastCreatedTimerDialogBJ())
-    if ( Trig_faq_start_Copy_Func004C() ) then
-        call gameset_owner()
-    endif
-    call TriggerSleepAction(53.00)
-    call TriggerExecute(gg_trg_scoreboard_ini)
-    if ( Trig_faq_start_Copy_Func007C() ) then
-        call gameset_owner()
-    endif
-    call TriggerSleepAction(10.00)
-    call DisplayTimedTextToForce(GetPlayersAll(), 60.00, "TRIGSTR_3816")
-    call ForGroupBJ(GetUnitsInRectMatching(GetPlayableMapRect(), Condition(function Trig_faq_start_Copy_Func010001002)), function Trig_faq_start_Copy_Func010A)
-endfunction
-
-function Trig_faq_active_Copy_Func001Func005Func005A takes nothing returns nothing
-    call DialogDisplayBJ(false, udg_faq_dialog, GetEnumPlayer())
-    call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, GetEnumPlayer(), 0)
-    call PanCameraToTimedLocForPlayer(GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), 0)
-    call SelectUnitForPlayerSingle(GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(GetEnumPlayer(), 'ntav')), GetEnumPlayer())
-endfunction
-
-function Trig_faq_active_Copy_Func001Func005C takes nothing returns boolean
-    if ( not ( udg_cycle_i > ( CountPlayersInForceBJ(udg_players_group) / 2 ) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_active_Copy_Func001Func010Func005A takes nothing returns nothing
-    call DialogDisplayBJ(false, udg_faq_dialog, GetEnumPlayer())
-endfunction
-
-function Trig_faq_active_Copy_Func001Func010C takes nothing returns boolean
-    if ( not ( udg_faq_vote >= ( CountPlayersInForceBJ(udg_players_group) / 2 ) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_faq_active_Copy_Func001C takes nothing returns boolean
-    if ( not ( GetClickedButtonBJ() == udg_faq_key[0] ) ) then
-        return false
-    endif
-    return true
+function faq_active_condition takes nothing returns boolean
+    // Disables faq_counter() and faq_active() if false
+    return IsFaqActive
 endfunction
 
 function faq_active takes nothing returns nothing
-    if ( Trig_faq_active_Copy_Func001C() ) then
-        set udg_faq_vote=( udg_faq_vote + 1 )
-        call DestroyTextTagBJ(udg_faq_text[2])
-        call CreateTextTagLocBJ(I2S(udg_faq_vote), GetRectCenter(gg_rct_guideyesvote), 0, 10.00, 100, 100, 100, 0)
-        set udg_faq_text[2]=GetLastCreatedTextTag()
-        if ( Trig_faq_active_Copy_Func001Func010C() ) then
-            set udg_gameset_time_first=102.00
-            set udg_faq_status=true
-            call faq_start()
-            call SetDayNightModels("Environment\\DNC\\DNCLordaeron\\DNCLordaeronTerrain\\DNCLordaeronTerrain.mdl", "Environment\\DNC\\DNCLordaeron\\DNCLordaeronUnit\\DNCLordaeronUnit.mdl")
-            call ForForce(udg_players_group, function Trig_faq_active_Copy_Func001Func010Func005A)
-            call DestroyTextTagBJ(udg_faq_text[0])
-            call DestroyTextTagBJ(udg_faq_text[1])
-            call DestroyTextTagBJ(udg_faq_text[2])
-            call DestroyTextTagBJ(udg_faq_text[3])
-            call TriggerExecute(gg_trg_faq)
-            call DisableTrigger(GetTriggeringTrigger())
-            set udg_cycle_i=0
-            set udg_faq_vote=0
+    if ( GetClickedButton() == udg_faq_key[0] ) then // Кнопка "Да"
+        set faq_vote_yes=faq_vote_yes + 1 // Голосов "За"
+        call SetTextTagText(udg_faq_text[2], I2S(faq_vote_yes), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "За"
+        if ( faq_vote_yes >= ( CountPlayersInForceBJ(udg_players_group) / 2 ) ) then // Если голосов "За" 1/1, 1/2, 1/3, 2/4, 2/5, 3/6, 3/7, 4/8 
+            set IsFaqActive=false // Disables faq_counter() and faq_active()
+            call faq_flush() // Destroys all texttags, hides faq_dialog, reveals map
+            call TriggerExecute(gg_trg_faq) // Enables faq guide
+            call TriggerSleepAction(51.8) // Duration of faq guide
+            call ForForce(udg_players_group, function faq_get_castle) // Focuses camera at castle you own
+            call faq_start() // Commands and settings
         endif
-    else
-        set udg_cycle_i=( udg_cycle_i + 1 )
-        call DestroyTextTagBJ(udg_faq_text[3])
-        call CreateTextTagLocBJ(I2S(udg_cycle_i), GetRectCenter(gg_rct_guidenovote), 0, 10.00, 100, 100, 100, 0)
-        set udg_faq_text[3]=GetLastCreatedTextTag()
-        if ( Trig_faq_active_Copy_Func001Func005C() ) then
-            set udg_gameset_time_first=60.00
-            set udg_faq_status=true
-            call faq_start()
-            call SetDayNightModels("Environment\\DNC\\DNCLordaeron\\DNCLordaeronTerrain\\DNCLordaeronTerrain.mdl", "Environment\\DNC\\DNCLordaeron\\DNCLordaeronUnit\\DNCLordaeronUnit.mdl")
-            call ForForce(udg_players_group, function Trig_faq_active_Copy_Func001Func005Func005A)
-            call DestroyTextTagBJ(udg_faq_text[0])
-            call DestroyTextTagBJ(udg_faq_text[1])
-            call DestroyTextTagBJ(udg_faq_text[2])
-            call DestroyTextTagBJ(udg_faq_text[3])
-            call DisableTrigger(GetTriggeringTrigger())
-            set udg_cycle_i=0
-            set udg_faq_vote=0
+    else // Кнопка "Нет"
+        set faq_vote_no=faq_vote_no + 1 // Голосов "Против"
+        call SetTextTagText(udg_faq_text[3], I2S(faq_vote_no), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "Против"
+        if ( faq_vote_no > ( CountPlayersInForceBJ(udg_players_group) / 2 ) ) then // Если голосов "За" 1/1, 2/2, 2/3, 3/4, 3/5, 4/6, 4/7, 5/8 
+            call faq_stop() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
         endif
     endif
 endfunction
 
-//===========================================================================
 function faq_active_init takes nothing returns nothing
     local trigger t= CreateTrigger()
 
-    call TriggerRegisterDialogEventBJ(t, udg_faq_dialog)
+    // Triggers if faq_dialog's buttons were clicked
+    call TriggerRegisterDialogEvent(t, udg_faq_dialog)
     call TriggerAddAction(t, function faq_active)
-
-    set t=null
+    call TriggerAddCondition(t, Condition(function faq_active_condition))
 endfunction
 
 
@@ -3757,8 +3656,6 @@ function initialization_in_game takes nothing returns nothing
     
     //faq ini Trigger
     call faq_ini()
-
-    call TriggerSleepAction(1.00)
 
     // Миниигра казино
     set udg_r=0
@@ -3872,7 +3769,7 @@ endfunction
 // Работа таймера Вклад в игрока
 function Timer_contr_to_pl_actions takes nothing returns nothing
     local timer t= GetExpiredTimer()
-    local player p= s__Table___players__getindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),GetHandleId(t))
+    local player p= s__Table__players__getindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),GetHandleId(t))
     local integer count_research= GetPlayerTechCountSimple(contr_to_pl_rc, p)
     local integer gold= contr_to_pl_gold + ( contr_to_pl_gold_mod * ( count_research - 1 ) )
     local integer lumber= contr_to_pl_lumber + ( contr_to_pl_lumber_mod * ( count_research - 1 ) )
@@ -3927,7 +3824,7 @@ function Trig_income_upg_actions_contr_to_pl takes player p,integer count_resear
     call DisplayTimedTextToPlayer(rand_p, 0, 0, 10.00, mes)
 
     set t=CreateTimer()
-    call s__Table___players__setindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),GetHandleId(t), rand_p)
+    call s__Table__players__setindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),GetHandleId(t), rand_p)
     call TimerStart(t, contr_to_pl_time, false, function Timer_contr_to_pl_actions)
 
     set mes=null
@@ -4327,10 +4224,10 @@ function Trig_income_upgTQ_Actions_group takes nothing returns nothing
     local boolean b1
     local boolean b2
     local player p= GetOwningPlayer(u)
-    local player p_k= s__Table___players__getindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),StringHash("player_killer"))
-    local player p_v= s__Table___players__getindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),StringHash("player_victim"))
+    local player p_k= s__Table__players__getindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),StringHash("player_killer"))
+    local player p_v= s__Table__players__getindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),StringHash("player_victim"))
     local real damage= cursed_mine_damage_for_lvl
-    local unit damage_u= s__Table___units__getindex(s__Table__get_unit(s__HashTable__getindex(hash,StringHash("income"))),StringHash("victim"))
+    local unit damage_u= s__Table__units__getindex(s__Table__get_unit(s__HashTable__getindex(hash,StringHash("income"))),StringHash("victim"))
 
     set b1=IsUnitInGroup(u, udg_wave_units)
     set b2=( p == p_k )
@@ -4383,9 +4280,9 @@ function Trig_income_upgTQ_Actions takes nothing returns nothing
 
     call GroupEnumUnitsInRange(gr, x, y, range_damage, null)
 
-    call s__Table___players__setindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),StringHash("player_killer"), p_k)
-    call s__Table___players__setindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),StringHash("player_victim"), p_v)
-    call s__Table___units__setindex(s__Table__get_unit(s__HashTable__getindex(hash,StringHash("income"))),StringHash("victim"), victim)
+    call s__Table__players__setindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),StringHash("player_killer"), p_k)
+    call s__Table__players__setindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),StringHash("player_victim"), p_v)
+    call s__Table__units__setindex(s__Table__get_unit(s__HashTable__getindex(hash,StringHash("income"))),StringHash("victim"), victim)
 
     call ForGroup(gr, function Trig_income_upgTQ_Actions_group)
 
@@ -4435,181 +4332,203 @@ function InitTrig_income_upgTQ takes nothing returns nothing
 endfunction
 
 
-function map_init takes nothing returns nothing
-    local string strTestWarning_RU
-    local string strWarning_RU
-    local string strVar_RU
-    local string Feedback_RU
+// scope Main begins
+  
+    function map_init takes nothing returns nothing
+        local string strTestWarning_RU
+        local string strWarning_RU
+        local string strVar_RU
+        local string Feedback_RU
 
-    // Аналогично, но только по-английски.
-    local string strTestWarning_EN
-    local string strWarning_EN
-    local string strVar_EN
-    local string Feedback_EN
+        // Аналогично, но только по-английски.
+        local string strTestWarning_EN
+        local string strWarning_EN
+        local string strVar_EN
+        local string Feedback_EN
 
-    local integer i= 0
+        local integer i= 0
 
 
-    // Отображает strVar_** в зависимости от типа карты
-    set strTestWarning_RU="В данной версии вы можете увидеть десинхронизацию, баги, неправильную работу способностей и ошиКБи в словах."
-    set strWarning_RU=( RED + "Внимание:|r вы играете в " + Version + " версию " + strVersion + ". " )
-    set strTestWarning_EN="In this version you can experience desyncs, bugs, and miTSakes in localization."
-    set strWarning_EN=( RED + "Caution:|r you are playing in " + Version + " version " + strVersion + ". " )
-    if ( Version != "" and strVersion != "" ) then
-        if ( Version == "Test" ) then
-            set strVar_RU=strWarning_RU + strTestWarning_RU + "\n "
-            set strVar_EN=strWarning_EN + strTestWarning_EN + "\n "
-        elseif ( Version == "Release" ) then
-            set strVar_RU="Вы играете в " + GREEN + "стабильную|r " + strVersion + " версию.\n "
-            set strVar_EN="You are playing in " + GREEN + "stable|r " + strVersion + " version.\n "
-        endif
-        if ( Locale() == "RU" ) then
-            call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 25, strVar_RU)
-        else
-            call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 25, strVar_EN)
-        endif
-    endif
+//#         static if  not true  then
+//#             // Отображает strVar_** в зависимости от типа карты
+//#             set strTestWarning_RU = "В данной версии вы можете увидеть десинхронизацию, баги, неправильную работу способностей и ошиКБи в словах."
+//#             set strWarning_RU = (RED + "Внимание:|r " + "вы играете в " + Version + " версию " + strVersion + ". ")
+//#             set strTestWarning_EN = "In this version you can experience desyncs, bugs, and miTSakes in localization."
+//#             set strWarning_EN = (RED + "Caution:|r " + "you are playing in " + Version + " version " + strVersion + ". ")
+//#             if (Version != "" and strVersion != "") then
+//#                 if (Version == "Test") then
+//#                     set strVar_RU = strWarning_RU + strTestWarning_RU + "\n "
+//#                     set strVar_EN = strWarning_EN + strTestWarning_EN + "\n "
+//#                 elseif (Version == "Release") then
+//#                     set strVar_RU = "Вы играете в " + GREEN + "стабильную|r " + strVersion + " версию.\n "
+//#                     set strVar_EN = "You are playing in " + GREEN + "stable|r " + strVersion + " version.\n "
+//#                 endif
+//#                 if (Locale() == "RU") then
+//#                     call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 25, strVar_RU)
+//#                 else
+//#                     call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 25, strVar_EN)
+//#                 endif
+//#             endif
+//# 
+//#             // Сообщение об обратной связи
+//#             set Feedback_RU = "Связаться со мной можно по электронной почте, буду рад ответить на любые вопросы: " + strEmail + "\n "
+//#             set Feedback_EN = "If you see an issue, please, leave the feedback/suggestions in the E-Mail: " + strEmail + "\n "
+//#             if (Locale() == "RU") then
+//#                 call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_RU)
+//#             else
+//#                 call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_EN)
+//#             endif
+//# 
+//#             // Условие: один из разработчиков в игре?
+//#             loop
+//#                 exitwhen (i > 11)
+//#                 if (GetPlayerName(Player(i)) == "Nokladr" or GetPlayerName(Player(i)) == "Nokladr#2429") then
+//#                     if (Locale() == "RU") then
+//#                         call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 35, ("С вами играет создатель данной карты, " + C_IntToColor(i) + "Nokladr#2429" + "|r. Критика приветствуется :)\n "))
+//#                     else
+//#                         call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 35, ("You are playing with author, " + C_IntToColor(i) + "Nokladr#2429" + "|r. Any feedback is welcome :)\n "))
+//#                     endif
+//#                     set IsDevInGame = true
+//#                 endif
+//#                 set i = i + 1
+//#             endloop
+//#         endif
 
-    // Сообщение об обратной связи
-    set Feedback_RU="Связаться со мной можно по электронной почте, буду рад ответить на любые вопросы: " + strEmail + "\n "
-    set Feedback_EN="If you see an issue, please, leave the feedback/suggestions in the E-Mail: " + strEmail + "\n "
-    if ( Locale() == "RU" ) then
-        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_RU)
-    else
-        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_EN)
-    endif
+        // Инициализируем хэш-таблицу
+        set hash=s__HashTable_create()
 
-    // Условие: один из разработчиков в игре?
-    loop
-        exitwhen ( i > 11 )
-        if ( GetPlayerName(Player(i)) == "Nokladr" or GetPlayerName(Player(i)) == "Nokladr#2429" ) then
-            if ( Locale() == "RU" ) then
-                call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 35, ( "С вами играет создатель данной карты, " + C_IntToColor(i) + "Nokladr#2429|r. Критика приветствуется :)\n " ))
-            else
-                call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 35, ( "You are playing with author, " + C_IntToColor(i) + "Nokladr#2429|r. Any feedback is welcome :)\n " ))
-            endif
-            set IsDevInGame=true
-        endif
-        set i=i + 1
-    endloop
+        // Заполнение массива incSpellrc равкодами инкам способностей
+        set s__incSpellrc[1]= 'R00F'
+        set s__incSpellrc[2]= 'R00G'
+        set s__incSpellrc[3]= 'R00H'
+        set s__incSpellrc[4]= 'R00I'
+        set s__incSpellrc[5]= 'R00J'
+        set s__incSpellrc[6]= 'R00Q'
+        set s__incSpellrc[7]= 'R00R'
+        set s__incSpellrc[8]= 'R00S'
+        set s__incSpellrc[9]= 'R027'
+        set s__incSpellrc[10]= 'R029'
+        set s__incSpellrc[11]= 'R02I'
+        set s__incSpellrc[12]= 'R02J'
+        set s__incSpellrc[13]= 'R02K'
 
-    // Инициализируем хэш-таблицу
-    set hash=s__HashTable_create()
+        // Заполнение массивов robbery_pr_f и robbery_pr_s процентами спосоности Грабёж
+        set s__robbery_pr_f[1]= 5
+        set s__robbery_pr_f[2]= 10
+        set s__robbery_pr_f[3]= 15
+        set s__robbery_pr_f[4]= 20
+        set s__robbery_pr_f[5]= 30
+        set s__robbery_pr_f[6]= 40
 
-    // Заполнение массива incSpellrc равкодами инкам способностей
-    set s__incSpellrc[1]= 'R00F'
-    set s__incSpellrc[2]= 'R00G'
-    set s__incSpellrc[3]= 'R00H'
-    set s__incSpellrc[4]= 'R00I'
-    set s__incSpellrc[5]= 'R00J'
-    set s__incSpellrc[6]= 'R00Q'
-    set s__incSpellrc[7]= 'R00R'
-    set s__incSpellrc[8]= 'R00S'
-    set s__incSpellrc[9]= 'R027'
-    set s__incSpellrc[10]= 'R029'
-    set s__incSpellrc[11]= 'R02I'
-    set s__incSpellrc[12]= 'R02J'
-    set s__incSpellrc[13]= 'R02K'
+        set s__robbery_pr_s[1]= 5
+        set s__robbery_pr_s[2]= 6
+        set s__robbery_pr_s[3]= 7
+        set s__robbery_pr_s[4]= 8
+        set s__robbery_pr_s[5]= 9
+        set s__robbery_pr_s[6]= 10
 
-    // Заполнение массивов robbery_pr_f и robbery_pr_s процентами спосоности Грабёж
-    set s__robbery_pr_f[1]= 5
-    set s__robbery_pr_f[2]= 10
-    set s__robbery_pr_f[3]= 15
-    set s__robbery_pr_f[4]= 20
-    set s__robbery_pr_f[5]= 30
-    set s__robbery_pr_f[6]= 40
+        // Заполнение массивов stab_time_gold и stab_time_lumber периодом инкама
+        set s__stab_time_gold[1]= 3
+        set s__stab_time_gold[2]= 3
+        set s__stab_time_gold[3]= 3
+        set s__stab_time_gold[4]= 3
+        set s__stab_time_gold[5]= 3
+        set s__stab_time_gold[6]= 3
 
-    set s__robbery_pr_s[1]= 5
-    set s__robbery_pr_s[2]= 6
-    set s__robbery_pr_s[3]= 7
-    set s__robbery_pr_s[4]= 8
-    set s__robbery_pr_s[5]= 9
-    set s__robbery_pr_s[6]= 10
+        set s__stab_time_lumber[1]= 40
+        set s__stab_time_lumber[2]= 40
+        set s__stab_time_lumber[3]= 30
+        set s__stab_time_lumber[4]= 20
+        set s__stab_time_lumber[5]= 15
+        set s__stab_time_lumber[6]= 12
 
-    // Заполнение массивов stab_time_gold и stab_time_lumber периодом инкама
-    set s__stab_time_gold[1]= 3
-    set s__stab_time_gold[2]= 3
-    set s__stab_time_gold[3]= 3
-    set s__stab_time_gold[4]= 3
-    set s__stab_time_gold[5]= 3
-    set s__stab_time_gold[6]= 3
+        // Заполнение массивов stab_gold и stab_lumber кол-вом инкама
+        set s__stab_gold[1]= 1
+        set s__stab_gold[2]= 1
+        set s__stab_gold[3]= 2
+        set s__stab_gold[4]= 2
+        set s__stab_gold[5]= 3
+        set s__stab_gold[6]= 4
+        
+        set s__stab_lumber[1]= 0
+        set s__stab_lumber[2]= 1
+        set s__stab_lumber[3]= 1
+        set s__stab_lumber[4]= 1
+        set s__stab_lumber[5]= 1
+        set s__stab_lumber[6]= 1
 
-    set s__stab_time_lumber[1]= 40
-    set s__stab_time_lumber[2]= 40
-    set s__stab_time_lumber[3]= 30
-    set s__stab_time_lumber[4]= 20
-    set s__stab_time_lumber[5]= 15
-    set s__stab_time_lumber[6]= 12
+        // Заполнение массивов goldmining_main_mine, goldmining_extra_mine, goldmining_income кол-вом увеличения инкама
+        set s__goldmining_main_mine[1]= 1
+        set s__goldmining_main_mine[2]= 1
+        set s__goldmining_main_mine[3]= 1
+        set s__goldmining_main_mine[4]= 1
+        set s__goldmining_main_mine[5]= 1
+        set s__goldmining_main_mine[6]= 1
 
-    // Заполнение массивов stab_gold и stab_lumber кол-вом инкама
-    set s__stab_gold[1]= 1
-    set s__stab_gold[2]= 1
-    set s__stab_gold[3]= 2
-    set s__stab_gold[4]= 2
-    set s__stab_gold[5]= 3
-    set s__stab_gold[6]= 4
-    
-    set s__stab_lumber[1]= 0
-    set s__stab_lumber[2]= 1
-    set s__stab_lumber[3]= 1
-    set s__stab_lumber[4]= 1
-    set s__stab_lumber[5]= 1
-    set s__stab_lumber[6]= 1
+        set s__goldmining_extra_mine[1]= 0
+        set s__goldmining_extra_mine[2]= 0
+        set s__goldmining_extra_mine[3]= 1
+        set s__goldmining_extra_mine[4]= 0
+        set s__goldmining_extra_mine[5]= 1
+        set s__goldmining_extra_mine[6]= 1
 
-    // Заполнение массивов goldmining_main_mine, goldmining_extra_mine, goldmining_income кол-вом увеличения инкама
-    set s__goldmining_main_mine[1]= 1
-    set s__goldmining_main_mine[2]= 1
-    set s__goldmining_main_mine[3]= 1
-    set s__goldmining_main_mine[4]= 1
-    set s__goldmining_main_mine[5]= 1
-    set s__goldmining_main_mine[6]= 1
+        set s__goldmining_income[1]= 10
+        set s__goldmining_income[2]= 10
+        set s__goldmining_income[3]= 10
+        set s__goldmining_income[4]= 10
+        set s__goldmining_income[5]= 10
+        set s__goldmining_income[6]= 10
 
-    set s__goldmining_extra_mine[1]= 0
-    set s__goldmining_extra_mine[2]= 0
-    set s__goldmining_extra_mine[3]= 1
-    set s__goldmining_extra_mine[4]= 0
-    set s__goldmining_extra_mine[5]= 1
-    set s__goldmining_extra_mine[6]= 1
+        // Не забываем обнулить переменные!!!
+        set strTestWarning_RU=null
+        set strWarning_RU=null
+        set strVar_RU=null
+        set Feedback_RU=null
+        
+        set strTestWarning_EN=null
+        set strWarning_EN=null
+        set strVar_EN=null
+        set Feedback_EN=null
+    endfunction
 
-    set s__goldmining_income[1]= 10
-    set s__goldmining_income[2]= 10
-    set s__goldmining_income[3]= 10
-    set s__goldmining_income[4]= 10
-    set s__goldmining_income[5]= 10
-    set s__goldmining_income[6]= 10
+    //-----------------------------Post main init------------------------------
 
-    // Не забываем обнулить переменные!!!
-    set strTestWarning_RU=null
-    set strWarning_RU=null
-    set strVar_RU=null
-    set Feedback_RU=null
-    
-    set strTestWarning_EN=null
-    set strWarning_EN=null
-    set strVar_EN=null
-    set Feedback_EN=null
-endfunction
+    function post_map_init takes nothing returns nothing
 
-//--------------------------------------------------Post main init---------------------------------------------------
+        // Сообщения в чате
+        call SetMessagesInit()
 
-function post_map_init takes nothing returns nothing
-    
-    // Сообщения в чате
-    call SetMessagesInit()
+        // initialization in game trigger
+        call initialization_in_game()
 
-    // initialization in game trigger
-    call initialization_in_game()
+        // income upg trigger
+        call InitTrig_income_upg()
+        call InitTrig_income_upgR()
+        call InitTrig_income_upgA()
+        call InitTrig_income_upgTQ()
 
-    // income upg trigger
-    call InitTrig_income_upg()
-	call InitTrig_income_upgR()
-	call InitTrig_income_upgA()
-	call InitTrig_income_upgTQ()
+        // faq active Trigger
+        call faq_active_init()
 
-    // faq active Trigger
-    call faq_active_init()
-    
-endfunction
+        call C_Log("post_map_init finished!")
+        
+    endfunction
+
+    //-------------------------The very first function-------------------------
+    // Starts map initialization
+    function MainInit takes nothing returns nothing
+        local trigger t= CreateTrigger()
+
+        call map_init()
+        call TriggerRegisterTimerEventSingle(t, 0.01)
+        call TriggerAddAction(t, function post_map_init)
+        call C_SetComputers()
+        call C_StartInitTimer()
+
+        set t=null
+    endfunction
+
+// scope Main ends
 //===========================================================================
 // 
 // MIX |cffffffff0.0.1|r
@@ -5040,27 +4959,27 @@ function InitSounds takes nothing returns nothing
     call SetSoundVolume(gg_snd_QuestCompleted, - 1)
     call SetSoundPitch(gg_snd_QuestCompleted, 1.0)
     set gg_snd_BloodElfMageYesAttack1=CreateSound("Units\\Human\\HeroBloodElf\\BloodElfMageYesAttack1.wav", false, false, true, 10, 10, "HeroAcksEAX")
-    call SetSoundDuration(gg_snd_BloodElfMageYesAttack1, 2831)
+    call SetSoundDuration(gg_snd_BloodElfMageYesAttack1, 1718)
     call SetSoundChannel(gg_snd_BloodElfMageYesAttack1, 0)
     call SetSoundVolume(gg_snd_BloodElfMageYesAttack1, - 1)
     call SetSoundPitch(gg_snd_BloodElfMageYesAttack1, 1.0)
     set gg_snd_BloodElfMageYesAttack3=CreateSound("Units\\Human\\HeroBloodElf\\BloodElfMageYesAttack3.wav", false, false, true, 10, 10, "HeroAcksEAX")
-    call SetSoundDuration(gg_snd_BloodElfMageYesAttack3, 3255)
+    call SetSoundDuration(gg_snd_BloodElfMageYesAttack3, 1938)
     call SetSoundChannel(gg_snd_BloodElfMageYesAttack3, 0)
     call SetSoundVolume(gg_snd_BloodElfMageYesAttack3, - 1)
     call SetSoundPitch(gg_snd_BloodElfMageYesAttack3, 1.0)
     set gg_snd_BloodElfMageWarcry1=CreateSound("Units\\Human\\HeroBloodElf\\BloodElfMageWarcry1.wav", false, false, true, 10, 10, "HeroAcksEAX")
-    call SetSoundDuration(gg_snd_BloodElfMageWarcry1, 2843)
+    call SetSoundDuration(gg_snd_BloodElfMageWarcry1, 2002)
     call SetSoundChannel(gg_snd_BloodElfMageWarcry1, 0)
     call SetSoundVolume(gg_snd_BloodElfMageWarcry1, - 1)
     call SetSoundPitch(gg_snd_BloodElfMageWarcry1, 1.0)
     set gg_snd_BloodElfMageReady1=CreateSound("Units\\Human\\HeroBloodElf\\BloodElfMageReady1.wav", false, false, true, 10, 10, "HeroAcksEAX")
-    call SetSoundDuration(gg_snd_BloodElfMageReady1, 3270)
+    call SetSoundDuration(gg_snd_BloodElfMageReady1, 2012)
     call SetSoundChannel(gg_snd_BloodElfMageReady1, 0)
     call SetSoundVolume(gg_snd_BloodElfMageReady1, - 1)
     call SetSoundPitch(gg_snd_BloodElfMageReady1, 1.0)
     set gg_snd_BloodElfMagePissed1=CreateSound("Units\\Human\\HeroBloodElf\\BloodElfMagePissed1.wav", false, false, true, 10, 10, "HeroAcksEAX")
-    call SetSoundDuration(gg_snd_BloodElfMagePissed1, 6437)
+    call SetSoundDuration(gg_snd_BloodElfMagePissed1, 2948)
     call SetSoundChannel(gg_snd_BloodElfMagePissed1, 0)
     call SetSoundVolume(gg_snd_BloodElfMagePissed1, - 1)
     call SetSoundPitch(gg_snd_BloodElfMagePissed1, 1.0)
@@ -5289,17 +5208,6 @@ endfunction
 //*
 //***************************************************************************
 
-//===========================================================================
-// Trigger: main
-//===========================================================================
-function InitTrig_main takes nothing returns nothing
-    local trigger t= CreateTrigger()
-    call map_init()
-    call TriggerRegisterTimerEventSingle(t, 0.01)
-    call TriggerAddAction(t, function post_map_init)
-    call C_SetComputers()
-    call C_StartInitTimer()
-endfunction
 //===========================================================================
 // Trigger: initialization
 //
@@ -16807,7 +16715,6 @@ endfunction
 
 //===========================================================================
 function InitCustomTriggers takes nothing returns nothing
-    call InitTrig_main()
     call InitTrig_initialization()
     call InitTrig_ini_id()
     call InitTrig_game_end()
@@ -17074,8 +16981,9 @@ function main takes nothing returns nothing
     call CreateAllUnits()
     call InitBlizzard()
 
-call ExecuteFunc("jasshelper__initstructs53193718")
-call ExecuteFunc("MIXLib___MIXLibInit")
+call ExecuteFunc("jasshelper__initstructs600468109")
+call ExecuteFunc("MIXLib__MIXLibInit")
+call MainInit()
 
     call InitGlobals()
     call InitCustomTriggers()
@@ -17118,23 +17026,19 @@ endfunction
 //Struct method generated initializers/callers:
 
 //Functions for BigArrays:
-function sa___prototype30_UnitRecycler___DisplayError takes nothing returns boolean
-    call UnitRecycler___DisplayError(f__arg_unit1)
+function sa___prototype31_UnitRecycler__DisplayError takes nothing returns boolean
+    call UnitRecycler__DisplayError(f__arg_unit1)
     return true
 endfunction
 
-function jasshelper__initstructs53193718 takes nothing returns nothing
-    set st___prototype30[1]=CreateTrigger()
-    call TriggerAddAction(st___prototype30[1],function sa___prototype30_UnitRecycler___DisplayError)
-    call TriggerAddCondition(st___prototype30[1],Condition(function sa___prototype30_UnitRecycler___DisplayError))
+function jasshelper__initstructs600468109 takes nothing returns nothing
+    set st___prototype31[1]=CreateTrigger()
+    call TriggerAddAction(st___prototype31[1],function sa___prototype31_UnitRecycler__DisplayError)
+    call TriggerAddCondition(st___prototype31[1],Condition(function sa___prototype31_UnitRecycler__DisplayError))
 
 
 
-call ExecuteFunc("s__Revive_ReviveUnit___Init___onInit")
-
-
-
-
+call ExecuteFunc("s__Revive_ReviveUnit__Init__onInit")
 
 
 
@@ -17182,13 +17086,17 @@ call ExecuteFunc("s__Revive_ReviveUnit___Init___onInit")
 
 
 
-call ExecuteFunc("s__RegisterNativeEvent___NativeEvent_RegisterNativeEvent___NativeEventInit___onInit")
 
 
 
-call ExecuteFunc("s__UnitRecycler___Initializer_UnitRecycler___Init___onInit")
 
-call ExecuteFunc("s__ResourcePreloader___S_ResourcePreloader___Init___onInit")
+call ExecuteFunc("s__RegisterNativeEvent__NativeEvent_RegisterNativeEvent__NativeEventInit__onInit")
+
+
+
+call ExecuteFunc("s__UnitRecycler__Initializer_UnitRecycler__Init__onInit")
+
+call ExecuteFunc("s__ResourcePreloader__S_ResourcePreloader__Init__onInit")
 
     call ExecuteFunc("s__BJObjectId_onInit")
 endfunction
