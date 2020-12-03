@@ -5,3 +5,4 @@ logs
 .idea
 tools/!MPQEditor.exe
 tools/!XDI.lnk
+.vscode/settings.json
