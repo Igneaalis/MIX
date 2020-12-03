@@ -5,7 +5,7 @@
 = Discord:           ! ! Gladiator#3635     =
 = E-Mail:            glady007rus@gmail.com  =
 = Дата создания:     11.11.2020 20:00       =
-= Дата изменения:    11.11.2020 20:00       =
+= Дата изменения:    03.12.2020 14:51       =
 =============================================
 
 Улучшение инкома Мёртвые деньги.
@@ -31,10 +31,7 @@ function Trig_income_upgR_Conditions takes nothing returns boolean
     set killer = null
     set victim = null
     
-    if b1 and b2 and b3 then
-        return true
-    endif
-    return false
+    return b1 and b2 and b3
 
 endfunction
 
@@ -45,7 +42,7 @@ function Trig_income_upgR_Actions takes nothing returns nothing
     local integer sum
 
     set sum = n * GetPlayerTechCountSimple(deadmoney_rc, p_k)
-    call AdjustPlayerStateBJ(sum, p_k, PLAYER_STATE_RESOURCE_GOLD)
+    call AddGoldToPlayer(sum, p_k)
 
     set killer = null
     set p_k = null
@@ -53,10 +50,23 @@ endfunction
 
 //===========================================================================
 function InitTrig_income_upgR takes nothing returns nothing
-    local trigger trg_income_upgR = CreateTrigger( )
-    call TriggerRegisterAnyUnitEventBJ( trg_income_upgR, EVENT_PLAYER_UNIT_DEATH )
-    call TriggerAddCondition( trg_income_upgR, Condition( function Trig_income_upgR_Conditions ) )
-    call TriggerAddAction( trg_income_upgR, function Trig_income_upgR_Actions )
+    local trigger t = CreateTrigger()
+
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerAddCondition(t, Condition( function Trig_income_upgR_Conditions))
+    call TriggerAddAction(t, function Trig_income_upgR_Actions)
+    
     set trg_income_upgR = null
 endfunction
 

@@ -5,7 +5,7 @@
 = Discord:           ! ! Gladiator#3635     =
 = E-Mail:            glady007rus@gmail.com  =
 = Дата создания:     22.11.2020 13:00       =
-= Дата изменения:    22.11.2020 13:00       =
+= Дата изменения:    03.12.2020 14:51       =
 =============================================
 
 Улучшение инкома Грабёж.
@@ -33,10 +33,7 @@ function Trig_income_upgA_Conditions takes nothing returns boolean
     set killer = null
     set victim = null
     
-    if b1 and b2 and b3 and b4 then
-        return true
-    endif
-    return false
+    return b1 and b2 and b3 and b4
 
 endfunction
 
@@ -61,10 +58,10 @@ function Trig_income_upgA_Actions takes nothing returns nothing
     set gold = R2I(I2R(gold) * multy)
     set lumber = R2I(I2R(lumber) * multy)
     
-    call AdjustPlayerStateBJ(gold, p_k, PLAYER_STATE_RESOURCE_GOLD)
-    call AdjustPlayerStateBJ(lumber, p_k, PLAYER_STATE_RESOURCE_LUMBER)
-    call AdjustPlayerStateBJ(-1 * gold, p_v, PLAYER_STATE_RESOURCE_GOLD)
-    call AdjustPlayerStateBJ(-1 * lumber, p_v, PLAYER_STATE_RESOURCE_LUMBER)
+    call AddGoldToPlayer(gold, p_k)
+    call AddGoldToPlayer(-gold, p_v)
+    call AddLumberToPlayer(lumber, p_k)
+    call AddLumberToPlayer(-lumber, p_v)
 
     set killer_mes = "Вы украли |cFFFFCD00" + I2S(gold) + "|r ед. золота и |cFFB23AEE" + I2S(lumber) + "|r ед. самоцветов у игрока " + color_v + name_v
     set victim_mes = "Вас ограбил игрок " + color_k + name_k
@@ -77,13 +74,30 @@ function Trig_income_upgA_Actions takes nothing returns nothing
     set victim = null
     set killer_mes = null
     set victim_mes = null
+    set color_k = null
+    set color_v = null
+    set name_k = null
+    set name_v = null
 endfunction
 
 //===========================================================================
 function InitTrig_income_upgA takes nothing returns nothing
-    local trigger trg_income_upgA = CreateTrigger( )
-    call TriggerRegisterAnyUnitEventBJ( trg_income_upgA, EVENT_PLAYER_UNIT_DEATH )
-    call TriggerAddCondition( trg_income_upgA, Condition( function Trig_income_upgA_Conditions ) )
-    call TriggerAddAction( trg_income_upgA, function Trig_income_upgA_Actions )
-    set trg_income_upgA = null
+    local trigger t = CreateTrigger()
+
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerAddCondition(t, Condition( function Trig_income_upgA_Conditions))
+    call TriggerAddAction(t, function Trig_income_upgA_Actions)
+    
+    set t = null
 endfunction

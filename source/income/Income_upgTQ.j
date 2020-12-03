@@ -5,7 +5,7 @@
 = Discord:           ! ! Gladiator#3635     =
 = E-Mail:            glady007rus@gmail.com  =
 = Дата создания:     22.11.2020 18:00       =
-= Дата изменения:    26.11.2020 13:49       =
+= Дата изменения:    03.12.2020 14:51       =
 =============================================
 
 Улучшение инкома Проклятый рудник.
@@ -27,11 +27,11 @@ function Trig_income_upgTQ_Conditions takes nothing returns boolean
     // n003 - Gold Mine большой
     // n004 - Gold Mine маленький
     // n005 - Флаг
-    set IsIncomeObjective = (v_rc == 'n003' or v_rc == 'n004' or v_rc == 'n005')
+    set IsIncomeObjective = ((v_rc == 'n003') or (v_rc == 'n004') or (v_rc == 'n005'))
 
     // Не действует на игроков с уровнем улучшения "Проклятый рудник" ниже вашего на 1 и выше.
-    set DoesVictimHasUpgrade = GetPlayerTechCountSimple(cursed_mine_rc, p_v) > 0
-    set DoesVictimsUpgradeGreaterThanKillers = (GetPlayerTechCountSimple(cursed_mine_rc, p_v) - 1) > GetPlayerTechCountSimple(cursed_mine_rc, p_k)
+    set DoesVictimHasUpgrade = GetPlayerTechCount(p_v, cursed_mine_rc, true) > 0
+    set DoesVictimsUpgradeGreaterThanKillers = (GetPlayerTechCount(p_v, cursed_mine_rc, true) - 1) > GetPlayerTechCount(p_k, cursed_mine_rc, true)
 
     set killer = null
     set victim = null
@@ -56,7 +56,7 @@ function Trig_income_upgTQ_Actions_group takes nothing returns nothing
     set b1 = IsUnitInGroup(u, udg_wave_units)
     set b2 = (p == p_k)
     if b1 and b2 then
-        set damage = damage * I2R(GetPlayerTechCountSimple(cursed_mine_rc, p_v))              // формула расчёта урона: урон = cursed_mine_damage_for_lvl * уровень улучшения
+        set damage = damage * I2R(GetPlayerTechCount(p_v, cursed_mine_rc, true))              // формула расчёта урона: урон = cursed_mine_damage_for_lvl * уровень улучшения
         // !!!
         call UnitDamageTargetBJ(damage_u, u, damage, ATTACK_TYPE_CHAOS, DAMAGE_TYPE_NORMAL)
         // -----
@@ -112,10 +112,11 @@ function Trig_income_upgTQ_Actions takes nothing returns nothing
 
     set gold = GetPlayerState(p_k, PLAYER_STATE_RESOURCE_GOLD) * percent / 100
     set lumber = GetPlayerState(p_k, PLAYER_STATE_RESOURCE_LUMBER) * percent / 100
-    call AdjustPlayerStateBJ(gold, p_v, PLAYER_STATE_RESOURCE_GOLD)
-    call AdjustPlayerStateBJ(lumber, p_v, PLAYER_STATE_RESOURCE_LUMBER)
-    call AdjustPlayerStateBJ(-1 * gold, p_k, PLAYER_STATE_RESOURCE_GOLD)
-    call AdjustPlayerStateBJ(-1 * lumber, p_k, PLAYER_STATE_RESOURCE_LUMBER)
+
+    call AddGoldToPlayer(gold, p_v)
+    call AddGoldToPlayer(-gold, p_k)
+    call AddLumberToPlayer(lumber, p_v)
+    call AddLumberToPlayer(-lumber, p_k)
 
     set s1 = "Вы украли |cFFFFCD00" + I2S(gold) + "|r ед. золота и |cFFB23AEE" + I2S(lumber) + "|r ед. самоцветов у игрока " + udg_players_colour[n_p_k] + udg_players_name[n_p_k]
     set s2 = "Вас ограбил игрок " + udg_players_colour[n_p_v] + udg_players_name[n_p_v]
@@ -123,6 +124,7 @@ function Trig_income_upgTQ_Actions takes nothing returns nothing
     call DisplayTextToPlayer(p_k, 0, 0, s2)
 
     call DestroyGroup(gr)
+    set name_ef = null
     set gr = null
     set killer = null
     set victim = null
@@ -136,7 +138,6 @@ endfunction
 function InitTrig_income_upgTQ takes nothing returns nothing
     local trigger t = CreateTrigger()
 
-    // Так быстрее
     call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
     call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
     call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
