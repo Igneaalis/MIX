@@ -5,7 +5,7 @@
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     20.11.2020 16:00       =
-= Дата изменения:    02.12.2020 20:56       =
+= Дата изменения:    03.12.2020 13:39       =
 =============================================
 
 faq stop Trigger
@@ -15,9 +15,11 @@ Stops voting for faq guide
 */
 
 function faq_get_castle takes nothing returns nothing
-    call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, GetEnumPlayer(), 0) // Resets camera angle
-    call PanCameraToTimedLocForPlayer(GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), 0) // Focuses camera at castle you own
-    call SelectUnitForPlayerSingle(GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(GetEnumPlayer(), 'ntav')), GetEnumPlayer()) // Selects tavern
+    local player p = GetEnumPlayer()
+    call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, p, 0) // Resets camera angle
+    call PanCameraToTimedLocForPlayer(p, GetPlayerStartLocationLoc(p), 0) // Focuses camera at castle you own
+    call SelectUnitForPlayerSingle(GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(p, 'ntav')), p) // Selects tavern
+    set p = null
 endfunction
 
 function faq_stop takes nothing returns nothing
