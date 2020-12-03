@@ -159,7 +159,7 @@ scope Main initializer MainInit
         set goldmining_income[5] = 10
         set goldmining_income[6] = 10
 
-        call C_Log("map_init finished!")
+        call Log("map_init finished!")
 
         // Не забываем обнулить переменные!!!
         set strTestWarning_RU = null
@@ -192,7 +192,7 @@ scope Main initializer MainInit
         // faq active Trigger
         call faq_active_init()
 
-        call C_Log("post_map_init finished!")
+        call Log("post_map_init finished!")
         
     endfunction
 
@@ -205,7 +205,7 @@ scope Main initializer MainInit
         call TriggerRegisterTimerEventSingle(t, 0.01)
         call TriggerAddAction(t, function post_map_init)
         call C_SetComputers()
-        call C_StartInitTimer()
+        call StartInitTimer()
 
         set t = null
     endfunction

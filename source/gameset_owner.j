@@ -34,7 +34,7 @@ function gameset_owner takes nothing returns nothing
     endif
 
     // Opt. begin
-    if  (C_GetTimeInSeconds() < R2I(udg_gameset_time_first)) then // Shows commands and settings only at game start
+    if  (GetTimeInSeconds() < R2I(udg_gameset_time_first)) then // Shows commands and settings only at game start
         if (udg_info[GetConvertedPlayerId(udg_game_owner)] == true) then // Checks Info flag of game owner
             static if (not DEBUG_MODE) then
                 // Shows all available commands and settings

@@ -5,7 +5,7 @@
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     18.02.2016             =
-= Дата изменения:    20.11.2020 21:37       =
+= Дата изменения:    03.12.2020 13:51       =
 =============================================
 
 Библиотека общего назначения.
@@ -67,7 +67,7 @@ library NokladrLib
     endfunction
 
     // Лог сообщений
-    function C_Log takes string s returns nothing
+    function Log takes string s returns nothing
         debug call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, (GOLD + "Log:|r " + GREEN + s + "|r"))
     endfunction
 
@@ -144,13 +144,13 @@ library NokladrLib
     endfunction
 
     // Инициализация счётчика времени
-    function C_StartInitTimer takes nothing returns nothing
+    function StartInitTimer takes nothing returns nothing
         local timer t = CreateTimer()
         call TimerStart(t, 1., true, function C_StartCount)
     endfunction
 
     // Возвращает состояние счётчика времени в секундах
-    function C_GetTimeInSeconds takes nothing returns integer
+    function GetTimeInSeconds takes nothing returns integer
         return time[0] + time[1]*60 + time[2]*3600
     endfunction
 
@@ -174,23 +174,22 @@ library NokladrLib
     endfunction
 
     // Добавляет золото игроку
-    function C_AddGoldToPlayer takes integer value, player p returns nothing
+    function AddGoldToPlayer takes integer value, player p returns nothing
         call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) + value)
     endfunction
 
     // Добавляет дерево игроку
-    function C_AddLumberToPlayer takes integer value, player p returns nothing
+    function AddLumberToPlayer takes integer value, player p returns nothing
         call SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER) + value)
     endfunction
 
     // Принимает rect, возвращает location
-    function C_RectToLoc takes rect r returns location
-        local location l = Location(GetRectCenterX(r), GetRectCenterY(r))
-        return l
+    function RectToLoc takes rect r returns location
+        return Location(GetRectCenterX(r), GetRectCenterY(r))
     endfunction
 
     // Условие: юнит имеет предмет с itemId?
-    function C_UnitHasItemOfType takes unit u, integer itemId returns boolean
+    function C_DoesUnitHasItemOfType takes unit u, integer itemId returns boolean
         local integer i = 0
         local item indexItem
         loop
@@ -221,6 +220,16 @@ library NokladrLib
         // SetTextTagColorBJ
         call SetTextTagColor(tt, 255, 255, 255, 255)
         return tt
+    endfunction
+
+    // Makes map normal in opposite to FadeMap()
+    function UnfadeMap takes nothing returns nothing
+        call SetDayNightModels("Environment\\DNC\\DNCLordaeron\\DNCLordaeronTerrain\\DNCLordaeronTerrain.mdl", "Environment\\DNC\\DNCLordaeron\\DNCLordaeronUnit\\DNCLordaeronUnit.mdl")
+    endfunction
+    
+    // Makes map absolute black
+    function FadeMap takes nothing returns nothing
+        call SetDayNightModels("", "")
     endfunction
 
 endlibrary
