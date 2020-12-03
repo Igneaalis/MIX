@@ -67,6 +67,6 @@ function InitTrig_income_upgR takes nothing returns nothing
     call TriggerAddCondition(t, Condition( function Trig_income_upgR_Conditions))
     call TriggerAddAction(t, function Trig_income_upgR_Actions)
     
-    set trg_income_upgR = null
+    set t = null
 endfunction
 
