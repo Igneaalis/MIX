@@ -55,6 +55,6 @@ function gameset_owner takes nothing returns nothing
 
         endif
     endif
-    // Opt. begin
+    // Opt. end
 endfunction
 
