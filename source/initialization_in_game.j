@@ -5,7 +5,7 @@
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     08.11.2020 19:46       =
-= Дата изменения:    02.12.2020 21:49       =
+= Дата изменения:    03.12.2020 13:51       =
 =============================================
 
 initialization in game Trigger
@@ -36,36 +36,39 @@ endfunction
 function initialization_in_game_set_unit_id takes nothing returns nothing
     // Opt. begin
     set udg_id = udg_id + 1
-    call GroupAddUnitSimple(GetEnumUnit(), udg_id_group)
+    call GroupAddUnit(udg_id_group, GetEnumUnit())
     call SetUnitUserData(GetEnumUnit(), udg_id)
     // Opt. end
 endfunction
 
 function initialization_in_game_players takes nothing returns nothing
-    // Opt.begin
-    call CameraSetupApplyForPlayer( true, gg_cam_logic, GetEnumPlayer(), 0 )
-    if (GetPlayerSlotState(GetEnumPlayer()) == PLAYER_SLOT_STATE_PLAYING and GetPlayerController(GetEnumPlayer()) == MAP_CONTROL_USER) then
-        call SetPlayerFlagBJ( PLAYER_STATE_GIVES_BOUNTY, true, GetEnumPlayer() )
-        call ForceAddPlayerSimple( GetEnumPlayer(), udg_players_group )
+    local player p = GetEnumPlayer()
+    local real x = GetPlayerStartLocationX(p)
+    local real y = GetPlayerStartLocationY(p)
+    call CameraSetupApplyForPlayer(true, gg_cam_logic, p, 0)
+    if (GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING and GetPlayerController(p) == MAP_CONTROL_USER) then
+        call SetPlayerState(p, PLAYER_STATE_GIVES_BOUNTY, 1)
+        call ForceAddPlayer(udg_players_group, p)
         // TODO: Нижние переменные надо перенести в pdb
-        set udg_players_name[GetConvertedPlayerId(GetEnumPlayer())] = GetPlayerName(GetEnumPlayer())
-        set udg_info[GetConvertedPlayerId(GetEnumPlayer())] = true
-        set udg_income_gold[GetConvertedPlayerId(GetEnumPlayer())] = 240
-        set udg_income_wood[GetConvertedPlayerId(GetEnumPlayer())] = 8
-        set udg_leader_kf[GetConvertedPlayerId(GetEnumPlayer())] = 1.00
-        set udg_leader_wins[GetConvertedPlayerId(GetEnumPlayer())] = 0
-        set udg_changeSet[GetConvertedPlayerId(GetEnumPlayer())] = 3
-        call CreateNUnitsAtLoc( 1, 'ntav', GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), bj_UNIT_FACING )
-        call CreateNUnitsAtLoc( 1, 'h001', GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), bj_UNIT_FACING )
-        call CreateNUnitsAtLoc( 1, 'h029', GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), bj_UNIT_FACING )
-        call SetPlayerStateBJ( GetEnumPlayer(), PLAYER_STATE_RESOURCE_GOLD, 100 )
-        call CreateFogModifierRectBJ( true, GetEnumPlayer(), FOG_OF_WAR_VISIBLE, gg_rct_all )
-        call CreateFogModifierRectBJ( true, GetEnumPlayer(), FOG_OF_WAR_VISIBLE, gg_rct_minersregion )
-        call CreateFogModifierRectBJ( true, GetEnumPlayer(), FOG_OF_WAR_VISIBLE, gg_rct_fastarena )
-        call CreateFogModifierRectBJ( true, GetEnumPlayer(), FOG_OF_WAR_VISIBLE, gg_rct_horseregion )
-        call CreateFogModifierRectBJ( true, GetEnumPlayer(), FOG_OF_WAR_VISIBLE, gg_rct_roulette )
+        set udg_players_name[GetConvertedPlayerId(p)] = GetPlayerName(p)
+        set udg_info[GetConvertedPlayerId(p)] = true
+        set udg_income_gold[GetConvertedPlayerId(p)] = 240
+        set udg_income_wood[GetConvertedPlayerId(p)] = 8
+        set udg_leader_kf[GetConvertedPlayerId(p)] = 1.00
+        set udg_leader_wins[GetConvertedPlayerId(p)] = 0
+        set udg_changeSet[GetConvertedPlayerId(p)] = 3
+        call CreateUnit(p, 'ntav', x, y, bj_UNIT_FACING) // Таверна с расами на выбор
+        call CreateUnit(p, 'h001', x, y, bj_UNIT_FACING) // Юнит "Выбор героя"
+        call CreateUnit(p, 'h029', x, y, bj_UNIT_FACING) // Юнит "Не более 1 погодного эффекта в раунде"
+        call AddGoldToPlayer(100, p) // Золото на выбор расы в таверне
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_all, true, false)) // Поле битвы
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_minersregion, true, false)) // Миниигра "Минёры"
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_fastarena, true, false)) // Миниарена
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_horseregion, true, false)) // Миниигра "Конные бега"
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_roulette, true, false)) // Миниигра "Казино"
     endif
-    // Opt. end
+
+    set p = null
 endfunction
 
 function initialization_in_game takes nothing returns nothing
@@ -85,7 +88,7 @@ function initialization_in_game takes nothing returns nothing
             // Если не миниигра с боссом, то
             set udg_random_log = false
             loop // Заполняем wave_mini[] рандомными, неповторяющимися числами (2, 4, 6, ..., 18) - волны, когда будут миниигры. mode = 1 (стандартный режим)
-                exitwhen (udg_random_log == true) // Возможны баги
+                exitwhen (udg_random_log == true) // TODO: test
                 set udg_r = GetRandomInt(1, (udg_mini_game_max + 1)) // От 1 до 9 (кол-во миниигр)
                 if (initialization_in_game_wave_mini_condition()) then
                     set udg_random_log = true
@@ -142,4 +145,6 @@ function initialization_in_game takes nothing returns nothing
         endloop
         set i = i + 1
     endloop
+
+    set lastCreatedUnit = null
 endfunction
