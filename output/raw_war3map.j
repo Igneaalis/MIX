@@ -337,75 +337,6 @@ library BJObjectId // 1.0 http://www.hiveworkshop.com/threads/287128/
     endstruct
 
 endlibrary
-library ErrorMessage /* v1.0.2.0 https://github.com/nestharus/JASS/blob/master/jass/Systems/ErrorMessage/main.j
-*************************************************************************************
-*
-*    Issue Compliant Error Messages
-*
-************************************************************************************
-*
-*    function ThrowError takes boolean expression, string libraryName, string functionName, string objectName, integer objectInstance, string description returns nothing
-*        -    In the event of an error the game will be permanently paused
-*
-*    function ThrowWarning takes boolean expression, string libraryName, string functionName, string objectName, integer objectInstance, string description returns nothing
-*
-************************************************************************************/
-    private struct Fields extends array
-        static constant string COLOR_RED = "|cffff0000"
-        static constant string COLOR_YELLOW = "|cffffff00"
-        static string lastError = null
-    endstruct
-    
-    private function Pause takes nothing returns nothing
-        call PauseGame(true)
-    endfunction
-    
-    private function ThrowMessage takes string libraryName, string functionName, string objectName, integer objectInstance, string description, string errorType, string color returns nothing
-        local string str
-        
-        local string color_braces = "|cff66FF99"
-        local string orange = "|cffff6600"
-        
-        set str = "->\n-> " + color_braces + "{|r " + "Library" + color_braces + "(" + orange + libraryName + color_braces + ")"
-        if (objectName != null) then
-            if (objectInstance != 0) then
-                set str = str + "|r.Object" + color_braces + "(" + orange + objectName + color_braces + " (|rinstance = " + orange + I2S(objectInstance) + color_braces + ") )" + "|r." + "Method" + color_braces + "(" + orange + functionName + color_braces + ")"
-            else
-                set str = str + "|r.Object" + color_braces + "(" + orange + objectName + color_braces + ")|r." + "Method" + color_braces + "(" + orange + functionName + color_braces + ")"
-            endif
-        else
-            set str = str + "|r." + "Function" + color_braces + "(" + orange + functionName + color_braces + ")"
-        endif
-        
-        set str = str + color_braces + " }|r " + "has thrown an exception of type " + color_braces + "(" + color + errorType + color_braces + ")|r."
-        
-        set Fields.lastError = str + "\n->\n" + "->    " + color + description + "|r\n->"
-    endfunction
-    
-    function ThrowError takes boolean expression, string libraryName, string functionName, string objectName, integer objectInstance, string description returns nothing
-        if (Fields.lastError != null) then
-            set objectInstance = 1/0
-        endif
-    
-        if (expression) then
-            call ThrowMessage(libraryName, functionName, objectName, objectInstance, description, "Error", Fields.COLOR_RED)
-            call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,60000,Fields.lastError)
-            call TimerStart(CreateTimer(), 0, true, function Pause)
-            set objectInstance = 1/0
-        endif
-    endfunction
-    function ThrowWarning takes boolean expression, string libraryName, string functionName, string objectName, integer objectInstance, string description returns nothing
-        if (Fields.lastError != null) then
-            set objectInstance = 1/0
-        endif
-    
-        if (expression) then
-            call ThrowMessage(libraryName, functionName, objectName, objectInstance, description, "Warning", Fields.COLOR_YELLOW)
-            call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,60000,Fields.lastError)
-            set Fields.lastError = null
-        endif
-    endfunction
-endlibrary
 /*****************************************************************************
 *
 *    RegisterNativeEvent v1.1.1.5 https://www.hiveworkshop.com/threads/250266/
@@ -1903,7 +1834,7 @@ library NokladrLib
     endfunction
 
     // Лог сообщений
-    function C_Log takes string s returns nothing
+    function Log takes string s returns nothing
         debug call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, (GOLD + "Log:|r " + GREEN + s + "|r"))
     endfunction
 
@@ -1980,13 +1911,13 @@ library NokladrLib
     endfunction
 
     // Инициализация счётчика времени
-    function C_StartInitTimer takes nothing returns nothing
+    function StartInitTimer takes nothing returns nothing
         local timer t = CreateTimer()
         call TimerStart(t, 1., true, function C_StartCount)
     endfunction
 
     // Возвращает состояние счётчика времени в секундах
-    function C_GetTimeInSeconds takes nothing returns integer
+    function GetTimeInSeconds takes nothing returns integer
         return time[0] + time[1]*60 + time[2]*3600
     endfunction
 
@@ -2010,23 +1941,22 @@ library NokladrLib
     endfunction
 
     // Добавляет золото игроку
-    function C_AddGoldToPlayer takes integer value, player p returns nothing
+    function AddGoldToPlayer takes integer value, player p returns nothing
         call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) + value)
     endfunction
 
     // Добавляет дерево игроку
-    function C_AddLumberToPlayer takes integer value, player p returns nothing
+    function AddLumberToPlayer takes integer value, player p returns nothing
         call SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER) + value)
     endfunction
 
     // Принимает rect, возвращает location
-    function C_RectToLoc takes rect r returns location
-        local location l = Location(GetRectCenterX(r), GetRectCenterY(r))
-        return l
+    function RectToLoc takes rect r returns location
+        return Location(GetRectCenterX(r), GetRectCenterY(r))
     endfunction
 
     // Условие: юнит имеет предмет с itemId?
-    function C_UnitHasItemOfType takes unit u, integer itemId returns boolean
+    function C_DoesUnitHasItemOfType takes unit u, integer itemId returns boolean
         local integer i = 0
         local item indexItem
         loop
@@ -2057,6 +1987,16 @@ library NokladrLib
         // SetTextTagColorBJ
         call SetTextTagColor(tt, 255, 255, 255, 255)
         return tt
+    endfunction
+
+    // Makes map normal in opposite to FadeMap()
+    function UnfadeMap takes nothing returns nothing
+        call SetDayNightModels("Environment\\DNC\\DNCLordaeron\\DNCLordaeronTerrain\\DNCLordaeronTerrain.mdl", "Environment\\DNC\\DNCLordaeron\\DNCLordaeronUnit\\DNCLordaeronUnit.mdl")
+    endfunction
+    
+    // Makes map absolute black
+    function FadeMap takes nothing returns nothing
+        call SetDayNightModels("", "")
     endfunction
 
 endlibrary
@@ -2127,7 +2067,7 @@ endlibrary
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     01.11.2020 18:41       =
-= Дата изменения:    22.11.2020 18:00       =
+= Дата изменения:    03.12.2020 02:07       =
 =============================================
 
 Объявление глобальных переменных
@@ -2136,46 +2076,46 @@ endlibrary
 
 globals
     boolean IsDevInGame = false                                                                 // Условие: один из разработчиков в игре?
-    HashTable hash                                                            // Инициализация хэш-таблицы
+    HashTable hash                                                                              // Инициализация хэш-таблицы
     constant string strVersion = "0.0.1"                                                        // Версия карты, семантическое версионирование: (Major, Minor, Patch)
     constant string Version = "Test"                                                            // Тип версии {Test, Release}
     constant string strEmail = (LB + "Nostaleal.ru|r" + GOLD + "@|r" + LB + "yandex.ru|r")      // E-Mail адрес
     constant string strBuild_Time = "8 November 2020"                                           // Время создания билда карты
 
-    leaderboard Leaderboard                                                                     // таблица лидеров
+    leaderboard Leaderboard                                                                     // Таблица лидеров
 
     constant integer finalWave = 15
     constant integer numberOfMinigames = 8
     constant integer base_gold = 100
     constant integer base_gems = 0
 
-    constant integer incSpellrc_count = 14                                                       // Кол-во инкам способностей(zначение увеличено на 1 для удобства)
+    constant integer incSpellrc_count = 14                                                       // Кол-во инкам способностей(значение увеличено на 1 для удобства)
     constant integer count_research_for_t1 = 12                                                  // Кол-во улучшений для доступа к т1
     constant integer count_research_for_t2 = 20                                                  // Кол-во улучшений для доступа к т2      
     constant integer max_players = 8                                                             // Максимальное кол-во игроков
 
-    integer array incSpellrc[incSpellrc_count]                                                   // Массив инкам способностей(zаполнение в Main.j, function map_init)
+    integer array incSpellrc[incSpellrc_count]                                                   // Массив инкам способностей(заполнение в Main.j, function map_init)
     player array ticket_list[max_ticket_list]
 
     // Равкоды инкам улучшений и связанных с ними способностей
-    constant integer t1_research_rc = 'R018'                                                              // 12 исследований
-    constant integer t2_research_rc = 'R019'                                                              // 20 исследований
-    constant integer robbery_lvl3_rc = 'R023'                                                             // Грабёж(3 уровень)
-    constant integer robbery_lvl5_rc = 'R024'                                                             // Грабёж(5 уровень)
-    constant integer robbery_rc = 'R00J'                                                                  // Грабёж
-    constant integer evforev_rc = 'R00R'                                                                  // Развитие ради развития
-    constant integer aggrgame_rc = 'R02K'                                                                 // Агрессивная игра
-    constant integer aggrgame_aura_rc = 'S000'                                                            // аура Агрессивной игры
-    constant integer contr_to_pl_rc = 'R027'                                                              // Вклад в игрока
-    constant integer goldmining_rc = 'R00F'                                                               // Золотодобыча
-    constant integer ticket_rc = 'R00G'                                                                   // Билет
-    constant integer jewelry_rc = 'R00H'                                                                  // Драгоценные камни
-    constant integer deadmoney_rc = 'R00I'                                                                // Мёртвые деньги
-    constant integer contr_rc = 'R00Q'                                                                    // Вклад
-    constant integer stab_rc = 'R00S'                                                                     // Стабильность
-    constant integer wait_five_minutes_rc = 'R028'                                                        // Подождите 5 минут, дополнительное улучшение для Вклада в игрока
-    constant integer leadership_rc = 'R029'                                                               // Лидерство
-    constant integer cursed_mine_rc = 'R02I'                                                              // Проклятый рудник
+    constant integer t1_research_rc = 'R018'                                                     // 12 исследований (т2 юниты Медива)
+    constant integer t2_research_rc = 'R019'                                                     // 20 исследований (т3 юниты Медива)
+    constant integer robbery_lvl3_rc = 'R023'                                                    // Грабёж(3 уровень)
+    constant integer robbery_lvl5_rc = 'R024'                                                    // Грабёж(5 уровень)
+    constant integer robbery_rc = 'R00J'                                                         // Грабёж
+    constant integer evforev_rc = 'R00R'                                                         // Развитие ради развития
+    constant integer aggrgame_rc = 'R02K'                                                        // Агрессивная игра
+    constant integer aggrgame_aura_rc = 'S000'                                                   // Аура Агрессивной игры
+    constant integer contr_to_pl_rc = 'R027'                                                     // Вклад в игрока
+    constant integer goldmining_rc = 'R00F'                                                      // Золотодобыча
+    constant integer ticket_rc = 'R00G'                                                          // Билет
+    constant integer jewelry_rc = 'R00H'                                                         // Драгоценные камни
+    constant integer deadmoney_rc = 'R00I'                                                       // Мёртвые деньги
+    constant integer contr_rc = 'R00Q'                                                           // Вклад
+    constant integer stab_rc = 'R00S'                                                            // Стабильность
+    constant integer wait_five_minutes_rc = 'R028'                                               // Подождите 5 минут, дополнительное улучшение для Вклада в игрока
+    constant integer leadership_rc = 'R029'                                                      // Лидерство
+    constant integer cursed_mine_rc = 'R02I'                                                     // Проклятый рудник
 
     // Равкоды
     constant integer castle_rc = 'h01O'
@@ -2192,13 +2132,11 @@ globals
     constant integer contr_to_pl_lumber_mod = 5
     constant real contr_to_pl_time = 300 // в секундах
     constant real contr_to_pl_multy = 2
-    //------------------------------------
     
     // Настройки улучшения Грабёж, заполнение массива в Main.j
     constant integer robbery_pr_count = 7
     real array robbery_pr_f[robbery_pr_count]
     real array robbery_pr_s[robbery_pr_count]
-    //---------------------------
 
     // Настройки улучшения Вклад
     constant integer contr_gold = 200
@@ -2206,7 +2144,6 @@ globals
     constant integer contr_lumber = 8
     constant integer contr_lumber_mod = 6
     constant integer contr_percent = 150 // процент
-    //------------------------------------
 
     // Настройки улучшения Стабильность, заполнение массива в Main.j
     constant integer stab_count = 7
@@ -2216,11 +2153,9 @@ globals
     integer array stab_lumber[stab_count]
     timer array stab_timer_gold[max_players]
     timer array stab_timer_lumber[max_players]
-    //------------------------------------
 
     // Настройки улучшения Лидерство
     constant real leadership_bonus = 0.2
-    //------------------------------------
 
     // Настройки улучшения Проклятый рудник
     constant integer cursed_mine_percent = 3
@@ -2228,35 +2163,28 @@ globals
     constant integer cursed_mine_count_wave = 8
     constant real cursed_mine_cast_range = 468
     constant real cursed_mine_damage_for_lvl = 100
-    //------------------------------------
 
     // Настройки улучшения Мёртвые деньги
     constant integer deadmoney_money_for_lvl = 8
-    //------------------------------------
 
     // Настройки улучшения Драгоценные камни
     constant integer jewelry_lumber_for_lvl = 1
-    //------------------------------------
 
     // Настройки улучшения Билет
     constant integer max_ticket_list = 5
-    //------------------------------------
 
     // Настройки улучшения Золотодобыча, заполнение массива в Main.j
     constant integer goldmining_count = 6
     integer array goldmining_main_mine[goldmining_count]
     integer array goldmining_extra_mine[goldmining_count]
     integer array goldmining_income[goldmining_count]
-    //------------------------------------
 
     // Настройки улучшения Развитие ради развития
     constant real evforev_bonus_res = 0.01
     constant real evforev_bonus_res_mod = 0.01
-    //------------------------------------
 
     // Настройки улучшения Агрессивная игра
-    // аура - aggrgame_aura_rc, внутри неё менять скорость боя и перемещения
-    //------------------------------------
+    // Аура - aggrgame_aura_rc, внутри неё менять скорость боя и перемещения
 endglobals
 /*
 
@@ -2401,7 +2329,7 @@ function gameset_owner takes nothing returns nothing
     endif
 
     // Opt. begin
-    if  (C_GetTimeInSeconds() < R2I(udg_gameset_time_first)) then // Shows commands and settings only at game start
+    if  (GetTimeInSeconds() < R2I(udg_gameset_time_first)) then // Shows commands and settings only at game start
         if (udg_info[GetConvertedPlayerId(udg_game_owner)] == true) then // Checks Info flag of game owner
             static if (not DEBUG_MODE) then
                 // Shows all available commands and settings
@@ -2497,7 +2425,7 @@ endfunction
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     20.11.2020 22:46       =
-= Дата изменения:    02.12.2020 21:33       =
+= Дата изменения:    03.12.2020 13:39       =
 =============================================
 
 faq library-ish
@@ -2511,25 +2439,27 @@ globals
     timerdialog faq_timerdialog // Timer dialog in upper-left corner for commands and settings
     integer faq_vote_yes = 0 // Голосов "За"
     integer faq_vote_no = 0 // Голосов "Против"
+    real faq_voting_duration = 6.00 // Duration of voting
+    texttag array faq_tts[4] // Плавающий текст для отображения голосования
+    button array faq_buttons[2] // Кнопки в меню голосования
+    dialog faq_dialog = DialogCreate() // Меню с голосованием
 endglobals
 
 function faq_show_dialog takes nothing returns nothing
-    call DialogDisplay(GetEnumPlayer(), udg_faq_dialog, true) // Shows voting dialog
+    call DialogDisplay(GetEnumPlayer(), faq_dialog, true) // Shows voting dialog
 endfunction
 
 function faq_hide_dialog takes nothing returns nothing
-    call DialogDisplay(GetEnumPlayer(), udg_faq_dialog, false) // Hides voting dialog
+    call DialogDisplay(GetEnumPlayer(), faq_dialog, false) // Hides voting dialog
 endfunction
 
 function faq_flush takes nothing returns nothing
-    // Unfades map
-    call SetDayNightModels("Environment\\DNC\\DNCLordaeron\\DNCLordaeronTerrain\\DNCLordaeronTerrain.mdl", "Environment\\DNC\\DNCLordaeron\\DNCLordaeronUnit\\DNCLordaeronUnit.mdl")
-
+    call UnfadeMap() // Unfades map
     call ForForce(udg_players_group, function faq_hide_dialog) // Hides voting dialog
-    call DestroyTextTagBJ(udg_faq_text[0]) // Уничтожает плавающий текст с голосами "За"
-    call DestroyTextTagBJ(udg_faq_text[1]) // Уничтожает плавающий текст с голосами "За"
-    call DestroyTextTagBJ(udg_faq_text[2]) // Уничтожает плавающий текст с голосами "Против"
-    call DestroyTextTagBJ(udg_faq_text[3]) // Уничтожает плавающий текст с голосами "Против"
+    call DestroyTextTag(faq_tts[0]) // Уничтожает плавающий текст с голосами "За"
+    call DestroyTextTag(faq_tts[1]) // Уничтожает плавающий текст с голосами "За"
+    call DestroyTextTag(faq_tts[2]) // Уничтожает плавающий текст с голосами "Против"
+    call DestroyTextTag(faq_tts[3]) // Уничтожает плавающий текст с голосами "Против"
 endfunction
 /*
 
@@ -2538,7 +2468,7 @@ endfunction
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     21.11.2020 21:03       =
-= Дата изменения:    02.12.2020 21:04       =
+= Дата изменения:    03.12.2020 13:39       =
 =============================================
 
 faq start Trigger
@@ -2549,11 +2479,12 @@ Shows all available commands and settings.
 
 function faq_start_timer_actions takes nothing returns nothing
     call gameset_end()
-    call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, "|cFFFF0000Команда |cFFFFFFFF-info|r |cFFFF0000отключит сообщения о штрафах и мини-арене.|r")
+    call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 15, "|cFFFF0000Команда |cFFFFFFFF-info|r |cFFFF0000отключит сообщения о штрафах и мини-арене.|r")
     call DestroyTimerDialog(faq_timerdialog) // Destroys timer dialog for commands and settings
 endfunction
 
 function faq_start takes nothing returns nothing
+    debug set udg_gameset_time_first = 30.00
     call TimerStart(udg_gameset_timer, udg_gameset_time_first, false, function faq_start_timer_actions) // After settings were set
 
     set faq_timerdialog = CreateTimerDialog(udg_gameset_timer) // Timer dialog in upper-left corner for commands and settings
@@ -2562,7 +2493,6 @@ function faq_start takes nothing returns nothing
 
     call gameset_owner() // Sets owner of game
     call TriggerExecute(gg_trg_scoreboard_ini) // Shows scoreboard
-
 endfunction
 
 /*
@@ -2572,7 +2502,7 @@ endfunction
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     20.11.2020 16:00       =
-= Дата изменения:    02.12.2020 20:56       =
+= Дата изменения:    03.12.2020 13:39       =
 =============================================
 
 faq stop Trigger
@@ -2582,9 +2512,11 @@ Stops voting for faq guide
 */
 
 function faq_get_castle takes nothing returns nothing
-    call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, GetEnumPlayer(), 0) // Resets camera angle
-    call PanCameraToTimedLocForPlayer(GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), 0) // Focuses camera at castle you own
-    call SelectUnitForPlayerSingle(GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(GetEnumPlayer(), 'ntav')), GetEnumPlayer()) // Selects tavern
+    local player p = GetEnumPlayer()
+    call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, p, 0) // Resets camera angle
+    call PanCameraToTimedLocForPlayer(p, GetPlayerStartLocationLoc(p), 0) // Focuses camera at castle you own
+    call SelectUnitForPlayerSingle(GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(p, 'ntav')), p) // Selects tavern
+    set p = null
 endfunction
 
 function faq_stop takes nothing returns nothing
@@ -2600,7 +2532,7 @@ endfunction
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     20.11.2020 16:00       =
-= Дата изменения:    02.12.2020 21:31       =
+= Дата изменения:    03.12.2020 13:39       =
 =============================================
 
 faq ini Trigger
@@ -2609,16 +2541,15 @@ Starts voting for faq guide
 
 */
 
-function faq_counter takes nothing returns nothing
+function faq_voting_timer_counter takes nothing returns nothing
     local timer t = GetExpiredTimer()
 
-    if (hash[StringHash("faq")].real[StringHash("counter")] >= 1 and IsFaqActive) then // If voting exists
-        call DialogSetMessage(udg_faq_dialog, ("Посмотреть обучение (" + WHITE + R2S(hash[StringHash("faq")].real[StringHash("counter")]) + " сек.|r)"))
-        set hash[StringHash("faq")].real[StringHash("counter")] = hash[StringHash("faq")].real[StringHash("counter")] - 1
+    if (faq_voting_duration >= 1.00 and IsFaqActive) then // If voting exists
+        call DialogSetMessage(faq_dialog, ("Посмотреть обучение (" + WHITE + R2S(faq_voting_duration) + " сек.|r)"))
+        set faq_voting_duration = faq_voting_duration - 1.00
     else
         call PauseTimer(t)
         call DestroyTimer(t)
-        call hash.remove(StringHash("faq"))
         if (IsFaqActive) then // If there are not enough votes
             call faq_stop() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
         endif
@@ -2629,34 +2560,33 @@ endfunction
 
 //===========================================================================
 function faq_ini takes nothing returns nothing
-    call SetDayNightModels("", "") // Сделать всю карту чёрной
+    call FadeMap() // Сделать всю карту чёрной
 
     // ---За---
     // Плавающий текст с требуемым кол-вом голосов "За"
-    set udg_faq_text[0] = NewTextTag((GREEN + "\"ЗА\"|r нужно " + I2S(CountPlayersInForceBJ(udg_players_group) / 2)), gg_rct_guideyes, 14.00)
+    set faq_tts[0] = NewTextTag((GREEN + "\"ЗА\"|r нужно " + I2S(CountPlayersInForceBJ(udg_players_group) / 2)), gg_rct_guideyes, 14.00)
     
     // Плавающий текст с кол-вом голосов "За"
-    set udg_faq_text[2] = NewTextTag(I2S(faq_vote_yes), gg_rct_guideyesvote, 10.00)
+    set faq_tts[2] = NewTextTag(I2S(faq_vote_yes), gg_rct_guideyesvote, 10.00)
 
     // Кнопка подтверждения просмотра обучения
-    set udg_faq_key[0] = DialogAddButton(udg_faq_dialog, "Да", 0)
+    set faq_buttons[0] = DialogAddButton(faq_dialog, "Да", 0)
 
     // ---Против---
     // Плавающий текст с требуемым кол-вом голосов "Против"
-    set udg_faq_text[1] = NewTextTag((RED + "\"ПРОТИВ\"|r нужно более " + I2S(CountPlayersInForceBJ(udg_players_group) / 2)), gg_rct_guideno, 14.00)
+    set faq_tts[1] = NewTextTag((RED + "\"ПРОТИВ\"|r нужно более " + I2S(CountPlayersInForceBJ(udg_players_group) / 2)), gg_rct_guideno, 14.00)
 
     // Плавающий текст с кол-вом голосов "Против"
-    set udg_faq_text[3] = NewTextTag(I2S(faq_vote_no), gg_rct_guidenovote, 10.00)
+    set faq_tts[3] = NewTextTag(I2S(faq_vote_no), gg_rct_guidenovote, 10.00)
 
     // Кнопка отклонения просмотра обучения
-    set udg_faq_key[1] = DialogAddButton(udg_faq_dialog, "Нет", 0)
+    set faq_buttons[1] = DialogAddButton(faq_dialog, "Нет", 0)
 
     static if DEBUG_MODE then
         call faq_stop() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
     else
-        set hash[StringHash("faq")].real[StringHash("counter")] = 6.00 // Duration of voting
-        call TimerStart(CreateTimer(), 1.00, true, function faq_counter) // Makes duration of voting visible in faq dialog's title
-        call faq_counter() // First tick of counter
+        call TimerStart(CreateTimer(), 1.00, true, function faq_voting_timer_counter) // Makes duration of voting visible in faq dialog's title
+        call faq_voting_timer_counter() // First tick of timer
         call ForForce(udg_players_group, function faq_show_dialog) // Shows faq dialog to all players
     endif
 endfunction
@@ -2667,7 +2597,7 @@ endfunction
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     21.11.2020 21:02       =
-= Дата изменения:    02.12.2020 21:07       =
+= Дата изменения:    03.12.2020 13:39       =
 =============================================
 
 faq active Trigger
@@ -2682,9 +2612,9 @@ function faq_active_condition takes nothing returns boolean
 endfunction
 
 function faq_active takes nothing returns nothing
-    if (GetClickedButton() == udg_faq_key[0]) then // Кнопка "Да"
+    if (GetClickedButton() == faq_buttons[0]) then // Кнопка "Да"
         set faq_vote_yes = faq_vote_yes + 1 // Голосов "За"
-        call SetTextTagText(udg_faq_text[2], I2S(faq_vote_yes), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "За"
+        call SetTextTagText(faq_tts[2], I2S(faq_vote_yes), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "За"
         if (faq_vote_yes >= (CountPlayersInForceBJ(udg_players_group) / 2)) then // Если голосов "За" 1/1, 1/2, 1/3, 2/4, 2/5, 3/6, 3/7, 4/8 
             set IsFaqActive = false // Disables faq_counter() and faq_active()
             call faq_flush() // Destroys all texttags, hides faq_dialog, reveals map
@@ -2695,7 +2625,7 @@ function faq_active takes nothing returns nothing
         endif
     else // Кнопка "Нет"
         set faq_vote_no = faq_vote_no + 1 // Голосов "Против"
-        call SetTextTagText(udg_faq_text[3], I2S(faq_vote_no), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "Против"
+        call SetTextTagText(faq_tts[3], I2S(faq_vote_no), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "Против"
         if (faq_vote_no > (CountPlayersInForceBJ(udg_players_group) / 2)) then  // Если голосов "За" 1/1, 2/2, 2/3, 3/4, 3/5, 4/6, 4/7, 5/8 
             call faq_stop() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
         endif
@@ -2706,7 +2636,7 @@ function faq_active_init takes nothing returns nothing
     local trigger t = CreateTrigger()
 
     // Triggers if faq_dialog's buttons were clicked
-    call TriggerRegisterDialogEvent(t, udg_faq_dialog)
+    call TriggerRegisterDialogEvent(t, faq_dialog)
     call TriggerAddAction(t, function faq_active)
     call TriggerAddCondition(t, Condition(function faq_active_condition))
 endfunction
@@ -2755,11 +2685,13 @@ function initialization_in_game_set_unit_id takes nothing returns nothing
 endfunction
 
 function initialization_in_game_players takes nothing returns nothing
-    // Opt.begin
-    call CameraSetupApplyForPlayer( true, gg_cam_logic, GetEnumPlayer(), 0 )
-    if (GetPlayerSlotState(GetEnumPlayer()) == PLAYER_SLOT_STATE_PLAYING and GetPlayerController(GetEnumPlayer()) == MAP_CONTROL_USER) then
-        call SetPlayerFlagBJ( PLAYER_STATE_GIVES_BOUNTY, true, GetEnumPlayer() )
-        call ForceAddPlayerSimple( GetEnumPlayer(), udg_players_group )
+    local player p = GetEnumPlayer()
+    local real x = GetPlayerStartLocationX(p)
+    local real y = GetPlayerStartLocationY(p)
+    call CameraSetupApplyForPlayer(true, gg_cam_logic, p, 0)
+    if (GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING and GetPlayerController(p) == MAP_CONTROL_USER) then
+        call SetPlayerState(p, PLAYER_STATE_GIVES_BOUNTY, 1)
+        call ForceAddPlayer(udg_players_group, p)
         // TODO: Нижние переменные надо перенести в pdb
         set udg_players_name[GetConvertedPlayerId(GetEnumPlayer())] = GetPlayerName(GetEnumPlayer())
         set udg_info[GetConvertedPlayerId(GetEnumPlayer())] = true
@@ -2768,17 +2700,18 @@ function initialization_in_game_players takes nothing returns nothing
         set udg_leader_kf[GetConvertedPlayerId(GetEnumPlayer())] = 1.00
         set udg_leader_wins[GetConvertedPlayerId(GetEnumPlayer())] = 0
         set udg_changeSet[GetConvertedPlayerId(GetEnumPlayer())] = 3
-        call CreateNUnitsAtLoc( 1, 'ntav', GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), bj_UNIT_FACING )
-        call CreateNUnitsAtLoc( 1, 'h001', GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), bj_UNIT_FACING )
-        call CreateNUnitsAtLoc( 1, 'h029', GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), bj_UNIT_FACING )
-        call SetPlayerStateBJ( GetEnumPlayer(), PLAYER_STATE_RESOURCE_GOLD, 100 )
-        call CreateFogModifierRectBJ( true, GetEnumPlayer(), FOG_OF_WAR_VISIBLE, gg_rct_all )
-        call CreateFogModifierRectBJ( true, GetEnumPlayer(), FOG_OF_WAR_VISIBLE, gg_rct_minersregion )
-        call CreateFogModifierRectBJ( true, GetEnumPlayer(), FOG_OF_WAR_VISIBLE, gg_rct_fastarena )
-        call CreateFogModifierRectBJ( true, GetEnumPlayer(), FOG_OF_WAR_VISIBLE, gg_rct_horseregion )
-        call CreateFogModifierRectBJ( true, GetEnumPlayer(), FOG_OF_WAR_VISIBLE, gg_rct_roulette )
+        call CreateUnit(p, 'ntav', x, y, bj_UNIT_FACING)
+        call CreateUnit(p, 'h001', x, y, bj_UNIT_FACING)
+        call CreateUnit(p, 'h029', x, y, bj_UNIT_FACING)
+        call AddGoldToPlayer(100, p) // Золото на выбор расы в таверне
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_all, true, false))
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_minersregion, true, false))
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_fastarena, true, false))
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_horseregion, true, false))
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_roulette, true, false))
     endif
-    // Opt. end
+
+    set p = null
 endfunction
 
 function initialization_in_game takes nothing returns nothing
@@ -2798,7 +2731,7 @@ function initialization_in_game takes nothing returns nothing
             // Если не миниигра с боссом, то
             set udg_random_log = false
             loop // Заполняем wave_mini[] рандомными, неповторяющимися числами (2, 4, 6, ..., 18) - волны, когда будут миниигры. mode = 1 (стандартный режим)
-                exitwhen (udg_random_log == true) // Возможны баги
+                exitwhen (udg_random_log == true) // TODO: test
                 set udg_r = GetRandomInt(1, (udg_mini_game_max + 1)) // От 1 до 9 (кол-во миниигр)
                 if (initialization_in_game_wave_mini_condition()) then
                     set udg_random_log = true
@@ -2855,6 +2788,8 @@ function initialization_in_game takes nothing returns nothing
         endloop
         set i = i + 1
     endloop
+
+    set lastCreatedUnit = null
 endfunction
 /*
 
@@ -3708,7 +3643,7 @@ scope Main initializer MainInit
         set goldmining_income[5] = 10
         set goldmining_income[6] = 10
 
-        call C_Log("map_init finished!")
+        call Log("map_init finished!")
 
         // Не забываем обнулить переменные!!!
         set strTestWarning_RU = null
@@ -3741,7 +3676,7 @@ scope Main initializer MainInit
         // faq active Trigger
         call faq_active_init()
 
-        call C_Log("post_map_init finished!")
+        call Log("post_map_init finished!")
         
     endfunction
 
@@ -3754,7 +3689,7 @@ scope Main initializer MainInit
         call TriggerRegisterTimerEventSingle(t, 0.01)
         call TriggerAddAction(t, function post_map_init)
         call C_SetComputers()
-        call C_StartInitTimer()
+        call StartInitTimer()
 
         set t = null
     endfunction
@@ -3890,12 +3825,7 @@ globals
     integer                 udg_leader_num             = 0
     integer array           udg_leader_wins
     integer array           udg_leader_owner
-    button array            udg_faq_key
-    dialog                  udg_faq_dialog             = null
     real                    udg_gameset_time_first     = 0
-    integer                 udg_faq_vote               = 0
-    texttag array           udg_faq_text
-    boolean                 udg_faq_status             = false
     unit array              udg_faq_unit
     boolean array           udg_info
     real                    udg_incometemp             = 0
@@ -4007,14 +3937,8 @@ globals
     sound                   gg_snd_BloodElfMagePissed1 = null
     sound                   gg_snd_BattleNetTick01     = null
     sound                   gg_snd_ClanInvitation      = null
-    trigger                 gg_trg_main                = null
     trigger                 gg_trg_initialization      = null
-    trigger                 gg_trg_initialization_in_game = null
-    trigger                 gg_trg_initialization_in_game_Copy = null
     trigger                 gg_trg_ini_id              = null
-    trigger                 gg_trg_ini_time            = null
-    trigger                 gg_trg_ini_leave           = null
-    trigger                 gg_trg_ini_leave_Copy      = null
     trigger                 gg_trg_game_end            = null
     trigger                 gg_trg_cmd_clear           = null
     trigger                 gg_trg_cmd_build           = null
@@ -4025,10 +3949,6 @@ globals
     trigger                 gg_trg_cmd_gg              = null
     trigger                 gg_trg_cmd_info            = null
     trigger                 gg_trg_cmd_zoom            = null
-    trigger                 gg_trg_gameset_owner       = null
-    trigger                 gg_trg_gameset_owner_Copy  = null
-    trigger                 gg_trg_gameset_end         = null
-    trigger                 gg_trg_gameset_end_Copy    = null
     trigger                 gg_trg_damage_system_initialization = null
     trigger                 gg_trg_damage_system       = null
     trigger                 gg_trg_scoreboard_ini      = null
@@ -4061,7 +3981,6 @@ globals
     trigger                 gg_trg_inc_colour          = null
     trigger                 gg_trg_inc_upg             = null
     trigger                 gg_trg_income_upg          = null
-    trigger                 gg_trg_income_upg_Copy     = null
     trigger                 gg_trg_income_upgQ         = null
     trigger                 gg_trg_income_upgW         = null
     trigger                 gg_trg_income_upgE         = null
@@ -4085,14 +4004,6 @@ globals
     trigger                 gg_trg_Armageddon          = null
     trigger                 gg_trg_Armageddon_effect   = null
     trigger                 gg_trg_Armageddon_effect_2 = null
-    trigger                 gg_trg_faq_ini             = null
-    trigger                 gg_trg_faq_ini_Copy        = null
-    trigger                 gg_trg_faq_active          = null
-    trigger                 gg_trg_faq_active_Copy     = null
-    trigger                 gg_trg_faq_stop            = null
-    trigger                 gg_trg_faq_stop_Copy       = null
-    trigger                 gg_trg_faq_start           = null
-    trigger                 gg_trg_faq_start_Copy      = null
     trigger                 gg_trg_faq                 = null
     trigger                 gg_trg_faq_death           = null
     trigger                 gg_trg_building_ini        = null
@@ -4498,10 +4409,7 @@ function InitGlobals takes nothing returns nothing
         set i = i + 1
     endloop
 
-    set udg_faq_dialog = DialogCreate()
     set udg_gameset_time_first = 0
-    set udg_faq_vote = 0
-    set udg_faq_status = false
     set i = 0
     loop
         exitwhen (i > 8)

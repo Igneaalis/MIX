@@ -2,9 +2,6 @@ globals
 //globals from BJObjectId:
 constant boolean LIBRARY_BJObjectId=true
 //endglobals from BJObjectId
-//globals from ErrorMessage:
-constant boolean LIBRARY_ErrorMessage=true
-//endglobals from ErrorMessage
 //globals from NokladrLib:
 constant boolean LIBRARY_NokladrLib=true
 constant string GOLD=      "|cffffcc00"
@@ -38,8 +35,8 @@ integer Table___more= 8190
         //Configure it if you use more than 8190 "key" variables in your map (this will never happen though).
     
 hashtable Table___ht= InitHashtable()
-constant integer Table___sizeK=8
-constant integer Table___listK=9
+constant integer Table___sizeK=4
+constant integer Table___listK=5
 //endglobals from Table
 //globals from MIXLib:
 constant boolean LIBRARY_MIXLib=true
@@ -95,7 +92,7 @@ constant integer count_research_for_t1= 12
 constant integer count_research_for_t2= 20
 constant integer max_players= 8
 
-// processed:     integer array incSpellrc[incSpellrc_count]                                                   // Массив инкам способностей(zаполнение в Main.j, function map_init)
+// processed:     integer array incSpellrc[incSpellrc_count]                                                   // Массив инкам способностей(заполнение в Main.j, function map_init)
 // processed:     player array ticket_list[max_ticket_list]
 
     // Равкоды инкам улучшений и связанных с ними способностей
@@ -133,13 +130,11 @@ constant integer contr_to_pl_lumber= 10
 constant integer contr_to_pl_lumber_mod= 5
 constant real contr_to_pl_time= 300
 constant real contr_to_pl_multy= 2
-    //------------------------------------
     
     // Настройки улучшения Грабёж, заполнение массива в Main.j
 constant integer robbery_pr_count= 7
 // processed:     real array robbery_pr_f[robbery_pr_count]
 // processed:     real array robbery_pr_s[robbery_pr_count]
-    //---------------------------
 
     // Настройки улучшения Вклад
 constant integer contr_gold= 200
@@ -147,7 +142,6 @@ constant integer contr_gold_mod= 100
 constant integer contr_lumber= 8
 constant integer contr_lumber_mod= 6
 constant integer contr_percent= 150
-    //------------------------------------
 
     // Настройки улучшения Стабильность, заполнение массива в Main.j
 constant integer stab_count= 7
@@ -157,11 +151,9 @@ constant integer stab_count= 7
 // processed:     integer array stab_lumber[stab_count]
 // processed:     timer array stab_timer_gold[max_players]
 // processed:     timer array stab_timer_lumber[max_players]
-    //------------------------------------
 
     // Настройки улучшения Лидерство
 constant real leadership_bonus= 0.2
-    //------------------------------------
 
     // Настройки улучшения Проклятый рудник
 constant integer cursed_mine_percent= 3
@@ -169,39 +161,36 @@ constant real cursed_mine_range_damage= 700
 constant integer cursed_mine_count_wave= 8
 constant real cursed_mine_cast_range= 468
 constant real cursed_mine_damage_for_lvl= 100
-    //------------------------------------
 
     // Настройки улучшения Мёртвые деньги
 constant integer deadmoney_money_for_lvl= 8
-    //------------------------------------
 
     // Настройки улучшения Драгоценные камни
 constant integer jewelry_lumber_for_lvl= 1
-    //------------------------------------
 
     // Настройки улучшения Билет
 constant integer max_ticket_list= 5
-    //------------------------------------
 
     // Настройки улучшения Золотодобыча, заполнение массива в Main.j
 constant integer goldmining_count= 6
 // processed:     integer array goldmining_main_mine[goldmining_count]
 // processed:     integer array goldmining_extra_mine[goldmining_count]
 // processed:     integer array goldmining_income[goldmining_count]
-    //------------------------------------
 
     // Настройки улучшения Развитие ради развития
 constant real evforev_bonus_res= 0.01
 constant real evforev_bonus_res_mod= 0.01
-    //------------------------------------
 
     // Настройки улучшения Агрессивная игра
-    // аура - aggrgame_aura_rc, внутри неё менять скорость боя и перемещения
-    //------------------------------------
+    // Аура - aggrgame_aura_rc, внутри неё менять скорость боя и перемещения
 boolean IsFaqActive= true
 timerdialog faq_timerdialog
 integer faq_vote_yes= 0
 integer faq_vote_no= 0
+real faq_voting_duration= 6.00
+// processed:     texttag array faq_tts[4] // Плавающий текст для отображения голосования
+// processed:     button array faq_buttons[2] // Кнопки в меню голосования
+dialog faq_dialog= DialogCreate()
     // User-defined
 real array udg_dmg_player_inflicted
 real array udg_dmg_player_taken
@@ -315,12 +304,7 @@ boolean udg_leader_bool= false
 integer udg_leader_num= 0
 integer array udg_leader_wins
 integer array udg_leader_owner
-button array udg_faq_key
-dialog udg_faq_dialog= null
 real udg_gameset_time_first= 0
-integer udg_faq_vote= 0
-texttag array udg_faq_text
-boolean udg_faq_status= false
 unit array udg_faq_unit
 boolean array udg_info
 real udg_incometemp= 0
@@ -432,14 +416,8 @@ sound gg_snd_BloodElfMageReady1= null
 sound gg_snd_BloodElfMagePissed1= null
 sound gg_snd_BattleNetTick01= null
 sound gg_snd_ClanInvitation= null
-trigger gg_trg_main= null
 trigger gg_trg_initialization= null
-trigger gg_trg_initialization_in_game= null
-trigger gg_trg_initialization_in_game_Copy= null
 trigger gg_trg_ini_id= null
-trigger gg_trg_ini_time= null
-trigger gg_trg_ini_leave= null
-trigger gg_trg_ini_leave_Copy= null
 trigger gg_trg_game_end= null
 trigger gg_trg_cmd_clear= null
 trigger gg_trg_cmd_build= null
@@ -450,10 +428,6 @@ trigger gg_trg_cmd_point= null
 trigger gg_trg_cmd_gg= null
 trigger gg_trg_cmd_info= null
 trigger gg_trg_cmd_zoom= null
-trigger gg_trg_gameset_owner= null
-trigger gg_trg_gameset_owner_Copy= null
-trigger gg_trg_gameset_end= null
-trigger gg_trg_gameset_end_Copy= null
 trigger gg_trg_damage_system_initialization= null
 trigger gg_trg_damage_system= null
 trigger gg_trg_scoreboard_ini= null
@@ -486,7 +460,6 @@ trigger gg_trg_inc_per_second= null
 trigger gg_trg_inc_colour= null
 trigger gg_trg_inc_upg= null
 trigger gg_trg_income_upg= null
-trigger gg_trg_income_upg_Copy= null
 trigger gg_trg_income_upgQ= null
 trigger gg_trg_income_upgW= null
 trigger gg_trg_income_upgE= null
@@ -510,14 +483,6 @@ trigger gg_trg_Storm_effect= null
 trigger gg_trg_Armageddon= null
 trigger gg_trg_Armageddon_effect= null
 trigger gg_trg_Armageddon_effect_2= null
-trigger gg_trg_faq_ini= null
-trigger gg_trg_faq_ini_Copy= null
-trigger gg_trg_faq_active= null
-trigger gg_trg_faq_active_Copy= null
-trigger gg_trg_faq_stop= null
-trigger gg_trg_faq_stop_Copy= null
-trigger gg_trg_faq_start= null
-trigger gg_trg_faq_start_Copy= null
 trigger gg_trg_faq= null
 trigger gg_trg_faq_death= null
 trigger gg_trg_building_ini= null
@@ -586,62 +551,58 @@ trigger l__library_init
 constant integer si__BJObjectId=1
 integer array s__BJObjectId_first_unit_oid
 integer array s__BJObjectId_first_cunit_oid
-constant integer si__ErrorMessage___Fields=2
-constant string s__ErrorMessage___Fields_COLOR_RED= "|cffff0000"
-constant string s__ErrorMessage___Fields_COLOR_YELLOW= "|cffffff00"
-string s__ErrorMessage___Fields_lastError= null
-constant integer si__Revive=3
-constant integer si__Table___dex=4
-constant integer si__Table___handles=5
-constant integer si__Table___agents=6
-constant integer si__Table___reals=7
-constant integer si__Table___booleans=8
-constant integer si__Table___strings=9
-constant integer si__Table___integers=10
-constant integer si__Table___players=11
-constant integer si__Table___widgets=12
-constant integer si__Table___destructables=13
-constant integer si__Table___items=14
-constant integer si__Table___units=15
-constant integer si__Table___abilitys=16
-constant integer si__Table___timers=17
-constant integer si__Table___triggers=18
-constant integer si__Table___triggerconditions=19
-constant integer si__Table___triggeractions=20
-constant integer si__Table___events=21
-constant integer si__Table___forces=22
-constant integer si__Table___groups=23
-constant integer si__Table___locations=24
-constant integer si__Table___rects=25
-constant integer si__Table___boolexprs=26
-constant integer si__Table___sounds=27
-constant integer si__Table___effects=28
-constant integer si__Table___unitpools=29
-constant integer si__Table___itempools=30
-constant integer si__Table___quests=31
-constant integer si__Table___questitems=32
-constant integer si__Table___defeatconditions=33
-constant integer si__Table___timerdialogs=34
-constant integer si__Table___leaderboards=35
-constant integer si__Table___multiboards=36
-constant integer si__Table___multiboarditems=37
-constant integer si__Table___trackables=38
-constant integer si__Table___dialogs=39
-constant integer si__Table___buttons=40
-constant integer si__Table___texttags=41
-constant integer si__Table___lightnings=42
-constant integer si__Table___images=43
-constant integer si__Table___ubersplats=44
-constant integer si__Table___regions=45
-constant integer si__Table___fogstates=46
-constant integer si__Table___fogmodifiers=47
-constant integer si__Table___hashtables=48
-constant integer si__Table=49
-constant integer si__TableArray=50
+constant integer si__Revive=2
+constant integer si__Table___dex=3
+constant integer si__Table___handles=4
+constant integer si__Table___agents=5
+constant integer si__Table___reals=6
+constant integer si__Table___booleans=7
+constant integer si__Table___strings=8
+constant integer si__Table___integers=9
+constant integer si__Table___players=10
+constant integer si__Table___widgets=11
+constant integer si__Table___destructables=12
+constant integer si__Table___items=13
+constant integer si__Table___units=14
+constant integer si__Table___abilitys=15
+constant integer si__Table___timers=16
+constant integer si__Table___triggers=17
+constant integer si__Table___triggerconditions=18
+constant integer si__Table___triggeractions=19
+constant integer si__Table___events=20
+constant integer si__Table___forces=21
+constant integer si__Table___groups=22
+constant integer si__Table___locations=23
+constant integer si__Table___rects=24
+constant integer si__Table___boolexprs=25
+constant integer si__Table___sounds=26
+constant integer si__Table___effects=27
+constant integer si__Table___unitpools=28
+constant integer si__Table___itempools=29
+constant integer si__Table___quests=30
+constant integer si__Table___questitems=31
+constant integer si__Table___defeatconditions=32
+constant integer si__Table___timerdialogs=33
+constant integer si__Table___leaderboards=34
+constant integer si__Table___multiboards=35
+constant integer si__Table___multiboarditems=36
+constant integer si__Table___trackables=37
+constant integer si__Table___dialogs=38
+constant integer si__Table___buttons=39
+constant integer si__Table___texttags=40
+constant integer si__Table___lightnings=41
+constant integer si__Table___images=42
+constant integer si__Table___ubersplats=43
+constant integer si__Table___regions=44
+constant integer si__Table___fogstates=45
+constant integer si__Table___fogmodifiers=46
+constant integer si__Table___hashtables=47
+constant integer si__Table=48
+constant integer si__TableArray=49
 integer s__TableArray_tempTable
 integer s__TableArray_tempEnd
-constant integer si__HashTable=51
-constant integer si__DB=52
+constant integer si__HashTable=50
+constant integer si__DB=51
 integer si__DB_F=0
 integer si__DB_I=0
 integer array si__DB_V
@@ -654,19 +615,19 @@ integer array s__DB_leader_wins
 integer array s__DB_arena_wins
 integer array s__DB_change_set
 boolean array s__DB_info
-constant integer si__Playerdb=53
+constant integer si__Playerdb=52
 integer si__Playerdb_F=0
 integer si__Playerdb_I=0
 integer array si__Playerdb_V
-constant integer si__RegisterNativeEvent___NativeEvent=54
+constant integer si__RegisterNativeEvent___NativeEvent=53
 integer s__RegisterNativeEvent___NativeEvent_table
-constant integer si__UnitRecycler___List=55
+constant integer si__UnitRecycler___List=54
 unit array s__UnitRecycler___List_unit
 integer array s__UnitRecycler___List_recycler
 integer array s__UnitRecycler___List_prev
 integer array s__UnitRecycler___List_next
 integer s__UnitRecycler___List_stocked
-constant integer si__UnitRecycler___UnitRecycler=56
+constant integer si__UnitRecycler___UnitRecycler=55
 integer s__UnitRecycler___UnitRecycler_rawCodeIdTable
 integer s__UnitRecycler___UnitRecycler_timerTable
 integer s__UnitRecycler___UnitRecycler_rawCodeCount= 0
@@ -674,8 +635,8 @@ integer array s__UnitRecycler___UnitRecycler_position
 integer array s__UnitRecycler___UnitRecycler_stackSize
 integer array s__UnitRecycler___UnitRecycler_indexStack
 integer array s__UnitRecycler___UnitRecycler_head
-constant integer si__UnitRecycler___Initializer=57
-constant integer si__ResourcePreloader___S=58
+constant integer si__UnitRecycler___Initializer=56
+constant integer si__ResourcePreloader___S=57
 integer s__ResourcePreloader___S_tb
 unit s__ResourcePreloader___S_dummy
 integer array s__time
@@ -693,8 +654,8 @@ timer array s__stab_timer_lumber
 integer array s__goldmining_main_mine
 integer array s__goldmining_extra_mine
 integer array s__goldmining_income
-trigger array st___prototype31
-unit f__arg_unit1
+texttag array s__faq_tts
+button array s__faq_buttons
 
 endglobals
     native UnitAlive takes unit u returns boolean
@@ -768,22 +729,6 @@ function s__DB_deallocate takes integer this returns nothing
     endif
     set si__DB_V[this]=si__DB_F
     set si__DB_F=this
-endfunction
-function sc___prototype31_execute takes integer i,unit a1 returns nothing
-    set f__arg_unit1=a1
-
-    call TriggerExecute(st___prototype31[i])
-endfunction
-function sc___prototype31_evaluate takes integer i,unit a1 returns nothing
-    set f__arg_unit1=a1
-
-    call TriggerEvaluate(st___prototype31[i])
-
-endfunction
-function h__RemoveUnit takes unit a0 returns nothing
-    //hook: UnitRecycler___DisplayError
-    call sc___prototype31_evaluate(1,a0)
-call RemoveUnit(a0)
 endfunction
 
 //library BJObjectId:
@@ -1049,59 +994,6 @@ endfunction
 
 
 //library BJObjectId ends
-//library ErrorMessage:
-    
-    function ErrorMessage___Pause takes nothing returns nothing
-        call PauseGame(true)
-    endfunction
-    
-    function ErrorMessage___ThrowMessage takes string libraryName,string functionName,string objectName,integer objectInstance,string description,string errorType,string color returns nothing
-        local string str
-        
-        local string color_braces= "|cff66FF99"
-        local string orange= "|cffff6600"
-        
-        set str="->\n-> " + color_braces + "{|r Library" + color_braces + "(" + orange + libraryName + color_braces + ")"
-        if ( objectName != null ) then
-            if ( objectInstance != 0 ) then
-                set str=str + "|r.Object" + color_braces + "(" + orange + objectName + color_braces + " (|rinstance = " + orange + I2S(objectInstance) + color_braces + ") )|r.Method" + color_braces + "(" + orange + functionName + color_braces + ")"
-            else
-                set str=str + "|r.Object" + color_braces + "(" + orange + objectName + color_braces + ")|r.Method" + color_braces + "(" + orange + functionName + color_braces + ")"
-            endif
-        else
-            set str=str + "|r.Function" + color_braces + "(" + orange + functionName + color_braces + ")"
-        endif
-        
-        set str=str + color_braces + " }|r has thrown an exception of type " + color_braces + "(" + color + errorType + color_braces + ")|r."
-        
-        set s__ErrorMessage___Fields_lastError=str + "\n->\n->    " + color + description + "|r\n->"
-    endfunction
-    
-    function ThrowError takes boolean expression,string libraryName,string functionName,string objectName,integer objectInstance,string description returns nothing
-        if ( s__ErrorMessage___Fields_lastError != null ) then
-            set objectInstance=1 / 0
-        endif
-    
-        if ( expression ) then
-            call ErrorMessage___ThrowMessage(libraryName , functionName , objectName , objectInstance , description , "Error" , s__ErrorMessage___Fields_COLOR_RED)
-            call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60000, s__ErrorMessage___Fields_lastError)
-            call TimerStart(CreateTimer(), 0, true, function ErrorMessage___Pause)
-            set objectInstance=1 / 0
-        endif
-    endfunction
-    function ThrowWarning takes boolean expression,string libraryName,string functionName,string objectName,integer objectInstance,string description returns nothing
-        if ( s__ErrorMessage___Fields_lastError != null ) then
-            set objectInstance=1 / 0
-        endif
-    
-        if ( expression ) then
-            call ErrorMessage___ThrowMessage(libraryName , functionName , objectName , objectInstance , description , "Warning" , s__ErrorMessage___Fields_COLOR_YELLOW)
-            call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60000, s__ErrorMessage___Fields_lastError)
-            set s__ErrorMessage___Fields_lastError=null
-        endif
-    endfunction
-
-//library ErrorMessage ends
 //library NokladrLib:
 
     // Возвращает цвет игрока взависимости от его ID.
@@ -1140,7 +1032,7 @@ endfunction
     endfunction
 
     // Лог сообщений
-    function C_Log takes string s returns nothing
+    function Log takes string s returns nothing
          call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, ( GOLD + "Log:|r " + GREEN + s + "|r" ))
     endfunction
 
@@ -1217,13 +1109,13 @@ endfunction
     endfunction
 
     // Инициализация счётчика времени
-    function C_StartInitTimer takes nothing returns nothing
+    function StartInitTimer takes nothing returns nothing
         local timer t= CreateTimer()
         call TimerStart(t, 1., true, function NokladrLib___C_StartCount)
     endfunction
 
     // Возвращает состояние счётчика времени в секундах
-    function C_GetTimeInSeconds takes nothing returns integer
+    function GetTimeInSeconds takes nothing returns integer
         return s__time[0] + s__time[1] * 60 + s__time[2] * 3600
     endfunction
 
@@ -1243,27 +1135,26 @@ endfunction
 
     // Удаляет выделенных юнитов
     function C_RemoveEnumUnits takes nothing returns nothing
-        call h__RemoveUnit(GetEnumUnit())
+        call RemoveUnit(GetEnumUnit())
     endfunction
 
     // Добавляет золото игроку
-    function C_AddGoldToPlayer takes integer value,player p returns nothing
+    function AddGoldToPlayer takes integer value,player p returns nothing
         call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) + value)
     endfunction
 
     // Добавляет дерево игроку
-    function C_AddLumberToPlayer takes integer value,player p returns nothing
+    function AddLumberToPlayer takes integer value,player p returns nothing
         call SetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER, GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER) + value)
     endfunction
 
     // Принимает rect, возвращает location
-    function C_RectToLoc takes rect r returns location
-        local location l= Location(GetRectCenterX(r), GetRectCenterY(r))
-        return l
+    function RectToLoc takes rect r returns location
+        return Location(GetRectCenterX(r), GetRectCenterY(r))
     endfunction
 
     // Условие: юнит имеет предмет с itemId?
-    function C_UnitHasItemOfType takes unit u,integer itemId returns boolean
+    function C_DoesUnitHasItemOfType takes unit u,integer itemId returns boolean
         local integer i= 0
         local item indexItem
         loop
@@ -1296,6 +1187,16 @@ endfunction
         return tt
     endfunction
 
+    // Makes map normal in opposite to FadeMap()
+    function UnfadeMap takes nothing returns nothing
+        call SetDayNightModels("Environment\\DNC\\DNCLordaeron\\DNCLordaeronTerrain\\DNCLordaeronTerrain.mdl", "Environment\\DNC\\DNCLordaeron\\DNCLordaeronUnit\\DNCLordaeronUnit.mdl")
+    endfunction
+    
+    // Makes map absolute black
+    function FadeMap takes nothing returns nothing
+        call SetDayNightModels("", "")
+    endfunction
+
 
 //library NokladrLib ends
 //library ReviveUnit:
@@ -1326,7 +1227,7 @@ endfunction
         endfunction
        
 //Implemented from module ReviveUnit___Init:
-        function s__Revive_ReviveUnit___Init__onInit takes nothing returns nothing
+        function s__Revive_ReviveUnit___Init___onInit takes nothing returns nothing
             set ReviveUnit___rx=GetRectMaxX(bj_mapInitialPlayableArea) - 1
             set ReviveUnit___ry=GetRectMaxY(bj_mapInitialPlayableArea) - 1
             set ReviveUnit___reviver=CreateUnit(Player(15), ReviveUnit___DUMMY, ReviveUnit___rx, ReviveUnit___ry, 0)
@@ -2556,7 +2457,7 @@ endfunction
 //#             static hashtable table = InitHashtable()
 //#         endif
 //Implemented from module RegisterNativeEvent___NativeEventInit:
-        function s__RegisterNativeEvent___NativeEvent_RegisterNativeEvent___NativeEventInit__onInit takes nothing returns nothing
+        function s__RegisterNativeEvent___NativeEvent_RegisterNativeEvent___NativeEventInit___onInit takes nothing returns nothing
 //#             static if LIBRARY_Table then
                     set s__RegisterNativeEvent___NativeEvent_table=s__TableArray__staticgetindex(0x2000)
 //#             endif
@@ -2709,7 +2610,7 @@ endfunction
             if u != null and not IsUnitType(u, UNIT_TYPE_HERO) and UnitRecycler___UnitTypeFilter(u) then
                 if not UnitAlive(u) and not ReviveUnit(u) then
 //#                     static if LIBRARY_ErrorMessage then
-                             call ThrowWarning(true , "UnitRecycler" , "addUnit()" , "UnitRecycler___List" , GetHandleId(u) , "Unable to recycle unit: Unable to revive dead unit")
+//#                          call ThrowWarning(true, "UnitRecycler", "addUnit()", "UnitRecycler___List", GetHandleId(u), "Unable to recycle unit: Unable to revive dead unit")
 //#                     endif
                     return false
                 endif
@@ -2884,12 +2785,12 @@ endfunction
 
     function GetRecycledUnit takes player owner,integer rawCode,real x,real y,real facing returns unit
 //#         static if true and LIBRARY_ErrorMessage then
-                call s__UnitRecycler___UnitRecycler_get(owner , rawCode , x , y , facing)
-                call ThrowError(bj_lastCreatedUnit == null , "UnitRecycler" , "GetRecycledUnit()" , "" , 0 , "Specified unit type does not exist")
-                call ThrowError(IsHeroUnitId(rawCode) , "UnitRecycler" , "GetRecycledUnit()" , GetUnitName(bj_lastCreatedUnit) , 0 , "Specified unit type is a hero")
-                return bj_lastCreatedUnit
+//#             call UnitRecycler___UnitRecycler.get(owner, rawCode, x, y, facing)
+//#             call ThrowError(bj_lastCreatedUnit == null, "UnitRecycler", "GetRecycledUnit()", "", 0, "Specified unit type does not exist")
+//#             call ThrowError(IsHeroUnitId(rawCode), "UnitRecycler", "GetRecycledUnit()", GetUnitName(bj_lastCreatedUnit), 0, "Specified unit type is a hero")
+//#             return bj_lastCreatedUnit
 //#         else
-//#             return UnitRecycler___UnitRecycler.get(owner, rawCode, x, y, facing)
+                return s__UnitRecycler___UnitRecycler_get(owner , rawCode , x , y , facing)
 //#         endif
     endfunction
 
@@ -2898,31 +2799,31 @@ endfunction
             return s__UnitRecycler___UnitRecycler_get(owner , rawCode , x , y , facing)
         endif
 //#         static if LIBRARY_ErrorMessage then
-                 call ThrowWarning(true , "UnitRecycler" , "GetRecycledUnitEx()" , "" , 0 , "Cannot retrieve a hero unit, creating new unit")
+//#              call ThrowWarning(true, "UnitRecycler", "GetRecycledUnitEx()", "", 0, "Cannot retrieve a hero unit, creating new unit")
 //#         endif
         return CreateUnit(owner, rawCode, x, y, facing)
     endfunction
 
     function RecycleUnit takes unit u returns boolean
 //#         static if LIBRARY_ErrorMessage then
-                 call ThrowError(s__Table___booleans__getindex(s__Table__get_boolean(s__UnitRecycler___List_stocked),GetHandleId(u)) , "UnitRecycler" , "RecycleUnit()" , GetUnitName(u) , 0 , "Attempted to recycle an already recycled unit")
-                 call ThrowWarning(u == null , "UnitRecycler" , "RecycleUnit()" , "" , 0 , "Attempted to recycle a null unit")
-                 call ThrowWarning(IsHeroUnitId(GetUnitTypeId(u)) , "UnitRecycler" , "RecycleUnit()" , GetUnitName(u) , 0 , "Attempted to recycle a hero unit")
-                 call ThrowWarning(not UnitRecycler___UnitTypeFilter(u) , "UnitRecycler" , "RecycleUnit()" , GetUnitName(u) , 0 , "Attempted to recycle an invalid unit type")
+//#              call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnit()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
+//#              call ThrowWarning(u == null, "UnitRecycler", "RecycleUnit()", "", 0, "Attempted to recycle a null unit")
+//#              call ThrowWarning(IsHeroUnitId(GetUnitTypeId(u)), "UnitRecycler", "RecycleUnit()", GetUnitName(u), 0, "Attempted to recycle a hero unit")
+//#              call ThrowWarning(not UnitRecycler___UnitTypeFilter(u), "UnitRecycler", "RecycleUnit()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
 //#         endif
         return s__UnitRecycler___UnitRecycler_add(u)
     endfunction
 
     function RecycleUnitEx takes unit u returns boolean
 //#         static if LIBRARY_ErrorMessage then
-                 call ThrowError(s__Table___booleans__getindex(s__Table__get_boolean(s__UnitRecycler___List_stocked),GetHandleId(u)) , "UnitRecycler" , "RecycleUnitEx()" , GetUnitName(u) , 0 , "Attempted to recycle an already recycled unit")
-                 call ThrowWarning(u == null , "UnitRecycler" , "RecycleUnitEx()" , "" , 0 , "Attempted to recycle a null unit")
-                 call ThrowWarning(not UnitRecycler___UnitTypeFilter(u) , "UnitRecycler" , "RecycleUnitEx()" , GetUnitName(u) , 0 , "Attempted to recycle an invalid unit type")
+//#              call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnitEx()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
+//#              call ThrowWarning(u == null, "UnitRecycler", "RecycleUnitEx()", "", 0, "Attempted to recycle a null unit")
+//#              call ThrowWarning(not UnitRecycler___UnitTypeFilter(u), "UnitRecycler", "RecycleUnitEx()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
 //#         endif
         if not s__UnitRecycler___UnitRecycler_add(u) then
-            call h__RemoveUnit(u)
+            call RemoveUnit(u)
 //#             static if LIBRARY_ErrorMessage then
-                     call ThrowWarning(u != null , "UnitRecycler" , "RecycleUnitEx()" , GetUnitName(u) , 0 , "Cannot recycle the specified unit, removing unit")
+//#                  call ThrowWarning(u != null, "UnitRecycler", "RecycleUnitEx()", GetUnitName(u), 0, "Cannot recycle the specified unit, removing unit")
 //#             endif
             return false
         endif
@@ -2931,31 +2832,31 @@ endfunction
 
     function RecycleUnitDelayed takes unit u,real delay returns nothing
 //#         static if LIBRARY_ErrorMessage then
-                 call ThrowError(s__Table___booleans__getindex(s__Table__get_boolean(s__UnitRecycler___List_stocked),GetHandleId(u)) , "UnitRecycler" , "RecycleUnitDelayed()" , GetUnitName(u) , 0 , "Attempted to recycle an already recycled unit")
-                 call ThrowWarning(u == null , "UnitRecycler" , "RecycleUnitDelayed()" , "" , 0 , "Attempted to recycle a null unit")
-                 call ThrowWarning(IsHeroUnitId(GetUnitTypeId(u)) , "UnitRecycler" , "RecycleUnitDelayed()" , GetUnitName(u) , 0 , "Attempted to recycle a hero unit")
-                 call ThrowWarning(not UnitRecycler___UnitTypeFilter(u) , "UnitRecycler" , "RecycleUnitDelayed()" , GetUnitName(u) , 0 , "Attempted to recycle an invalid unit type")
+//#              call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnitDelayed()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
+//#              call ThrowWarning(u == null, "UnitRecycler", "RecycleUnitDelayed()", "", 0, "Attempted to recycle a null unit")
+//#              call ThrowWarning(IsHeroUnitId(GetUnitTypeId(u)), "UnitRecycler", "RecycleUnitDelayed()", GetUnitName(u), 0, "Attempted to recycle a hero unit")
+//#              call ThrowWarning(not UnitRecycler___UnitTypeFilter(u), "UnitRecycler", "RecycleUnitDelayed()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
 //#         endif
         call s__UnitRecycler___UnitRecycler_addDelayed(u , delay , function s__UnitRecycler___UnitRecycler_delayedRecycle)
     endfunction
 
     function RecycleUnitDelayedEx takes unit u,real delay returns nothing
 //#         static if LIBRARY_ErrorMessage then
-                 call ThrowError(s__Table___booleans__getindex(s__Table__get_boolean(s__UnitRecycler___List_stocked),GetHandleId(u)) , "UnitRecycler" , "RecycleUnitDelayedEx()" , GetUnitName(u) , 0 , "Attempted to recycle an already recycled unit")
-                 call ThrowWarning(u == null , "UnitRecycler" , "RecycleUnitDelayedEx()" , "" , 0 , "Attempted to recycle a null unit")
-                 call ThrowWarning(not UnitRecycler___UnitTypeFilter(u) , "UnitRecycler" , "RecycleUnitDelayedEx()" , GetUnitName(u) , 0 , "Attempted to recycle an invalid unit type")
+//#              call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnitDelayedEx()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
+//#              call ThrowWarning(u == null, "UnitRecycler", "RecycleUnitDelayedEx()", "", 0, "Attempted to recycle a null unit")
+//#              call ThrowWarning(not UnitRecycler___UnitTypeFilter(u), "UnitRecycler", "RecycleUnitDelayedEx()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
 //#         endif
         call s__UnitRecycler___UnitRecycler_addDelayed(u , delay , function s__UnitRecycler___UnitRecycler_delayedRecycleEx)
     endfunction
 
     function UnitAddToStock takes integer rawCode returns boolean
 //#         static if LIBRARY_ErrorMessage then
-                 local unit u= CreateUnit(UnitRecycler___OWNER, rawCode, 0, 0, 0)
-                 call ThrowWarning(u == null , "UnitRecycler" , "UnitAddToStock()" , "" , 0 , "Attempted to stock a non-existent unit type")
-                 call ThrowWarning(IsHeroUnitId(rawCode) , "UnitRecycler" , "UnitAddToStock()" , GetUnitName(u) , 0 , "Attempted to stock a hero unit")
-                 call ThrowWarning(not UnitRecycler___UnitTypeFilter(u) , "UnitRecycler" , "UnitAddToStock()" , GetUnitName(u) , 0 , "Attempted to stock an invalid unit type")
-                 call h__RemoveUnit(u)
-                 set u=null
+//#              local unit u = CreateUnit(UnitRecycler___OWNER, rawCode, 0, 0, 0)
+//#              call ThrowWarning(u == null, "UnitRecycler", "UnitAddToStock()", "", 0, "Attempted to stock a non-existent unit type")
+//#              call ThrowWarning(IsHeroUnitId(rawCode), "UnitRecycler", "UnitAddToStock()", GetUnitName(u), 0, "Attempted to stock a hero unit")
+//#              call ThrowWarning(not UnitRecycler___UnitTypeFilter(u), "UnitRecycler", "UnitAddToStock()", GetUnitName(u), 0, "Attempted to stock an invalid unit type")
+//#              call RemoveUnit(u)
+//#              set u = null
 //#         endif
         return s__UnitRecycler___UnitRecycler_stock(rawCode)
     endfunction
@@ -2968,7 +2869,7 @@ endfunction
                 function s__UnitRecycler___Initializer_onDeath takes nothing returns nothing
                     local unit u= GetTriggerUnit()
 //#                 static if LIBRARY_ErrorMessage then
-                         call ThrowError(s__Table___booleans__getindex(s__Table__get_boolean(s__UnitRecycler___List_stocked),GetHandleId(u)) , "UnitRecycler" , "" , GetUnitName(u) , 0 , "A unit in stock has been killed!")
+//#                      call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "", GetUnitName(u), 0, "A unit in stock has been killed!")
 //#                 endif
                     if UnitRecycler___UnitTypeFilter(u) and not IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitType(u, UNIT_TYPE_STRUCTURE) then
                         call RecycleUnitDelayedEx(u , UnitRecycler___DeathTime(u))
@@ -3005,17 +2906,17 @@ endfunction
             call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, "|CFFFFCC00UnitRecycler|R library is ready!")
         endfunction
 //Implemented from module UnitRecycler___Init:
-        function s__UnitRecycler___Initializer_UnitRecycler___Init__onInit takes nothing returns nothing
+        function s__UnitRecycler___Initializer_UnitRecycler___Init___onInit takes nothing returns nothing
             call s__UnitRecycler___Initializer_init()
         endfunction
 
 
 //#     static if true and LIBRARY_ErrorMessage then
-            function UnitRecycler___DisplayError takes unit removedUnit returns nothing
-                call ThrowError(s__Table___booleans__getindex(s__Table__get_boolean(s__UnitRecycler___List_stocked),GetHandleId(removedUnit)) , "UnitRecycler" , "RemoveUnit()" , GetUnitName(removedUnit) , 0 , "Attempted to remove a stocked unit")
-            endfunction
-    
-//processed hook:             hook RemoveUnit UnitRecycler___DisplayError
+//#         function UnitRecycler___DisplayError takes unit removedUnit returns nothing
+//#             call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(removedUnit)], "UnitRecycler", "RemoveUnit()", GetUnitName(removedUnit), 0, "Attempted to remove a stocked unit")
+//#         endfunction
+//# 
+//#         hook RemoveUnit UnitRecycler___DisplayError
 //#     endif
 
 
@@ -3207,7 +3108,7 @@ endfunction
 //#             static hashtable tb = InitHashtable()
 //#         endif
 //Implemented from module ResourcePreloader___Init:
-        function s__ResourcePreloader___S_ResourcePreloader___Init__onInit takes nothing returns nothing
+        function s__ResourcePreloader___S_ResourcePreloader___Init___onInit takes nothing returns nothing
             local rect world= GetWorldBounds()
 //#             static if LIBRARY_Table then
                     set s__ResourcePreloader___S_tb=s__TableArray__staticgetindex(5)
@@ -3247,7 +3148,7 @@ endfunction
 
 
 function defeat_clear takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function defeat_quit takes nothing returns nothing
@@ -3337,7 +3238,7 @@ function gameset_owner takes nothing returns nothing
 //#     endif
 
     // Opt. begin
-    if ( C_GetTimeInSeconds() < R2I(udg_gameset_time_first) ) then // Shows commands and settings only at game start
+    if ( GetTimeInSeconds() < R2I(udg_gameset_time_first) ) then // Shows commands and settings only at game start
         if ( udg_info[GetConvertedPlayerId(udg_game_owner)] == true ) then // Checks Info flag of game owner
 //#             static if  not true  then
 //#                 // Shows all available commands and settings
@@ -3374,7 +3275,7 @@ function OnLeave takes nothing returns nothing
             call GroupRemoveUnitSimple(u, udg_buildings)
         endif
         // Opt. end
-        call h__RemoveUnit(u)
+        call RemoveUnit(u)
     else
         call SetUnitOwner(u, Player(PLAYER_NEUTRAL_PASSIVE), true)
     endif
@@ -3418,32 +3319,31 @@ endfunction
 
 
 function faq_show_dialog takes nothing returns nothing
-    call DialogDisplay(GetEnumPlayer(), udg_faq_dialog, true) // Shows voting dialog
+    call DialogDisplay(GetEnumPlayer(), faq_dialog, true) // Shows voting dialog
 endfunction
 
 function faq_hide_dialog takes nothing returns nothing
-    call DialogDisplay(GetEnumPlayer(), udg_faq_dialog, false) // Hides voting dialog
+    call DialogDisplay(GetEnumPlayer(), faq_dialog, false) // Hides voting dialog
 endfunction
 
 function faq_flush takes nothing returns nothing
-    // Unfades map
-    call SetDayNightModels("Environment\\DNC\\DNCLordaeron\\DNCLordaeronTerrain\\DNCLordaeronTerrain.mdl", "Environment\\DNC\\DNCLordaeron\\DNCLordaeronUnit\\DNCLordaeronUnit.mdl")
-
+    call UnfadeMap() // Unfades map
     call ForForce(udg_players_group, function faq_hide_dialog) // Hides voting dialog
-    call DestroyTextTagBJ(udg_faq_text[0]) // Уничтожает плавающий текст с голосами "За"
-    call DestroyTextTagBJ(udg_faq_text[1]) // Уничтожает плавающий текст с голосами "За"
-    call DestroyTextTagBJ(udg_faq_text[2]) // Уничтожает плавающий текст с голосами "Против"
-    call DestroyTextTagBJ(udg_faq_text[3]) // Уничтожает плавающий текст с голосами "Против"
+    call DestroyTextTag(s__faq_tts[0]) // Уничтожает плавающий текст с голосами "За"
+    call DestroyTextTag(s__faq_tts[1]) // Уничтожает плавающий текст с голосами "За"
+    call DestroyTextTag(s__faq_tts[2]) // Уничтожает плавающий текст с голосами "Против"
+    call DestroyTextTag(s__faq_tts[3]) // Уничтожает плавающий текст с голосами "Против"
 endfunction
 
 
 function faq_start_timer_actions takes nothing returns nothing
     call gameset_end()
-    call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, "|cFFFF0000Команда |cFFFFFFFF-info|r |cFFFF0000отключит сообщения о штрафах и мини-арене.|r")
+    call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 15, "|cFFFF0000Команда |cFFFFFFFF-info|r |cFFFF0000отключит сообщения о штрафах и мини-арене.|r")
     call DestroyTimerDialog(faq_timerdialog) // Destroys timer dialog for commands and settings
 endfunction
 
 function faq_start takes nothing returns nothing
+     set udg_gameset_time_first=30.00
     call TimerStart(udg_gameset_timer, udg_gameset_time_first, false, function faq_start_timer_actions) // After settings were set
 
     set faq_timerdialog=CreateTimerDialog(udg_gameset_timer) // Timer dialog in upper-left corner for commands and settings
@@ -3452,15 +3352,16 @@ function faq_start takes nothing returns nothing
 
     call gameset_owner() // Sets owner of game
     call TriggerExecute(gg_trg_scoreboard_ini) // Shows scoreboard
-
 endfunction
 
 
 
 function faq_get_castle takes nothing returns nothing
-    call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, GetEnumPlayer(), 0) // Resets camera angle
-    call PanCameraToTimedLocForPlayer(GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), 0) // Focuses camera at castle you own
-    call SelectUnitForPlayerSingle(GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(GetEnumPlayer(), 'ntav')), GetEnumPlayer()) // Selects tavern
+    local player p= GetEnumPlayer()
+    call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, p, 0) // Resets camera angle
+    call PanCameraToTimedLocForPlayer(p, GetPlayerStartLocationLoc(p), 0) // Focuses camera at castle you own
+    call SelectUnitForPlayerSingle(GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(p, 'ntav')), p) // Selects tavern
+    set p=null
 endfunction
 
 function faq_stop takes nothing returns nothing
@@ -3471,16 +3372,15 @@ function faq_stop takes nothing returns nothing
 endfunction
 
 
-function faq_counter takes nothing returns nothing
+function faq_voting_timer_counter takes nothing returns nothing
     local timer t= GetExpiredTimer()
 
-    if ( s__Table___reals__getindex(s__Table__get_real(s__HashTable__getindex(hash,StringHash("faq"))),StringHash("counter")) >= 1 and IsFaqActive ) then // If voting exists
-        call DialogSetMessage(udg_faq_dialog, ( "Посмотреть обучение (" + WHITE + R2S(s__Table___reals__getindex(s__Table__get_real(s__HashTable__getindex(hash,StringHash("faq"))),StringHash("counter"))) + " сек.|r)" ))
-        call s__Table___reals__setindex(s__Table__get_real(s__HashTable__getindex(hash,StringHash("faq"))),StringHash("counter"), s__Table___reals__getindex(s__Table__get_real(s__HashTable__getindex(hash,StringHash("faq"))),StringHash("counter")) - 1)
+    if ( faq_voting_duration >= 1.00 and IsFaqActive ) then // If voting exists
+        call DialogSetMessage(faq_dialog, ( "Посмотреть обучение (" + WHITE + R2S(faq_voting_duration) + " сек.|r)" ))
+        set faq_voting_duration=faq_voting_duration - 1.00
     else
         call PauseTimer(t)
         call DestroyTimer(t)
-        call s__HashTable_remove(hash,StringHash("faq"))
         if ( IsFaqActive ) then // If there are not enough votes
             call faq_stop() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
         endif
@@ -3491,34 +3391,33 @@ endfunction
 
 //===========================================================================
 function faq_ini takes nothing returns nothing
-    call SetDayNightModels("", "") // Сделать всю карту чёрной
+    call FadeMap() // Сделать всю карту чёрной
 
     // ---За---
     // Плавающий текст с требуемым кол-вом голосов "За"
-    set udg_faq_text[0]=NewTextTag(( GREEN + "\"ЗА\"|r нужно " + I2S(CountPlayersInForceBJ(udg_players_group) / 2) ) , gg_rct_guideyes , 14.00)
+    set s__faq_tts[0]= NewTextTag(( GREEN + "\"ЗА\"|r нужно " + I2S(CountPlayersInForceBJ(udg_players_group) / 2) ) , gg_rct_guideyes , 14.00)
     
     // Плавающий текст с кол-вом голосов "За"
-    set udg_faq_text[2]=NewTextTag(I2S(faq_vote_yes) , gg_rct_guideyesvote , 10.00)
+    set s__faq_tts[2]= NewTextTag(I2S(faq_vote_yes) , gg_rct_guideyesvote , 10.00)
 
     // Кнопка подтверждения просмотра обучения
-    set udg_faq_key[0]=DialogAddButton(udg_faq_dialog, "Да", 0)
+    set s__faq_buttons[0]= DialogAddButton(faq_dialog, "Да", 0)
 
     // ---Против---
     // Плавающий текст с требуемым кол-вом голосов "Против"
-    set udg_faq_text[1]=NewTextTag(( RED + "\"ПРОТИВ\"|r нужно более " + I2S(CountPlayersInForceBJ(udg_players_group) / 2) ) , gg_rct_guideno , 14.00)
+    set s__faq_tts[1]= NewTextTag(( RED + "\"ПРОТИВ\"|r нужно более " + I2S(CountPlayersInForceBJ(udg_players_group) / 2) ) , gg_rct_guideno , 14.00)
 
     // Плавающий текст с кол-вом голосов "Против"
-    set udg_faq_text[3]=NewTextTag(I2S(faq_vote_no) , gg_rct_guidenovote , 10.00)
+    set s__faq_tts[3]= NewTextTag(I2S(faq_vote_no) , gg_rct_guidenovote , 10.00)
 
     // Кнопка отклонения просмотра обучения
-    set udg_faq_key[1]=DialogAddButton(udg_faq_dialog, "Нет", 0)
+    set s__faq_buttons[1]= DialogAddButton(faq_dialog, "Нет", 0)
 
 //#     static if true then
             call faq_stop() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
 //#     else
-//#         set hash[StringHash("faq")].real[StringHash("counter")] = 6.00 // Duration of voting
-//#         call TimerStart(CreateTimer(), 1.00, true, function faq_counter) // Makes duration of voting visible in faq dialog's title
-//#         call faq_counter() // First tick of counter
+//#         call TimerStart(CreateTimer(), 1.00, true, function faq_voting_timer_counter) // Makes duration of voting visible in faq dialog's title
+//#         call faq_voting_timer_counter() // First tick of timer
 //#         call ForForce(udg_players_group, function faq_show_dialog) // Shows faq dialog to all players
 //#     endif
 endfunction
@@ -3530,9 +3429,9 @@ function faq_active_condition takes nothing returns boolean
 endfunction
 
 function faq_active takes nothing returns nothing
-    if ( GetClickedButton() == udg_faq_key[0] ) then // Кнопка "Да"
+    if ( GetClickedButton() == s__faq_buttons[0] ) then // Кнопка "Да"
         set faq_vote_yes=faq_vote_yes + 1 // Голосов "За"
-        call SetTextTagText(udg_faq_text[2], I2S(faq_vote_yes), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "За"
+        call SetTextTagText(s__faq_tts[2], I2S(faq_vote_yes), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "За"
         if ( faq_vote_yes >= ( CountPlayersInForceBJ(udg_players_group) / 2 ) ) then // Если голосов "За" 1/1, 1/2, 1/3, 2/4, 2/5, 3/6, 3/7, 4/8 
             set IsFaqActive=false // Disables faq_counter() and faq_active()
             call faq_flush() // Destroys all texttags, hides faq_dialog, reveals map
@@ -3543,7 +3442,7 @@ function faq_active takes nothing returns nothing
         endif
     else // Кнопка "Нет"
         set faq_vote_no=faq_vote_no + 1 // Голосов "Против"
-        call SetTextTagText(udg_faq_text[3], I2S(faq_vote_no), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "Против"
+        call SetTextTagText(s__faq_tts[3], I2S(faq_vote_no), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "Против"
         if ( faq_vote_no > ( CountPlayersInForceBJ(udg_players_group) / 2 ) ) then // Если голосов "За" 1/1, 2/2, 2/3, 3/4, 3/5, 4/6, 4/7, 5/8 
             call faq_stop() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
         endif
@@ -3554,7 +3453,7 @@ function faq_active_init takes nothing returns nothing
     local trigger t= CreateTrigger()
 
     // Triggers if faq_dialog's buttons were clicked
-    call TriggerRegisterDialogEvent(t, udg_faq_dialog)
+    call TriggerRegisterDialogEvent(t, faq_dialog)
     call TriggerAddAction(t, function faq_active)
     call TriggerAddCondition(t, Condition(function faq_active_condition))
 endfunction
@@ -3589,11 +3488,13 @@ function initialization_in_game_set_unit_id takes nothing returns nothing
 endfunction
 
 function initialization_in_game_players takes nothing returns nothing
-    // Opt.begin
-    call CameraSetupApplyForPlayer(true, gg_cam_logic, GetEnumPlayer(), 0)
-    if ( GetPlayerSlotState(GetEnumPlayer()) == PLAYER_SLOT_STATE_PLAYING and GetPlayerController(GetEnumPlayer()) == MAP_CONTROL_USER ) then
-        call SetPlayerFlagBJ(PLAYER_STATE_GIVES_BOUNTY, true, GetEnumPlayer())
-        call ForceAddPlayerSimple(GetEnumPlayer(), udg_players_group)
+    local player p= GetEnumPlayer()
+    local real x= GetPlayerStartLocationX(p)
+    local real y= GetPlayerStartLocationY(p)
+    call CameraSetupApplyForPlayer(true, gg_cam_logic, p, 0)
+    if ( GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING and GetPlayerController(p) == MAP_CONTROL_USER ) then
+        call SetPlayerState(p, PLAYER_STATE_GIVES_BOUNTY, 1)
+        call ForceAddPlayer(udg_players_group, p)
         // TODO: Нижние переменные надо перенести в pdb
         set udg_players_name[GetConvertedPlayerId(GetEnumPlayer())]=GetPlayerName(GetEnumPlayer())
         set udg_info[GetConvertedPlayerId(GetEnumPlayer())]=true
@@ -3602,17 +3503,18 @@ function initialization_in_game_players takes nothing returns nothing
         set udg_leader_kf[GetConvertedPlayerId(GetEnumPlayer())]=1.00
         set udg_leader_wins[GetConvertedPlayerId(GetEnumPlayer())]=0
         set udg_changeSet[GetConvertedPlayerId(GetEnumPlayer())]=3
-        call CreateNUnitsAtLoc(1, 'ntav', GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), bj_UNIT_FACING)
-        call CreateNUnitsAtLoc(1, 'h001', GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), bj_UNIT_FACING)
-        call CreateNUnitsAtLoc(1, 'h029', GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), bj_UNIT_FACING)
-        call SetPlayerStateBJ(GetEnumPlayer(), PLAYER_STATE_RESOURCE_GOLD, 100)
-        call CreateFogModifierRectBJ(true, GetEnumPlayer(), FOG_OF_WAR_VISIBLE, gg_rct_all)
-        call CreateFogModifierRectBJ(true, GetEnumPlayer(), FOG_OF_WAR_VISIBLE, gg_rct_minersregion)
-        call CreateFogModifierRectBJ(true, GetEnumPlayer(), FOG_OF_WAR_VISIBLE, gg_rct_fastarena)
-        call CreateFogModifierRectBJ(true, GetEnumPlayer(), FOG_OF_WAR_VISIBLE, gg_rct_horseregion)
-        call CreateFogModifierRectBJ(true, GetEnumPlayer(), FOG_OF_WAR_VISIBLE, gg_rct_roulette)
+        call CreateUnit(p, 'ntav', x, y, bj_UNIT_FACING)
+        call CreateUnit(p, 'h001', x, y, bj_UNIT_FACING)
+        call CreateUnit(p, 'h029', x, y, bj_UNIT_FACING)
+        call AddGoldToPlayer(100 , p) // Золото на выбор расы в таверне
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_all, true, false))
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_minersregion, true, false))
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_fastarena, true, false))
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_horseregion, true, false))
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_roulette, true, false))
     endif
-    // Opt. end
+
+    set p=null
 endfunction
 
 function initialization_in_game takes nothing returns nothing
@@ -3632,7 +3534,7 @@ function initialization_in_game takes nothing returns nothing
             // Если не миниигра с боссом, то
             set udg_random_log=false
             loop // Заполняем wave_mini[] рандомными, неповторяющимися числами (2, 4, 6, ..., 18) - волны, когда будут миниигры. mode = 1 (стандартный режим)
-                exitwhen ( udg_random_log == true ) // Возможны баги
+                exitwhen ( udg_random_log == true ) // TODO: test
                 set udg_r=GetRandomInt(1, ( udg_mini_game_max + 1 )) // От 1 до 9 (кол-во миниигр)
                 if ( initialization_in_game_wave_mini_condition() ) then
                     set udg_random_log=true
@@ -3689,6 +3591,8 @@ function initialization_in_game takes nothing returns nothing
         endloop
         set i=i + 1
     endloop
+
+    set lastCreatedUnit=null
 endfunction
 
 function Trig_income_upg_Conditions takes nothing returns boolean
@@ -3944,7 +3848,7 @@ function Trig_income_upg_actions_leadership_group takes nothing returns nothing
     local integer u_rc= GetUnitTypeId(u)
 
     if u_rc == most_point_kill_last_round or u_rc == or_leadership_arena_last_round then
-        call h__RemoveUnit(u)
+        call RemoveUnit(u)
     endif
 
     set u=null
@@ -4478,7 +4382,7 @@ endfunction
         set s__goldmining_income[5]= 10
         set s__goldmining_income[6]= 10
 
-        call C_Log("map_init finished!")
+        call Log("map_init finished!")
 
         // Не забываем обнулить переменные!!!
         set strTestWarning_RU=null
@@ -4511,7 +4415,7 @@ endfunction
         // faq active Trigger
         call faq_active_init()
 
-        call C_Log("post_map_init finished!")
+        call Log("post_map_init finished!")
         
     endfunction
 
@@ -4524,7 +4428,7 @@ endfunction
         call TriggerRegisterTimerEventSingle(t, 0.01)
         call TriggerAddAction(t, function post_map_init)
         call C_SetComputers()
-        call C_StartInitTimer()
+        call StartInitTimer()
 
         set t=null
     endfunction
@@ -4889,10 +4793,7 @@ function InitGlobals takes nothing returns nothing
         set i=i + 1
     endloop
 
-    set udg_faq_dialog=DialogCreate()
     set udg_gameset_time_first=0
-    set udg_faq_vote=0
-    set udg_faq_status=false
     set i=0
     loop
         exitwhen ( i > 8 )
@@ -5365,11 +5266,11 @@ endfunction
 //===========================================================================
 function Trig_game_end_Func003A takes nothing returns nothing
     call PanCameraToTimedLocForPlayer(GetOwningPlayer(GetEnumUnit()), GetPlayerStartLocationLoc(GetOwningPlayer(GetEnumUnit())), 0)
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_game_end_Func004A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_game_end_Func006Func001Func002001002 takes nothing returns boolean
@@ -6297,7 +6198,7 @@ function Trig_units_death_Actions takes nothing returns nothing
     else
     endif
     call TriggerSleepAction(60.00)
-    call h__RemoveUnit(GetDyingUnit())
+    call RemoveUnit(GetDyingUnit())
 endfunction
 
 //===========================================================================
@@ -6327,7 +6228,7 @@ endfunction
 function Trig_unit_dammi_Actions takes nothing returns nothing
     call TriggerSleepAction(60.00)
     if ( Trig_unit_dammi_Func002C() ) then
-        call h__RemoveUnit(GetEnteringUnit())
+        call RemoveUnit(GetEnteringUnit())
     else
     endif
 endfunction
@@ -6516,7 +6417,7 @@ function Trig_set_wave_start_main_Func002C takes nothing returns boolean
 endfunction
 
 function Trig_set_wave_start_main_Func003A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_set_wave_start_main_Func009C takes nothing returns boolean
@@ -8118,7 +8019,7 @@ function Trig_wave_end_timer_Func003C takes nothing returns boolean
 endfunction
 
 function Trig_wave_end_timer_Func004Func001A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_end_timer_Func004C takes nothing returns boolean
@@ -8143,11 +8044,11 @@ function Trig_wave_end_timer_Func007C takes nothing returns boolean
 endfunction
 
 function Trig_wave_end_timer_Func008Func001A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_end_timer_Func008Func002A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_end_timer_Func008Func005Func001Func001Func002001001002 takes nothing returns boolean
@@ -8197,7 +8098,7 @@ function Trig_wave_end_timer_Func009Func005A takes nothing returns nothing
 endfunction
 
 function Trig_wave_end_timer_Func009Func006A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_end_timer_Func009C takes nothing returns boolean
@@ -8216,7 +8117,7 @@ function Trig_wave_end_timer_Func010Func004A takes nothing returns nothing
 endfunction
 
 function Trig_wave_end_timer_Func010Func005A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_end_timer_Func010C takes nothing returns boolean
@@ -8263,7 +8164,7 @@ function Trig_wave_end_timer_Func011Func002Func001A takes nothing returns nothin
 endfunction
 
 function Trig_wave_end_timer_Func011Func002Func002A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_end_timer_Func011Func002Func008Func001C takes nothing returns boolean
@@ -8286,7 +8187,7 @@ function Trig_wave_end_timer_Func011Func002Func009001002 takes nothing returns b
 endfunction
 
 function Trig_wave_end_timer_Func011Func002Func009A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_end_timer_Func011Func002C takes nothing returns boolean
@@ -8798,7 +8699,7 @@ endfunction
 
 function Trig_wave_rotation_Func005A takes nothing returns nothing
     call GroupRemoveUnitSimple(GetEnumUnit(), udg_wave_units)
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_rotation_Func006001002001 takes nothing returns boolean
@@ -8815,7 +8716,7 @@ endfunction
 
 function Trig_wave_rotation_Func006A takes nothing returns nothing
     call GroupRemoveUnitSimple(GetEnumUnit(), udg_wave_units)
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_rotation_Func007001002001 takes nothing returns boolean
@@ -9024,11 +8925,11 @@ function Trig_wave_fast_arena_end_Func003Func006Func003A takes nothing returns n
 endfunction
 
 function Trig_wave_fast_arena_end_Func003Func006Func004A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_fast_arena_end_Func003Func006Func006A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_fast_arena_end_Func003Func006C takes nothing returns boolean
@@ -9244,11 +9145,11 @@ function Trig_wave_end_Func001Func001Func002Func001Func002Func001C takes nothing
 endfunction
 
 function Trig_wave_end_Func001Func001Func002Func001Func007A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_end_Func001Func001Func002Func001Func009A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_end_Func001Func001Func002Func001Func011A takes nothing returns nothing
@@ -9390,11 +9291,11 @@ function Trig_wave_end_Func002Func002C takes nothing returns boolean
 endfunction
 
 function Trig_wave_end_Func002Func004A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_end_Func002Func006A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_end_Func002Func013A takes nothing returns nothing
@@ -9414,7 +9315,7 @@ function Trig_wave_end_Func002Func020001002 takes nothing returns boolean
 endfunction
 
 function Trig_wave_end_Func002Func020A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_end_Func002Func021Func001A takes nothing returns nothing
@@ -9483,27 +9384,27 @@ function Trig_wave_end_Func002Func030A takes nothing returns nothing
 endfunction
 
 function Trig_wave_end_Func002Func031A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_end_Func002Func032A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_end_Func002Func033A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_end_Func002Func034A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_end_Func002Func035A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_end_Func002Func036A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_wave_end_Func002Func037A takes nothing returns nothing
@@ -10702,12 +10603,12 @@ function Trig_inc_colour_Actions takes nothing returns nothing
         else
         endif
         call CreateNUnitsAtLoc(1, GetUnitTypeId(GetDyingUnit()), GetOwningPlayer(GetKillingUnitBJ()), GetRectCenter(gg_rct_inc), bj_UNIT_FACING)
-        call h__RemoveUnit(GetDyingUnit())
+        call RemoveUnit(GetDyingUnit())
         call ForGroupBJ(GetUnitsInRangeOfLocMatching(128.00, GetUnitLoc(GetLastCreatedUnit()), Condition(function Trig_inc_colour_Func003Func015001003)), function Trig_inc_colour_Func003Func015A)
     else
         call ForGroupBJ(udg_light[udg_goldmine_colour], function Trig_inc_colour_Func003Func001A)
         call CreateNUnitsAtLoc(1, GetUnitTypeId(GetDyingUnit()), Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_inc), bj_UNIT_FACING)
-        call h__RemoveUnit(GetDyingUnit())
+        call RemoveUnit(GetDyingUnit())
         call ForGroupBJ(GetUnitsInRangeOfLocMatching(128.00, GetUnitLoc(GetLastCreatedUnit()), Condition(function Trig_inc_colour_Func003Func004001003)), function Trig_inc_colour_Func003Func004A)
     endif
 endfunction
@@ -10926,7 +10827,7 @@ function Trig_Weather_Func007A takes nothing returns nothing
 endfunction
 
 function Trig_Weather_Func008A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_Weather_Func010Func001C takes nothing returns boolean
@@ -10973,7 +10874,7 @@ function Trig_Blizzard_Conditions takes nothing returns boolean
 endfunction
 
 function Trig_Blizzard_Func002A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_Blizzard_Func003A takes nothing returns nothing
@@ -11005,7 +10906,7 @@ function Trig_Storm_Conditions takes nothing returns boolean
 endfunction
 
 function Trig_Storm_Func002A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_Storm_Func003A takes nothing returns nothing
@@ -11075,7 +10976,7 @@ function Trig_Armageddon_Conditions takes nothing returns boolean
 endfunction
 
 function Trig_Armageddon_Func002A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_Armageddon_Func003A takes nothing returns nothing
@@ -11180,19 +11081,19 @@ function Trig_faq_Func019A takes nothing returns nothing
 endfunction
 
 function Trig_faq_Func020A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_faq_Func034A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_faq_Func035A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_faq_Func036A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_faq_Func037A takes nothing returns nothing
@@ -11204,11 +11105,11 @@ function Trig_faq_Func038A takes nothing returns nothing
 endfunction
 
 function Trig_faq_Func048A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_faq_Func049A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_faq_Func050A takes nothing returns nothing
@@ -11216,7 +11117,7 @@ function Trig_faq_Func050A takes nothing returns nothing
 endfunction
 
 function Trig_faq_Func059A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_faq_Func061A takes nothing returns nothing
@@ -11305,7 +11206,7 @@ function Trig_faq_death_Conditions takes nothing returns boolean
 endfunction
 
 function Trig_faq_death_Func001A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_faq_death_Func003A takes nothing returns nothing
@@ -11322,7 +11223,7 @@ function Trig_faq_death_Actions takes nothing returns nothing
     call ForGroupBJ(udg_light[0], function Trig_faq_death_Func003A)
     call CreateNUnitsAtLoc(1, GetUnitTypeId(GetDyingUnit()), Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_centreCENTRE), bj_UNIT_FACING)
     set udg_faq_unit[1]=GetLastCreatedUnit()
-    call h__RemoveUnit(GetDyingUnit())
+    call RemoveUnit(GetDyingUnit())
     call ForGroupBJ(GetUnitsOfTypeIdAll('n006'), function Trig_faq_death_Func007A)
     call CreateTextTagLocBJ(( "|cFFFFCD00+6" ), GetUnitRallyPoint(udg_faq_unit[1]), 0, 12.00, 100, 100, 100, 0)
     call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), GetPlayersAll())
@@ -12263,7 +12164,7 @@ function Trig_building_selling_Actions takes nothing returns nothing
     else
     endif
     call GroupRemoveUnitSimple(GetSpellAbilityUnit(), udg_buildings)
-    call h__RemoveUnit(GetSpellAbilityUnit())
+    call RemoveUnit(GetSpellAbilityUnit())
     set udg_sold_gold=0
     set udg_sold_wood=0
     call AddSpecialEffectLocBJ(GetUnitLoc(GetSpellAbilityUnit()), "Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl")
@@ -12320,7 +12221,7 @@ function Trig_builder_select_Func002001002 takes nothing returns boolean
 endfunction
 
 function Trig_builder_select_Func002A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_builder_select_Func009C takes nothing returns boolean
@@ -13601,11 +13502,11 @@ endfunction
 // Trigger: boss ini finish
 //===========================================================================
 function Trig_boss_ini_finish_Func005A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_boss_ini_finish_Func006A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_boss_ini_finish_Actions takes nothing returns nothing
@@ -13772,19 +13673,19 @@ function Trig_boss_end_Func002Func019A takes nothing returns nothing
 endfunction
 
 function Trig_boss_end_Func002Func020A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_boss_end_Func002Func021A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_boss_end_Func002Func022A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_boss_end_Func002Func023A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_boss_end_Func002Func024A takes nothing returns nothing
@@ -13952,7 +13853,7 @@ function Trig_spells_check_Func006Func007001002 takes nothing returns boolean
 endfunction
 
 function Trig_spells_check_Func006Func007A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_spells_check_Func006Func013C takes nothing returns boolean
@@ -14082,7 +13983,7 @@ function Trig_spell_2_Func002A takes nothing returns nothing
 endfunction
 
 function Trig_spell_2_Func004Func002A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_spell_2_Func004C takes nothing returns boolean
@@ -14144,7 +14045,7 @@ function Trig_spell_4_Func002A takes nothing returns nothing
 endfunction
 
 function Trig_spell_4_Func004Func002A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_spell_4_Func004C takes nothing returns boolean
@@ -14197,7 +14098,7 @@ endfunction
 function Trig_hunter_death_Actions takes nothing returns nothing
     call GroupRemoveUnitSimple(GetDyingUnit(), udg_wave_units)
     call SetHeroLevelBJ(GetKillingUnitBJ(), ( GetHeroLevel(GetKillingUnitBJ()) + 1 ), true)
-    call h__RemoveUnit(GetDyingUnit())
+    call RemoveUnit(GetDyingUnit())
     if ( Trig_hunter_death_Func004C() ) then
         call ForGroupBJ(GetUnitsOfTypeIdAll('Ewar'), function Trig_hunter_death_Func004Func001A)
     else
@@ -14341,7 +14242,7 @@ function Trig_zombie_ini_finish_Func005A takes nothing returns nothing
 endfunction
 
 function Trig_zombie_ini_finish_Func006A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_zombie_ini_finish_Func007Func001Func001A takes nothing returns nothing
@@ -14380,12 +14281,12 @@ function Trig_zombie_ini_finish_Func007C takes nothing returns boolean
 endfunction
 
 function Trig_zombie_ini_finish_Func008A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_zombie_ini_finish_Func009A takes nothing returns nothing
     call GroupRemoveUnitSimple(GetEnumUnit(), udg_wave_units)
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_zombie_ini_finish_Actions takes nothing returns nothing
@@ -14430,7 +14331,7 @@ function Trig_zombie_death_Func002A takes nothing returns nothing
 endfunction
 
 function Trig_zombie_death_Func010Func002A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_zombie_death_Func010Func003001001002001 takes nothing returns boolean
@@ -14905,7 +14806,7 @@ function Trig_gold_result_Func004A takes nothing returns nothing
 endfunction
 
 function Trig_gold_result_Func006A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_gold_result_Actions takes nothing returns nothing
@@ -15226,7 +15127,7 @@ function Trig_horse_finish_Actions takes nothing returns nothing
     endif
     call AddSpecialEffectLocBJ(GetUnitLoc(GetEnteringUnit()), "Abilities\\Spells\\Items\\AIsm\\AIsmTarget.mdl")
     call DestroyEffectBJ(GetLastCreatedEffectBJ())
-    call h__RemoveUnit(GetEnteringUnit())
+    call RemoveUnit(GetEnteringUnit())
 endfunction
 
 //===========================================================================
@@ -15388,7 +15289,7 @@ function Trig_miners_death_Func002Func001A takes nothing returns nothing
         call DisplayTimedTextToForce(GetForceOfPlayer(GetOwningPlayer(GetEnumUnit())), 10.00, ( "Победа в Miners: |cFFFFCD00" + I2S(( 250 + ( 25 * udg_wave ) )) ))
     else
     endif
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_miners_death_Func002C takes nothing returns boolean
@@ -15890,7 +15791,7 @@ function Trig_hide_stop_Func001A takes nothing returns nothing
     call CreateNUnitsAtLoc(1, 'h00Z', GetOwningPlayer(GetEnumUnit()), GetUnitLoc(GetEnumUnit()), bj_UNIT_FACING)
     call GroupAddUnitSimple(GetLastCreatedUnit(), udg_wave_units)
     call GroupRemoveUnitSimple(GetEnumUnit(), udg_wave_units)
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_hide_stop_Actions takes nothing returns nothing
@@ -15918,7 +15819,7 @@ function Trig_hide_kill_Func003A takes nothing returns nothing
 endfunction
 
 function Trig_hide_kill_Func009Func006A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_hide_kill_Func009C takes nothing returns boolean
@@ -15933,7 +15834,7 @@ function Trig_hide_kill_Actions takes nothing returns nothing
     call DestroyEffectBJ(GetLastCreatedEffectBJ())
     call EnumDestructablesInCircleBJ(32.00, GetUnitLoc(GetDyingUnit()), function Trig_hide_kill_Func003A)
     call GroupRemoveUnitSimple(GetDyingUnit(), udg_wave_units)
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
     call CreateNUnitsAtLoc(1, 'h00Y', GetOwningPlayer(GetDyingUnit()), GetUnitLoc(GetDyingUnit()), bj_UNIT_FACING)
     if ( Trig_hide_kill_Func009C() ) then
         call DisplayTimedTextToForce(GetPlayersAll(), 15.00, ( "Победил охотник: " + ( udg_players_colour[GetConvertedPlayerId(udg_hide_hunter)] + udg_players_name[GetConvertedPlayerId(udg_hide_hunter)] ) ))
@@ -16031,7 +15932,7 @@ function Trig_banshi_end_Func004A takes nothing returns nothing
 endfunction
 
 function Trig_banshi_end_Func005A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_banshi_end_Actions takes nothing returns nothing
@@ -16466,7 +16367,7 @@ endfunction
 // Trigger: parodys set cast
 //===========================================================================
 function Trig_parodys_set_cast_Func002Func001Func002A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_parodys_set_cast_Func002Func001Func003Func001Func001A takes nothing returns nothing
@@ -16639,7 +16540,7 @@ endfunction
 // Trigger: parody dies
 //===========================================================================
 function Trig_parody_dies_Func001Func001Func005A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_parody_dies_Func001Func001C takes nothing returns boolean
@@ -16673,11 +16574,11 @@ function Trig_parody_dies_Func001Func002A takes nothing returns nothing
         call DisplayTimedTextToForce(GetForceOfPlayer(GetOwningPlayer(GetEnumUnit())), 10.00, ( "Победа в мини-игре: |cFFFFCD00" + I2S(( 400 + ( 40 * udg_wave ) )) ))
     else
     endif
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_parody_dies_Func001Func006A takes nothing returns nothing
-    call h__RemoveUnit(GetEnumUnit())
+    call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_parody_dies_Func001C takes nothing returns boolean
@@ -16982,7 +16883,7 @@ function main takes nothing returns nothing
     call CreateAllUnits()
     call InitBlizzard()
 
-call ExecuteFunc("jasshelper__initstructs601493703")
+call ExecuteFunc("jasshelper__initstructs658040468")
 call ExecuteFunc("MIXLib___MIXLibInit")
 call MainInit()
 
@@ -17027,19 +16928,11 @@ endfunction
 //Struct method generated initializers/callers:
 
 //Functions for BigArrays:
-function sa___prototype31_UnitRecycler___DisplayError takes nothing returns boolean
-    call UnitRecycler___DisplayError(f__arg_unit1)
-    return true
-endfunction
 
-function jasshelper__initstructs601493703 takes nothing returns nothing
-    set st___prototype31[1]=CreateTrigger()
-    call TriggerAddAction(st___prototype31[1],function sa___prototype31_UnitRecycler___DisplayError)
-    call TriggerAddCondition(st___prototype31[1],Condition(function sa___prototype31_UnitRecycler___DisplayError))
+function jasshelper__initstructs658040468 takes nothing returns nothing
 
 
-
-call ExecuteFunc("s__Revive_ReviveUnit___Init__onInit")
+call ExecuteFunc("s__Revive_ReviveUnit___Init___onInit")
 
 
 
@@ -17091,13 +16984,13 @@ call ExecuteFunc("s__Revive_ReviveUnit___Init__onInit")
 
 
 
-call ExecuteFunc("s__RegisterNativeEvent___NativeEvent_RegisterNativeEvent___NativeEventInit__onInit")
+call ExecuteFunc("s__RegisterNativeEvent___NativeEvent_RegisterNativeEvent___NativeEventInit___onInit")
 
 
 
-call ExecuteFunc("s__UnitRecycler___Initializer_UnitRecycler___Init__onInit")
+call ExecuteFunc("s__UnitRecycler___Initializer_UnitRecycler___Init___onInit")
 
-call ExecuteFunc("s__ResourcePreloader___S_ResourcePreloader___Init__onInit")
+call ExecuteFunc("s__ResourcePreloader___S_ResourcePreloader___Init___onInit")
 
     call ExecuteFunc("s__BJObjectId_onInit")
 endfunction

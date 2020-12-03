@@ -128,12 +128,7 @@ globals
     integer                 udg_leader_num             = 0
     integer array           udg_leader_wins
     integer array           udg_leader_owner
-    button array            udg_faq_key
-    dialog                  udg_faq_dialog             = null
     real                    udg_gameset_time_first     = 0
-    integer                 udg_faq_vote               = 0
-    texttag array           udg_faq_text
-    boolean                 udg_faq_status             = false
     unit array              udg_faq_unit
     boolean array           udg_info
     real                    udg_incometemp             = 0
@@ -245,14 +240,8 @@ globals
     sound                   gg_snd_BloodElfMagePissed1 = null
     sound                   gg_snd_BattleNetTick01     = null
     sound                   gg_snd_ClanInvitation      = null
-    trigger                 gg_trg_main                = null
     trigger                 gg_trg_initialization      = null
-    trigger                 gg_trg_initialization_in_game = null
-    trigger                 gg_trg_initialization_in_game_Copy = null
     trigger                 gg_trg_ini_id              = null
-    trigger                 gg_trg_ini_time            = null
-    trigger                 gg_trg_ini_leave           = null
-    trigger                 gg_trg_ini_leave_Copy      = null
     trigger                 gg_trg_game_end            = null
     trigger                 gg_trg_cmd_clear           = null
     trigger                 gg_trg_cmd_build           = null
@@ -263,10 +252,6 @@ globals
     trigger                 gg_trg_cmd_gg              = null
     trigger                 gg_trg_cmd_info            = null
     trigger                 gg_trg_cmd_zoom            = null
-    trigger                 gg_trg_gameset_owner       = null
-    trigger                 gg_trg_gameset_owner_Copy  = null
-    trigger                 gg_trg_gameset_end         = null
-    trigger                 gg_trg_gameset_end_Copy    = null
     trigger                 gg_trg_damage_system_initialization = null
     trigger                 gg_trg_damage_system       = null
     trigger                 gg_trg_scoreboard_ini      = null
@@ -299,7 +284,6 @@ globals
     trigger                 gg_trg_inc_colour          = null
     trigger                 gg_trg_inc_upg             = null
     trigger                 gg_trg_income_upg          = null
-    trigger                 gg_trg_income_upg_Copy     = null
     trigger                 gg_trg_income_upgQ         = null
     trigger                 gg_trg_income_upgW         = null
     trigger                 gg_trg_income_upgE         = null
@@ -323,14 +307,6 @@ globals
     trigger                 gg_trg_Armageddon          = null
     trigger                 gg_trg_Armageddon_effect   = null
     trigger                 gg_trg_Armageddon_effect_2 = null
-    trigger                 gg_trg_faq_ini             = null
-    trigger                 gg_trg_faq_ini_Copy        = null
-    trigger                 gg_trg_faq_active          = null
-    trigger                 gg_trg_faq_active_Copy     = null
-    trigger                 gg_trg_faq_stop            = null
-    trigger                 gg_trg_faq_stop_Copy       = null
-    trigger                 gg_trg_faq_start           = null
-    trigger                 gg_trg_faq_start_Copy      = null
     trigger                 gg_trg_faq                 = null
     trigger                 gg_trg_faq_death           = null
     trigger                 gg_trg_building_ini        = null
@@ -736,10 +712,7 @@ function InitGlobals takes nothing returns nothing
         set i = i + 1
     endloop
 
-    set udg_faq_dialog = DialogCreate()
     set udg_gameset_time_first = 0
-    set udg_faq_vote = 0
-    set udg_faq_status = false
     set i = 0
     loop
         exitwhen (i > 8)
