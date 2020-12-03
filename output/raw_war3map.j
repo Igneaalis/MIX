@@ -1772,7 +1772,7 @@ endlibrary
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     18.02.2016             =
-= Дата изменения:    20.11.2020 21:37       =
+= Дата изменения:    03.12.2020 13:51       =
 =============================================
 
 Библиотека общего назначения.
@@ -2350,7 +2350,7 @@ function gameset_owner takes nothing returns nothing
 
         endif
     endif
-    // Opt. begin
+    // Opt. end
 endfunction
 
 /*
@@ -2648,7 +2648,7 @@ endfunction
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     08.11.2020 19:46       =
-= Дата изменения:    02.12.2020 21:49       =
+= Дата изменения:    03.12.2020 13:51       =
 =============================================
 
 initialization in game Trigger
@@ -2679,7 +2679,7 @@ endfunction
 function initialization_in_game_set_unit_id takes nothing returns nothing
     // Opt. begin
     set udg_id = udg_id + 1
-    call GroupAddUnitSimple(GetEnumUnit(), udg_id_group)
+    call GroupAddUnit(udg_id_group, GetEnumUnit())
     call SetUnitUserData(GetEnumUnit(), udg_id)
     // Opt. end
 endfunction
@@ -2693,22 +2693,22 @@ function initialization_in_game_players takes nothing returns nothing
         call SetPlayerState(p, PLAYER_STATE_GIVES_BOUNTY, 1)
         call ForceAddPlayer(udg_players_group, p)
         // TODO: Нижние переменные надо перенести в pdb
-        set udg_players_name[GetConvertedPlayerId(GetEnumPlayer())] = GetPlayerName(GetEnumPlayer())
-        set udg_info[GetConvertedPlayerId(GetEnumPlayer())] = true
-        set udg_income_gold[GetConvertedPlayerId(GetEnumPlayer())] = 240
-        set udg_income_wood[GetConvertedPlayerId(GetEnumPlayer())] = 8
-        set udg_leader_kf[GetConvertedPlayerId(GetEnumPlayer())] = 1.00
-        set udg_leader_wins[GetConvertedPlayerId(GetEnumPlayer())] = 0
-        set udg_changeSet[GetConvertedPlayerId(GetEnumPlayer())] = 3
-        call CreateUnit(p, 'ntav', x, y, bj_UNIT_FACING)
-        call CreateUnit(p, 'h001', x, y, bj_UNIT_FACING)
-        call CreateUnit(p, 'h029', x, y, bj_UNIT_FACING)
+        set udg_players_name[GetConvertedPlayerId(p)] = GetPlayerName(p)
+        set udg_info[GetConvertedPlayerId(p)] = true
+        set udg_income_gold[GetConvertedPlayerId(p)] = 240
+        set udg_income_wood[GetConvertedPlayerId(p)] = 8
+        set udg_leader_kf[GetConvertedPlayerId(p)] = 1.00
+        set udg_leader_wins[GetConvertedPlayerId(p)] = 0
+        set udg_changeSet[GetConvertedPlayerId(p)] = 3
+        call CreateUnit(p, 'ntav', x, y, bj_UNIT_FACING) // Таверна с расами на выбор
+        call CreateUnit(p, 'h001', x, y, bj_UNIT_FACING) // Юнит "Выбор героя"
+        call CreateUnit(p, 'h029', x, y, bj_UNIT_FACING) // Юнит "Не более 1 погодного эффекта в раунде"
         call AddGoldToPlayer(100, p) // Золото на выбор расы в таверне
-        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_all, true, false))
-        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_minersregion, true, false))
-        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_fastarena, true, false))
-        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_horseregion, true, false))
-        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_roulette, true, false))
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_all, true, false)) // Поле битвы
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_minersregion, true, false)) // Миниигра "Минёры"
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_fastarena, true, false)) // Миниарена
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_horseregion, true, false)) // Миниигра "Конные бега"
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_roulette, true, false)) // Миниигра "Казино"
     endif
 
     set p = null
@@ -2798,7 +2798,7 @@ endfunction
 = Discord:           ! ! Gladiator#3635     =
 = E-Mail:            glady007rus@gmail.com  =
 = Дата создания:     08.11.2020 20:42       =
-= Дата изменения:    22.11.2020 18:00       =
+= Дата изменения:    03.12.2020 14:51       =
 =============================================
 
 Исследования инкома.
@@ -2824,11 +2824,12 @@ function Trig_income_upg_actions_evforev takes player p returns nothing
     local integer bonus_gold
     local integer bonus_lumber
 
-    set r = evforev_bonus_res_mod * I2R(GetPlayerTechCountSimple(evforev_rc, p)) + evforev_bonus_res
+    set r = evforev_bonus_res_mod * I2R(GetPlayerTechCount(p, evforev_rc, true)) + evforev_bonus_res
     set bonus_gold = R2I(r * I2R(GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)))
     set bonus_lumber = R2I(r * I2R(GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER)))
-    call AdjustPlayerStateBJ(bonus_gold, p, PLAYER_STATE_RESOURCE_GOLD)
-    call AdjustPlayerStateBJ(bonus_lumber, p, PLAYER_STATE_RESOURCE_LUMBER)
+
+    call AddGoldToPlayer(bonus_gold, p)
+    call AddLumberToPlayer(bonus_lumber, p)
     
 endfunction
 
@@ -2837,40 +2838,36 @@ function Aggrgame_conditions takes nothing returns boolean
 endfunction
 
 function Aggrgame_group takes nothing returns nothing
-    if GetUnitAbilityLevelSwapped(aggrgame_aura_rc, GetEnumUnit()) == 0 then
-        call UnitAddAbilityBJ(aggrgame_aura_rc, GetEnumUnit())
+    local unit u = GetEnumUnit()
+    if GetUnitAbilityLevel(u, aggrgame_aura_rc) == 0 then
+        call UnitAddAbility(u, aggrgame_aura_rc)
     else
-        call IncUnitAbilityLevelSwapped(aggrgame_aura_rc, GetEnumUnit())
+        call IncUnitAbilityLevel(u, aggrgame_aura_rc)
     endif
+    set u = null
 endfunction
 
 // Действие улучшения Агрессивной игры
 function Trig_income_upg_actions_aggrgame takes player p returns nothing
     local group gr
-    local boolexpr b
     
-    set gr = CreateGroup()         
-    set b = Condition(function Aggrgame_conditions) 
-    call GroupEnumUnitsOfPlayer(gr, p, b) 
+    set gr = CreateGroup()
+    call GroupEnumUnitsOfPlayer(gr, p, Condition(function Aggrgame_conditions)) 
     call ForGroup(gr, function Aggrgame_group)
     
-    call DestroyBoolExpr(b)
     call DestroyGroup(gr)
+    set gr = null
 endfunction
 
 // Добавить в группу игроков всех играющих игроков
 function AllPlayingPlayers takes force gr_p returns nothing
     local integer i = 1
     local player p
-    local boolean b1
-    local boolean b2
 
     loop
         exitwhen i > max_players
         set p = Player(i)
-        set b1 = GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING
-        set b2 = GetPlayerController(p) == MAP_CONTROL_USER
-        if b1 and b2 then
+        if (GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING) and (GetPlayerController(p) == MAP_CONTROL_USER) then
             call ForceAddPlayer(gr_p, p)
         endif
         set i = i + 1
@@ -2883,7 +2880,7 @@ endfunction
 function Timer_contr_to_pl_actions takes nothing returns nothing
     local timer t = GetExpiredTimer()
     local player p = hash[StringHash("income")].player[GetHandleId(t)]
-    local integer count_research = GetPlayerTechCountSimple(contr_to_pl_rc, p)
+    local integer count_research = GetPlayerTechCount(p, contr_to_pl_rc, true)
     local integer gold = contr_to_pl_gold + (contr_to_pl_gold_mod * (count_research - 1))
     local integer lumber = contr_to_pl_lumber + (contr_to_pl_lumber_mod * (count_research - 1))
     local string s1
@@ -2892,8 +2889,8 @@ function Timer_contr_to_pl_actions takes nothing returns nothing
     set gold = R2I(contr_to_pl_multy * I2R(gold))
     set lumber = R2I(contr_to_pl_multy * I2R(lumber))
 
-    call AdjustPlayerStateBJ(gold, p, PLAYER_STATE_RESOURCE_GOLD)
-    call AdjustPlayerStateBJ(lumber, p, PLAYER_STATE_RESOURCE_LUMBER)
+    call AddGoldToPlayer(gold, p)
+    call AddLumberToPlayer(lumber, p)
 
     set s1 = "Доход с вложения в игрока: |cFFFFCD00" + I2S(gold)
     set s2 = "Доход с вложения в игрока: |cFFB23AEE" + I2S(lumber)
@@ -2901,9 +2898,10 @@ function Timer_contr_to_pl_actions takes nothing returns nothing
     call DisplayTextToPlayer(p, 0, 0, s1)
     call DisplayTextToPlayer(p, 0, 0, s2)
     // !!! Найти причину, зачем увеличивается лвл улучшения Подождите 5 минут
-    call SetPlayerTechResearchedSwap( wait_five_minutes_rc, count_research, p)
+    call SetPlayerTechResearched(p, wait_five_minutes_rc, count_research)
     // ----------------------------------------------------------------------
 
+    call PauseTimer(t)
     call DestroyTimer(t)
     set p = null
     set t = null
@@ -2920,7 +2918,7 @@ function Trig_income_upg_actions_contr_to_pl takes player p, integer count_resea
     local string mes
     local timer t
 
-    set gr_p = CreateForce() 
+    set gr_p = CreateForce()
     call AllPlayingPlayers(gr_p)
     call ForceRemovePlayer(gr_p, p)
     set rand_p = ForcePickRandomPlayer(gr_p)
@@ -2928,8 +2926,8 @@ function Trig_income_upg_actions_contr_to_pl takes player p, integer count_resea
     set bonus_gold = contr_to_pl_gold + (contr_to_pl_gold_mod * (count_research - 1))
     set bonus_lumber = contr_to_pl_lumber + (contr_to_pl_lumber_mod * (count_research - 1))
 
-    call AdjustPlayerStateBJ(bonus_gold, rand_p, PLAYER_STATE_RESOURCE_GOLD)
-    call AdjustPlayerStateBJ(bonus_lumber, rand_p, PLAYER_STATE_RESOURCE_LUMBER)
+    call AddGoldToPlayer(bonus_gold, rand_p)
+    call AddLumberToPlayer(bonus_lumber, rand_p)
 
     set mes = "В вас вложились: |cFFFFCD00" + I2S(bonus_gold)
     call DisplayTimedTextToPlayer(rand_p, 0, 0, 10.00, mes)
@@ -2940,16 +2938,16 @@ function Trig_income_upg_actions_contr_to_pl takes player p, integer count_resea
     set hash[StringHash("income")].player[GetHandleId(t)] = rand_p
     call TimerStart(t, contr_to_pl_time, false, function Timer_contr_to_pl_actions)
 
+    call DestroyForce(gr_p)
     set mes = null
     set rand_p = null
     set t = null
-    call DestroyForce(gr_p)
+    set gr_p = null
 endfunction
 
 function Trig_income_upg_actions_goldmining takes player p, integer number_p, integer research_rc returns nothing
-    local integer lvl_research
+    local integer lvl_research = GetPlayerTechCount(p, research_rc, true)
 
-    set lvl_research = GetPlayerTechCountSimple(research_rc, p)
     set udg_income_gold[number_p] = udg_income_gold[number_p] + goldmining_income[lvl_research]
     set udg_income_goldmine_c[number_p] = udg_income_goldmine_c[number_p] + goldmining_main_mine[lvl_research]
     set udg_income_goldmine_l[number_p] = udg_income_goldmine_l[number_p] + goldmining_extra_mine[lvl_research]
@@ -2984,8 +2982,8 @@ function Trig_income_upg_actions_contr takes player p, integer count_research re
     set s1 = "Доход с вклада: |cFFFFCD00" + I2S(gold)
     set s2 = "Доход за вклад: |cFFB23AEE" + I2S(lumber)
     
-    call AdjustPlayerStateBJ(gold, p, PLAYER_STATE_RESOURCE_GOLD)
-    call AdjustPlayerStateBJ(lumber, p, PLAYER_STATE_RESOURCE_LUMBER)
+    call AddGoldToPlayer(gold, p)
+    call AddLumberToPlayer(lumber, p)
     call DisplayTextToPlayer(p, 0, 0, s1)
     call DisplayTextToPlayer(p, 0, 0, s2)
 
@@ -3000,7 +2998,7 @@ function find_number_timer takes timer t returns integer
 
     loop
         exitwhen i > max_players
-        if t == stab_timer_gold[i] or t == stab_timer_lumber[i] then
+        if (t == stab_timer_gold[i]) or (t == stab_timer_lumber[i]) then
             set number_timer = i
         endif
         set i = i + 1
@@ -3018,11 +3016,12 @@ function stab_timer_gold_actions takes nothing returns nothing
 
     set number_p = find_number_timer(t)
     set p = Player(number_p - 1)
-    set count_research = GetPlayerTechCountSimple(stab_rc, p)
+    set count_research = GetPlayerTechCount(p, stab_rc, true)
 
-    call AdjustPlayerStateBJ(stab_gold[count_research], p, PLAYER_STATE_RESOURCE_GOLD)
+    call AddGoldToPlayer(stab_gold[count_research], p)
 
     set p = null
+    set t = null
 endfunction
 
 // Работа таймера stab_timer_lumber
@@ -3034,11 +3033,12 @@ function stab_timer_lumber_actions takes nothing returns nothing
 
     set number_p = find_number_timer(t)
     set p = Player(number_p - 1)
-    set count_research = GetPlayerTechCountSimple(stab_rc, p)
+    set count_research = GetPlayerTechCount(p, stab_rc, true)
 
-    call AdjustPlayerStateBJ(stab_lumber[count_research], p, PLAYER_STATE_RESOURCE_LUMBER)
+    call AddLumberToPlayer(stab_lumber[count_research], p)
 
     set p = null
+    set t = null
 endfunction
 
 // Действие улучшения Стабильность
@@ -3057,7 +3057,7 @@ function Trig_income_upg_actions_leadership_group takes nothing returns nothing
     local unit u = GetEnumUnit()
     local integer u_rc = GetUnitTypeId(u)
 
-    if u_rc == most_point_kill_last_round or u_rc == or_leadership_arena_last_round then
+    if (u_rc == most_point_kill_last_round) or (u_rc == or_leadership_arena_last_round) then
         call RemoveUnit(u)
     endif
 
@@ -3088,7 +3088,7 @@ function Trig_income_upg_Actions takes nothing returns nothing
     local integer research_rc = GetResearched()
     local integer bonus_gold
     local integer bonus_lumber
-    local integer count_research = GetPlayerTechCountSimple(research_rc, p)
+    local integer count_research = GetPlayerTechCount(p, research_rc, true)
     local real r
 
     set count_upg = count_upg + 1
@@ -3099,29 +3099,29 @@ function Trig_income_upg_Actions takes nothing returns nothing
 
     // Кол-во исследований(улучшений)
     if count_upg == count_research_for_t1 then 
-        call SetPlayerTechResearchedSwap(t1_research_rc, 1, p)
+        call SetPlayerTechResearched(p, t1_research_rc, 1)
     elseif count_upg == count_research_for_t2 then
-        call SetPlayerTechResearchedSwap(t2_research_rc, 1, p)
+        call SetPlayerTechResearched(p, t2_research_rc, 1)
     endif
 
     // Грабёж
     if research_rc == robbery_rc then 
-        if GetPlayerTechCountSimple(robbery_rc, p) == 3 then
-            call SetPlayerTechResearchedSwap(robbery_lvl3_rc, 1, p)
-        elseif GetPlayerTechCountSimple(robbery_rc, p) == 5 then
-            call SetPlayerTechResearchedSwap(robbery_lvl5_rc, 1, p)
+        if GetPlayerTechCount(p, robbery_rc, true) == 3 then
+            call SetPlayerTechResearched(p, robbery_lvl3_rc, 1)
+        elseif GetPlayerTechCount(p, robbery_rc, true) == 5 then
+            call SetPlayerTechResearched(p, robbery_lvl5_rc, 1)
         endif
     endif
     
     // Развитие ради развития
-    if GetPlayerTechCountSimple(evforev_rc, p) > 0 then
+    if GetPlayerTechCount(p, evforev_rc, true) > 0 then
         call Trig_income_upg_actions_evforev(p)
     endif
 
     // Агрессивная игра
-    // |Выделяем всех наших юнитов типа рабочий
-    // |и даём им ауру на скорость атаки и скорость бега, если
-    // |её нет, повышаем её уровень
+    // Выделяем всех наших юнитов типа рабочий
+    // и даём им ауру на скорость атаки и скорость бега, если
+    // её нет, повышаем её уровень
     // !!!стоит переделать, если всего 1 рабочий, проще его в переменные забить и давать способность ему напрямую
     if research_rc == aggrgame_rc then 
         call Trig_income_upg_actions_aggrgame(p)
@@ -3169,11 +3169,24 @@ endfunction
 
 //===========================================================================
 function InitTrig_income_upg takes nothing returns nothing
-    local trigger trg_income_upg = CreateTrigger()
-    call TriggerRegisterAnyUnitEventBJ(trg_income_upg, EVENT_PLAYER_UNIT_RESEARCH_FINISH)
-    call TriggerAddCondition(trg_income_upg, Condition(function Trig_income_upg_Conditions))
-    call TriggerAddAction(trg_income_upg, function Trig_income_upg_Actions)
-    set trg_income_upg = null
+    local trigger t = CreateTrigger()
+
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerAddCondition(t, Condition(function Trig_income_upg_Conditions))
+    call TriggerAddAction(t, function Trig_income_upg_Actions)
+    
+    set t = null
 endfunction
 /*
 
@@ -3182,7 +3195,7 @@ endfunction
 = Discord:           ! ! Gladiator#3635     =
 = E-Mail:            glady007rus@gmail.com  =
 = Дата создания:     22.11.2020 13:00       =
-= Дата изменения:    22.11.2020 13:00       =
+= Дата изменения:    03.12.2020 14:51       =
 =============================================
 
 Улучшение инкома Грабёж.
@@ -3210,10 +3223,7 @@ function Trig_income_upgA_Conditions takes nothing returns boolean
     set killer = null
     set victim = null
     
-    if b1 and b2 and b3 and b4 then
-        return true
-    endif
-    return false
+    return b1 and b2 and b3 and b4
 
 endfunction
 
@@ -3238,10 +3248,10 @@ function Trig_income_upgA_Actions takes nothing returns nothing
     set gold = R2I(I2R(gold) * multy)
     set lumber = R2I(I2R(lumber) * multy)
     
-    call AdjustPlayerStateBJ(gold, p_k, PLAYER_STATE_RESOURCE_GOLD)
-    call AdjustPlayerStateBJ(lumber, p_k, PLAYER_STATE_RESOURCE_LUMBER)
-    call AdjustPlayerStateBJ(-1 * gold, p_v, PLAYER_STATE_RESOURCE_GOLD)
-    call AdjustPlayerStateBJ(-1 * lumber, p_v, PLAYER_STATE_RESOURCE_LUMBER)
+    call AddGoldToPlayer(gold, p_k)
+    call AddGoldToPlayer(-gold, p_v)
+    call AddLumberToPlayer(lumber, p_k)
+    call AddLumberToPlayer(-lumber, p_v)
 
     set killer_mes = "Вы украли |cFFFFCD00" + I2S(gold) + "|r ед. золота и |cFFB23AEE" + I2S(lumber) + "|r ед. самоцветов у игрока " + color_v + name_v
     set victim_mes = "Вас ограбил игрок " + color_k + name_k
@@ -3254,15 +3264,32 @@ function Trig_income_upgA_Actions takes nothing returns nothing
     set victim = null
     set killer_mes = null
     set victim_mes = null
+    set color_k = null
+    set color_v = null
+    set name_k = null
+    set name_v = null
 endfunction
 
 //===========================================================================
 function InitTrig_income_upgA takes nothing returns nothing
-    local trigger trg_income_upgA = CreateTrigger( )
-    call TriggerRegisterAnyUnitEventBJ( trg_income_upgA, EVENT_PLAYER_UNIT_DEATH )
-    call TriggerAddCondition( trg_income_upgA, Condition( function Trig_income_upgA_Conditions ) )
-    call TriggerAddAction( trg_income_upgA, function Trig_income_upgA_Actions )
-    set trg_income_upgA = null
+    local trigger t = CreateTrigger()
+
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerAddCondition(t, Condition( function Trig_income_upgA_Conditions))
+    call TriggerAddAction(t, function Trig_income_upgA_Actions)
+    
+    set t = null
 endfunction
 /*
 
@@ -3271,7 +3298,7 @@ endfunction
 = Discord:           ! ! Gladiator#3635     =
 = E-Mail:            glady007rus@gmail.com  =
 = Дата создания:     11.11.2020 20:00       =
-= Дата изменения:    11.11.2020 20:00       =
+= Дата изменения:    03.12.2020 14:51       =
 =============================================
 
 Улучшение инкома Мёртвые деньги.
@@ -3297,10 +3324,7 @@ function Trig_income_upgR_Conditions takes nothing returns boolean
     set killer = null
     set victim = null
     
-    if b1 and b2 and b3 then
-        return true
-    endif
-    return false
+    return b1 and b2 and b3
 
 endfunction
 
@@ -3311,7 +3335,7 @@ function Trig_income_upgR_Actions takes nothing returns nothing
     local integer sum
 
     set sum = n * GetPlayerTechCountSimple(deadmoney_rc, p_k)
-    call AdjustPlayerStateBJ(sum, p_k, PLAYER_STATE_RESOURCE_GOLD)
+    call AddGoldToPlayer(sum, p_k)
 
     set killer = null
     set p_k = null
@@ -3319,11 +3343,24 @@ endfunction
 
 //===========================================================================
 function InitTrig_income_upgR takes nothing returns nothing
-    local trigger trg_income_upgR = CreateTrigger( )
-    call TriggerRegisterAnyUnitEventBJ( trg_income_upgR, EVENT_PLAYER_UNIT_DEATH )
-    call TriggerAddCondition( trg_income_upgR, Condition( function Trig_income_upgR_Conditions ) )
-    call TriggerAddAction( trg_income_upgR, function Trig_income_upgR_Actions )
-    set trg_income_upgR = null
+    local trigger t = CreateTrigger()
+
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerAddCondition(t, Condition( function Trig_income_upgR_Conditions))
+    call TriggerAddAction(t, function Trig_income_upgR_Actions)
+    
+    set t = null
 endfunction
 
 /*
@@ -3333,7 +3370,7 @@ endfunction
 = Discord:           ! ! Gladiator#3635     =
 = E-Mail:            glady007rus@gmail.com  =
 = Дата создания:     22.11.2020 18:00       =
-= Дата изменения:    26.11.2020 13:49       =
+= Дата изменения:    03.12.2020 14:51       =
 =============================================
 
 Улучшение инкома Проклятый рудник.
@@ -3355,11 +3392,11 @@ function Trig_income_upgTQ_Conditions takes nothing returns boolean
     // n003 - Gold Mine большой
     // n004 - Gold Mine маленький
     // n005 - Флаг
-    set IsIncomeObjective = (v_rc == 'n003' or v_rc == 'n004' or v_rc == 'n005')
+    set IsIncomeObjective = ((v_rc == 'n003') or (v_rc == 'n004') or (v_rc == 'n005'))
 
     // Не действует на игроков с уровнем улучшения "Проклятый рудник" ниже вашего на 1 и выше.
-    set DoesVictimHasUpgrade = GetPlayerTechCountSimple(cursed_mine_rc, p_v) > 0
-    set DoesVictimsUpgradeGreaterThanKillers = (GetPlayerTechCountSimple(cursed_mine_rc, p_v) - 1) > GetPlayerTechCountSimple(cursed_mine_rc, p_k)
+    set DoesVictimHasUpgrade = GetPlayerTechCount(p_v, cursed_mine_rc, true) > 0
+    set DoesVictimsUpgradeGreaterThanKillers = (GetPlayerTechCount(p_v, cursed_mine_rc, true) - 1) > GetPlayerTechCount(p_k, cursed_mine_rc, true)
 
     set killer = null
     set victim = null
@@ -3384,7 +3421,7 @@ function Trig_income_upgTQ_Actions_group takes nothing returns nothing
     set b1 = IsUnitInGroup(u, udg_wave_units)
     set b2 = (p == p_k)
     if b1 and b2 then
-        set damage = damage * I2R(GetPlayerTechCountSimple(cursed_mine_rc, p_v))              // формула расчёта урона: урон = cursed_mine_damage_for_lvl * уровень улучшения
+        set damage = damage * I2R(GetPlayerTechCount(p_v, cursed_mine_rc, true))              // формула расчёта урона: урон = cursed_mine_damage_for_lvl * уровень улучшения
         // !!!
         call UnitDamageTargetBJ(damage_u, u, damage, ATTACK_TYPE_CHAOS, DAMAGE_TYPE_NORMAL)
         // -----
@@ -3440,10 +3477,11 @@ function Trig_income_upgTQ_Actions takes nothing returns nothing
 
     set gold = GetPlayerState(p_k, PLAYER_STATE_RESOURCE_GOLD) * percent / 100
     set lumber = GetPlayerState(p_k, PLAYER_STATE_RESOURCE_LUMBER) * percent / 100
-    call AdjustPlayerStateBJ(gold, p_v, PLAYER_STATE_RESOURCE_GOLD)
-    call AdjustPlayerStateBJ(lumber, p_v, PLAYER_STATE_RESOURCE_LUMBER)
-    call AdjustPlayerStateBJ(-1 * gold, p_k, PLAYER_STATE_RESOURCE_GOLD)
-    call AdjustPlayerStateBJ(-1 * lumber, p_k, PLAYER_STATE_RESOURCE_LUMBER)
+
+    call AddGoldToPlayer(gold, p_v)
+    call AddGoldToPlayer(-gold, p_k)
+    call AddLumberToPlayer(lumber, p_v)
+    call AddLumberToPlayer(-lumber, p_k)
 
     set s1 = "Вы украли |cFFFFCD00" + I2S(gold) + "|r ед. золота и |cFFB23AEE" + I2S(lumber) + "|r ед. самоцветов у игрока " + udg_players_colour[n_p_k] + udg_players_name[n_p_k]
     set s2 = "Вас ограбил игрок " + udg_players_colour[n_p_v] + udg_players_name[n_p_v]
@@ -3451,6 +3489,7 @@ function Trig_income_upgTQ_Actions takes nothing returns nothing
     call DisplayTextToPlayer(p_k, 0, 0, s2)
 
     call DestroyGroup(gr)
+    set name_ef = null
     set gr = null
     set killer = null
     set victim = null
@@ -3464,7 +3503,6 @@ endfunction
 function InitTrig_income_upgTQ takes nothing returns nothing
     local trigger t = CreateTrigger()
 
-    // Так быстрее
     call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
     call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
     call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
