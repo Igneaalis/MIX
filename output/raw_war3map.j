@@ -1991,7 +1991,7 @@ library NokladrLib
 
     // Makes map normal in opposite to FadeMap()
     function UnfadeMap takes nothing returns nothing
-        call SetDayNightModels("Environment\\DNC\\DNCLordaeron\\DNCLordaeronTerrain\\DNCLordaeronTerrain.mdl", "Environment\\DNC\\DNCLordaeron\\DNCLordaeronUnit\\DNCLordaeronUnit.mdl")
+        call SetDayNightModels("Environment\\DNC\\DNCDalaran\\DNCDalaranTerrain\\DNCDalaranTerrain.mdl", "Environment\\DNC\\DNCDalaran\\DNCDalaranUnit\\DNCDalaranUnit.mdl")
     endfunction
     
     // Makes map absolute black
@@ -2086,36 +2086,36 @@ globals
 
     constant integer finalWave = 15
     constant integer numberOfMinigames = 8
-    constant integer base_gold = 100
-    constant integer base_gems = 0
+    constant integer base_gold = 755                                                            // Кол-во золота в начале игры
+    constant integer base_gems = 22                                                             // Кол-во гемов в начале игры
 
-    constant integer incSpellrc_count = 14                                                       // Кол-во инкам способностей(значение увеличено на 1 для удобства)
-    constant integer count_research_for_t1 = 12                                                  // Кол-во улучшений для доступа к т1
-    constant integer count_research_for_t2 = 20                                                  // Кол-во улучшений для доступа к т2      
-    constant integer max_players = 8                                                             // Максимальное кол-во игроков
+    constant integer incSpellrc_count = 14                                                      // Кол-во инкам способностей(значение увеличено на 1 для удобства)
+    constant integer count_research_for_t1 = 12                                                 // Кол-во улучшений для доступа к т1
+    constant integer count_research_for_t2 = 20                                                 // Кол-во улучшений для доступа к т2      
+    constant integer max_players = 8                                                            // Максимальное кол-во игроков
 
-    integer array incSpellrc[incSpellrc_count]                                                   // Массив инкам способностей(заполнение в Main.j, function map_init)
+    integer array incSpellrc[incSpellrc_count]                                                  // Массив инкам способностей(заполнение в Main.j, function map_init)
     player array ticket_list[max_ticket_list]
 
     // Равкоды инкам улучшений и связанных с ними способностей
-    constant integer t1_research_rc = 'R018'                                                     // 12 исследований (т2 юниты Медива)
-    constant integer t2_research_rc = 'R019'                                                     // 20 исследований (т3 юниты Медива)
-    constant integer robbery_lvl3_rc = 'R023'                                                    // Грабёж(3 уровень)
-    constant integer robbery_lvl5_rc = 'R024'                                                    // Грабёж(5 уровень)
-    constant integer robbery_rc = 'R00J'                                                         // Грабёж
-    constant integer evforev_rc = 'R00R'                                                         // Развитие ради развития
-    constant integer aggrgame_rc = 'R02K'                                                        // Агрессивная игра
-    constant integer aggrgame_aura_rc = 'S000'                                                   // Аура Агрессивной игры
-    constant integer contr_to_pl_rc = 'R027'                                                     // Вклад в игрока
-    constant integer goldmining_rc = 'R00F'                                                      // Золотодобыча
-    constant integer ticket_rc = 'R00G'                                                          // Билет
-    constant integer jewelry_rc = 'R00H'                                                         // Драгоценные камни
-    constant integer deadmoney_rc = 'R00I'                                                       // Мёртвые деньги
-    constant integer contr_rc = 'R00Q'                                                           // Вклад
-    constant integer stab_rc = 'R00S'                                                            // Стабильность
-    constant integer wait_five_minutes_rc = 'R028'                                               // Подождите 5 минут, дополнительное улучшение для Вклада в игрока
-    constant integer leadership_rc = 'R029'                                                      // Лидерство
-    constant integer cursed_mine_rc = 'R02I'                                                     // Проклятый рудник
+    constant integer t1_research_rc = 'R018'                                                    // 12 исследований (т2 юниты Медива)
+    constant integer t2_research_rc = 'R019'                                                    // 20 исследований (т3 юниты Медива)
+    constant integer robbery_lvl3_rc = 'R023'                                                   // Грабёж(3 уровень)
+    constant integer robbery_lvl5_rc = 'R024'                                                   // Грабёж(5 уровень)
+    constant integer robbery_rc = 'R00J'                                                        // Грабёж
+    constant integer evforev_rc = 'R00R'                                                        // Развитие ради развития
+    constant integer aggrgame_rc = 'R02K'                                                       // Агрессивная игра
+    constant integer aggrgame_aura_rc = 'S000'                                                  // Аура Агрессивной игры
+    constant integer contr_to_pl_rc = 'R027'                                                    // Вклад в игрока
+    constant integer goldmining_rc = 'R00F'                                                     // Золотодобыча
+    constant integer ticket_rc = 'R00G'                                                         // Билет
+    constant integer jewelry_rc = 'R00H'                                                        // Драгоценные камни
+    constant integer deadmoney_rc = 'R00I'                                                      // Мёртвые деньги
+    constant integer contr_rc = 'R00Q'                                                          // Вклад
+    constant integer stab_rc = 'R00S'                                                           // Стабильность
+    constant integer wait_five_minutes_rc = 'R028'                                              // Подождите 5 минут, дополнительное улучшение для Вклада в игрока
+    constant integer leadership_rc = 'R029'                                                     // Лидерство
+    constant integer cursed_mine_rc = 'R02I'                                                    // Проклятый рудник
 
     // Равкоды
     constant integer castle_rc = 'h01O'
@@ -3520,6 +3520,118 @@ function InitTrig_income_upgTQ takes nothing returns nothing
 
     set t = null
 endfunction
+globals
+    integer array peonsId[12]
+endglobals
+
+function builder_select_IsDummy takes nothing returns boolean
+    return (GetUnitTypeId(GetFilterUnit()) == 'h001') or (GetUnitTypeId(GetFilterUnit()) == 'ntav')
+endfunction
+
+function builder_select_actions takes nothing returns nothing
+    local unit peon
+    local player owner_of_peon
+    local group group_of_dummies
+    local real x
+    local real y
+    local integer peonId
+
+    local integer column
+    local integer row
+    local multiboarditem mbitem
+    local string iconFileName
+
+    if not IsUnitType(GetSoldUnit(), UNIT_TYPE_PEON) then
+        set peon = null
+        set owner_of_peon = null
+        set group_of_dummies = null
+        set mbitem = null
+        set iconFileName = null
+        return
+    endif
+
+    set peon = GetSoldUnit()
+    set owner_of_peon = GetTriggerPlayer()
+    set group_of_dummies = GetUnitsOfPlayerMatching(owner_of_peon, Condition(function builder_select_IsDummy))
+    set x = GetPlayerStartLocationX(owner_of_peon)
+    set y = GetPlayerStartLocationY(owner_of_peon)
+    set peonId = GetUnitTypeId(peon)
+
+    set column = 0
+    set row = GetPlayerId(owner_of_peon) + 1
+    set mbitem = MultiboardGetItem(udg_scoreboard, row, column)
+
+    call SelectUnitForPlayerSingle(peon, owner_of_peon) // Selects peon for player
+    call ForGroup(group_of_dummies, function C_RemoveEnumUnits) // Remove dummies
+    call AddGoldToPlayer(base_gold, owner_of_peon) // Check Globals.j
+    call AddLumberToPlayer(base_gems, owner_of_peon) // Check Globals.j
+    call CreateUnit(owner_of_peon, 'hbla', x, y, bj_UNIT_FACING) // Юнит "Замок"
+    call CreateUnit(owner_of_peon, 'hwtw', x-450, y+640, bj_UNIT_FACING) // Юнит "Улучшения"
+    call SetUnitPosition(peon, x, y-250) // Peon's position
+    call SetUnitFacing(peon, bj_UNIT_FACING) // Peon's facing
+    call PanCameraToForPlayer(owner_of_peon, x, y)
+
+    if (peonId == peonsId[0]) then
+        set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNPeasant.blp"
+        call SetPlayerTechResearched(owner_of_peon, 'R02G', 1) // Улучшение "Играть за людей"
+    elseif (peonId == peonsId[1]) then
+        set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNAcolyte.blp"
+    elseif (peonId == peonsId[2]) then
+        set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNWisp.blp"
+        call SetPlayerTechResearched(owner_of_peon, 'R00H', 2) // Улучшение "Драгоценные камни"
+        call SetPlayerTechResearched(owner_of_peon, 'R02F', 1) // Улучшение "Играть за эльфов"
+        set udg_scoreboard_upg[row] = 2
+    elseif (peonId == peonsId[3]) then
+        set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNPeon.blp"
+        call AddGoldToPlayer(150, owner_of_peon)
+        call SetPlayerTechResearched(owner_of_peon, 'R00H', 1) // Улучшение "Играть за орду"
+    elseif (peonId == peonsId[4]) then
+        set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNMurgalSlave.blp"
+    elseif (peonId == peonsId[5]) then
+        set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNMedivh.blp"
+        set udg_mediv = owner_of_peon
+        call TriggerExecute(gg_trg_mediv_select)
+    endif
+
+    call MultiboardSetItemIcon(mbitem, iconFileName)
+    call MultiboardReleaseItem(mbitem)
+
+    set peon = null
+    set owner_of_peon = null
+    call DestroyGroup(group_of_dummies)
+    set group_of_dummies = null
+    set mbitem = null
+    set iconFileName = null
+endfunction
+
+//===========================================================================
+function builder_select takes nothing returns nothing
+    local trigger t = CreateTrigger()
+
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_SELL, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_SELL, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_SELL, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_SELL, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_SELL, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_SELL, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_SELL, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_SELL, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_SELL, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_SELL, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_SELL, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_SELL, null)
+    call TriggerAddAction(t, function builder_select_actions)
+
+    set peonsId[0] = 'h02I' // Работник
+    set peonsId[1] = 'h015' // Послушник
+    set peonsId[2] = 'h01G' // Светлячок
+    set peonsId[3] = 'h01U' // Раб
+    set peonsId[4] = 'h025' // Маргол-раб
+    set peonsId[5] = 'h02H' // Медив
+
+    set t = null
+endfunction
+
 /*
 
 =============================================
@@ -3702,10 +3814,10 @@ scope Main initializer MainInit
         // Сообщения в чате
         call SetMessagesInit()
 
-        // initialization in game trigger
+        // initialization in game Trigger
         call initialization_in_game()
 
-        // income upg trigger
+        // income upg Trigger
         call InitTrig_income_upg()
         call InitTrig_income_upgR()
         call InitTrig_income_upgA()
@@ -3713,6 +3825,9 @@ scope Main initializer MainInit
 
         // faq active Trigger
         call faq_active_init()
+
+        // builder select Trigger
+        call builder_select()
 
         call Log("post_map_init finished!")
         
@@ -4047,7 +4162,6 @@ globals
     trigger                 gg_trg_building_ini        = null
     trigger                 gg_trg_building_selling    = null
     trigger                 gg_trg_building_inf        = null
-    trigger                 gg_trg_builder_select      = null
     trigger                 gg_trg_builder_left        = null
     trigger                 gg_trg_mediv_select        = null
     trigger                 gg_trg_change_set          = null
@@ -11861,117 +11975,6 @@ function InitTrig_building_inf takes nothing returns nothing
 endfunction
 
 //===========================================================================
-// Trigger: builder select
-//===========================================================================
-function Trig_builder_select_Conditions takes nothing returns boolean
-    if ( not ( IsUnitType(GetEnteringUnit(), UNIT_TYPE_PEON) == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_builder_select_Func002001002 takes nothing returns boolean
-    return ( IsUnitType(GetFilterUnit(), UNIT_TYPE_SAPPER) == true )
-endfunction
-
-function Trig_builder_select_Func002A takes nothing returns nothing
-    call RemoveUnit( GetEnumUnit() )
-endfunction
-
-function Trig_builder_select_Func009C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) == 'hpea' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_builder_select_Func010C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) == 'h015' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_builder_select_Func011C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) == 'h01G' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_builder_select_Func012C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) == 'h01U' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_builder_select_Func013C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) == 'h025' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_builder_select_Func014C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) == 'h02H' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_builder_select_Actions takes nothing returns nothing
-    call SelectUnitForPlayerSingle( GetEnteringUnit(), GetOwningPlayer(GetEnteringUnit()) )
-    call ForGroupBJ( GetUnitsOfPlayerMatching(GetOwningPlayer(GetEnteringUnit()), Condition(function Trig_builder_select_Func002001002)), function Trig_builder_select_Func002A )
-    call SetPlayerStateBJ( GetOwningPlayer(GetEnteringUnit()), PLAYER_STATE_RESOURCE_GOLD, 755 )
-    call SetPlayerStateBJ( GetOwningPlayer(GetEnteringUnit()), PLAYER_STATE_RESOURCE_LUMBER, 22 )
-    call CreateNUnitsAtLoc( 1, 'hbla', GetOwningPlayer(GetEnteringUnit()), GetPlayerStartLocationLoc(GetOwningPlayer(GetEnteringUnit())), bj_UNIT_FACING )
-    call CreateNUnitsAtLoc( 1, 'hwtw', GetOwningPlayer(GetEnteringUnit()), PolarProjectionBJ(GetPlayerStartLocationLoc(GetOwningPlayer(GetEnteringUnit())), 781.00, 125.00), bj_UNIT_FACING )
-    call SetUnitPositionLocFacingLocBJ( GetEnteringUnit(), PolarProjectionBJ(GetUnitLoc(GetEnteringUnit()), 192.00, ( ( I2R(GetConvertedPlayerId(GetOwningPlayer(GetEnteringUnit()))) * 45.00 ) + 225.00 )), GetUnitLoc(GetLastCreatedUnit()) )
-    call PanCameraToTimedLocForPlayer( GetOwningPlayer(GetEnteringUnit()), GetUnitLoc(GetEnteringUnit()), 0 )
-    if ( Trig_builder_select_Func009C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnteringUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNPeasant.blp" )
-        call SetPlayerTechResearchedSwap( 'R02G', 1, GetOwningPlayer(GetEnteringUnit()) )
-    else
-    endif
-    if ( Trig_builder_select_Func010C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnteringUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNAcolyte.blp" )
-    else
-    endif
-    if ( Trig_builder_select_Func011C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnteringUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNWisp.blp" )
-        call SetPlayerTechResearchedSwap( 'R00H', 2, GetOwningPlayer(GetEnteringUnit()) )
-        call SetPlayerTechResearchedSwap( 'R02F', 1, GetOwningPlayer(GetEnteringUnit()) )
-        set udg_scoreboard_upg[GetConvertedPlayerId(GetOwningPlayer(GetEnteringUnit()))] = 2
-    else
-    endif
-    if ( Trig_builder_select_Func012C() ) then
-        call AdjustPlayerStateBJ( 150, GetOwningPlayer(GetEnteringUnit()), PLAYER_STATE_RESOURCE_GOLD )
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnteringUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNPeon.blp" )
-        call SetPlayerTechResearchedSwap( 'R02H', 1, GetOwningPlayer(GetEnteringUnit()) )
-    else
-    endif
-    if ( Trig_builder_select_Func013C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnteringUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNMurgalSlave.blp" )
-    else
-    endif
-    if ( Trig_builder_select_Func014C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnteringUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNMedivh.blp" )
-        set udg_mediv = GetOwningPlayer(GetEnteringUnit())
-        call TriggerExecute( gg_trg_mediv_select )
-    else
-    endif
-endfunction
-
-//===========================================================================
-function InitTrig_builder_select takes nothing returns nothing
-    set gg_trg_builder_select = CreateTrigger(  )
-    call TriggerRegisterEnterRectSimple( gg_trg_builder_select, GetEntireMapRect() )
-    call TriggerAddCondition( gg_trg_builder_select, Condition( function Trig_builder_select_Conditions ) )
-    call TriggerAddAction( gg_trg_builder_select, function Trig_builder_select_Actions )
-endfunction
-
-//===========================================================================
 // Trigger: builder left
 //===========================================================================
 function Trig_builder_left_Conditions takes nothing returns boolean
@@ -16325,7 +16328,6 @@ function InitCustomTriggers takes nothing returns nothing
     call InitTrig_building_ini(  )
     call InitTrig_building_selling(  )
     call InitTrig_building_inf(  )
-    call InitTrig_builder_select(  )
     call InitTrig_builder_left(  )
     call InitTrig_mediv_select(  )
     call InitTrig_change_set(  )

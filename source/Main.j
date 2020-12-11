@@ -180,10 +180,10 @@ scope Main initializer MainInit
         // Сообщения в чате
         call SetMessagesInit()
 
-        // initialization in game trigger
+        // initialization in game Trigger
         call initialization_in_game()
 
-        // income upg trigger
+        // income upg Trigger
         call InitTrig_income_upg()
         call InitTrig_income_upgR()
         call InitTrig_income_upgA()
@@ -191,6 +191,9 @@ scope Main initializer MainInit
 
         // faq active Trigger
         call faq_active_init()
+
+        // builder select Trigger
+        call builder_select()
 
         call Log("post_map_init finished!")
         

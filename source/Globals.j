@@ -24,36 +24,36 @@ globals
 
     constant integer finalWave = 15
     constant integer numberOfMinigames = 8
-    constant integer base_gold = 100
-    constant integer base_gems = 0
+    constant integer base_gold = 755                                                            // Кол-во золота в начале игры
+    constant integer base_gems = 22                                                             // Кол-во гемов в начале игры
 
-    constant integer incSpellrc_count = 14                                                       // Кол-во инкам способностей(значение увеличено на 1 для удобства)
-    constant integer count_research_for_t1 = 12                                                  // Кол-во улучшений для доступа к т1
-    constant integer count_research_for_t2 = 20                                                  // Кол-во улучшений для доступа к т2      
-    constant integer max_players = 8                                                             // Максимальное кол-во игроков
+    constant integer incSpellrc_count = 14                                                      // Кол-во инкам способностей(значение увеличено на 1 для удобства)
+    constant integer count_research_for_t1 = 12                                                 // Кол-во улучшений для доступа к т1
+    constant integer count_research_for_t2 = 20                                                 // Кол-во улучшений для доступа к т2      
+    constant integer max_players = 8                                                            // Максимальное кол-во игроков
 
-    integer array incSpellrc[incSpellrc_count]                                                   // Массив инкам способностей(заполнение в Main.j, function map_init)
+    integer array incSpellrc[incSpellrc_count]                                                  // Массив инкам способностей(заполнение в Main.j, function map_init)
     player array ticket_list[max_ticket_list]
 
     // Равкоды инкам улучшений и связанных с ними способностей
-    constant integer t1_research_rc = 'R018'                                                     // 12 исследований (т2 юниты Медива)
-    constant integer t2_research_rc = 'R019'                                                     // 20 исследований (т3 юниты Медива)
-    constant integer robbery_lvl3_rc = 'R023'                                                    // Грабёж(3 уровень)
-    constant integer robbery_lvl5_rc = 'R024'                                                    // Грабёж(5 уровень)
-    constant integer robbery_rc = 'R00J'                                                         // Грабёж
-    constant integer evforev_rc = 'R00R'                                                         // Развитие ради развития
-    constant integer aggrgame_rc = 'R02K'                                                        // Агрессивная игра
-    constant integer aggrgame_aura_rc = 'S000'                                                   // Аура Агрессивной игры
-    constant integer contr_to_pl_rc = 'R027'                                                     // Вклад в игрока
-    constant integer goldmining_rc = 'R00F'                                                      // Золотодобыча
-    constant integer ticket_rc = 'R00G'                                                          // Билет
-    constant integer jewelry_rc = 'R00H'                                                         // Драгоценные камни
-    constant integer deadmoney_rc = 'R00I'                                                       // Мёртвые деньги
-    constant integer contr_rc = 'R00Q'                                                           // Вклад
-    constant integer stab_rc = 'R00S'                                                            // Стабильность
-    constant integer wait_five_minutes_rc = 'R028'                                               // Подождите 5 минут, дополнительное улучшение для Вклада в игрока
-    constant integer leadership_rc = 'R029'                                                      // Лидерство
-    constant integer cursed_mine_rc = 'R02I'                                                     // Проклятый рудник
+    constant integer t1_research_rc = 'R018'                                                    // 12 исследований (т2 юниты Медива)
+    constant integer t2_research_rc = 'R019'                                                    // 20 исследований (т3 юниты Медива)
+    constant integer robbery_lvl3_rc = 'R023'                                                   // Грабёж(3 уровень)
+    constant integer robbery_lvl5_rc = 'R024'                                                   // Грабёж(5 уровень)
+    constant integer robbery_rc = 'R00J'                                                        // Грабёж
+    constant integer evforev_rc = 'R00R'                                                        // Развитие ради развития
+    constant integer aggrgame_rc = 'R02K'                                                       // Агрессивная игра
+    constant integer aggrgame_aura_rc = 'S000'                                                  // Аура Агрессивной игры
+    constant integer contr_to_pl_rc = 'R027'                                                    // Вклад в игрока
+    constant integer goldmining_rc = 'R00F'                                                     // Золотодобыча
+    constant integer ticket_rc = 'R00G'                                                         // Билет
+    constant integer jewelry_rc = 'R00H'                                                        // Драгоценные камни
+    constant integer deadmoney_rc = 'R00I'                                                      // Мёртвые деньги
+    constant integer contr_rc = 'R00Q'                                                          // Вклад
+    constant integer stab_rc = 'R00S'                                                           // Стабильность
+    constant integer wait_five_minutes_rc = 'R028'                                              // Подождите 5 минут, дополнительное улучшение для Вклада в игрока
+    constant integer leadership_rc = 'R029'                                                     // Лидерство
+    constant integer cursed_mine_rc = 'R02I'                                                    // Проклятый рудник
 
     // Равкоды
     constant integer castle_rc = 'h01O'

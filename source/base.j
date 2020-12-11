@@ -312,7 +312,6 @@ globals
     trigger                 gg_trg_building_ini        = null
     trigger                 gg_trg_building_selling    = null
     trigger                 gg_trg_building_inf        = null
-    trigger                 gg_trg_builder_select      = null
     trigger                 gg_trg_builder_left        = null
     trigger                 gg_trg_mediv_select        = null
     trigger                 gg_trg_change_set          = null
@@ -8126,117 +8125,6 @@ function InitTrig_building_inf takes nothing returns nothing
 endfunction
 
 //===========================================================================
-// Trigger: builder select
-//===========================================================================
-function Trig_builder_select_Conditions takes nothing returns boolean
-    if ( not ( IsUnitType(GetEnteringUnit(), UNIT_TYPE_PEON) == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_builder_select_Func002001002 takes nothing returns boolean
-    return ( IsUnitType(GetFilterUnit(), UNIT_TYPE_SAPPER) == true )
-endfunction
-
-function Trig_builder_select_Func002A takes nothing returns nothing
-    call RemoveUnit( GetEnumUnit() )
-endfunction
-
-function Trig_builder_select_Func009C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) == 'hpea' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_builder_select_Func010C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) == 'h015' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_builder_select_Func011C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) == 'h01G' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_builder_select_Func012C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) == 'h01U' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_builder_select_Func013C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) == 'h025' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_builder_select_Func014C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) == 'h02H' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_builder_select_Actions takes nothing returns nothing
-    call SelectUnitForPlayerSingle( GetEnteringUnit(), GetOwningPlayer(GetEnteringUnit()) )
-    call ForGroupBJ( GetUnitsOfPlayerMatching(GetOwningPlayer(GetEnteringUnit()), Condition(function Trig_builder_select_Func002001002)), function Trig_builder_select_Func002A )
-    call SetPlayerStateBJ( GetOwningPlayer(GetEnteringUnit()), PLAYER_STATE_RESOURCE_GOLD, 755 )
-    call SetPlayerStateBJ( GetOwningPlayer(GetEnteringUnit()), PLAYER_STATE_RESOURCE_LUMBER, 22 )
-    call CreateNUnitsAtLoc( 1, 'hbla', GetOwningPlayer(GetEnteringUnit()), GetPlayerStartLocationLoc(GetOwningPlayer(GetEnteringUnit())), bj_UNIT_FACING )
-    call CreateNUnitsAtLoc( 1, 'hwtw', GetOwningPlayer(GetEnteringUnit()), PolarProjectionBJ(GetPlayerStartLocationLoc(GetOwningPlayer(GetEnteringUnit())), 781.00, 125.00), bj_UNIT_FACING )
-    call SetUnitPositionLocFacingLocBJ( GetEnteringUnit(), PolarProjectionBJ(GetUnitLoc(GetEnteringUnit()), 192.00, ( ( I2R(GetConvertedPlayerId(GetOwningPlayer(GetEnteringUnit()))) * 45.00 ) + 225.00 )), GetUnitLoc(GetLastCreatedUnit()) )
-    call PanCameraToTimedLocForPlayer( GetOwningPlayer(GetEnteringUnit()), GetUnitLoc(GetEnteringUnit()), 0 )
-    if ( Trig_builder_select_Func009C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnteringUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNPeasant.blp" )
-        call SetPlayerTechResearchedSwap( 'R02G', 1, GetOwningPlayer(GetEnteringUnit()) )
-    else
-    endif
-    if ( Trig_builder_select_Func010C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnteringUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNAcolyte.blp" )
-    else
-    endif
-    if ( Trig_builder_select_Func011C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnteringUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNWisp.blp" )
-        call SetPlayerTechResearchedSwap( 'R00H', 2, GetOwningPlayer(GetEnteringUnit()) )
-        call SetPlayerTechResearchedSwap( 'R02F', 1, GetOwningPlayer(GetEnteringUnit()) )
-        set udg_scoreboard_upg[GetConvertedPlayerId(GetOwningPlayer(GetEnteringUnit()))] = 2
-    else
-    endif
-    if ( Trig_builder_select_Func012C() ) then
-        call AdjustPlayerStateBJ( 150, GetOwningPlayer(GetEnteringUnit()), PLAYER_STATE_RESOURCE_GOLD )
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnteringUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNPeon.blp" )
-        call SetPlayerTechResearchedSwap( 'R02H', 1, GetOwningPlayer(GetEnteringUnit()) )
-    else
-    endif
-    if ( Trig_builder_select_Func013C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnteringUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNMurgalSlave.blp" )
-    else
-    endif
-    if ( Trig_builder_select_Func014C() ) then
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetOwningPlayer(GetEnteringUnit())) ), "ReplaceableTextures\\CommandButtons\\BTNMedivh.blp" )
-        set udg_mediv = GetOwningPlayer(GetEnteringUnit())
-        call TriggerExecute( gg_trg_mediv_select )
-    else
-    endif
-endfunction
-
-//===========================================================================
-function InitTrig_builder_select takes nothing returns nothing
-    set gg_trg_builder_select = CreateTrigger(  )
-    call TriggerRegisterEnterRectSimple( gg_trg_builder_select, GetEntireMapRect() )
-    call TriggerAddCondition( gg_trg_builder_select, Condition( function Trig_builder_select_Conditions ) )
-    call TriggerAddAction( gg_trg_builder_select, function Trig_builder_select_Actions )
-endfunction
-
-//===========================================================================
 // Trigger: builder left
 //===========================================================================
 function Trig_builder_left_Conditions takes nothing returns boolean
@@ -12590,7 +12478,6 @@ function InitCustomTriggers takes nothing returns nothing
     call InitTrig_building_ini(  )
     call InitTrig_building_selling(  )
     call InitTrig_building_inf(  )
-    call InitTrig_builder_select(  )
     call InitTrig_builder_left(  )
     call InitTrig_mediv_select(  )
     call InitTrig_change_set(  )
