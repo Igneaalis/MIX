@@ -36,12 +36,12 @@ integer Table___more= 8190
     
 hashtable Table___ht= InitHashtable()
 constant integer Table___sizeK=4
-constant integer Table___listK=6
+constant integer Table___listK=5
 //endglobals from Table
 //globals from MIXLib:
 constant boolean LIBRARY_MIXLib=true
 integer pdb
-// processed:         DB array MIXLib__dbarr[8]
+// processed:         DB array MIXLib___dbarr[8]
 //endglobals from MIXLib
 //globals from RegisterNativeEvent:
 constant boolean LIBRARY_RegisterNativeEvent=true
@@ -53,16 +53,16 @@ constant boolean LIBRARY_RegisterPlayerUnitEvent=true
 //globals from UnitRecycler:
 constant boolean LIBRARY_UnitRecycler=true
     
-constant player UnitRecycler__OWNER= Player(15)
+constant player UnitRecycler___OWNER= Player(15)
     
-constant boolean UnitRecycler__AUTO_RECYCLE_DEAD= true
+constant boolean UnitRecycler___AUTO_RECYCLE_DEAD= true
     
-constant integer UnitRecycler__ANGLE_COUNT= 8
+constant integer UnitRecycler___ANGLE_COUNT= 8
 
-constant real UnitRecycler__ANGLE_INTERVAL= 360.00 / UnitRecycler__ANGLE_COUNT
-constant real UnitRecycler__HALF_INTERVAL= UnitRecycler__ANGLE_INTERVAL / 2.00
-real UnitRecycler__unitCampX
-real UnitRecycler__unitCampY
+constant real UnitRecycler___ANGLE_INTERVAL= 360.00 / UnitRecycler___ANGLE_COUNT
+constant real UnitRecycler___HALF_INTERVAL= UnitRecycler___ANGLE_INTERVAL / 2.00
+real UnitRecycler___unitCampX
+real UnitRecycler___unitCampY
 //endglobals from UnitRecycler
 //globals from ResourcePreloader:
 constant boolean LIBRARY_ResourcePreloader=true
@@ -195,8 +195,8 @@ real faq_voting_duration= 6.00
 dialog faq_dialog= DialogCreate()
 // processed:     integer array peonsId[12]
 integer udb
-// processed:         UnitStruct array UDBLib__usarr[128]
-integer UDBLib__usarrcounter= 1
+// processed:         UnitStruct array UDBLib___usarr[128]
+integer UDBLib___usarrcounter= 1
     // User-defined
 real array udg_dmg_player_inflicted
 real array udg_dmg_player_taken
@@ -625,21 +625,21 @@ integer si__Playerdb_I=0
 integer array si__Playerdb_V
 constant integer si__RegisterNativeEvent___NativeEvent=53
 integer s__RegisterNativeEvent___NativeEvent_table
-constant integer si__UnitRecycler__List=54
-unit array s__UnitRecycler__List_unit
-integer array s__UnitRecycler__List_recycler
-integer array s__UnitRecycler__List_prev
-integer array s__UnitRecycler__List_next
-integer s__UnitRecycler__List_stocked
-constant integer si__UnitRecycler__UnitRecycler=55
-integer s__UnitRecycler__UnitRecycler_rawCodeIdTable
-integer s__UnitRecycler__UnitRecycler_timerTable
-integer s__UnitRecycler__UnitRecycler_rawCodeCount= 0
-integer array s__UnitRecycler__UnitRecycler_position
-integer array s__UnitRecycler__UnitRecycler_stackSize
-integer array s__UnitRecycler__UnitRecycler_indexStack
-integer array s__UnitRecycler__UnitRecycler_head
-constant integer si__UnitRecycler__Initializer=56
+constant integer si__UnitRecycler___List=54
+unit array s__UnitRecycler___List_unit
+integer array s__UnitRecycler___List_recycler
+integer array s__UnitRecycler___List_prev
+integer array s__UnitRecycler___List_next
+integer s__UnitRecycler___List_stocked
+constant integer si__UnitRecycler___UnitRecycler=55
+integer s__UnitRecycler___UnitRecycler_rawCodeIdTable
+integer s__UnitRecycler___UnitRecycler_timerTable
+integer s__UnitRecycler___UnitRecycler_rawCodeCount= 0
+integer array s__UnitRecycler___UnitRecycler_position
+integer array s__UnitRecycler___UnitRecycler_stackSize
+integer array s__UnitRecycler___UnitRecycler_indexStack
+integer array s__UnitRecycler___UnitRecycler_head
+constant integer si__UnitRecycler___Initializer=56
 constant integer si__ResourcePreloader___S=57
 integer s__ResourcePreloader___S_tb
 unit s__ResourcePreloader___S_dummy
@@ -656,7 +656,7 @@ integer si__UnitDB_F=0
 integer si__UnitDB_I=0
 integer array si__UnitDB_V
 integer array s__time
-integer array s__MIXLib__dbarr
+integer array s__MIXLib___dbarr
 integer array s__incSpellrc
 player array s__ticket_list
 real array s__robbery_pr_f
@@ -673,7 +673,7 @@ integer array s__goldmining_income
 texttag array s__faq_tts
 button array s__faq_buttons
 integer array s__peonsId
-integer array s__UDBLib__usarr
+integer array s__UDBLib___usarr
 trigger st__UnitStruct_GetGoldRaw
 trigger st__UnitStruct_GetLumberRaw
 integer f__arg_this
@@ -1185,7 +1185,7 @@ endfunction
     endfunction
 
     // Счётчик времени
-    function NokladrLib__C_StartCount takes nothing returns nothing
+    function NokladrLib___C_StartCount takes nothing returns nothing
         set s__time[0]= s__time[0] + 1
         if ( s__time[0] > 59 ) then
             set s__time[0]= 0
@@ -1205,7 +1205,7 @@ endfunction
     // Инициализация счётчика времени
     function StartInitTimer takes nothing returns nothing
         local timer t= CreateTimer()
-        call TimerStart(t, 1., true, function NokladrLib__C_StartCount)
+        call TimerStart(t, 1., true, function NokladrLib___C_StartCount)
     endfunction
 
     // Возвращает состояние счётчика времени в секундах
@@ -1276,6 +1276,18 @@ endfunction
         call SetTextTagText(tt, s, TextTagSize2Height(size))
         // SetTextTagPosBJ
         call SetTextTagPos(tt, GetRectCenterX(rct), GetRectCenterY(rct), 0)
+        // SetTextTagColorBJ
+        call SetTextTagColor(tt, 255, 255, 255, 255)
+        return tt
+    endfunction
+
+    // Создаёт texttag по координатам юнита, упрощённая и оптимизированная версия CreateTextTagLocBJ
+    function NewTextTagAtUnit takes string s,unit u,real zOffset,real size returns texttag
+        local texttag tt= CreateTextTag()
+        // SetTextTagTextBJ
+        call SetTextTagText(tt, s, TextTagSize2Height(size))
+        // SetTextTagPosBJ
+        call SetTextTagPos(tt, GetUnitX(u), GetUnitY(u), zOffset)
         // SetTextTagColorBJ
         call SetTextTagColor(tt, 255, 255, 255, 255)
         return tt
@@ -2522,23 +2534,23 @@ endfunction
         endfunction
 
         function s__Playerdb__getindex takes integer this,player p returns integer
-            return s__MIXLib__dbarr[GetPlayerId(p)]
+            return s__MIXLib___dbarr[GetPlayerId(p)]
         endfunction
 
-    function MIXLib__fill_dbarr takes nothing returns nothing
+    function MIXLib___fill_dbarr takes nothing returns nothing
         set pdb=s__Playerdb__allocate()
-        set s__MIXLib__dbarr[0]= s__DB_create(Player(0x00))
-        set s__MIXLib__dbarr[1]= s__DB_create(Player(0x01))
-        set s__MIXLib__dbarr[2]= s__DB_create(Player(0x02))
-        set s__MIXLib__dbarr[3]= s__DB_create(Player(0x03))
-        set s__MIXLib__dbarr[4]= s__DB_create(Player(0x04))
-        set s__MIXLib__dbarr[5]= s__DB_create(Player(0x05))
-        set s__MIXLib__dbarr[6]= s__DB_create(Player(0x06))
-        set s__MIXLib__dbarr[7]= s__DB_create(Player(0x07))
+        set s__MIXLib___dbarr[0]= s__DB_create(Player(0x00))
+        set s__MIXLib___dbarr[1]= s__DB_create(Player(0x01))
+        set s__MIXLib___dbarr[2]= s__DB_create(Player(0x02))
+        set s__MIXLib___dbarr[3]= s__DB_create(Player(0x03))
+        set s__MIXLib___dbarr[4]= s__DB_create(Player(0x04))
+        set s__MIXLib___dbarr[5]= s__DB_create(Player(0x05))
+        set s__MIXLib___dbarr[6]= s__DB_create(Player(0x06))
+        set s__MIXLib___dbarr[7]= s__DB_create(Player(0x07))
     endfunction
 
-    function MIXLib__MIXLibInit takes nothing returns nothing
-        call MIXLib__fill_dbarr()
+    function MIXLib___MIXLibInit takes nothing returns nothing
+        call MIXLib___fill_dbarr()
     endfunction
 
 //library MIXLib ends
@@ -2658,15 +2670,15 @@ endfunction
 
 
     
-//#     static if UnitRecycler__AUTO_RECYCLE_DEAD then
-            function UnitRecycler__DeathTime takes unit u returns real
+//#     static if UnitRecycler___AUTO_RECYCLE_DEAD then
+            function UnitRecycler___DeathTime takes unit u returns real
                 
                 return 8.00
             endfunction
 //#     endif
 
     // Filters units allowed for recycling
-    function UnitRecycler__UnitTypeFilter takes unit u returns boolean
+    function UnitRecycler___UnitTypeFilter takes unit u returns boolean
         return not IsUnitIllusion(u) and not IsUnitType(u, UNIT_TYPE_SUMMONED)
     endfunction
 
@@ -2681,39 +2693,39 @@ endfunction
 
 
 
-        constant function s__UnitRecycler__List__get_head takes nothing returns integer
+        constant function s__UnitRecycler___List__get_head takes nothing returns integer
             return 0
         endfunction
 
-        function s__UnitRecycler__List_stockUnit takes integer this,unit u returns nothing
-            local integer node= s__UnitRecycler__List_recycler[s__UnitRecycler__List__get_head()]
-            local integer last= s__UnitRecycler__List_prev[this]
-            set s__UnitRecycler__List_recycler[s__UnitRecycler__List__get_head()]=s__UnitRecycler__List_recycler[node]
-            set s__UnitRecycler__List_prev[this]=node
-            set s__UnitRecycler__List_next[last]=node
-            set s__UnitRecycler__List_prev[node]=last
-            set s__UnitRecycler__List_next[node]=this
-            set s__UnitRecycler__List_unit[node]=u
+        function s__UnitRecycler___List_stockUnit takes integer this,unit u returns nothing
+            local integer node= s__UnitRecycler___List_recycler[s__UnitRecycler___List__get_head()]
+            local integer last= s__UnitRecycler___List_prev[this]
+            set s__UnitRecycler___List_recycler[s__UnitRecycler___List__get_head()]=s__UnitRecycler___List_recycler[node]
+            set s__UnitRecycler___List_prev[this]=node
+            set s__UnitRecycler___List_next[last]=node
+            set s__UnitRecycler___List_prev[node]=last
+            set s__UnitRecycler___List_next[node]=this
+            set s__UnitRecycler___List_unit[node]=u
             call PauseUnit(u, true)
-            call SetUnitX(u, UnitRecycler__unitCampX)
-            call SetUnitY(u, UnitRecycler__unitCampY)
-             call s__Table___booleans__setindex(s__Table__get_boolean(s__UnitRecycler__List_stocked),GetHandleId(u), true)
+            call SetUnitX(u, UnitRecycler___unitCampX)
+            call SetUnitY(u, UnitRecycler___unitCampY)
+             call s__Table___booleans__setindex(s__Table__get_boolean(s__UnitRecycler___List_stocked),GetHandleId(u), true)
         endfunction
 
-        function s__UnitRecycler__List_addUnit takes integer this,unit u,real angle returns boolean
-            if u != null and not IsUnitType(u, UNIT_TYPE_HERO) and UnitRecycler__UnitTypeFilter(u) then
+        function s__UnitRecycler___List_addUnit takes integer this,unit u,real angle returns boolean
+            if u != null and not IsUnitType(u, UNIT_TYPE_HERO) and UnitRecycler___UnitTypeFilter(u) then
                 if not UnitAlive(u) and not ReviveUnit(u) then
 //#                     static if LIBRARY_ErrorMessage then
-//#                          call ThrowWarning(true, "UnitRecycler", "addUnit()", "UnitRecycler__List", GetHandleId(u), "Unable to recycle unit: Unable to revive dead unit")
+//#                          call ThrowWarning(true, "UnitRecycler", "addUnit()", "UnitRecycler___List", GetHandleId(u), "Unable to recycle unit: Unable to revive dead unit")
 //#                     endif
                     return false
                 endif
-                call s__UnitRecycler__List_stockUnit(this,u)
+                call s__UnitRecycler___List_stockUnit(this,u)
                 call SetUnitFacing(u, angle)
-                call SetUnitOwner(u, UnitRecycler__OWNER, true)
+                call SetUnitOwner(u, UnitRecycler___OWNER, true)
                 call SetWidgetLife(u, GetUnitState(u, UNIT_STATE_MAX_LIFE))
                 call SetUnitState(u, UNIT_STATE_MANA, GetUnitState(u, UNIT_STATE_MAX_MANA))
-//Implemented from module UnitRecycler__UnitRecyclerResets:
+//Implemented from module UnitRecycler___UnitRecyclerResets:
         call SetUnitScale(u, 1, 0, 0)
         call SetUnitVertexColor(u, 255, 255, 255, 255)
         call SetUnitFlyHeight(u, GetUnitDefaultFlyHeight(u), 0)
@@ -2722,95 +2734,95 @@ endfunction
             return false
         endfunction
 
-        function s__UnitRecycler__List_getUnit takes integer this,player owner,integer id,real x,real y,real angle returns unit
+        function s__UnitRecycler___List_getUnit takes integer this,player owner,integer id,real x,real y,real angle returns unit
             local integer first
             local integer next
             local real facing
             local real deltaAngle
             if not IsHeroUnitId(id) then
-                set first=s__UnitRecycler__List_next[this]
-                set deltaAngle=RAbsBJ(GetUnitFacing(s__UnitRecycler__List_unit[first]) - angle)
+                set first=s__UnitRecycler___List_next[this]
+                set deltaAngle=RAbsBJ(GetUnitFacing(s__UnitRecycler___List_unit[first]) - angle)
                 if deltaAngle > 180.00 then
                     set deltaAngle=360.00 - deltaAngle
                 endif
-                if first == this or deltaAngle > UnitRecycler__HALF_INTERVAL then
+                if first == this or deltaAngle > UnitRecycler___HALF_INTERVAL then
                     set bj_lastCreatedUnit=CreateUnit(owner, id, x, y, angle)
                 else
-                    set bj_lastCreatedUnit=s__UnitRecycler__List_unit[first]
-                    set s__UnitRecycler__List_unit[first]=null
-                    set next=s__UnitRecycler__List_next[first]
-                    set s__UnitRecycler__List_prev[next]=this
-                    set s__UnitRecycler__List_next[this]=next
+                    set bj_lastCreatedUnit=s__UnitRecycler___List_unit[first]
+                    set s__UnitRecycler___List_unit[first]=null
+                    set next=s__UnitRecycler___List_next[first]
+                    set s__UnitRecycler___List_prev[next]=this
+                    set s__UnitRecycler___List_next[this]=next
                     call SetUnitOwner(bj_lastCreatedUnit, owner, true)
                     call SetUnitPosition(bj_lastCreatedUnit, x, y)
                     call SetUnitFacing(bj_lastCreatedUnit, angle)
                     call PauseUnit(bj_lastCreatedUnit, false)
-                     call s__Table___booleans_remove(s__Table__get_boolean(s__UnitRecycler__List_stocked),GetHandleId(bj_lastCreatedUnit))
+                     call s__Table___booleans_remove(s__Table__get_boolean(s__UnitRecycler___List_stocked),GetHandleId(bj_lastCreatedUnit))
                 endif
                 return bj_lastCreatedUnit
             endif
             return null
         endfunction
 
-        function s__UnitRecycler__List_init takes nothing returns nothing
+        function s__UnitRecycler___List_init takes nothing returns nothing
             local integer this= 0
-            set s__UnitRecycler__List_recycler[(8190)]=0
+            set s__UnitRecycler___List_recycler[(8190)]=0
             loop
-                set s__UnitRecycler__List_recycler[this]=this + 1
+                set s__UnitRecycler___List_recycler[this]=this + 1
                 set this=this + 1
                 exitwhen this == 8190
             endloop
-             set s__UnitRecycler__List_stocked=s__Table_create()
+             set s__UnitRecycler___List_stocked=s__Table_create()
         endfunction
 
 
 
 
-        function s__UnitRecycler__UnitRecycler_getRawCodeId takes integer rawCode returns integer
-            local integer i= s__Table__getindex(s__UnitRecycler__UnitRecycler_rawCodeIdTable,rawCode)
+        function s__UnitRecycler___UnitRecycler_getRawCodeId takes integer rawCode returns integer
+            local integer i= s__Table__getindex(s__UnitRecycler___UnitRecycler_rawCodeIdTable,rawCode)
             if i == 0 then
-                set s__UnitRecycler__UnitRecycler_rawCodeCount=s__UnitRecycler__UnitRecycler_rawCodeCount + 1
-                call s__Table__setindex(s__UnitRecycler__UnitRecycler_rawCodeIdTable,rawCode, s__UnitRecycler__UnitRecycler_rawCodeCount)
-                set i=s__UnitRecycler__UnitRecycler_rawCodeCount
+                set s__UnitRecycler___UnitRecycler_rawCodeCount=s__UnitRecycler___UnitRecycler_rawCodeCount + 1
+                call s__Table__setindex(s__UnitRecycler___UnitRecycler_rawCodeIdTable,rawCode, s__UnitRecycler___UnitRecycler_rawCodeCount)
+                set i=s__UnitRecycler___UnitRecycler_rawCodeCount
             endif
             return i
         endfunction
 
-        function s__UnitRecycler__UnitRecycler_getHead takes integer id,integer index returns integer
-            local integer this= s__UnitRecycler__UnitRecycler_head[id * UnitRecycler__ANGLE_COUNT + index]
+        function s__UnitRecycler___UnitRecycler_getHead takes integer id,integer index returns integer
+            local integer this= s__UnitRecycler___UnitRecycler_head[id * UnitRecycler___ANGLE_COUNT + index]
             if this == 0 then
-                set this=s__UnitRecycler__List_recycler[s__UnitRecycler__List__get_head()]
-                set s__UnitRecycler__List_recycler[s__UnitRecycler__List__get_head()]=s__UnitRecycler__List_recycler[this]
-                set s__UnitRecycler__List_prev[this]=this
-                set s__UnitRecycler__List_next[this]=this
-                set s__UnitRecycler__UnitRecycler_head[id * UnitRecycler__ANGLE_COUNT + index]=this
+                set this=s__UnitRecycler___List_recycler[s__UnitRecycler___List__get_head()]
+                set s__UnitRecycler___List_recycler[s__UnitRecycler___List__get_head()]=s__UnitRecycler___List_recycler[this]
+                set s__UnitRecycler___List_prev[this]=this
+                set s__UnitRecycler___List_next[this]=this
+                set s__UnitRecycler___UnitRecycler_head[id * UnitRecycler___ANGLE_COUNT + index]=this
             endif
             return this
         endfunction
 
-        function s__UnitRecycler__UnitRecycler_getListIndex takes integer id returns integer
-            if s__UnitRecycler__UnitRecycler_stackSize[id] == 0 then
-                if s__UnitRecycler__UnitRecycler_position[id] < UnitRecycler__ANGLE_COUNT - 1 then
-                    set s__UnitRecycler__UnitRecycler_position[id]=s__UnitRecycler__UnitRecycler_position[id] + 1
-                    return s__UnitRecycler__UnitRecycler_position[id]
+        function s__UnitRecycler___UnitRecycler_getListIndex takes integer id returns integer
+            if s__UnitRecycler___UnitRecycler_stackSize[id] == 0 then
+                if s__UnitRecycler___UnitRecycler_position[id] < UnitRecycler___ANGLE_COUNT - 1 then
+                    set s__UnitRecycler___UnitRecycler_position[id]=s__UnitRecycler___UnitRecycler_position[id] + 1
+                    return s__UnitRecycler___UnitRecycler_position[id]
                 endif
-                set s__UnitRecycler__UnitRecycler_position[id]=0
+                set s__UnitRecycler___UnitRecycler_position[id]=0
                 return 0
             endif
-            set s__UnitRecycler__UnitRecycler_stackSize[id]=s__UnitRecycler__UnitRecycler_stackSize[id] - 1
-            return s__UnitRecycler__UnitRecycler_indexStack[id * UnitRecycler__ANGLE_COUNT + s__UnitRecycler__UnitRecycler_stackSize[id]]
+            set s__UnitRecycler___UnitRecycler_stackSize[id]=s__UnitRecycler___UnitRecycler_stackSize[id] - 1
+            return s__UnitRecycler___UnitRecycler_indexStack[id * UnitRecycler___ANGLE_COUNT + s__UnitRecycler___UnitRecycler_stackSize[id]]
         endfunction
 
-        function s__UnitRecycler__UnitRecycler_stock takes integer rawCode returns boolean
+        function s__UnitRecycler___UnitRecycler_stock takes integer rawCode returns boolean
             local integer id
             local integer index
             local unit u
             if not IsHeroUnitId(rawCode) then
-                set id=s__UnitRecycler__UnitRecycler_getRawCodeId(rawCode)
-                set index=s__UnitRecycler__UnitRecycler_getListIndex(id)
-                set u=CreateUnit(UnitRecycler__OWNER, rawCode, 0.00, 0.00, index * UnitRecycler__ANGLE_INTERVAL)
-                if u != null and not IsUnitType(u, UNIT_TYPE_HERO) and UnitRecycler__UnitTypeFilter(u) then
-                    call s__UnitRecycler__List_stockUnit(s__UnitRecycler__UnitRecycler_getHead(id , index),u)
+                set id=s__UnitRecycler___UnitRecycler_getRawCodeId(rawCode)
+                set index=s__UnitRecycler___UnitRecycler_getListIndex(id)
+                set u=CreateUnit(UnitRecycler___OWNER, rawCode, 0.00, 0.00, index * UnitRecycler___ANGLE_INTERVAL)
+                if u != null and not IsUnitType(u, UNIT_TYPE_HERO) and UnitRecycler___UnitTypeFilter(u) then
+                    call s__UnitRecycler___List_stockUnit(s__UnitRecycler___UnitRecycler_getHead(id , index),u)
                     set u=null
                     return true
                 endif
@@ -2818,60 +2830,60 @@ endfunction
             return false
         endfunction
 
-        function s__UnitRecycler__UnitRecycler_add takes unit u returns boolean
-            local integer id= s__UnitRecycler__UnitRecycler_getRawCodeId(GetUnitTypeId(u))
-            local integer index= s__UnitRecycler__UnitRecycler_getListIndex(id)
-            return s__UnitRecycler__List_addUnit(s__UnitRecycler__UnitRecycler_getHead(id , index),u , index * UnitRecycler__ANGLE_INTERVAL)
+        function s__UnitRecycler___UnitRecycler_add takes unit u returns boolean
+            local integer id= s__UnitRecycler___UnitRecycler_getRawCodeId(GetUnitTypeId(u))
+            local integer index= s__UnitRecycler___UnitRecycler_getListIndex(id)
+            return s__UnitRecycler___List_addUnit(s__UnitRecycler___UnitRecycler_getHead(id , index),u , index * UnitRecycler___ANGLE_INTERVAL)
         endfunction
 
-        function s__UnitRecycler__UnitRecycler_get takes player owner,integer rawCode,real x,real y,real angle returns unit
-            local integer id= s__UnitRecycler__UnitRecycler_getRawCodeId(rawCode)
-            local integer index= R2I(angle / UnitRecycler__ANGLE_INTERVAL)
-            if angle - UnitRecycler__ANGLE_INTERVAL * index > UnitRecycler__ANGLE_INTERVAL / 2.00 then
-                if index < UnitRecycler__ANGLE_COUNT - 1 then
+        function s__UnitRecycler___UnitRecycler_get takes player owner,integer rawCode,real x,real y,real angle returns unit
+            local integer id= s__UnitRecycler___UnitRecycler_getRawCodeId(rawCode)
+            local integer index= R2I(angle / UnitRecycler___ANGLE_INTERVAL)
+            if angle - UnitRecycler___ANGLE_INTERVAL * index > UnitRecycler___ANGLE_INTERVAL / 2.00 then
+                if index < UnitRecycler___ANGLE_COUNT - 1 then
                     set index=index + 1
                 else
                     set index=0
                 endif
             endif
-            set s__UnitRecycler__UnitRecycler_indexStack[id * UnitRecycler__ANGLE_COUNT + s__UnitRecycler__UnitRecycler_stackSize[id]]=index
-            set s__UnitRecycler__UnitRecycler_stackSize[id]=s__UnitRecycler__UnitRecycler_stackSize[id] + 1
-            return s__UnitRecycler__List_getUnit(s__UnitRecycler__UnitRecycler_getHead(id , index),owner , rawCode , x , y , angle)
+            set s__UnitRecycler___UnitRecycler_indexStack[id * UnitRecycler___ANGLE_COUNT + s__UnitRecycler___UnitRecycler_stackSize[id]]=index
+            set s__UnitRecycler___UnitRecycler_stackSize[id]=s__UnitRecycler___UnitRecycler_stackSize[id] + 1
+            return s__UnitRecycler___List_getUnit(s__UnitRecycler___UnitRecycler_getHead(id , index),owner , rawCode , x , y , angle)
         endfunction
 
-        function s__UnitRecycler__UnitRecycler_delayedRecycle takes nothing returns nothing
+        function s__UnitRecycler___UnitRecycler_delayedRecycle takes nothing returns nothing
             local timer t= GetExpiredTimer()
             local integer key= GetHandleId(t)
-            call s__UnitRecycler__UnitRecycler_add(s__Table___units__getindex(s__Table__get_unit(s__UnitRecycler__UnitRecycler_timerTable),key))
-            call s__Table___units_remove(s__Table__get_unit(s__UnitRecycler__UnitRecycler_timerTable),key)
+            call s__UnitRecycler___UnitRecycler_add(s__Table___units__getindex(s__Table__get_unit(s__UnitRecycler___UnitRecycler_timerTable),key))
+            call s__Table___units_remove(s__Table__get_unit(s__UnitRecycler___UnitRecycler_timerTable),key)
             call DestroyTimer(t)
             set t=null
         endfunction
-        function s__UnitRecycler__UnitRecycler_delayedRecycleEx takes nothing returns nothing
+        function s__UnitRecycler___UnitRecycler_delayedRecycleEx takes nothing returns nothing
             local timer t= GetExpiredTimer()
             local integer key= GetHandleId(t)
-            call s__UnitRecycler__UnitRecycler_add(s__Table___units__getindex(s__Table__get_unit(s__UnitRecycler__UnitRecycler_timerTable),key))
-            call s__Table___units_remove(s__Table__get_unit(s__UnitRecycler__UnitRecycler_timerTable),key)
+            call s__UnitRecycler___UnitRecycler_add(s__Table___units__getindex(s__Table__get_unit(s__UnitRecycler___UnitRecycler_timerTable),key))
+            call s__Table___units_remove(s__Table__get_unit(s__UnitRecycler___UnitRecycler_timerTable),key)
             call DestroyTimer(t)
             set t=null
         endfunction
 
-        function s__UnitRecycler__UnitRecycler_addDelayed takes unit u,real delay,code callback returns nothing
+        function s__UnitRecycler___UnitRecycler_addDelayed takes unit u,real delay,code callback returns nothing
             local timer t= CreateTimer()
-            call s__Table___units__setindex(s__Table__get_unit(s__UnitRecycler__UnitRecycler_timerTable),GetHandleId(t), u)
+            call s__Table___units__setindex(s__Table__get_unit(s__UnitRecycler___UnitRecycler_timerTable),GetHandleId(t), u)
             call TimerStart(t, delay, false, callback)
             set t=null
         endfunction
 
-        function s__UnitRecycler__UnitRecycler_init takes nothing returns nothing
+        function s__UnitRecycler___UnitRecycler_init takes nothing returns nothing
             local rect bounds= GetWorldBounds()
             // Hide recycled units at the top of the map beyond reach of the camera
-            set UnitRecycler__unitCampX=0.00
-            set UnitRecycler__unitCampY=GetRectMaxY(bounds) + 1000.00
+            set UnitRecycler___unitCampX=0.00
+            set UnitRecycler___unitCampY=GetRectMaxY(bounds) + 1000.00
             call RemoveRect(bounds)
             set bounds=null
-            set s__UnitRecycler__UnitRecycler_rawCodeIdTable=s__Table_create()
-            set s__UnitRecycler__UnitRecycler_timerTable=s__Table_create()
+            set s__UnitRecycler___UnitRecycler_rawCodeIdTable=s__Table_create()
+            set s__UnitRecycler___UnitRecycler_timerTable=s__Table_create()
         endfunction
 
 
@@ -2879,18 +2891,18 @@ endfunction
 
     function GetRecycledUnit takes player owner,integer rawCode,real x,real y,real facing returns unit
 //#         static if true and LIBRARY_ErrorMessage then
-//#             call UnitRecycler__UnitRecycler.get(owner, rawCode, x, y, facing)
+//#             call UnitRecycler___UnitRecycler.get(owner, rawCode, x, y, facing)
 //#             call ThrowError(bj_lastCreatedUnit == null, "UnitRecycler", "GetRecycledUnit()", "", 0, "Specified unit type does not exist")
 //#             call ThrowError(IsHeroUnitId(rawCode), "UnitRecycler", "GetRecycledUnit()", GetUnitName(bj_lastCreatedUnit), 0, "Specified unit type is a hero")
 //#             return bj_lastCreatedUnit
 //#         else
-                return s__UnitRecycler__UnitRecycler_get(owner , rawCode , x , y , facing)
+                return s__UnitRecycler___UnitRecycler_get(owner , rawCode , x , y , facing)
 //#         endif
     endfunction
 
     function GetRecycledUnitEx takes player owner,integer rawCode,real x,real y,real facing returns unit
         if not IsHeroUnitId(rawCode) then
-            return s__UnitRecycler__UnitRecycler_get(owner , rawCode , x , y , facing)
+            return s__UnitRecycler___UnitRecycler_get(owner , rawCode , x , y , facing)
         endif
 //#         static if LIBRARY_ErrorMessage then
 //#              call ThrowWarning(true, "UnitRecycler", "GetRecycledUnitEx()", "", 0, "Cannot retrieve a hero unit, creating new unit")
@@ -2900,21 +2912,21 @@ endfunction
 
     function RecycleUnit takes unit u returns boolean
 //#         static if LIBRARY_ErrorMessage then
-//#              call ThrowError(UnitRecycler__List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnit()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
+//#              call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnit()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
 //#              call ThrowWarning(u == null, "UnitRecycler", "RecycleUnit()", "", 0, "Attempted to recycle a null unit")
 //#              call ThrowWarning(IsHeroUnitId(GetUnitTypeId(u)), "UnitRecycler", "RecycleUnit()", GetUnitName(u), 0, "Attempted to recycle a hero unit")
-//#              call ThrowWarning(not UnitRecycler__UnitTypeFilter(u), "UnitRecycler", "RecycleUnit()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
+//#              call ThrowWarning(not UnitRecycler___UnitTypeFilter(u), "UnitRecycler", "RecycleUnit()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
 //#         endif
-        return s__UnitRecycler__UnitRecycler_add(u)
+        return s__UnitRecycler___UnitRecycler_add(u)
     endfunction
 
     function RecycleUnitEx takes unit u returns boolean
 //#         static if LIBRARY_ErrorMessage then
-//#              call ThrowError(UnitRecycler__List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnitEx()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
+//#              call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnitEx()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
 //#              call ThrowWarning(u == null, "UnitRecycler", "RecycleUnitEx()", "", 0, "Attempted to recycle a null unit")
-//#              call ThrowWarning(not UnitRecycler__UnitTypeFilter(u), "UnitRecycler", "RecycleUnitEx()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
+//#              call ThrowWarning(not UnitRecycler___UnitTypeFilter(u), "UnitRecycler", "RecycleUnitEx()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
 //#         endif
-        if not s__UnitRecycler__UnitRecycler_add(u) then
+        if not s__UnitRecycler___UnitRecycler_add(u) then
             call RemoveUnit(u)
 //#             static if LIBRARY_ErrorMessage then
 //#                  call ThrowWarning(u != null, "UnitRecycler", "RecycleUnitEx()", GetUnitName(u), 0, "Cannot recycle the specified unit, removing unit")
@@ -2926,58 +2938,58 @@ endfunction
 
     function RecycleUnitDelayed takes unit u,real delay returns nothing
 //#         static if LIBRARY_ErrorMessage then
-//#              call ThrowError(UnitRecycler__List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnitDelayed()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
+//#              call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnitDelayed()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
 //#              call ThrowWarning(u == null, "UnitRecycler", "RecycleUnitDelayed()", "", 0, "Attempted to recycle a null unit")
 //#              call ThrowWarning(IsHeroUnitId(GetUnitTypeId(u)), "UnitRecycler", "RecycleUnitDelayed()", GetUnitName(u), 0, "Attempted to recycle a hero unit")
-//#              call ThrowWarning(not UnitRecycler__UnitTypeFilter(u), "UnitRecycler", "RecycleUnitDelayed()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
+//#              call ThrowWarning(not UnitRecycler___UnitTypeFilter(u), "UnitRecycler", "RecycleUnitDelayed()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
 //#         endif
-        call s__UnitRecycler__UnitRecycler_addDelayed(u , delay , function s__UnitRecycler__UnitRecycler_delayedRecycle)
+        call s__UnitRecycler___UnitRecycler_addDelayed(u , delay , function s__UnitRecycler___UnitRecycler_delayedRecycle)
     endfunction
 
     function RecycleUnitDelayedEx takes unit u,real delay returns nothing
 //#         static if LIBRARY_ErrorMessage then
-//#              call ThrowError(UnitRecycler__List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnitDelayedEx()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
+//#              call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnitDelayedEx()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
 //#              call ThrowWarning(u == null, "UnitRecycler", "RecycleUnitDelayedEx()", "", 0, "Attempted to recycle a null unit")
-//#              call ThrowWarning(not UnitRecycler__UnitTypeFilter(u), "UnitRecycler", "RecycleUnitDelayedEx()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
+//#              call ThrowWarning(not UnitRecycler___UnitTypeFilter(u), "UnitRecycler", "RecycleUnitDelayedEx()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
 //#         endif
-        call s__UnitRecycler__UnitRecycler_addDelayed(u , delay , function s__UnitRecycler__UnitRecycler_delayedRecycleEx)
+        call s__UnitRecycler___UnitRecycler_addDelayed(u , delay , function s__UnitRecycler___UnitRecycler_delayedRecycleEx)
     endfunction
 
     function UnitAddToStock takes integer rawCode returns boolean
 //#         static if LIBRARY_ErrorMessage then
-//#              local unit u = CreateUnit(UnitRecycler__OWNER, rawCode, 0, 0, 0)
+//#              local unit u = CreateUnit(UnitRecycler___OWNER, rawCode, 0, 0, 0)
 //#              call ThrowWarning(u == null, "UnitRecycler", "UnitAddToStock()", "", 0, "Attempted to stock a non-existent unit type")
 //#              call ThrowWarning(IsHeroUnitId(rawCode), "UnitRecycler", "UnitAddToStock()", GetUnitName(u), 0, "Attempted to stock a hero unit")
-//#              call ThrowWarning(not UnitRecycler__UnitTypeFilter(u), "UnitRecycler", "UnitAddToStock()", GetUnitName(u), 0, "Attempted to stock an invalid unit type")
+//#              call ThrowWarning(not UnitRecycler___UnitTypeFilter(u), "UnitRecycler", "UnitAddToStock()", GetUnitName(u), 0, "Attempted to stock an invalid unit type")
 //#              call RemoveUnit(u)
 //#              set u = null
 //#         endif
-        return s__UnitRecycler__UnitRecycler_stock(rawCode)
+        return s__UnitRecycler___UnitRecycler_stock(rawCode)
     endfunction
 
     //========================================================================================================
 
 
 
-//#         static if UnitRecycler__AUTO_RECYCLE_DEAD then
-                function s__UnitRecycler__Initializer_onDeath takes nothing returns nothing
+//#         static if UnitRecycler___AUTO_RECYCLE_DEAD then
+                function s__UnitRecycler___Initializer_onDeath takes nothing returns nothing
                     local unit u= GetTriggerUnit()
 //#                 static if LIBRARY_ErrorMessage then
-//#                      call ThrowError(UnitRecycler__List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "", GetUnitName(u), 0, "A unit in stock has been killed!")
+//#                      call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "", GetUnitName(u), 0, "A unit in stock has been killed!")
 //#                 endif
-                    if UnitRecycler__UnitTypeFilter(u) and not IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitType(u, UNIT_TYPE_STRUCTURE) then
-                        call RecycleUnitDelayedEx(u , UnitRecycler__DeathTime(u))
+                    if UnitRecycler___UnitTypeFilter(u) and not IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitType(u, UNIT_TYPE_STRUCTURE) then
+                        call RecycleUnitDelayedEx(u , UnitRecycler___DeathTime(u))
                     endif
                     set u=null
                 endfunction
     
-                function s__UnitRecycler__Initializer_autoRecycler takes nothing returns nothing
-//#                 static if UnitRecycler__AUTO_RECYCLE_DEAD then
+                function s__UnitRecycler___Initializer_autoRecycler takes nothing returns nothing
+//#                 static if UnitRecycler___AUTO_RECYCLE_DEAD then
 //#                     static if LIBRARY_RegisterPlayerUnitEvent then
-                            call RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_DEATH , function s__UnitRecycler__Initializer_onDeath)
+                            call RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_DEATH , function s__UnitRecycler___Initializer_onDeath)
 //#                     else
 //#                         local trigger t = CreateTrigger()
-//#                         local code c = function UnitRecycler__Initializer.onDeath
+//#                         local code c = function UnitRecycler___Initializer.onDeath
 //#                         local integer i = 16
 //#                         loop
 //#                             set i = i - 1
@@ -2991,26 +3003,26 @@ endfunction
                 endfunction
 //#         endif
 
-        function s__UnitRecycler__Initializer_init takes nothing returns nothing
-            call s__UnitRecycler__List_init()
-            call s__UnitRecycler__UnitRecycler_init()
-//#             static if UnitRecycler__AUTO_RECYCLE_DEAD then
-                    call s__UnitRecycler__Initializer_autoRecycler()
+        function s__UnitRecycler___Initializer_init takes nothing returns nothing
+            call s__UnitRecycler___List_init()
+            call s__UnitRecycler___UnitRecycler_init()
+//#             static if UnitRecycler___AUTO_RECYCLE_DEAD then
+                    call s__UnitRecycler___Initializer_autoRecycler()
 //#             endif
             call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, "|CFFFFCC00UnitRecycler|R library is ready!")
         endfunction
-//Implemented from module UnitRecycler__Init:
-        function s__UnitRecycler__Initializer_UnitRecycler__Init___onInit takes nothing returns nothing
-            call s__UnitRecycler__Initializer_init()
+//Implemented from module UnitRecycler___Init:
+        function s__UnitRecycler___Initializer_UnitRecycler___Init___onInit takes nothing returns nothing
+            call s__UnitRecycler___Initializer_init()
         endfunction
 
 
 //#     static if true and LIBRARY_ErrorMessage then
-//#         function UnitRecycler__DisplayError takes unit removedUnit returns nothing
-//#             call ThrowError(UnitRecycler__List.stocked.boolean[GetHandleId(removedUnit)], "UnitRecycler", "RemoveUnit()", GetUnitName(removedUnit), 0, "Attempted to remove a stocked unit")
+//#         function UnitRecycler___DisplayError takes unit removedUnit returns nothing
+//#             call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(removedUnit)], "UnitRecycler", "RemoveUnit()", GetUnitName(removedUnit), 0, "Attempted to remove a stocked unit")
 //#         endfunction
 //# 
-//#         hook RemoveUnit UnitRecycler__DisplayError
+//#         hook RemoveUnit UnitRecycler___DisplayError
 //#     endif
 
 
@@ -4494,16 +4506,16 @@ endfunction
             local integer us= s__UnitStruct__allocate()
             set s__UnitStruct_gold_raw[us]=gold * 0.8
             set s__UnitStruct_lumber_raw[us]=lumber * 0.8
-            if ( s__UDBLib__usarr[s__Table__getindex(table,parentUnitTypeId)] != null ) then
-                set s__UnitStruct_gold[us]=R2I(s__UnitStruct_gold_raw[us] + sc__UnitStruct_GetGoldRaw(s__UDBLib__usarr[s__Table__getindex(table,parentUnitTypeId)]))
-                set s__UnitStruct_lumber[us]=R2I(s__UnitStruct_lumber_raw[us] + sc__UnitStruct_GetLumberRaw(s__UDBLib__usarr[s__Table__getindex(table,parentUnitTypeId)]))
+            if ( s__UDBLib___usarr[s__Table__getindex(table,parentUnitTypeId)] != null ) then
+                set s__UnitStruct_gold[us]=R2I(s__UnitStruct_gold_raw[us] + sc__UnitStruct_GetGoldRaw(s__UDBLib___usarr[s__Table__getindex(table,parentUnitTypeId)]))
+                set s__UnitStruct_lumber[us]=R2I(s__UnitStruct_lumber_raw[us] + sc__UnitStruct_GetLumberRaw(s__UDBLib___usarr[s__Table__getindex(table,parentUnitTypeId)]))
             else
                 set s__UnitStruct_gold[us]=IMaxBJ(R2I(gold * 0.8), 1)
                 set s__UnitStruct_lumber[us]=IMaxBJ(R2I(lumber * 0.8), 1)
             endif
-            call s__Table__setindex(table,unitTypeId, UDBLib__usarrcounter)
-            set s__UDBLib__usarr[UDBLib__usarrcounter]= us
-            set UDBLib__usarrcounter=UDBLib__usarrcounter + 1
+            call s__Table__setindex(table,unitTypeId, UDBLib___usarrcounter)
+            set s__UDBLib___usarr[UDBLib___usarrcounter]= us
+            set UDBLib___usarrcounter=UDBLib___usarrcounter + 1
             return us
         endfunction
 
@@ -4525,7 +4537,7 @@ endfunction
 
 
         function s__UnitDB__getindex takes integer this,unit u returns integer
-            return s__UDBLib__usarr[s__Table__getindex(table,GetUnitTypeId(u))]
+            return s__UDBLib___usarr[s__Table__getindex(table,GetUnitTypeId(u))]
         endfunction
 
 // scope UDBLib ends
@@ -4537,35 +4549,38 @@ endfunction
 function building_selling_actions takes nothing returns nothing
     local unit u= GetSpellAbilityUnit()
     local player p= GetTriggerPlayer()
+    local integer gold= s__UnitStruct_GetGold(s__UnitDB__getindex(udb,u))
+    local integer lumber= s__UnitStruct_GetLumber(s__UnitDB__getindex(udb,u))
+    local texttag tt
     call GroupRemoveUnit(udg_buildings, u)
-    set udg_sold_gold=s__UnitStruct_GetGold(s__UnitDB__getindex(udb,u))
-    set udg_sold_wood=s__UnitStruct_GetLumber(s__UnitDB__getindex(udb,u))
 
-    call AddGoldToPlayer(udg_sold_gold , p)
-    call AddLumberToPlayer(udg_sold_wood , p)
+    call AddGoldToPlayer(gold , p)
+    call AddLumberToPlayer(lumber , p)
 
-    call CreateTextTagLocBJ(( "|cFFFFCD00+" + I2S(udg_sold_gold) ), GetUnitLoc(GetSpellAbilityUnit()), 0, 11.00, 100, 100, 100, 0)
-    call ShowTextTagForceBJ(false, GetLastCreatedTextTag(), GetPlayersAll())
-    call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), GetForceOfPlayer(GetOwningPlayer(GetSpellAbilityUnit())))
-    call SetTextTagPermanentBJ(GetLastCreatedTextTag(), false)
-    call SetTextTagLifespanBJ(GetLastCreatedTextTag(), 2.00)
-    call SetTextTagFadepointBJ(GetLastCreatedTextTag(), 1.30)
-    call SetTextTagVelocityBJ(GetLastCreatedTextTag(), 48.00, 90)
+    set tt=NewTextTagAtUnit(GOLD + "+" + I2S(gold) , u , 70.00 , 11.00)
+    call SetTextTagVisibility(tt, false)
+    if ( GetLocalPlayer() == p ) then
+        call SetTextTagVisibility(tt, true)
+    endif
+    call SetTextTagPermanent(tt, false)
+    call SetTextTagLifespan(tt, 2.00)
+    call SetTextTagFadepoint(tt, 1.30)
+    call SetTextTagVelocity(tt, 0, 0.03)
 
-    call CreateTextTagLocBJ(( "|cFFB23AEE+" + I2S(udg_sold_wood) ), GetUnitLoc(GetSpellAbilityUnit()), 48.00, 11.00, 100, 100, 100, 0)
-    call ShowTextTagForceBJ(false, GetLastCreatedTextTag(), GetPlayersAll())
-    call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), GetForceOfPlayer(GetOwningPlayer(GetSpellAbilityUnit())))
-    call SetTextTagPermanentBJ(GetLastCreatedTextTag(), false)
-    call SetTextTagLifespanBJ(GetLastCreatedTextTag(), 2.00)
-    call SetTextTagFadepointBJ(GetLastCreatedTextTag(), 1.30)
-    call SetTextTagVelocityBJ(GetLastCreatedTextTag(), 48.00, 90)
+    set tt=NewTextTagAtUnit(GREEN + "+" + I2S(lumber) , u , 0.00 , 11.00)
+    call SetTextTagVisibility(tt, false)
+    if ( GetLocalPlayer() == p ) then
+        call SetTextTagVisibility(tt, true)
+    endif
+    call SetTextTagPermanent(tt, false)
+    call SetTextTagLifespan(tt, 2.00)
+    call SetTextTagFadepoint(tt, 1.30)
+    call SetTextTagVelocity(tt, 0, 0.03)
 
     call RemoveUnit(u)
-    set udg_sold_gold=0
-    set udg_sold_wood=0
-    call AddSpecialEffectLocBJ(GetUnitLoc(u), "Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl")
-    call DestroyEffectBJ(GetLastCreatedEffectBJ())
+    call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl", GetUnitX(u), GetUnitY(u)))
 
+    set tt=null
     set u=null
     set p=null
 endfunction
@@ -16399,8 +16414,8 @@ function main takes nothing returns nothing
     call CreateAllUnits()
     call InitBlizzard()
 
-call ExecuteFunc("jasshelper__initstructs31653812")
-call ExecuteFunc("MIXLib__MIXLibInit")
+call ExecuteFunc("jasshelper__initstructs34785968")
+call ExecuteFunc("MIXLib___MIXLibInit")
 call MainInit()
 
     call InitGlobals()
@@ -16455,7 +16470,7 @@ set f__result_real= s__UnitStruct_lumber_raw[this]
    return true
 endfunction
 
-function jasshelper__initstructs31653812 takes nothing returns nothing
+function jasshelper__initstructs34785968 takes nothing returns nothing
     set st__UnitStruct_GetGoldRaw=CreateTrigger()
     call TriggerAddCondition(st__UnitStruct_GetGoldRaw,Condition( function sa__UnitStruct_GetGoldRaw))
     set st__UnitStruct_GetLumberRaw=CreateTrigger()
@@ -16518,7 +16533,7 @@ call ExecuteFunc("s__RegisterNativeEvent___NativeEvent_RegisterNativeEvent___Nat
 
 
 
-call ExecuteFunc("s__UnitRecycler__Initializer_UnitRecycler__Init___onInit")
+call ExecuteFunc("s__UnitRecycler___Initializer_UnitRecycler___Init___onInit")
 
 call ExecuteFunc("s__ResourcePreloader___S_ResourcePreloader___Init___onInit")
 

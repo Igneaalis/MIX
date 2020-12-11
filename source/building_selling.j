@@ -74,35 +74,38 @@ endfunction
 function building_selling_actions takes nothing returns nothing
     local unit u = GetSpellAbilityUnit()
     local player p = GetTriggerPlayer()
+    local integer gold = udb[u].GetGold()
+    local integer lumber = udb[u].GetLumber()
+    local texttag tt
     call GroupRemoveUnit(udg_buildings, u)
-    set udg_sold_gold = udb[u].GetGold()
-    set udg_sold_wood = udb[u].GetLumber()
 
-    call AddGoldToPlayer(udg_sold_gold, p)
-    call AddLumberToPlayer(udg_sold_wood, p)
+    call AddGoldToPlayer(gold, p)
+    call AddLumberToPlayer(lumber, p)
 
-    call CreateTextTagLocBJ( ( "|cFFFFCD00+" + I2S(udg_sold_gold) ), GetUnitLoc(GetSpellAbilityUnit()), 0, 11.00, 100, 100, 100, 0 )
-    call ShowTextTagForceBJ( false, GetLastCreatedTextTag(), GetPlayersAll() )
-    call ShowTextTagForceBJ( true, GetLastCreatedTextTag(), GetForceOfPlayer(GetOwningPlayer(GetSpellAbilityUnit())) )
-    call SetTextTagPermanentBJ( GetLastCreatedTextTag(), false )
-    call SetTextTagLifespanBJ( GetLastCreatedTextTag(), 2.00 )
-    call SetTextTagFadepointBJ( GetLastCreatedTextTag(), 1.30 )
-    call SetTextTagVelocityBJ( GetLastCreatedTextTag(), 48.00, 90 )
+    set tt = NewTextTagAtUnit(GOLD + "+" + I2S(gold), u, 70.00, 11.00)
+    call SetTextTagVisibility(tt, false)
+    if (GetLocalPlayer() == p) then
+        call SetTextTagVisibility(tt, true)
+    endif
+    call SetTextTagPermanent(tt, false)
+    call SetTextTagLifespan(tt, 2.00)
+    call SetTextTagFadepoint(tt, 1.30)
+    call SetTextTagVelocity(tt, 0, 0.03)
 
-    call CreateTextTagLocBJ( ( "|cFFB23AEE+" + I2S(udg_sold_wood) ), GetUnitLoc(GetSpellAbilityUnit()), 48.00, 11.00, 100, 100, 100, 0 )
-    call ShowTextTagForceBJ( false, GetLastCreatedTextTag(), GetPlayersAll() )
-    call ShowTextTagForceBJ( true, GetLastCreatedTextTag(), GetForceOfPlayer(GetOwningPlayer(GetSpellAbilityUnit())) )
-    call SetTextTagPermanentBJ( GetLastCreatedTextTag(), false )
-    call SetTextTagLifespanBJ( GetLastCreatedTextTag(), 2.00 )
-    call SetTextTagFadepointBJ( GetLastCreatedTextTag(), 1.30 )
-    call SetTextTagVelocityBJ( GetLastCreatedTextTag(), 48.00, 90 )
+    set tt = NewTextTagAtUnit(GREEN + "+" + I2S(lumber), u, 0.00, 11.00)
+    call SetTextTagVisibility(tt, false)
+    if (GetLocalPlayer() == p) then
+        call SetTextTagVisibility(tt, true)
+    endif
+    call SetTextTagPermanent(tt, false)
+    call SetTextTagLifespan(tt, 2.00)
+    call SetTextTagFadepoint(tt, 1.30)
+    call SetTextTagVelocity(tt, 0, 0.03)
 
     call RemoveUnit(u)
-    set udg_sold_gold = 0
-    set udg_sold_wood = 0
-    call AddSpecialEffectLocBJ( GetUnitLoc(u), "Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl" )
-    call DestroyEffectBJ( GetLastCreatedEffectBJ() )
+    call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl", GetUnitX(u), GetUnitY(u)))
 
+    set tt = null
     set u = null
     set p = null
 endfunction
