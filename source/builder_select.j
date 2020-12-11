@@ -56,8 +56,15 @@ function builder_select_actions takes nothing returns nothing
 
     call SelectUnitForPlayerSingle(peon, owner_of_peon) // Selects peon for player
     call ForGroup(group_of_dummies, function C_RemoveEnumUnits) // Remove dummies
-    call AddGoldToPlayer(base_gold, owner_of_peon) // Check Globals.j
-    call AddLumberToPlayer(base_gems, owner_of_peon) // Check Globals.j
+    static if DEBUG_MODE then
+        call AddGoldToPlayer(100000, owner_of_peon)
+        call AddLumberToPlayer(100000, owner_of_peon)
+        call SetPlayerTechResearched(owner_of_peon, 'R018', 1) // Улучшение "12 исследований"
+        call SetPlayerTechResearched(owner_of_peon, 'R019', 1) // Улучшение "20 исследований"
+        else
+        call AddGoldToPlayer(base_gold, owner_of_peon) // Check Globals.j
+        call AddLumberToPlayer(base_gems, owner_of_peon) // Check Globals.j
+    endif
     call CreateUnit(owner_of_peon, 'hbla', x, y, bj_UNIT_FACING) // Юнит "Замок"
     call CreateUnit(owner_of_peon, 'hwtw', x-450, y+640, bj_UNIT_FACING) // Юнит "Улучшения"
     call SetUnitPosition(peon, x, y-250) // Peon's position

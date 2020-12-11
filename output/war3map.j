@@ -35,13 +35,13 @@ integer Table___more= 8190
         //Configure it if you use more than 8190 "key" variables in your map (this will never happen though).
     
 hashtable Table___ht= InitHashtable()
-constant integer Table___sizeK=11
-constant integer Table___listK=13
+constant integer Table___sizeK=4
+constant integer Table___listK=6
 //endglobals from Table
 //globals from MIXLib:
 constant boolean LIBRARY_MIXLib=true
 integer pdb
-// processed:         DB array MIXLib___dbarr[8]
+// processed:         DB array MIXLib__dbarr[8]
 //endglobals from MIXLib
 //globals from RegisterNativeEvent:
 constant boolean LIBRARY_RegisterNativeEvent=true
@@ -53,16 +53,16 @@ constant boolean LIBRARY_RegisterPlayerUnitEvent=true
 //globals from UnitRecycler:
 constant boolean LIBRARY_UnitRecycler=true
     
-constant player UnitRecycler___OWNER= Player(15)
+constant player UnitRecycler__OWNER= Player(15)
     
-constant boolean UnitRecycler___AUTO_RECYCLE_DEAD= true
+constant boolean UnitRecycler__AUTO_RECYCLE_DEAD= true
     
-constant integer UnitRecycler___ANGLE_COUNT= 8
+constant integer UnitRecycler__ANGLE_COUNT= 8
 
-constant real UnitRecycler___ANGLE_INTERVAL= 360.00 / UnitRecycler___ANGLE_COUNT
-constant real UnitRecycler___HALF_INTERVAL= UnitRecycler___ANGLE_INTERVAL / 2.00
-real UnitRecycler___unitCampX
-real UnitRecycler___unitCampY
+constant real UnitRecycler__ANGLE_INTERVAL= 360.00 / UnitRecycler__ANGLE_COUNT
+constant real UnitRecycler__HALF_INTERVAL= UnitRecycler__ANGLE_INTERVAL / 2.00
+real UnitRecycler__unitCampX
+real UnitRecycler__unitCampY
 //endglobals from UnitRecycler
 //globals from ResourcePreloader:
 constant boolean LIBRARY_ResourcePreloader=true
@@ -74,6 +74,7 @@ player ResourcePreloader_PRELOAD_UNIT_OWNER= Player(PLAYER_NEUTRAL_PASSIVE)
 real ResourcePreloader_PRELOAD_UNIT_Y_BOUNDS_EXTENSION= 0.00
 //endglobals from ResourcePreloader
 boolean IsDevInGame= false
+integer table
 integer hash
 constant string strVersion= "0.0.1"
 constant string Version= "Test"
@@ -84,6 +85,7 @@ leaderboard Leaderboard
 
 constant integer finalWave= 15
 constant integer numberOfMinigames= 8
+    
 constant integer base_gold= 755
 constant integer base_gems= 22
 
@@ -192,6 +194,9 @@ real faq_voting_duration= 6.00
 // processed:     button array faq_buttons[2] // Кнопки в меню голосования
 dialog faq_dialog= DialogCreate()
 // processed:     integer array peonsId[12]
+integer udb
+// processed:         UnitStruct array UDBLib__usarr[128]
+integer UDBLib__usarrcounter= 1
     // User-defined
 real array udg_dmg_player_inflicted
 real array udg_dmg_player_taken
@@ -487,7 +492,6 @@ trigger gg_trg_Armageddon_effect_2= null
 trigger gg_trg_faq= null
 trigger gg_trg_faq_death= null
 trigger gg_trg_building_ini= null
-trigger gg_trg_building_selling= null
 trigger gg_trg_building_inf= null
 trigger gg_trg_builder_left= null
 trigger gg_trg_mediv_select= null
@@ -621,26 +625,38 @@ integer si__Playerdb_I=0
 integer array si__Playerdb_V
 constant integer si__RegisterNativeEvent___NativeEvent=53
 integer s__RegisterNativeEvent___NativeEvent_table
-constant integer si__UnitRecycler___List=54
-unit array s__UnitRecycler___List_unit
-integer array s__UnitRecycler___List_recycler
-integer array s__UnitRecycler___List_prev
-integer array s__UnitRecycler___List_next
-integer s__UnitRecycler___List_stocked
-constant integer si__UnitRecycler___UnitRecycler=55
-integer s__UnitRecycler___UnitRecycler_rawCodeIdTable
-integer s__UnitRecycler___UnitRecycler_timerTable
-integer s__UnitRecycler___UnitRecycler_rawCodeCount= 0
-integer array s__UnitRecycler___UnitRecycler_position
-integer array s__UnitRecycler___UnitRecycler_stackSize
-integer array s__UnitRecycler___UnitRecycler_indexStack
-integer array s__UnitRecycler___UnitRecycler_head
-constant integer si__UnitRecycler___Initializer=56
+constant integer si__UnitRecycler__List=54
+unit array s__UnitRecycler__List_unit
+integer array s__UnitRecycler__List_recycler
+integer array s__UnitRecycler__List_prev
+integer array s__UnitRecycler__List_next
+integer s__UnitRecycler__List_stocked
+constant integer si__UnitRecycler__UnitRecycler=55
+integer s__UnitRecycler__UnitRecycler_rawCodeIdTable
+integer s__UnitRecycler__UnitRecycler_timerTable
+integer s__UnitRecycler__UnitRecycler_rawCodeCount= 0
+integer array s__UnitRecycler__UnitRecycler_position
+integer array s__UnitRecycler__UnitRecycler_stackSize
+integer array s__UnitRecycler__UnitRecycler_indexStack
+integer array s__UnitRecycler__UnitRecycler_head
+constant integer si__UnitRecycler__Initializer=56
 constant integer si__ResourcePreloader___S=57
 integer s__ResourcePreloader___S_tb
 unit s__ResourcePreloader___S_dummy
+constant integer si__UnitStruct=58
+integer si__UnitStruct_F=0
+integer si__UnitStruct_I=0
+integer array si__UnitStruct_V
+integer array s__UnitStruct_gold
+integer array s__UnitStruct_lumber
+real array s__UnitStruct_gold_raw
+real array s__UnitStruct_lumber_raw
+constant integer si__UnitDB=59
+integer si__UnitDB_F=0
+integer si__UnitDB_I=0
+integer array si__UnitDB_V
 integer array s__time
-integer array s__MIXLib___dbarr
+integer array s__MIXLib__dbarr
 integer array s__incSpellrc
 player array s__ticket_list
 real array s__robbery_pr_f
@@ -657,10 +673,87 @@ integer array s__goldmining_income
 texttag array s__faq_tts
 button array s__faq_buttons
 integer array s__peonsId
+integer array s__UDBLib__usarr
+trigger st__UnitStruct_GetGoldRaw
+trigger st__UnitStruct_GetLumberRaw
+integer f__arg_this
+real f__result_real
 
 endglobals
     native UnitAlive takes unit u returns boolean
 
+
+//Generated allocator of UnitDB
+function s__UnitDB__allocate takes nothing returns integer
+ local integer this=si__UnitDB_F
+    if (this!=0) then
+        set si__UnitDB_F=si__UnitDB_V[this]
+    else
+        set si__UnitDB_I=si__UnitDB_I+1
+        set this=si__UnitDB_I
+    endif
+    if (this>8190) then
+        call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1000.,"Unable to allocate id for an object of type: UnitDB")
+        return 0
+    endif
+
+    set si__UnitDB_V[this]=-1
+ return this
+endfunction
+
+//Generated destructor of UnitDB
+function s__UnitDB_deallocate takes integer this returns nothing
+    if this==null then
+            call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1000.,"Attempt to destroy a null struct of type: UnitDB")
+        return
+    elseif (si__UnitDB_V[this]!=-1) then
+            call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1000.,"Double free of type: UnitDB")
+        return
+    endif
+    set si__UnitDB_V[this]=si__UnitDB_F
+    set si__UnitDB_F=this
+endfunction
+
+//Generated method caller for UnitStruct.GetGoldRaw
+function sc__UnitStruct_GetGoldRaw takes integer this returns real
+            return s__UnitStruct_gold_raw[this]
+endfunction
+
+//Generated method caller for UnitStruct.GetLumberRaw
+function sc__UnitStruct_GetLumberRaw takes integer this returns real
+            return s__UnitStruct_lumber_raw[this]
+endfunction
+
+//Generated allocator of UnitStruct
+function s__UnitStruct__allocate takes nothing returns integer
+ local integer this=si__UnitStruct_F
+    if (this!=0) then
+        set si__UnitStruct_F=si__UnitStruct_V[this]
+    else
+        set si__UnitStruct_I=si__UnitStruct_I+1
+        set this=si__UnitStruct_I
+    endif
+    if (this>8190) then
+        call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1000.,"Unable to allocate id for an object of type: UnitStruct")
+        return 0
+    endif
+
+    set si__UnitStruct_V[this]=-1
+ return this
+endfunction
+
+//Generated destructor of UnitStruct
+function s__UnitStruct_deallocate takes integer this returns nothing
+    if this==null then
+            call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1000.,"Attempt to destroy a null struct of type: UnitStruct")
+        return
+    elseif (si__UnitStruct_V[this]!=-1) then
+            call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1000.,"Double free of type: UnitStruct")
+        return
+    endif
+    set si__UnitStruct_V[this]=si__UnitStruct_F
+    set si__UnitStruct_F=this
+endfunction
 
 //Generated allocator of Playerdb
 function s__Playerdb__allocate takes nothing returns integer
@@ -1092,7 +1185,7 @@ endfunction
     endfunction
 
     // Счётчик времени
-    function NokladrLib___C_StartCount takes nothing returns nothing
+    function NokladrLib__C_StartCount takes nothing returns nothing
         set s__time[0]= s__time[0] + 1
         if ( s__time[0] > 59 ) then
             set s__time[0]= 0
@@ -1112,7 +1205,7 @@ endfunction
     // Инициализация счётчика времени
     function StartInitTimer takes nothing returns nothing
         local timer t= CreateTimer()
-        call TimerStart(t, 1., true, function NokladrLib___C_StartCount)
+        call TimerStart(t, 1., true, function NokladrLib__C_StartCount)
     endfunction
 
     // Возвращает состояние счётчика времени в секундах
@@ -2429,23 +2522,23 @@ endfunction
         endfunction
 
         function s__Playerdb__getindex takes integer this,player p returns integer
-            return s__MIXLib___dbarr[GetPlayerId(p)]
+            return s__MIXLib__dbarr[GetPlayerId(p)]
         endfunction
 
-    function MIXLib___fill_dbarr takes nothing returns nothing
+    function MIXLib__fill_dbarr takes nothing returns nothing
         set pdb=s__Playerdb__allocate()
-        set s__MIXLib___dbarr[0]= s__DB_create(Player(0x00))
-        set s__MIXLib___dbarr[1]= s__DB_create(Player(0x01))
-        set s__MIXLib___dbarr[2]= s__DB_create(Player(0x02))
-        set s__MIXLib___dbarr[3]= s__DB_create(Player(0x03))
-        set s__MIXLib___dbarr[4]= s__DB_create(Player(0x04))
-        set s__MIXLib___dbarr[5]= s__DB_create(Player(0x05))
-        set s__MIXLib___dbarr[6]= s__DB_create(Player(0x06))
-        set s__MIXLib___dbarr[7]= s__DB_create(Player(0x07))
+        set s__MIXLib__dbarr[0]= s__DB_create(Player(0x00))
+        set s__MIXLib__dbarr[1]= s__DB_create(Player(0x01))
+        set s__MIXLib__dbarr[2]= s__DB_create(Player(0x02))
+        set s__MIXLib__dbarr[3]= s__DB_create(Player(0x03))
+        set s__MIXLib__dbarr[4]= s__DB_create(Player(0x04))
+        set s__MIXLib__dbarr[5]= s__DB_create(Player(0x05))
+        set s__MIXLib__dbarr[6]= s__DB_create(Player(0x06))
+        set s__MIXLib__dbarr[7]= s__DB_create(Player(0x07))
     endfunction
 
-    function MIXLib___MIXLibInit takes nothing returns nothing
-        call MIXLib___fill_dbarr()
+    function MIXLib__MIXLibInit takes nothing returns nothing
+        call MIXLib__fill_dbarr()
     endfunction
 
 //library MIXLib ends
@@ -2565,15 +2658,15 @@ endfunction
 
 
     
-//#     static if UnitRecycler___AUTO_RECYCLE_DEAD then
-            function UnitRecycler___DeathTime takes unit u returns real
+//#     static if UnitRecycler__AUTO_RECYCLE_DEAD then
+            function UnitRecycler__DeathTime takes unit u returns real
                 
                 return 8.00
             endfunction
 //#     endif
 
     // Filters units allowed for recycling
-    function UnitRecycler___UnitTypeFilter takes unit u returns boolean
+    function UnitRecycler__UnitTypeFilter takes unit u returns boolean
         return not IsUnitIllusion(u) and not IsUnitType(u, UNIT_TYPE_SUMMONED)
     endfunction
 
@@ -2588,39 +2681,39 @@ endfunction
 
 
 
-        constant function s__UnitRecycler___List__get_head takes nothing returns integer
+        constant function s__UnitRecycler__List__get_head takes nothing returns integer
             return 0
         endfunction
 
-        function s__UnitRecycler___List_stockUnit takes integer this,unit u returns nothing
-            local integer node= s__UnitRecycler___List_recycler[s__UnitRecycler___List__get_head()]
-            local integer last= s__UnitRecycler___List_prev[this]
-            set s__UnitRecycler___List_recycler[s__UnitRecycler___List__get_head()]=s__UnitRecycler___List_recycler[node]
-            set s__UnitRecycler___List_prev[this]=node
-            set s__UnitRecycler___List_next[last]=node
-            set s__UnitRecycler___List_prev[node]=last
-            set s__UnitRecycler___List_next[node]=this
-            set s__UnitRecycler___List_unit[node]=u
+        function s__UnitRecycler__List_stockUnit takes integer this,unit u returns nothing
+            local integer node= s__UnitRecycler__List_recycler[s__UnitRecycler__List__get_head()]
+            local integer last= s__UnitRecycler__List_prev[this]
+            set s__UnitRecycler__List_recycler[s__UnitRecycler__List__get_head()]=s__UnitRecycler__List_recycler[node]
+            set s__UnitRecycler__List_prev[this]=node
+            set s__UnitRecycler__List_next[last]=node
+            set s__UnitRecycler__List_prev[node]=last
+            set s__UnitRecycler__List_next[node]=this
+            set s__UnitRecycler__List_unit[node]=u
             call PauseUnit(u, true)
-            call SetUnitX(u, UnitRecycler___unitCampX)
-            call SetUnitY(u, UnitRecycler___unitCampY)
-             call s__Table___booleans__setindex(s__Table__get_boolean(s__UnitRecycler___List_stocked),GetHandleId(u), true)
+            call SetUnitX(u, UnitRecycler__unitCampX)
+            call SetUnitY(u, UnitRecycler__unitCampY)
+             call s__Table___booleans__setindex(s__Table__get_boolean(s__UnitRecycler__List_stocked),GetHandleId(u), true)
         endfunction
 
-        function s__UnitRecycler___List_addUnit takes integer this,unit u,real angle returns boolean
-            if u != null and not IsUnitType(u, UNIT_TYPE_HERO) and UnitRecycler___UnitTypeFilter(u) then
+        function s__UnitRecycler__List_addUnit takes integer this,unit u,real angle returns boolean
+            if u != null and not IsUnitType(u, UNIT_TYPE_HERO) and UnitRecycler__UnitTypeFilter(u) then
                 if not UnitAlive(u) and not ReviveUnit(u) then
 //#                     static if LIBRARY_ErrorMessage then
-//#                          call ThrowWarning(true, "UnitRecycler", "addUnit()", "UnitRecycler___List", GetHandleId(u), "Unable to recycle unit: Unable to revive dead unit")
+//#                          call ThrowWarning(true, "UnitRecycler", "addUnit()", "UnitRecycler__List", GetHandleId(u), "Unable to recycle unit: Unable to revive dead unit")
 //#                     endif
                     return false
                 endif
-                call s__UnitRecycler___List_stockUnit(this,u)
+                call s__UnitRecycler__List_stockUnit(this,u)
                 call SetUnitFacing(u, angle)
-                call SetUnitOwner(u, UnitRecycler___OWNER, true)
+                call SetUnitOwner(u, UnitRecycler__OWNER, true)
                 call SetWidgetLife(u, GetUnitState(u, UNIT_STATE_MAX_LIFE))
                 call SetUnitState(u, UNIT_STATE_MANA, GetUnitState(u, UNIT_STATE_MAX_MANA))
-//Implemented from module UnitRecycler___UnitRecyclerResets:
+//Implemented from module UnitRecycler__UnitRecyclerResets:
         call SetUnitScale(u, 1, 0, 0)
         call SetUnitVertexColor(u, 255, 255, 255, 255)
         call SetUnitFlyHeight(u, GetUnitDefaultFlyHeight(u), 0)
@@ -2629,95 +2722,95 @@ endfunction
             return false
         endfunction
 
-        function s__UnitRecycler___List_getUnit takes integer this,player owner,integer id,real x,real y,real angle returns unit
+        function s__UnitRecycler__List_getUnit takes integer this,player owner,integer id,real x,real y,real angle returns unit
             local integer first
             local integer next
             local real facing
             local real deltaAngle
             if not IsHeroUnitId(id) then
-                set first=s__UnitRecycler___List_next[this]
-                set deltaAngle=RAbsBJ(GetUnitFacing(s__UnitRecycler___List_unit[first]) - angle)
+                set first=s__UnitRecycler__List_next[this]
+                set deltaAngle=RAbsBJ(GetUnitFacing(s__UnitRecycler__List_unit[first]) - angle)
                 if deltaAngle > 180.00 then
                     set deltaAngle=360.00 - deltaAngle
                 endif
-                if first == this or deltaAngle > UnitRecycler___HALF_INTERVAL then
+                if first == this or deltaAngle > UnitRecycler__HALF_INTERVAL then
                     set bj_lastCreatedUnit=CreateUnit(owner, id, x, y, angle)
                 else
-                    set bj_lastCreatedUnit=s__UnitRecycler___List_unit[first]
-                    set s__UnitRecycler___List_unit[first]=null
-                    set next=s__UnitRecycler___List_next[first]
-                    set s__UnitRecycler___List_prev[next]=this
-                    set s__UnitRecycler___List_next[this]=next
+                    set bj_lastCreatedUnit=s__UnitRecycler__List_unit[first]
+                    set s__UnitRecycler__List_unit[first]=null
+                    set next=s__UnitRecycler__List_next[first]
+                    set s__UnitRecycler__List_prev[next]=this
+                    set s__UnitRecycler__List_next[this]=next
                     call SetUnitOwner(bj_lastCreatedUnit, owner, true)
                     call SetUnitPosition(bj_lastCreatedUnit, x, y)
                     call SetUnitFacing(bj_lastCreatedUnit, angle)
                     call PauseUnit(bj_lastCreatedUnit, false)
-                     call s__Table___booleans_remove(s__Table__get_boolean(s__UnitRecycler___List_stocked),GetHandleId(bj_lastCreatedUnit))
+                     call s__Table___booleans_remove(s__Table__get_boolean(s__UnitRecycler__List_stocked),GetHandleId(bj_lastCreatedUnit))
                 endif
                 return bj_lastCreatedUnit
             endif
             return null
         endfunction
 
-        function s__UnitRecycler___List_init takes nothing returns nothing
+        function s__UnitRecycler__List_init takes nothing returns nothing
             local integer this= 0
-            set s__UnitRecycler___List_recycler[(8190)]=0
+            set s__UnitRecycler__List_recycler[(8190)]=0
             loop
-                set s__UnitRecycler___List_recycler[this]=this + 1
+                set s__UnitRecycler__List_recycler[this]=this + 1
                 set this=this + 1
                 exitwhen this == 8190
             endloop
-             set s__UnitRecycler___List_stocked=s__Table_create()
+             set s__UnitRecycler__List_stocked=s__Table_create()
         endfunction
 
 
 
 
-        function s__UnitRecycler___UnitRecycler_getRawCodeId takes integer rawCode returns integer
-            local integer i= s__Table__getindex(s__UnitRecycler___UnitRecycler_rawCodeIdTable,rawCode)
+        function s__UnitRecycler__UnitRecycler_getRawCodeId takes integer rawCode returns integer
+            local integer i= s__Table__getindex(s__UnitRecycler__UnitRecycler_rawCodeIdTable,rawCode)
             if i == 0 then
-                set s__UnitRecycler___UnitRecycler_rawCodeCount=s__UnitRecycler___UnitRecycler_rawCodeCount + 1
-                call s__Table__setindex(s__UnitRecycler___UnitRecycler_rawCodeIdTable,rawCode, s__UnitRecycler___UnitRecycler_rawCodeCount)
-                set i=s__UnitRecycler___UnitRecycler_rawCodeCount
+                set s__UnitRecycler__UnitRecycler_rawCodeCount=s__UnitRecycler__UnitRecycler_rawCodeCount + 1
+                call s__Table__setindex(s__UnitRecycler__UnitRecycler_rawCodeIdTable,rawCode, s__UnitRecycler__UnitRecycler_rawCodeCount)
+                set i=s__UnitRecycler__UnitRecycler_rawCodeCount
             endif
             return i
         endfunction
 
-        function s__UnitRecycler___UnitRecycler_getHead takes integer id,integer index returns integer
-            local integer this= s__UnitRecycler___UnitRecycler_head[id * UnitRecycler___ANGLE_COUNT + index]
+        function s__UnitRecycler__UnitRecycler_getHead takes integer id,integer index returns integer
+            local integer this= s__UnitRecycler__UnitRecycler_head[id * UnitRecycler__ANGLE_COUNT + index]
             if this == 0 then
-                set this=s__UnitRecycler___List_recycler[s__UnitRecycler___List__get_head()]
-                set s__UnitRecycler___List_recycler[s__UnitRecycler___List__get_head()]=s__UnitRecycler___List_recycler[this]
-                set s__UnitRecycler___List_prev[this]=this
-                set s__UnitRecycler___List_next[this]=this
-                set s__UnitRecycler___UnitRecycler_head[id * UnitRecycler___ANGLE_COUNT + index]=this
+                set this=s__UnitRecycler__List_recycler[s__UnitRecycler__List__get_head()]
+                set s__UnitRecycler__List_recycler[s__UnitRecycler__List__get_head()]=s__UnitRecycler__List_recycler[this]
+                set s__UnitRecycler__List_prev[this]=this
+                set s__UnitRecycler__List_next[this]=this
+                set s__UnitRecycler__UnitRecycler_head[id * UnitRecycler__ANGLE_COUNT + index]=this
             endif
             return this
         endfunction
 
-        function s__UnitRecycler___UnitRecycler_getListIndex takes integer id returns integer
-            if s__UnitRecycler___UnitRecycler_stackSize[id] == 0 then
-                if s__UnitRecycler___UnitRecycler_position[id] < UnitRecycler___ANGLE_COUNT - 1 then
-                    set s__UnitRecycler___UnitRecycler_position[id]=s__UnitRecycler___UnitRecycler_position[id] + 1
-                    return s__UnitRecycler___UnitRecycler_position[id]
+        function s__UnitRecycler__UnitRecycler_getListIndex takes integer id returns integer
+            if s__UnitRecycler__UnitRecycler_stackSize[id] == 0 then
+                if s__UnitRecycler__UnitRecycler_position[id] < UnitRecycler__ANGLE_COUNT - 1 then
+                    set s__UnitRecycler__UnitRecycler_position[id]=s__UnitRecycler__UnitRecycler_position[id] + 1
+                    return s__UnitRecycler__UnitRecycler_position[id]
                 endif
-                set s__UnitRecycler___UnitRecycler_position[id]=0
+                set s__UnitRecycler__UnitRecycler_position[id]=0
                 return 0
             endif
-            set s__UnitRecycler___UnitRecycler_stackSize[id]=s__UnitRecycler___UnitRecycler_stackSize[id] - 1
-            return s__UnitRecycler___UnitRecycler_indexStack[id * UnitRecycler___ANGLE_COUNT + s__UnitRecycler___UnitRecycler_stackSize[id]]
+            set s__UnitRecycler__UnitRecycler_stackSize[id]=s__UnitRecycler__UnitRecycler_stackSize[id] - 1
+            return s__UnitRecycler__UnitRecycler_indexStack[id * UnitRecycler__ANGLE_COUNT + s__UnitRecycler__UnitRecycler_stackSize[id]]
         endfunction
 
-        function s__UnitRecycler___UnitRecycler_stock takes integer rawCode returns boolean
+        function s__UnitRecycler__UnitRecycler_stock takes integer rawCode returns boolean
             local integer id
             local integer index
             local unit u
             if not IsHeroUnitId(rawCode) then
-                set id=s__UnitRecycler___UnitRecycler_getRawCodeId(rawCode)
-                set index=s__UnitRecycler___UnitRecycler_getListIndex(id)
-                set u=CreateUnit(UnitRecycler___OWNER, rawCode, 0.00, 0.00, index * UnitRecycler___ANGLE_INTERVAL)
-                if u != null and not IsUnitType(u, UNIT_TYPE_HERO) and UnitRecycler___UnitTypeFilter(u) then
-                    call s__UnitRecycler___List_stockUnit(s__UnitRecycler___UnitRecycler_getHead(id , index),u)
+                set id=s__UnitRecycler__UnitRecycler_getRawCodeId(rawCode)
+                set index=s__UnitRecycler__UnitRecycler_getListIndex(id)
+                set u=CreateUnit(UnitRecycler__OWNER, rawCode, 0.00, 0.00, index * UnitRecycler__ANGLE_INTERVAL)
+                if u != null and not IsUnitType(u, UNIT_TYPE_HERO) and UnitRecycler__UnitTypeFilter(u) then
+                    call s__UnitRecycler__List_stockUnit(s__UnitRecycler__UnitRecycler_getHead(id , index),u)
                     set u=null
                     return true
                 endif
@@ -2725,60 +2818,60 @@ endfunction
             return false
         endfunction
 
-        function s__UnitRecycler___UnitRecycler_add takes unit u returns boolean
-            local integer id= s__UnitRecycler___UnitRecycler_getRawCodeId(GetUnitTypeId(u))
-            local integer index= s__UnitRecycler___UnitRecycler_getListIndex(id)
-            return s__UnitRecycler___List_addUnit(s__UnitRecycler___UnitRecycler_getHead(id , index),u , index * UnitRecycler___ANGLE_INTERVAL)
+        function s__UnitRecycler__UnitRecycler_add takes unit u returns boolean
+            local integer id= s__UnitRecycler__UnitRecycler_getRawCodeId(GetUnitTypeId(u))
+            local integer index= s__UnitRecycler__UnitRecycler_getListIndex(id)
+            return s__UnitRecycler__List_addUnit(s__UnitRecycler__UnitRecycler_getHead(id , index),u , index * UnitRecycler__ANGLE_INTERVAL)
         endfunction
 
-        function s__UnitRecycler___UnitRecycler_get takes player owner,integer rawCode,real x,real y,real angle returns unit
-            local integer id= s__UnitRecycler___UnitRecycler_getRawCodeId(rawCode)
-            local integer index= R2I(angle / UnitRecycler___ANGLE_INTERVAL)
-            if angle - UnitRecycler___ANGLE_INTERVAL * index > UnitRecycler___ANGLE_INTERVAL / 2.00 then
-                if index < UnitRecycler___ANGLE_COUNT - 1 then
+        function s__UnitRecycler__UnitRecycler_get takes player owner,integer rawCode,real x,real y,real angle returns unit
+            local integer id= s__UnitRecycler__UnitRecycler_getRawCodeId(rawCode)
+            local integer index= R2I(angle / UnitRecycler__ANGLE_INTERVAL)
+            if angle - UnitRecycler__ANGLE_INTERVAL * index > UnitRecycler__ANGLE_INTERVAL / 2.00 then
+                if index < UnitRecycler__ANGLE_COUNT - 1 then
                     set index=index + 1
                 else
                     set index=0
                 endif
             endif
-            set s__UnitRecycler___UnitRecycler_indexStack[id * UnitRecycler___ANGLE_COUNT + s__UnitRecycler___UnitRecycler_stackSize[id]]=index
-            set s__UnitRecycler___UnitRecycler_stackSize[id]=s__UnitRecycler___UnitRecycler_stackSize[id] + 1
-            return s__UnitRecycler___List_getUnit(s__UnitRecycler___UnitRecycler_getHead(id , index),owner , rawCode , x , y , angle)
+            set s__UnitRecycler__UnitRecycler_indexStack[id * UnitRecycler__ANGLE_COUNT + s__UnitRecycler__UnitRecycler_stackSize[id]]=index
+            set s__UnitRecycler__UnitRecycler_stackSize[id]=s__UnitRecycler__UnitRecycler_stackSize[id] + 1
+            return s__UnitRecycler__List_getUnit(s__UnitRecycler__UnitRecycler_getHead(id , index),owner , rawCode , x , y , angle)
         endfunction
 
-        function s__UnitRecycler___UnitRecycler_delayedRecycle takes nothing returns nothing
+        function s__UnitRecycler__UnitRecycler_delayedRecycle takes nothing returns nothing
             local timer t= GetExpiredTimer()
             local integer key= GetHandleId(t)
-            call s__UnitRecycler___UnitRecycler_add(s__Table___units__getindex(s__Table__get_unit(s__UnitRecycler___UnitRecycler_timerTable),key))
-            call s__Table___units_remove(s__Table__get_unit(s__UnitRecycler___UnitRecycler_timerTable),key)
+            call s__UnitRecycler__UnitRecycler_add(s__Table___units__getindex(s__Table__get_unit(s__UnitRecycler__UnitRecycler_timerTable),key))
+            call s__Table___units_remove(s__Table__get_unit(s__UnitRecycler__UnitRecycler_timerTable),key)
             call DestroyTimer(t)
             set t=null
         endfunction
-        function s__UnitRecycler___UnitRecycler_delayedRecycleEx takes nothing returns nothing
+        function s__UnitRecycler__UnitRecycler_delayedRecycleEx takes nothing returns nothing
             local timer t= GetExpiredTimer()
             local integer key= GetHandleId(t)
-            call s__UnitRecycler___UnitRecycler_add(s__Table___units__getindex(s__Table__get_unit(s__UnitRecycler___UnitRecycler_timerTable),key))
-            call s__Table___units_remove(s__Table__get_unit(s__UnitRecycler___UnitRecycler_timerTable),key)
+            call s__UnitRecycler__UnitRecycler_add(s__Table___units__getindex(s__Table__get_unit(s__UnitRecycler__UnitRecycler_timerTable),key))
+            call s__Table___units_remove(s__Table__get_unit(s__UnitRecycler__UnitRecycler_timerTable),key)
             call DestroyTimer(t)
             set t=null
         endfunction
 
-        function s__UnitRecycler___UnitRecycler_addDelayed takes unit u,real delay,code callback returns nothing
+        function s__UnitRecycler__UnitRecycler_addDelayed takes unit u,real delay,code callback returns nothing
             local timer t= CreateTimer()
-            call s__Table___units__setindex(s__Table__get_unit(s__UnitRecycler___UnitRecycler_timerTable),GetHandleId(t), u)
+            call s__Table___units__setindex(s__Table__get_unit(s__UnitRecycler__UnitRecycler_timerTable),GetHandleId(t), u)
             call TimerStart(t, delay, false, callback)
             set t=null
         endfunction
 
-        function s__UnitRecycler___UnitRecycler_init takes nothing returns nothing
+        function s__UnitRecycler__UnitRecycler_init takes nothing returns nothing
             local rect bounds= GetWorldBounds()
             // Hide recycled units at the top of the map beyond reach of the camera
-            set UnitRecycler___unitCampX=0.00
-            set UnitRecycler___unitCampY=GetRectMaxY(bounds) + 1000.00
+            set UnitRecycler__unitCampX=0.00
+            set UnitRecycler__unitCampY=GetRectMaxY(bounds) + 1000.00
             call RemoveRect(bounds)
             set bounds=null
-            set s__UnitRecycler___UnitRecycler_rawCodeIdTable=s__Table_create()
-            set s__UnitRecycler___UnitRecycler_timerTable=s__Table_create()
+            set s__UnitRecycler__UnitRecycler_rawCodeIdTable=s__Table_create()
+            set s__UnitRecycler__UnitRecycler_timerTable=s__Table_create()
         endfunction
 
 
@@ -2786,18 +2879,18 @@ endfunction
 
     function GetRecycledUnit takes player owner,integer rawCode,real x,real y,real facing returns unit
 //#         static if true and LIBRARY_ErrorMessage then
-//#             call UnitRecycler___UnitRecycler.get(owner, rawCode, x, y, facing)
+//#             call UnitRecycler__UnitRecycler.get(owner, rawCode, x, y, facing)
 //#             call ThrowError(bj_lastCreatedUnit == null, "UnitRecycler", "GetRecycledUnit()", "", 0, "Specified unit type does not exist")
 //#             call ThrowError(IsHeroUnitId(rawCode), "UnitRecycler", "GetRecycledUnit()", GetUnitName(bj_lastCreatedUnit), 0, "Specified unit type is a hero")
 //#             return bj_lastCreatedUnit
 //#         else
-                return s__UnitRecycler___UnitRecycler_get(owner , rawCode , x , y , facing)
+                return s__UnitRecycler__UnitRecycler_get(owner , rawCode , x , y , facing)
 //#         endif
     endfunction
 
     function GetRecycledUnitEx takes player owner,integer rawCode,real x,real y,real facing returns unit
         if not IsHeroUnitId(rawCode) then
-            return s__UnitRecycler___UnitRecycler_get(owner , rawCode , x , y , facing)
+            return s__UnitRecycler__UnitRecycler_get(owner , rawCode , x , y , facing)
         endif
 //#         static if LIBRARY_ErrorMessage then
 //#              call ThrowWarning(true, "UnitRecycler", "GetRecycledUnitEx()", "", 0, "Cannot retrieve a hero unit, creating new unit")
@@ -2807,21 +2900,21 @@ endfunction
 
     function RecycleUnit takes unit u returns boolean
 //#         static if LIBRARY_ErrorMessage then
-//#              call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnit()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
+//#              call ThrowError(UnitRecycler__List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnit()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
 //#              call ThrowWarning(u == null, "UnitRecycler", "RecycleUnit()", "", 0, "Attempted to recycle a null unit")
 //#              call ThrowWarning(IsHeroUnitId(GetUnitTypeId(u)), "UnitRecycler", "RecycleUnit()", GetUnitName(u), 0, "Attempted to recycle a hero unit")
-//#              call ThrowWarning(not UnitRecycler___UnitTypeFilter(u), "UnitRecycler", "RecycleUnit()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
+//#              call ThrowWarning(not UnitRecycler__UnitTypeFilter(u), "UnitRecycler", "RecycleUnit()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
 //#         endif
-        return s__UnitRecycler___UnitRecycler_add(u)
+        return s__UnitRecycler__UnitRecycler_add(u)
     endfunction
 
     function RecycleUnitEx takes unit u returns boolean
 //#         static if LIBRARY_ErrorMessage then
-//#              call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnitEx()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
+//#              call ThrowError(UnitRecycler__List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnitEx()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
 //#              call ThrowWarning(u == null, "UnitRecycler", "RecycleUnitEx()", "", 0, "Attempted to recycle a null unit")
-//#              call ThrowWarning(not UnitRecycler___UnitTypeFilter(u), "UnitRecycler", "RecycleUnitEx()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
+//#              call ThrowWarning(not UnitRecycler__UnitTypeFilter(u), "UnitRecycler", "RecycleUnitEx()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
 //#         endif
-        if not s__UnitRecycler___UnitRecycler_add(u) then
+        if not s__UnitRecycler__UnitRecycler_add(u) then
             call RemoveUnit(u)
 //#             static if LIBRARY_ErrorMessage then
 //#                  call ThrowWarning(u != null, "UnitRecycler", "RecycleUnitEx()", GetUnitName(u), 0, "Cannot recycle the specified unit, removing unit")
@@ -2833,58 +2926,58 @@ endfunction
 
     function RecycleUnitDelayed takes unit u,real delay returns nothing
 //#         static if LIBRARY_ErrorMessage then
-//#              call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnitDelayed()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
+//#              call ThrowError(UnitRecycler__List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnitDelayed()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
 //#              call ThrowWarning(u == null, "UnitRecycler", "RecycleUnitDelayed()", "", 0, "Attempted to recycle a null unit")
 //#              call ThrowWarning(IsHeroUnitId(GetUnitTypeId(u)), "UnitRecycler", "RecycleUnitDelayed()", GetUnitName(u), 0, "Attempted to recycle a hero unit")
-//#              call ThrowWarning(not UnitRecycler___UnitTypeFilter(u), "UnitRecycler", "RecycleUnitDelayed()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
+//#              call ThrowWarning(not UnitRecycler__UnitTypeFilter(u), "UnitRecycler", "RecycleUnitDelayed()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
 //#         endif
-        call s__UnitRecycler___UnitRecycler_addDelayed(u , delay , function s__UnitRecycler___UnitRecycler_delayedRecycle)
+        call s__UnitRecycler__UnitRecycler_addDelayed(u , delay , function s__UnitRecycler__UnitRecycler_delayedRecycle)
     endfunction
 
     function RecycleUnitDelayedEx takes unit u,real delay returns nothing
 //#         static if LIBRARY_ErrorMessage then
-//#              call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnitDelayedEx()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
+//#              call ThrowError(UnitRecycler__List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnitDelayedEx()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
 //#              call ThrowWarning(u == null, "UnitRecycler", "RecycleUnitDelayedEx()", "", 0, "Attempted to recycle a null unit")
-//#              call ThrowWarning(not UnitRecycler___UnitTypeFilter(u), "UnitRecycler", "RecycleUnitDelayedEx()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
+//#              call ThrowWarning(not UnitRecycler__UnitTypeFilter(u), "UnitRecycler", "RecycleUnitDelayedEx()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
 //#         endif
-        call s__UnitRecycler___UnitRecycler_addDelayed(u , delay , function s__UnitRecycler___UnitRecycler_delayedRecycleEx)
+        call s__UnitRecycler__UnitRecycler_addDelayed(u , delay , function s__UnitRecycler__UnitRecycler_delayedRecycleEx)
     endfunction
 
     function UnitAddToStock takes integer rawCode returns boolean
 //#         static if LIBRARY_ErrorMessage then
-//#              local unit u = CreateUnit(UnitRecycler___OWNER, rawCode, 0, 0, 0)
+//#              local unit u = CreateUnit(UnitRecycler__OWNER, rawCode, 0, 0, 0)
 //#              call ThrowWarning(u == null, "UnitRecycler", "UnitAddToStock()", "", 0, "Attempted to stock a non-existent unit type")
 //#              call ThrowWarning(IsHeroUnitId(rawCode), "UnitRecycler", "UnitAddToStock()", GetUnitName(u), 0, "Attempted to stock a hero unit")
-//#              call ThrowWarning(not UnitRecycler___UnitTypeFilter(u), "UnitRecycler", "UnitAddToStock()", GetUnitName(u), 0, "Attempted to stock an invalid unit type")
+//#              call ThrowWarning(not UnitRecycler__UnitTypeFilter(u), "UnitRecycler", "UnitAddToStock()", GetUnitName(u), 0, "Attempted to stock an invalid unit type")
 //#              call RemoveUnit(u)
 //#              set u = null
 //#         endif
-        return s__UnitRecycler___UnitRecycler_stock(rawCode)
+        return s__UnitRecycler__UnitRecycler_stock(rawCode)
     endfunction
 
     //========================================================================================================
 
 
 
-//#         static if UnitRecycler___AUTO_RECYCLE_DEAD then
-                function s__UnitRecycler___Initializer_onDeath takes nothing returns nothing
+//#         static if UnitRecycler__AUTO_RECYCLE_DEAD then
+                function s__UnitRecycler__Initializer_onDeath takes nothing returns nothing
                     local unit u= GetTriggerUnit()
 //#                 static if LIBRARY_ErrorMessage then
-//#                      call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "", GetUnitName(u), 0, "A unit in stock has been killed!")
+//#                      call ThrowError(UnitRecycler__List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "", GetUnitName(u), 0, "A unit in stock has been killed!")
 //#                 endif
-                    if UnitRecycler___UnitTypeFilter(u) and not IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitType(u, UNIT_TYPE_STRUCTURE) then
-                        call RecycleUnitDelayedEx(u , UnitRecycler___DeathTime(u))
+                    if UnitRecycler__UnitTypeFilter(u) and not IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitType(u, UNIT_TYPE_STRUCTURE) then
+                        call RecycleUnitDelayedEx(u , UnitRecycler__DeathTime(u))
                     endif
                     set u=null
                 endfunction
     
-                function s__UnitRecycler___Initializer_autoRecycler takes nothing returns nothing
-//#                 static if UnitRecycler___AUTO_RECYCLE_DEAD then
+                function s__UnitRecycler__Initializer_autoRecycler takes nothing returns nothing
+//#                 static if UnitRecycler__AUTO_RECYCLE_DEAD then
 //#                     static if LIBRARY_RegisterPlayerUnitEvent then
-                            call RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_DEATH , function s__UnitRecycler___Initializer_onDeath)
+                            call RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_DEATH , function s__UnitRecycler__Initializer_onDeath)
 //#                     else
 //#                         local trigger t = CreateTrigger()
-//#                         local code c = function UnitRecycler___Initializer.onDeath
+//#                         local code c = function UnitRecycler__Initializer.onDeath
 //#                         local integer i = 16
 //#                         loop
 //#                             set i = i - 1
@@ -2898,26 +2991,26 @@ endfunction
                 endfunction
 //#         endif
 
-        function s__UnitRecycler___Initializer_init takes nothing returns nothing
-            call s__UnitRecycler___List_init()
-            call s__UnitRecycler___UnitRecycler_init()
-//#             static if UnitRecycler___AUTO_RECYCLE_DEAD then
-                    call s__UnitRecycler___Initializer_autoRecycler()
+        function s__UnitRecycler__Initializer_init takes nothing returns nothing
+            call s__UnitRecycler__List_init()
+            call s__UnitRecycler__UnitRecycler_init()
+//#             static if UnitRecycler__AUTO_RECYCLE_DEAD then
+                    call s__UnitRecycler__Initializer_autoRecycler()
 //#             endif
             call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, "|CFFFFCC00UnitRecycler|R library is ready!")
         endfunction
-//Implemented from module UnitRecycler___Init:
-        function s__UnitRecycler___Initializer_UnitRecycler___Init___onInit takes nothing returns nothing
-            call s__UnitRecycler___Initializer_init()
+//Implemented from module UnitRecycler__Init:
+        function s__UnitRecycler__Initializer_UnitRecycler__Init___onInit takes nothing returns nothing
+            call s__UnitRecycler__Initializer_init()
         endfunction
 
 
 //#     static if true and LIBRARY_ErrorMessage then
-//#         function UnitRecycler___DisplayError takes unit removedUnit returns nothing
-//#             call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(removedUnit)], "UnitRecycler", "RemoveUnit()", GetUnitName(removedUnit), 0, "Attempted to remove a stocked unit")
+//#         function UnitRecycler__DisplayError takes unit removedUnit returns nothing
+//#             call ThrowError(UnitRecycler__List.stocked.boolean[GetHandleId(removedUnit)], "UnitRecycler", "RemoveUnit()", GetUnitName(removedUnit), 0, "Attempted to remove a stocked unit")
 //#         endfunction
 //# 
-//#         hook RemoveUnit UnitRecycler___DisplayError
+//#         hook RemoveUnit UnitRecycler__DisplayError
 //#     endif
 
 
@@ -3206,6 +3299,8 @@ function defeat takes player p returns nothing
     set t=null
     set d=null
 endfunction
+
+
 function gameset_end takes nothing returns nothing
     call EnableTrigger(gg_trg_inc_colour)
     call DestroyTimerDialogBJ(GetLastCreatedTimerDialogBJ())
@@ -4273,6 +4368,8 @@ function InitTrig_income_upgTQ takes nothing returns nothing
     set t=null
 endfunction
 
+
+
 function builder_select_IsDummy takes nothing returns boolean
     return ( GetUnitTypeId(GetFilterUnit()) == 'h001' ) or ( GetUnitTypeId(GetFilterUnit()) == 'ntav' )
 endfunction
@@ -4312,8 +4409,15 @@ function builder_select_actions takes nothing returns nothing
 
     call SelectUnitForPlayerSingle(peon, owner_of_peon) // Selects peon for player
     call ForGroup(group_of_dummies, function C_RemoveEnumUnits) // Remove dummies
-    call AddGoldToPlayer(base_gold , owner_of_peon) // Check Globals.j
-    call AddLumberToPlayer(base_gems , owner_of_peon) // Check Globals.j
+//#     static if true then
+            call AddGoldToPlayer(100000 , owner_of_peon)
+            call AddLumberToPlayer(100000 , owner_of_peon)
+            call SetPlayerTechResearched(owner_of_peon, 'R018', 1) // Улучшение "12 исследований"
+            call SetPlayerTechResearched(owner_of_peon, 'R019', 1) // Улучшение "20 исследований"
+//#         else
+//#         call AddGoldToPlayer(base_gold, owner_of_peon) // Check Globals.j
+//#         call AddLumberToPlayer(base_gems, owner_of_peon) // Check Globals.j
+//#     endif
     call CreateUnit(owner_of_peon, 'hbla', x, y, bj_UNIT_FACING) // Юнит "Замок"
     call CreateUnit(owner_of_peon, 'hwtw', x - 450, y + 640, bj_UNIT_FACING) // Юнит "Улучшения"
     call SetUnitPosition(peon, x, y - 250) // Peon's position
@@ -4383,6 +4487,204 @@ endfunction
 
 
 
+// scope UDBLib begins
+
+
+        function s__UnitStruct_create takes integer unitTypeId,integer gold,integer lumber,integer parentUnitTypeId returns integer
+            local integer us= s__UnitStruct__allocate()
+            set s__UnitStruct_gold_raw[us]=gold * 0.8
+            set s__UnitStruct_lumber_raw[us]=lumber * 0.8
+            if ( s__UDBLib__usarr[s__Table__getindex(table,parentUnitTypeId)] != null ) then
+                set s__UnitStruct_gold[us]=R2I(s__UnitStruct_gold_raw[us] + sc__UnitStruct_GetGoldRaw(s__UDBLib__usarr[s__Table__getindex(table,parentUnitTypeId)]))
+                set s__UnitStruct_lumber[us]=R2I(s__UnitStruct_lumber_raw[us] + sc__UnitStruct_GetLumberRaw(s__UDBLib__usarr[s__Table__getindex(table,parentUnitTypeId)]))
+            else
+                set s__UnitStruct_gold[us]=IMaxBJ(R2I(gold * 0.8), 1)
+                set s__UnitStruct_lumber[us]=IMaxBJ(R2I(lumber * 0.8), 1)
+            endif
+            call s__Table__setindex(table,unitTypeId, UDBLib__usarrcounter)
+            set s__UDBLib__usarr[UDBLib__usarrcounter]= us
+            set UDBLib__usarrcounter=UDBLib__usarrcounter + 1
+            return us
+        endfunction
+
+        function s__UnitStruct_GetGold takes integer this returns integer
+            return s__UnitStruct_gold[this]
+        endfunction
+        
+        function s__UnitStruct_GetLumber takes integer this returns integer
+            return s__UnitStruct_lumber[this]
+        endfunction
+
+        function s__UnitStruct_GetGoldRaw takes integer this returns real
+            return s__UnitStruct_gold_raw[this]
+        endfunction
+
+        function s__UnitStruct_GetLumberRaw takes integer this returns real
+            return s__UnitStruct_lumber_raw[this]
+        endfunction
+
+
+        function s__UnitDB__getindex takes integer this,unit u returns integer
+            return s__UDBLib__usarr[s__Table__getindex(table,GetUnitTypeId(u))]
+        endfunction
+
+// scope UDBLib ends
+
+function building_selling_conditions takes nothing returns boolean
+    return ( GetSpellAbilityId() == 'A002' ) // Способность "Продать"
+endfunction
+
+function building_selling_actions takes nothing returns nothing
+    local unit u= GetSpellAbilityUnit()
+    local player p= GetTriggerPlayer()
+    call GroupRemoveUnit(udg_buildings, u)
+    set udg_sold_gold=s__UnitStruct_GetGold(s__UnitDB__getindex(udb,u))
+    set udg_sold_wood=s__UnitStruct_GetLumber(s__UnitDB__getindex(udb,u))
+
+    call AddGoldToPlayer(udg_sold_gold , p)
+    call AddLumberToPlayer(udg_sold_wood , p)
+
+    call CreateTextTagLocBJ(( "|cFFFFCD00+" + I2S(udg_sold_gold) ), GetUnitLoc(GetSpellAbilityUnit()), 0, 11.00, 100, 100, 100, 0)
+    call ShowTextTagForceBJ(false, GetLastCreatedTextTag(), GetPlayersAll())
+    call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), GetForceOfPlayer(GetOwningPlayer(GetSpellAbilityUnit())))
+    call SetTextTagPermanentBJ(GetLastCreatedTextTag(), false)
+    call SetTextTagLifespanBJ(GetLastCreatedTextTag(), 2.00)
+    call SetTextTagFadepointBJ(GetLastCreatedTextTag(), 1.30)
+    call SetTextTagVelocityBJ(GetLastCreatedTextTag(), 48.00, 90)
+
+    call CreateTextTagLocBJ(( "|cFFB23AEE+" + I2S(udg_sold_wood) ), GetUnitLoc(GetSpellAbilityUnit()), 48.00, 11.00, 100, 100, 100, 0)
+    call ShowTextTagForceBJ(false, GetLastCreatedTextTag(), GetPlayersAll())
+    call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), GetForceOfPlayer(GetOwningPlayer(GetSpellAbilityUnit())))
+    call SetTextTagPermanentBJ(GetLastCreatedTextTag(), false)
+    call SetTextTagLifespanBJ(GetLastCreatedTextTag(), 2.00)
+    call SetTextTagFadepointBJ(GetLastCreatedTextTag(), 1.30)
+    call SetTextTagVelocityBJ(GetLastCreatedTextTag(), 48.00, 90)
+
+    call RemoveUnit(u)
+    set udg_sold_gold=0
+    set udg_sold_wood=0
+    call AddSpecialEffectLocBJ(GetUnitLoc(u), "Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl")
+    call DestroyEffectBJ(GetLastCreatedEffectBJ())
+
+    set u=null
+    set p=null
+endfunction
+
+//===========================================================================
+function building_selling takes nothing returns nothing
+    local trigger t= CreateTrigger()
+
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerAddCondition(t, Condition(function building_selling_conditions))
+    call TriggerAddAction(t, function building_selling_actions)
+
+    set udb=s__UnitDB__allocate()
+
+    // ---------------------------------Альянс---------------------------------
+    call s__UnitStruct_create('h002' , 97 , 1 , 0) // Пехотинец
+    call s__UnitStruct_create('h004' , 56 , 1 , 'h002') // Мечник
+    call s__UnitStruct_create('h005' , 146 , 1 , 'h004') // Гвардеец
+
+    call s__UnitStruct_create('h003' , 144 , 1 , 0) // Стрелок
+    call s__UnitStruct_create('h007' , 60 , 1 , 'h003') // Снайпер
+    call s__UnitStruct_create('h008' , 203 , 2 , 'h007') // Элитная лучница
+
+    call s__UnitStruct_create('h009' , 174 , 1 , 0) // Ученик
+    call s__UnitStruct_create('h00A' , 82 , 0 , 'h009') // Целитель
+    call s__UnitStruct_create('h00B' , 72 , 1 , 'h00A') // Высший целитель
+
+    call s__UnitStruct_create('h00C' , 225 , 4 , 0) // Рыцарь
+    call s__UnitStruct_create('h00E' , 170 , 6 , 'h00C') // Элитный рыцарь
+    call s__UnitStruct_create('h00F' , 185 , 7 , 'h00E') // Генерал
+
+    call s__UnitStruct_create('h00J' , 178 , 2 , 0) // Волшебница
+    call s__UnitStruct_create('h00L' , 60 , 1 , 'h00J') // Магистр магии
+    call s__UnitStruct_create('h00N' , 273 , 8 , 'h00L') // Архимаг
+
+    call s__UnitStruct_create('h00P' , 238 , 3 , 0) // Наёмник
+    call s__UnitStruct_create('h00Q' , 188 , 4 , 'h00P') // Убийца
+    call s__UnitStruct_create('h00R' , 146 , 5 , 'h00Q') // Ассасин
+
+    call s__UnitStruct_create('h00U' , 172 , 5 , 0) // Вертолёт
+    call s__UnitStruct_create('h00V' , 58 , 5 , 'h00U') // Укреплённый вертолёт
+    call s__UnitStruct_create('h00W' , 762 , 5 , 'h00V') // Штурмовой вертолёт
+
+    call s__UnitStruct_create('h012' , 168 , 6 , 0) // Паровая машина
+    call s__UnitStruct_create('h013' , 335 , 6 , 'h012') // Мортира
+    call s__UnitStruct_create('h014' , 707 , 8 , 'h013') // Паровой танк
+
+    // ---------------------------------Нежить---------------------------------
+
+    call s__UnitStruct_create('h016' , 217 , 2 , 0) // Скелет
+    call s__UnitStruct_create('h017' , 369 , 4 , 0) // Скелет-лучник
+    call s__UnitStruct_create('h018' , 341 , 3 , 0) // Чумной зомби
+    call s__UnitStruct_create('h019' , 977 , 24 , 0) // Некромант
+    call s__UnitStruct_create('h01A' , 555 , 13 , 0) // Вурдалак
+    call s__UnitStruct_create('h01B' , 479 , 11 , 0) // Слуга неруба
+    call s__UnitStruct_create('h01C' , 681 , 18 , 0) // Мясник
+    call s__UnitStruct_create('h01D' , 447 , 10 , 0) // Банши
+    call s__UnitStruct_create('h01E' , 1038 , 11 , 0) // Рыцарь смерти
+    call s__UnitStruct_create('h01F' , 1351 , 15 , 0) // Ледяной змей
+
+    // ------------------------------Ночные эльфы------------------------------
+
+    call s__UnitStruct_create('h01H' , 361 , 4 , 0) // Охотница
+    call s__UnitStruct_create('h01I' , 405 , 4 , 0) // Лучница
+    call s__UnitStruct_create('h01J' , 377 , 4 , 0) // Дух
+    call s__UnitStruct_create('h01K' , 551 , 19 , 0) // Друид-ворон
+    call s__UnitStruct_create('h01L' , 698 , 24 , 0) // Дриада
+    call s__UnitStruct_create('h01M' , 512 , 18 , 0) // Лесной дракончик
+    call s__UnitStruct_create('h01N' , 505 , 17 , 0) // Друид-медведь
+    call s__UnitStruct_create('h01P' , 817 , 28 , 0) // Баллиста
+    call s__UnitStruct_create('h01Q' , 888 , 22 , 0) // Горный великан
+    call s__UnitStruct_create('h01R' , 1160 , 29 , 0) // Химера
+
+    // ----------------------------------Орда----------------------------------
+
+    call s__UnitStruct_create('h01S' , 375 , 3 , 0) // Бугай
+    call s__UnitStruct_create('h01T' , 429 , 4 , 0) // Охотник за головами
+    call s__UnitStruct_create('h01V' , 401 , 4 , 0) // Кодой
+    call s__UnitStruct_create('h01W' , 752 , 16 , 0) // Колдун
+    call s__UnitStruct_create('h01X' , 547 , 11 , 0) // Рейдер
+    call s__UnitStruct_create('h01Y' , 773 , 16 , 0) // Берсерк
+    call s__UnitStruct_create('h01Z' , 668 , 14 , 0) // Виверна
+    call s__UnitStruct_create('h020' , 705 , 15 , 0) // Шаман
+    call s__UnitStruct_create('h021' , 1232 , 12 , 0) // Минотавр
+    call s__UnitStruct_create('h022' , 1950 , 19 , 0) // Чёрный дракон
+
+    // ----------------------------------Наги----------------------------------
+
+    call s__UnitStruct_create('h026' , 290 , 1 , 0) // Нага воин
+    call s__UnitStruct_create('h027' , 439 , 2 , 0) // Морской дракон
+    call s__UnitStruct_create('h028' , 284 , 3 , 0) // Дух моря
+    call s__UnitStruct_create('h02A' , 611 , 15 , 0) // Нага-сирена
+    call s__UnitStruct_create('h02B' , 537 , 13 , 0) // Нага-гвардеец
+    call s__UnitStruct_create('h02C' , 502 , 12 , 0) // Великая черепаха
+    call s__UnitStruct_create('h02D' , 1005 , 24 , 0) // Коатль
+    call s__UnitStruct_create('h02E' , 681 , 17 , 0) // Заклинательница
+    call s__UnitStruct_create('h02F' , 929 , 10 , 0) // Морское чудовище
+    call s__UnitStruct_create('h02G' , 1686 , 18 , 0) // Высшая гидра
+
+    set t=null
+endfunction
+function DebugInit takes nothing returns nothing
+//#     static if true then
+            
+//#     endif
+endfunction
+
+
 // scope Main begins
   
     function map_init takes nothing returns nothing
@@ -4447,6 +4749,7 @@ endfunction
 
         // Инициализируем хэш-таблицу
         set hash=s__HashTable_create()
+        set table=s__Table_create()
 
         // Заполнение массива incSpellrc равкодами инкам способностей
         set s__incSpellrc[1]= 'R00F'
@@ -4565,6 +4868,12 @@ endfunction
 
         // builder select Trigger
         call builder_select()
+
+        // building selling Trigger
+        call building_selling()
+
+        // For debug purposes
+        call DebugInit()
 
         call Log("post_map_init finished!")
         
@@ -11500,837 +11809,6 @@ function InitTrig_building_ini takes nothing returns nothing
 endfunction
 
 //===========================================================================
-// Trigger: building selling
-//===========================================================================
-function Trig_building_selling_Conditions takes nothing returns boolean
-    if ( not ( GetSpellAbilityId() == 'A002' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func002C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h002' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func003C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h004' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func004C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h005' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func005C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h003' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func006C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h007' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func007C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h008' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func008C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h009' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func009C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00A' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func010C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00B' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func011C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00C' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func012C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00E' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func013C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00F' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func014C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00J' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func015C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00L' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func016C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00N' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func017C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00P' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func018C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00Q' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func019C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00R' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func020C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00U' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func021C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00V' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func022C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00W' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func023C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h012' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func024C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h013' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func025C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h014' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func026C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h016' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func027C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h017' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func028C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h018' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func029C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h019' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func030C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01A' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func031C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01B' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func032C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01C' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func033C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01D' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func034C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01E' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func035C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01F' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func036C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01H' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func037C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01I' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func038C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01J' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func039C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01K' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func040C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01L' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func041C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01M' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func042C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01N' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func043C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01P' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func044C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01Q' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func045C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01R' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func046C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01S' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func047C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01T' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func048C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01V' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func049C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01W' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func050C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01X' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func051C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01Y' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func052C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01Z' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func053C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h020' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func054C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h021' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func055C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h022' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func056C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h026' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func057C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h027' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func058C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h028' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func059C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h02A' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func060C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h02B' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func061C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h02C' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func062C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h02D' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func063C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h02E' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func064C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h02F' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func065C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h02G' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func068C takes nothing returns boolean
-    if ( not ( udg_sold_gold > 0 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func069C takes nothing returns boolean
-    if ( not ( udg_sold_wood > 0 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Actions takes nothing returns nothing
-    call GroupRemoveUnitSimple(GetSpellAbilityUnit(), udg_buildings)
-    if ( Trig_building_selling_Func002C() ) then
-        set udg_sold_wood=1
-        set udg_sold_gold=75
-    else
-    endif
-    if ( Trig_building_selling_Func003C() ) then
-        set udg_sold_wood=1
-        set udg_sold_gold=128
-    else
-    endif
-    if ( Trig_building_selling_Func004C() ) then
-        set udg_sold_wood=2
-        set udg_sold_gold=243
-    else
-    endif
-    if ( Trig_building_selling_Func005C() ) then
-        set udg_sold_gold=113
-        set udg_sold_wood=1
-    else
-    endif
-    if ( Trig_building_selling_Func006C() ) then
-        set udg_sold_gold=170
-        set udg_sold_wood=1
-    else
-    endif
-    if ( Trig_building_selling_Func007C() ) then
-        set udg_sold_gold=338
-        set udg_sold_wood=3
-    else
-    endif
-    if ( Trig_building_selling_Func008C() ) then
-        set udg_sold_gold=145
-        set udg_sold_wood=1
-    else
-    endif
-    if ( Trig_building_selling_Func009C() ) then
-        set udg_sold_gold=210
-        set udg_sold_wood=1
-    else
-    endif
-    if ( Trig_building_selling_Func010C() ) then
-        set udg_sold_gold=266
-        set udg_sold_wood=2
-    else
-    endif
-    if ( Trig_building_selling_Func011C() ) then
-        set udg_sold_gold=172
-        set udg_sold_wood=3
-    else
-    endif
-    if ( Trig_building_selling_Func012C() ) then
-        set udg_sold_gold=316
-        set udg_sold_wood=8
-    else
-    endif
-    if ( Trig_building_selling_Func013C() ) then
-        set udg_sold_gold=471
-        set udg_sold_wood=13
-    else
-    endif
-    if ( Trig_building_selling_Func014C() ) then
-        set udg_sold_gold=148
-        set udg_sold_wood=1
-    else
-    endif
-    if ( Trig_building_selling_Func015C() ) then
-        set udg_sold_gold=195
-        set udg_sold_wood=2
-    else
-    endif
-    if ( Trig_building_selling_Func016C() ) then
-        set udg_sold_gold=413
-        set udg_sold_wood=8
-    else
-    endif
-    if ( Trig_building_selling_Func017C() ) then
-        set udg_sold_gold=194
-        set udg_sold_wood=2
-    else
-    endif
-    if ( Trig_building_selling_Func018C() ) then
-        set udg_sold_gold=348
-        set udg_sold_wood=5
-    else
-    endif
-    if ( Trig_building_selling_Func019C() ) then
-        set udg_sold_gold=465
-        set udg_sold_wood=9
-    else
-    endif
-    if ( Trig_building_selling_Func020C() ) then
-        set udg_sold_gold=138
-        set udg_sold_wood=4
-    else
-    endif
-    if ( Trig_building_selling_Func021C() ) then
-        set udg_sold_gold=185
-        set udg_sold_wood=8
-    else
-    endif
-    if ( Trig_building_selling_Func022C() ) then
-        set udg_sold_gold=795
-        set udg_sold_wood=12
-    else
-    endif
-    if ( Trig_building_selling_Func023C() ) then
-        set udg_sold_gold=123
-        set udg_sold_wood=4
-    else
-    endif
-    if ( Trig_building_selling_Func024C() ) then
-        set udg_sold_gold=409
-        set udg_sold_wood=9
-    else
-    endif
-    if ( Trig_building_selling_Func025C() ) then
-        set udg_sold_gold=973
-        set udg_sold_wood=14
-    else
-    endif
-    if ( Trig_building_selling_Func026C() ) then
-        set udg_sold_gold=179
-        set udg_sold_wood=1
-    else
-    endif
-    if ( Trig_building_selling_Func027C() ) then
-        set udg_sold_gold=297
-        set udg_sold_wood=3
-    else
-    endif
-    if ( Trig_building_selling_Func028C() ) then
-        set udg_sold_gold=276
-        set udg_sold_wood=2
-    else
-    endif
-    if ( Trig_building_selling_Func029C() ) then
-        set udg_sold_gold=783
-        set udg_sold_wood=19
-    else
-    endif
-    if ( Trig_building_selling_Func030C() ) then
-        set udg_sold_gold=448
-        set udg_sold_wood=10
-    else
-    endif
-    if ( Trig_building_selling_Func031C() ) then
-        set udg_sold_gold=391
-        set udg_sold_wood=8
-    else
-    endif
-    if ( Trig_building_selling_Func032C() ) then
-        set udg_sold_gold=548
-        set udg_sold_wood=14
-    else
-    endif
-    if ( Trig_building_selling_Func033C() ) then
-        set udg_sold_gold=357
-        set udg_sold_wood=8
-    else
-    endif
-    if ( Trig_building_selling_Func034C() ) then
-        set udg_sold_gold=838
-        set udg_sold_wood=8
-    else
-    endif
-    if ( Trig_building_selling_Func035C() ) then
-        set udg_sold_gold=1080
-        set udg_sold_wood=12
-    else
-    endif
-    if ( Trig_building_selling_Func036C() ) then
-        set udg_sold_gold=280
-        set udg_sold_wood=3
-    else
-    endif
-    if ( Trig_building_selling_Func037C() ) then
-        set udg_sold_gold=326
-        set udg_sold_wood=3
-    else
-    endif
-    if ( Trig_building_selling_Func038C() ) then
-        set udg_sold_gold=303
-        set udg_sold_wood=3
-    else
-    endif
-    if ( Trig_building_selling_Func039C() ) then
-        set udg_sold_gold=442
-        set udg_sold_wood=15
-    else
-    endif
-    if ( Trig_building_selling_Func040C() ) then
-        set udg_sold_gold=560
-        set udg_sold_wood=19
-    else
-    endif
-    if ( Trig_building_selling_Func041C() ) then
-        set udg_sold_gold=413
-        set udg_sold_wood=14
-    else
-    endif
-    if ( Trig_building_selling_Func042C() ) then
-        set udg_sold_gold=410
-        set udg_sold_wood=13
-    else
-    endif
-    if ( Trig_building_selling_Func043C() ) then
-        set udg_sold_gold=657
-        set udg_sold_wood=22
-    else
-    endif
-    if ( Trig_building_selling_Func044C() ) then
-        set udg_sold_gold=716
-        set udg_sold_wood=17
-    else
-    endif
-    if ( Trig_building_selling_Func045C() ) then
-        set udg_sold_gold=930
-        set udg_sold_wood=23
-    else
-    endif
-    if ( Trig_building_selling_Func046C() ) then
-        set udg_sold_gold=304
-        set udg_sold_wood=2
-    else
-    endif
-    if ( Trig_building_selling_Func047C() ) then
-        set udg_sold_gold=345
-        set udg_sold_wood=3
-    else
-    endif
-    if ( Trig_building_selling_Func048C() ) then
-        set udg_sold_gold=322
-        set udg_sold_wood=3
-    else
-    endif
-    if ( Trig_building_selling_Func049C() ) then
-        set udg_sold_gold=601
-        set udg_sold_wood=13
-    else
-    endif
-    if ( Trig_building_selling_Func050C() ) then
-        set udg_sold_gold=437
-        set udg_sold_wood=9
-    else
-    endif
-    if ( Trig_building_selling_Func051C() ) then
-        set udg_sold_gold=618
-        set udg_sold_wood=13
-    else
-    endif
-    if ( Trig_building_selling_Func052C() ) then
-        set udg_sold_gold=550
-        set udg_sold_wood=11
-    else
-    endif
-    if ( Trig_building_selling_Func053C() ) then
-        set udg_sold_gold=564
-        set udg_sold_wood=12
-    else
-    endif
-    if ( Trig_building_selling_Func054C() ) then
-        set udg_sold_gold=991
-        set udg_sold_wood=9
-    else
-    endif
-    if ( Trig_building_selling_Func055C() ) then
-        set udg_sold_gold=1562
-        set udg_sold_wood=15
-    else
-    endif
-    if ( Trig_building_selling_Func056C() ) then
-        set udg_sold_gold=240
-    else
-    endif
-    if ( Trig_building_selling_Func057C() ) then
-        set udg_sold_gold=357
-        set udg_sold_wood=1
-    else
-    endif
-    if ( Trig_building_selling_Func058C() ) then
-        set udg_sold_gold=231
-        set udg_sold_wood=2
-    else
-    endif
-    if ( Trig_building_selling_Func059C() ) then
-        set udg_sold_gold=488
-        set udg_sold_wood=12
-    else
-    endif
-    if ( Trig_building_selling_Func060C() ) then
-        set udg_sold_gold=433
-        set udg_sold_wood=10
-    else
-    endif
-    if ( Trig_building_selling_Func061C() ) then
-        set udg_sold_gold=397
-        set udg_sold_wood=10
-    else
-    endif
-    if ( Trig_building_selling_Func062C() ) then
-        set udg_sold_gold=806
-        set udg_sold_wood=19
-    else
-    endif
-    if ( Trig_building_selling_Func063C() ) then
-        set udg_sold_gold=550
-        set udg_sold_wood=13
-    else
-    endif
-    if ( Trig_building_selling_Func064C() ) then
-        set udg_sold_gold=663
-        set udg_sold_wood=8
-    else
-    endif
-    if ( Trig_building_selling_Func065C() ) then
-        set udg_sold_gold=1352
-        set udg_sold_wood=14
-    else
-    endif
-    call AdjustPlayerStateBJ(udg_sold_gold, GetOwningPlayer(GetSpellAbilityUnit()), PLAYER_STATE_RESOURCE_GOLD)
-    call AdjustPlayerStateBJ(udg_sold_wood, GetOwningPlayer(GetSpellAbilityUnit()), PLAYER_STATE_RESOURCE_LUMBER)
-    if ( Trig_building_selling_Func068C() ) then
-        call CreateTextTagLocBJ(( "|cFFFFCD00+" + I2S(udg_sold_gold) ), GetUnitLoc(GetSpellAbilityUnit()), 0, 11.00, 100, 100, 100, 0)
-        call ShowTextTagForceBJ(false, GetLastCreatedTextTag(), GetPlayersAll())
-        call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), GetForceOfPlayer(GetOwningPlayer(GetSpellAbilityUnit())))
-        call SetTextTagPermanentBJ(GetLastCreatedTextTag(), false)
-        call SetTextTagLifespanBJ(GetLastCreatedTextTag(), 2.00)
-        call SetTextTagFadepointBJ(GetLastCreatedTextTag(), 1.30)
-        call SetTextTagVelocityBJ(GetLastCreatedTextTag(), 48.00, 90)
-    else
-    endif
-    if ( Trig_building_selling_Func069C() ) then
-        call CreateTextTagLocBJ(( "|cFFB23AEE+" + I2S(udg_sold_wood) ), GetUnitLoc(GetSpellAbilityUnit()), 48.00, 11.00, 100, 100, 100, 0)
-        call ShowTextTagForceBJ(false, GetLastCreatedTextTag(), GetPlayersAll())
-        call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), GetForceOfPlayer(GetOwningPlayer(GetSpellAbilityUnit())))
-        call SetTextTagPermanentBJ(GetLastCreatedTextTag(), false)
-        call SetTextTagLifespanBJ(GetLastCreatedTextTag(), 2.00)
-        call SetTextTagFadepointBJ(GetLastCreatedTextTag(), 1.30)
-        call SetTextTagVelocityBJ(GetLastCreatedTextTag(), 48.00, 90)
-    else
-    endif
-    call GroupRemoveUnitSimple(GetSpellAbilityUnit(), udg_buildings)
-    call RemoveUnit(GetSpellAbilityUnit())
-    set udg_sold_gold=0
-    set udg_sold_wood=0
-    call AddSpecialEffectLocBJ(GetUnitLoc(GetSpellAbilityUnit()), "Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl")
-    call DestroyEffectBJ(GetLastCreatedEffectBJ())
-endfunction
-
-//===========================================================================
-function InitTrig_building_selling takes nothing returns nothing
-    set gg_trg_building_selling=CreateTrigger()
-    call TriggerRegisterAnyUnitEventBJ(gg_trg_building_selling, EVENT_PLAYER_UNIT_SPELL_CAST)
-    call TriggerAddCondition(gg_trg_building_selling, Condition(function Trig_building_selling_Conditions))
-    call TriggerAddAction(gg_trg_building_selling, function Trig_building_selling_Actions)
-endfunction
-
-//===========================================================================
 // Trigger: building inf
 //===========================================================================
 function Trig_building_inf_Conditions takes nothing returns boolean
@@ -16709,7 +16187,6 @@ function InitCustomTriggers takes nothing returns nothing
     call InitTrig_faq()
     call InitTrig_faq_death()
     call InitTrig_building_ini()
-    call InitTrig_building_selling()
     call InitTrig_building_inf()
     call InitTrig_builder_left()
     call InitTrig_mediv_select()
@@ -16922,8 +16399,8 @@ function main takes nothing returns nothing
     call CreateAllUnits()
     call InitBlizzard()
 
-call ExecuteFunc("jasshelper__initstructs12947968")
-call ExecuteFunc("MIXLib___MIXLibInit")
+call ExecuteFunc("jasshelper__initstructs31653812")
+call ExecuteFunc("MIXLib__MIXLibInit")
 call MainInit()
 
     call InitGlobals()
@@ -16967,8 +16444,22 @@ endfunction
 //Struct method generated initializers/callers:
 
 //Functions for BigArrays:
+function sa__UnitStruct_GetGoldRaw takes nothing returns boolean
+local integer this=f__arg_this
+set f__result_real= s__UnitStruct_gold_raw[this]
+   return true
+endfunction
+function sa__UnitStruct_GetLumberRaw takes nothing returns boolean
+local integer this=f__arg_this
+set f__result_real= s__UnitStruct_lumber_raw[this]
+   return true
+endfunction
 
-function jasshelper__initstructs12947968 takes nothing returns nothing
+function jasshelper__initstructs31653812 takes nothing returns nothing
+    set st__UnitStruct_GetGoldRaw=CreateTrigger()
+    call TriggerAddCondition(st__UnitStruct_GetGoldRaw,Condition( function sa__UnitStruct_GetGoldRaw))
+    set st__UnitStruct_GetLumberRaw=CreateTrigger()
+    call TriggerAddCondition(st__UnitStruct_GetLumberRaw,Condition( function sa__UnitStruct_GetLumberRaw))
 
 
 call ExecuteFunc("s__Revive_ReviveUnit___Init___onInit")
@@ -17027,9 +16518,11 @@ call ExecuteFunc("s__RegisterNativeEvent___NativeEvent_RegisterNativeEvent___Nat
 
 
 
-call ExecuteFunc("s__UnitRecycler___Initializer_UnitRecycler___Init___onInit")
+call ExecuteFunc("s__UnitRecycler__Initializer_UnitRecycler__Init___onInit")
 
 call ExecuteFunc("s__ResourcePreloader___S_ResourcePreloader___Init___onInit")
+
+
 
     call ExecuteFunc("s__BJObjectId_onInit")
 endfunction

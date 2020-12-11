@@ -13,6 +13,7 @@
 
 globals
     boolean IsDevInGame = false                                                                 // Условие: один из разработчиков в игре?
+    Table table                                                                                 // Инициализация таблицы
     HashTable hash                                                                              // Инициализация хэш-таблицы
     constant string strVersion = "0.0.1"                                                        // Версия карты, семантическое версионирование: (Major, Minor, Patch)
     constant string Version = "Test"                                                            // Тип версии {Test, Release}
@@ -23,6 +24,7 @@ globals
 
     constant integer finalWave = 15
     constant integer numberOfMinigames = 8
+    
     constant integer base_gold = 755                                                            // Кол-во золота в начале игры
     constant integer base_gems = 22                                                             // Кол-во гемов в начале игры
 

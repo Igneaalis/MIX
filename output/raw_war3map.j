@@ -1772,7 +1772,6 @@ endlibrary
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     18.02.2016             =
-= Дата изменения:    03.12.2020 13:51       =
 =============================================
 
 Библиотека общего назначения.
@@ -2007,7 +2006,6 @@ endlibrary
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     02.11.2020 16:27       =
-= Дата изменения:    08.11.2020 21:14       =
 =============================================
 
 Структуры данных.
@@ -2067,7 +2065,6 @@ endlibrary
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     01.11.2020 18:41       =
-= Дата изменения:    03.12.2020 02:07       =
 =============================================
 
 Объявление глобальных переменных
@@ -2076,6 +2073,7 @@ endlibrary
 
 globals
     boolean IsDevInGame = false                                                                 // Условие: один из разработчиков в игре?
+    Table table                                                                                 // Инициализация таблицы
     HashTable hash                                                                              // Инициализация хэш-таблицы
     constant string strVersion = "0.0.1"                                                        // Версия карты, семантическое версионирование: (Major, Minor, Patch)
     constant string Version = "Test"                                                            // Тип версии {Test, Release}
@@ -2086,6 +2084,7 @@ globals
 
     constant integer finalWave = 15
     constant integer numberOfMinigames = 8
+    
     constant integer base_gold = 755                                                            // Кол-во золота в начале игры
     constant integer base_gems = 22                                                             // Кол-во гемов в начале игры
 
@@ -2193,7 +2192,6 @@ endglobals
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     01.11.2020 18:30       =
-= Дата изменения:    01.11.2020 18:30       =
 =============================================
 
 */
@@ -2214,8 +2212,7 @@ endfunction
 = Файл создал:       Nokladr                =
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     01.11.2020 19:17       =
-= Дата изменения:    01.11.2020 20:52       =
+= Дата создания:     01.11.2020 21:19       =
 =============================================
 
 Реализация окна победы/поражения.
@@ -2280,6 +2277,21 @@ function defeat takes player p returns nothing
     set t = null
     set d = null
 endfunction
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     20.11.2020 21:40       =
+=============================================
+
+gameset end Trigger
+
+Starts main game loop
+
+*/
+
 function gameset_end takes nothing returns nothing
     call EnableTrigger(gg_trg_inc_colour)
     call DestroyTimerDialogBJ(GetLastCreatedTimerDialogBJ())
@@ -2300,7 +2312,6 @@ endfunction
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     20.11.2020 21:07       =
-= Дата изменения:    02.12.2020 21:45       =
 =============================================
 
 gameset owner Trigger
@@ -2360,7 +2371,6 @@ endfunction
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     01.11.2020 18:30       =
-= Дата изменения:    20.11.2020 21:36       =
 =============================================
 
 Интерфейс внутриигровых сообщений
@@ -2425,7 +2435,6 @@ endfunction
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     20.11.2020 22:46       =
-= Дата изменения:    03.12.2020 13:39       =
 =============================================
 
 faq library-ish
@@ -2468,7 +2477,6 @@ endfunction
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     21.11.2020 21:03       =
-= Дата изменения:    03.12.2020 13:39       =
 =============================================
 
 faq start Trigger
@@ -2502,7 +2510,6 @@ endfunction
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     20.11.2020 16:00       =
-= Дата изменения:    03.12.2020 13:39       =
 =============================================
 
 faq stop Trigger
@@ -2532,7 +2539,6 @@ endfunction
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     20.11.2020 16:00       =
-= Дата изменения:    03.12.2020 13:39       =
 =============================================
 
 faq ini Trigger
@@ -2597,7 +2603,6 @@ endfunction
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     21.11.2020 21:02       =
-= Дата изменения:    03.12.2020 13:39       =
 =============================================
 
 faq active Trigger
@@ -2648,7 +2653,6 @@ endfunction
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     08.11.2020 19:46       =
-= Дата изменения:    03.12.2020 13:51       =
 =============================================
 
 initialization in game Trigger
@@ -2798,7 +2802,6 @@ endfunction
 = Discord:           ! ! Gladiator#3635     =
 = E-Mail:            glady007rus@gmail.com  =
 = Дата создания:     08.11.2020 20:42       =
-= Дата изменения:    03.12.2020 14:51       =
 =============================================
 
 Исследования инкома.
@@ -3195,7 +3198,6 @@ endfunction
 = Discord:           ! ! Gladiator#3635     =
 = E-Mail:            glady007rus@gmail.com  =
 = Дата создания:     22.11.2020 13:00       =
-= Дата изменения:    03.12.2020 14:51       =
 =============================================
 
 Улучшение инкома Грабёж.
@@ -3298,7 +3300,6 @@ endfunction
 = Discord:           ! ! Gladiator#3635     =
 = E-Mail:            glady007rus@gmail.com  =
 = Дата создания:     11.11.2020 20:00       =
-= Дата изменения:    03.12.2020 14:51       =
 =============================================
 
 Улучшение инкома Мёртвые деньги.
@@ -3370,7 +3371,6 @@ endfunction
 = Discord:           ! ! Gladiator#3635     =
 = E-Mail:            glady007rus@gmail.com  =
 = Дата создания:     22.11.2020 18:00       =
-= Дата изменения:    03.12.2020 14:51       =
 =============================================
 
 Улучшение инкома Проклятый рудник.
@@ -3520,6 +3520,21 @@ function InitTrig_income_upgTQ takes nothing returns nothing
 
     set t = null
 endfunction
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     11.12.2020 15:00       =
+=============================================
+
+builder select Trigger
+
+Реализация выбора расы
+
+*/
+
 globals
     integer array peonsId[12]
 endglobals
@@ -3563,8 +3578,15 @@ function builder_select_actions takes nothing returns nothing
 
     call SelectUnitForPlayerSingle(peon, owner_of_peon) // Selects peon for player
     call ForGroup(group_of_dummies, function C_RemoveEnumUnits) // Remove dummies
-    call AddGoldToPlayer(base_gold, owner_of_peon) // Check Globals.j
-    call AddLumberToPlayer(base_gems, owner_of_peon) // Check Globals.j
+    static if DEBUG_MODE then
+        call AddGoldToPlayer(100000, owner_of_peon)
+        call AddLumberToPlayer(100000, owner_of_peon)
+        call SetPlayerTechResearched(owner_of_peon, 'R018', 1) // Улучшение "12 исследований"
+        call SetPlayerTechResearched(owner_of_peon, 'R019', 1) // Улучшение "20 исследований"
+        else
+        call AddGoldToPlayer(base_gold, owner_of_peon) // Check Globals.j
+        call AddLumberToPlayer(base_gems, owner_of_peon) // Check Globals.j
+    endif
     call CreateUnit(owner_of_peon, 'hbla', x, y, bj_UNIT_FACING) // Юнит "Замок"
     call CreateUnit(owner_of_peon, 'hwtw', x-450, y+640, bj_UNIT_FACING) // Юнит "Улучшения"
     call SetUnitPosition(peon, x, y-250) // Peon's position
@@ -3638,8 +3660,229 @@ endfunction
 = Файл создал:       Nokladr                =
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     02.11.2020 16:27       =
+=============================================
+
+Структуры данных.
+
+*/
+
+scope UDBLib
+    globals
+        UnitDB udb
+        private UnitStruct array usarr[128]
+        private integer usarrcounter = 1
+    endglobals
+
+    struct UnitStruct
+        private integer gold
+        private integer lumber
+        private real gold_raw
+        private real lumber_raw
+
+        static method create takes integer unitTypeId, integer gold, integer lumber, integer parentUnitTypeId returns UnitStruct
+            local UnitStruct us = UnitStruct.allocate()
+            set us.gold_raw = gold * 0.8
+            set us.lumber_raw = lumber * 0.8
+            if (usarr[table[parentUnitTypeId]] != null) then
+                set us.gold = R2I(us.gold_raw + usarr[table[parentUnitTypeId]].GetGoldRaw())
+                set us.lumber = R2I(us.lumber_raw + usarr[table[parentUnitTypeId]].GetLumberRaw())
+            else
+                set us.gold = IMaxBJ(R2I(gold * 0.8), 1)
+                set us.lumber = IMaxBJ(R2I(lumber * 0.8), 1)
+            endif
+            set table[unitTypeId] = usarrcounter
+            set usarr[usarrcounter] = us
+            set usarrcounter = usarrcounter + 1
+            return us
+        endmethod
+
+        method GetGold takes nothing returns integer
+            return gold
+        endmethod
+        
+        method GetLumber takes nothing returns integer
+            return lumber
+        endmethod
+
+        method GetGoldRaw takes nothing returns real
+            return gold_raw
+        endmethod
+
+        method GetLumberRaw takes nothing returns real
+            return lumber_raw
+        endmethod
+
+    endstruct
+
+    struct UnitDB
+        method operator [] takes unit u returns UnitStruct
+            return usarr[table[GetUnitTypeId(u)]]
+        endmethod
+    endstruct
+
+endscope
+
+function building_selling_conditions takes nothing returns boolean
+    return (GetSpellAbilityId() == 'A002') // Способность "Продать"
+endfunction
+
+function building_selling_actions takes nothing returns nothing
+    local unit u = GetSpellAbilityUnit()
+    local player p = GetTriggerPlayer()
+    call GroupRemoveUnit(udg_buildings, u)
+    set udg_sold_gold = udb[u].GetGold()
+    set udg_sold_wood = udb[u].GetLumber()
+
+    call AddGoldToPlayer(udg_sold_gold, p)
+    call AddLumberToPlayer(udg_sold_wood, p)
+
+    call CreateTextTagLocBJ( ( "|cFFFFCD00+" + I2S(udg_sold_gold) ), GetUnitLoc(GetSpellAbilityUnit()), 0, 11.00, 100, 100, 100, 0 )
+    call ShowTextTagForceBJ( false, GetLastCreatedTextTag(), GetPlayersAll() )
+    call ShowTextTagForceBJ( true, GetLastCreatedTextTag(), GetForceOfPlayer(GetOwningPlayer(GetSpellAbilityUnit())) )
+    call SetTextTagPermanentBJ( GetLastCreatedTextTag(), false )
+    call SetTextTagLifespanBJ( GetLastCreatedTextTag(), 2.00 )
+    call SetTextTagFadepointBJ( GetLastCreatedTextTag(), 1.30 )
+    call SetTextTagVelocityBJ( GetLastCreatedTextTag(), 48.00, 90 )
+
+    call CreateTextTagLocBJ( ( "|cFFB23AEE+" + I2S(udg_sold_wood) ), GetUnitLoc(GetSpellAbilityUnit()), 48.00, 11.00, 100, 100, 100, 0 )
+    call ShowTextTagForceBJ( false, GetLastCreatedTextTag(), GetPlayersAll() )
+    call ShowTextTagForceBJ( true, GetLastCreatedTextTag(), GetForceOfPlayer(GetOwningPlayer(GetSpellAbilityUnit())) )
+    call SetTextTagPermanentBJ( GetLastCreatedTextTag(), false )
+    call SetTextTagLifespanBJ( GetLastCreatedTextTag(), 2.00 )
+    call SetTextTagFadepointBJ( GetLastCreatedTextTag(), 1.30 )
+    call SetTextTagVelocityBJ( GetLastCreatedTextTag(), 48.00, 90 )
+
+    call RemoveUnit(u)
+    set udg_sold_gold = 0
+    set udg_sold_wood = 0
+    call AddSpecialEffectLocBJ( GetUnitLoc(u), "Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl" )
+    call DestroyEffectBJ( GetLastCreatedEffectBJ() )
+
+    set u = null
+    set p = null
+endfunction
+
+//===========================================================================
+function building_selling takes nothing returns nothing
+    local trigger t = CreateTrigger()
+
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+    call TriggerAddCondition(t, Condition(function building_selling_conditions))
+    call TriggerAddAction(t, function building_selling_actions)
+
+    set udb = UnitDB.create()
+
+    // ---------------------------------Альянс---------------------------------
+    call UnitStruct.create('h002', 97, 1, 0)        // Пехотинец
+    call UnitStruct.create('h004', 56, 1, 'h002')   // Мечник
+    call UnitStruct.create('h005', 146, 1, 'h004')  // Гвардеец
+
+    call UnitStruct.create('h003', 144, 1, 0)       // Стрелок
+    call UnitStruct.create('h007', 60, 1, 'h003')   // Снайпер
+    call UnitStruct.create('h008', 203, 2, 'h007')  // Элитная лучница
+
+    call UnitStruct.create('h009', 174, 1, 0)       // Ученик
+    call UnitStruct.create('h00A', 82, 0, 'h009')   // Целитель
+    call UnitStruct.create('h00B', 72, 1, 'h00A')   // Высший целитель
+
+    call UnitStruct.create('h00C', 225, 4, 0)       // Рыцарь
+    call UnitStruct.create('h00E', 170, 6, 'h00C')  // Элитный рыцарь
+    call UnitStruct.create('h00F', 185, 7, 'h00E')  // Генерал
+
+    call UnitStruct.create('h00J', 178, 2, 0)       // Волшебница
+    call UnitStruct.create('h00L', 60, 1, 'h00J')   // Магистр магии
+    call UnitStruct.create('h00N', 273, 8, 'h00L')  // Архимаг
+
+    call UnitStruct.create('h00P', 238, 3, 0)       // Наёмник
+    call UnitStruct.create('h00Q', 188, 4, 'h00P')  // Убийца
+    call UnitStruct.create('h00R', 146, 5, 'h00Q')  // Ассасин
+
+    call UnitStruct.create('h00U', 172, 5, 0)       // Вертолёт
+    call UnitStruct.create('h00V', 58, 5, 'h00U')   // Укреплённый вертолёт
+    call UnitStruct.create('h00W', 762, 5, 'h00V')  // Штурмовой вертолёт
+
+    call UnitStruct.create('h012', 168, 6, 0)       // Паровая машина
+    call UnitStruct.create('h013', 335, 6, 'h012')  // Мортира
+    call UnitStruct.create('h014', 707, 8, 'h013')  // Паровой танк
+
+    // ---------------------------------Нежить---------------------------------
+
+    call UnitStruct.create('h016', 217, 2, 0)       // Скелет
+    call UnitStruct.create('h017', 369, 4, 0)       // Скелет-лучник
+    call UnitStruct.create('h018', 341, 3, 0)       // Чумной зомби
+    call UnitStruct.create('h019', 977, 24, 0)      // Некромант
+    call UnitStruct.create('h01A', 555, 13, 0)      // Вурдалак
+    call UnitStruct.create('h01B', 479, 11, 0)      // Слуга неруба
+    call UnitStruct.create('h01C', 681, 18, 0)      // Мясник
+    call UnitStruct.create('h01D', 447, 10, 0)      // Банши
+    call UnitStruct.create('h01E', 1038, 11, 0)     // Рыцарь смерти
+    call UnitStruct.create('h01F', 1351, 15, 0)     // Ледяной змей
+
+    // ------------------------------Ночные эльфы------------------------------
+
+    call UnitStruct.create('h01H', 361, 4, 0)       // Охотница
+    call UnitStruct.create('h01I', 405, 4, 0)       // Лучница
+    call UnitStruct.create('h01J', 377, 4, 0)       // Дух
+    call UnitStruct.create('h01K', 551, 19, 0)      // Друид-ворон
+    call UnitStruct.create('h01L', 698, 24, 0)      // Дриада
+    call UnitStruct.create('h01M', 512, 18, 0)      // Лесной дракончик
+    call UnitStruct.create('h01N', 505, 17, 0)      // Друид-медведь
+    call UnitStruct.create('h01P', 817, 28, 0)      // Баллиста
+    call UnitStruct.create('h01Q', 888, 22, 0)      // Горный великан
+    call UnitStruct.create('h01R', 1160, 29, 0)     // Химера
+
+    // ----------------------------------Орда----------------------------------
+
+    call UnitStruct.create('h01S', 375, 3, 0)       // Бугай
+    call UnitStruct.create('h01T', 429, 4, 0)       // Охотник за головами
+    call UnitStruct.create('h01V', 401, 4, 0)       // Кодой
+    call UnitStruct.create('h01W', 752, 16, 0)      // Колдун
+    call UnitStruct.create('h01X', 547, 11, 0)      // Рейдер
+    call UnitStruct.create('h01Y', 773, 16, 0)      // Берсерк
+    call UnitStruct.create('h01Z', 668, 14, 0)      // Виверна
+    call UnitStruct.create('h020', 705, 15, 0)      // Шаман
+    call UnitStruct.create('h021', 1232, 12, 0)     // Минотавр
+    call UnitStruct.create('h022', 1950, 19, 0)     // Чёрный дракон
+
+    // ----------------------------------Наги----------------------------------
+
+    call UnitStruct.create('h026', 290, 1, 0)       // Нага воин
+    call UnitStruct.create('h027', 439, 2, 0)       // Морской дракон
+    call UnitStruct.create('h028', 284, 3, 0)       // Дух моря
+    call UnitStruct.create('h02A', 611, 15, 0)      // Нага-сирена
+    call UnitStruct.create('h02B', 537, 13, 0)      // Нага-гвардеец
+    call UnitStruct.create('h02C', 502, 12, 0)      // Великая черепаха
+    call UnitStruct.create('h02D', 1005, 24, 0)     // Коатль
+    call UnitStruct.create('h02E', 681, 17, 0)      // Заклинательница
+    call UnitStruct.create('h02F', 929, 10, 0)      // Морское чудовище
+    call UnitStruct.create('h02G', 1686, 18, 0)     // Высшая гидра
+
+    set t = null
+endfunction
+function DebugInit takes nothing returns nothing
+    static if DEBUG_MODE then
+        
+    endif
+endfunction
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     01.11.2020 18:28       =
-= Дата изменения:    02.12.2020 21:50       =
 =============================================
 
 Главный и входной интерфейс карты.
@@ -3710,6 +3953,7 @@ scope Main initializer MainInit
 
         // Инициализируем хэш-таблицу
         set hash = HashTable.create()
+        set table = Table.create()
 
         // Заполнение массива incSpellrc равкодами инкам способностей
         set incSpellrc[1] = 'R00F'
@@ -3828,6 +4072,12 @@ scope Main initializer MainInit
 
         // builder select Trigger
         call builder_select()
+
+        // building selling Trigger
+        call building_selling()
+
+        // For debug purposes
+        call DebugInit()
 
         call Log("post_map_init finished!")
         
@@ -4160,7 +4410,6 @@ globals
     trigger                 gg_trg_faq                 = null
     trigger                 gg_trg_faq_death           = null
     trigger                 gg_trg_building_ini        = null
-    trigger                 gg_trg_building_selling    = null
     trigger                 gg_trg_building_inf        = null
     trigger                 gg_trg_builder_left        = null
     trigger                 gg_trg_mediv_select        = null
@@ -11117,837 +11366,6 @@ function InitTrig_building_ini takes nothing returns nothing
 endfunction
 
 //===========================================================================
-// Trigger: building selling
-//===========================================================================
-function Trig_building_selling_Conditions takes nothing returns boolean
-    if ( not ( GetSpellAbilityId() == 'A002' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func002C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h002' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func003C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h004' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func004C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h005' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func005C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h003' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func006C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h007' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func007C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h008' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func008C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h009' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func009C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00A' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func010C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00B' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func011C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00C' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func012C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00E' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func013C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00F' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func014C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00J' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func015C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00L' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func016C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00N' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func017C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00P' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func018C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00Q' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func019C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00R' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func020C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00U' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func021C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00V' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func022C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h00W' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func023C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h012' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func024C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h013' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func025C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h014' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func026C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h016' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func027C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h017' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func028C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h018' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func029C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h019' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func030C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01A' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func031C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01B' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func032C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01C' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func033C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01D' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func034C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01E' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func035C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01F' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func036C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01H' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func037C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01I' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func038C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01J' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func039C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01K' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func040C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01L' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func041C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01M' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func042C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01N' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func043C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01P' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func044C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01Q' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func045C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01R' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func046C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01S' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func047C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01T' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func048C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01V' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func049C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01W' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func050C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01X' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func051C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01Y' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func052C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h01Z' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func053C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h020' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func054C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h021' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func055C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h022' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func056C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h026' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func057C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h027' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func058C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h028' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func059C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h02A' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func060C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h02B' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func061C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h02C' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func062C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h02D' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func063C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h02E' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func064C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h02F' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func065C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetSpellAbilityUnit()) == 'h02G' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func068C takes nothing returns boolean
-    if ( not ( udg_sold_gold > 0 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Func069C takes nothing returns boolean
-    if ( not ( udg_sold_wood > 0 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_selling_Actions takes nothing returns nothing
-    call GroupRemoveUnitSimple( GetSpellAbilityUnit(), udg_buildings )
-    if ( Trig_building_selling_Func002C() ) then
-        set udg_sold_wood = 1
-        set udg_sold_gold = 75
-    else
-    endif
-    if ( Trig_building_selling_Func003C() ) then
-        set udg_sold_wood = 1
-        set udg_sold_gold = 128
-    else
-    endif
-    if ( Trig_building_selling_Func004C() ) then
-        set udg_sold_wood = 2
-        set udg_sold_gold = 243
-    else
-    endif
-    if ( Trig_building_selling_Func005C() ) then
-        set udg_sold_gold = 113
-        set udg_sold_wood = 1
-    else
-    endif
-    if ( Trig_building_selling_Func006C() ) then
-        set udg_sold_gold = 170
-        set udg_sold_wood = 1
-    else
-    endif
-    if ( Trig_building_selling_Func007C() ) then
-        set udg_sold_gold = 338
-        set udg_sold_wood = 3
-    else
-    endif
-    if ( Trig_building_selling_Func008C() ) then
-        set udg_sold_gold = 145
-        set udg_sold_wood = 1
-    else
-    endif
-    if ( Trig_building_selling_Func009C() ) then
-        set udg_sold_gold = 210
-        set udg_sold_wood = 1
-    else
-    endif
-    if ( Trig_building_selling_Func010C() ) then
-        set udg_sold_gold = 266
-        set udg_sold_wood = 2
-    else
-    endif
-    if ( Trig_building_selling_Func011C() ) then
-        set udg_sold_gold = 172
-        set udg_sold_wood = 3
-    else
-    endif
-    if ( Trig_building_selling_Func012C() ) then
-        set udg_sold_gold = 316
-        set udg_sold_wood = 8
-    else
-    endif
-    if ( Trig_building_selling_Func013C() ) then
-        set udg_sold_gold = 471
-        set udg_sold_wood = 13
-    else
-    endif
-    if ( Trig_building_selling_Func014C() ) then
-        set udg_sold_gold = 148
-        set udg_sold_wood = 1
-    else
-    endif
-    if ( Trig_building_selling_Func015C() ) then
-        set udg_sold_gold = 195
-        set udg_sold_wood = 2
-    else
-    endif
-    if ( Trig_building_selling_Func016C() ) then
-        set udg_sold_gold = 413
-        set udg_sold_wood = 8
-    else
-    endif
-    if ( Trig_building_selling_Func017C() ) then
-        set udg_sold_gold = 194
-        set udg_sold_wood = 2
-    else
-    endif
-    if ( Trig_building_selling_Func018C() ) then
-        set udg_sold_gold = 348
-        set udg_sold_wood = 5
-    else
-    endif
-    if ( Trig_building_selling_Func019C() ) then
-        set udg_sold_gold = 465
-        set udg_sold_wood = 9
-    else
-    endif
-    if ( Trig_building_selling_Func020C() ) then
-        set udg_sold_gold = 138
-        set udg_sold_wood = 4
-    else
-    endif
-    if ( Trig_building_selling_Func021C() ) then
-        set udg_sold_gold = 185
-        set udg_sold_wood = 8
-    else
-    endif
-    if ( Trig_building_selling_Func022C() ) then
-        set udg_sold_gold = 795
-        set udg_sold_wood = 12
-    else
-    endif
-    if ( Trig_building_selling_Func023C() ) then
-        set udg_sold_gold = 123
-        set udg_sold_wood = 4
-    else
-    endif
-    if ( Trig_building_selling_Func024C() ) then
-        set udg_sold_gold = 409
-        set udg_sold_wood = 9
-    else
-    endif
-    if ( Trig_building_selling_Func025C() ) then
-        set udg_sold_gold = 973
-        set udg_sold_wood = 14
-    else
-    endif
-    if ( Trig_building_selling_Func026C() ) then
-        set udg_sold_gold = 179
-        set udg_sold_wood = 1
-    else
-    endif
-    if ( Trig_building_selling_Func027C() ) then
-        set udg_sold_gold = 297
-        set udg_sold_wood = 3
-    else
-    endif
-    if ( Trig_building_selling_Func028C() ) then
-        set udg_sold_gold = 276
-        set udg_sold_wood = 2
-    else
-    endif
-    if ( Trig_building_selling_Func029C() ) then
-        set udg_sold_gold = 783
-        set udg_sold_wood = 19
-    else
-    endif
-    if ( Trig_building_selling_Func030C() ) then
-        set udg_sold_gold = 448
-        set udg_sold_wood = 10
-    else
-    endif
-    if ( Trig_building_selling_Func031C() ) then
-        set udg_sold_gold = 391
-        set udg_sold_wood = 8
-    else
-    endif
-    if ( Trig_building_selling_Func032C() ) then
-        set udg_sold_gold = 548
-        set udg_sold_wood = 14
-    else
-    endif
-    if ( Trig_building_selling_Func033C() ) then
-        set udg_sold_gold = 357
-        set udg_sold_wood = 8
-    else
-    endif
-    if ( Trig_building_selling_Func034C() ) then
-        set udg_sold_gold = 838
-        set udg_sold_wood = 8
-    else
-    endif
-    if ( Trig_building_selling_Func035C() ) then
-        set udg_sold_gold = 1080
-        set udg_sold_wood = 12
-    else
-    endif
-    if ( Trig_building_selling_Func036C() ) then
-        set udg_sold_gold = 280
-        set udg_sold_wood = 3
-    else
-    endif
-    if ( Trig_building_selling_Func037C() ) then
-        set udg_sold_gold = 326
-        set udg_sold_wood = 3
-    else
-    endif
-    if ( Trig_building_selling_Func038C() ) then
-        set udg_sold_gold = 303
-        set udg_sold_wood = 3
-    else
-    endif
-    if ( Trig_building_selling_Func039C() ) then
-        set udg_sold_gold = 442
-        set udg_sold_wood = 15
-    else
-    endif
-    if ( Trig_building_selling_Func040C() ) then
-        set udg_sold_gold = 560
-        set udg_sold_wood = 19
-    else
-    endif
-    if ( Trig_building_selling_Func041C() ) then
-        set udg_sold_gold = 413
-        set udg_sold_wood = 14
-    else
-    endif
-    if ( Trig_building_selling_Func042C() ) then
-        set udg_sold_gold = 410
-        set udg_sold_wood = 13
-    else
-    endif
-    if ( Trig_building_selling_Func043C() ) then
-        set udg_sold_gold = 657
-        set udg_sold_wood = 22
-    else
-    endif
-    if ( Trig_building_selling_Func044C() ) then
-        set udg_sold_gold = 716
-        set udg_sold_wood = 17
-    else
-    endif
-    if ( Trig_building_selling_Func045C() ) then
-        set udg_sold_gold = 930
-        set udg_sold_wood = 23
-    else
-    endif
-    if ( Trig_building_selling_Func046C() ) then
-        set udg_sold_gold = 304
-        set udg_sold_wood = 2
-    else
-    endif
-    if ( Trig_building_selling_Func047C() ) then
-        set udg_sold_gold = 345
-        set udg_sold_wood = 3
-    else
-    endif
-    if ( Trig_building_selling_Func048C() ) then
-        set udg_sold_gold = 322
-        set udg_sold_wood = 3
-    else
-    endif
-    if ( Trig_building_selling_Func049C() ) then
-        set udg_sold_gold = 601
-        set udg_sold_wood = 13
-    else
-    endif
-    if ( Trig_building_selling_Func050C() ) then
-        set udg_sold_gold = 437
-        set udg_sold_wood = 9
-    else
-    endif
-    if ( Trig_building_selling_Func051C() ) then
-        set udg_sold_gold = 618
-        set udg_sold_wood = 13
-    else
-    endif
-    if ( Trig_building_selling_Func052C() ) then
-        set udg_sold_gold = 550
-        set udg_sold_wood = 11
-    else
-    endif
-    if ( Trig_building_selling_Func053C() ) then
-        set udg_sold_gold = 564
-        set udg_sold_wood = 12
-    else
-    endif
-    if ( Trig_building_selling_Func054C() ) then
-        set udg_sold_gold = 991
-        set udg_sold_wood = 9
-    else
-    endif
-    if ( Trig_building_selling_Func055C() ) then
-        set udg_sold_gold = 1562
-        set udg_sold_wood = 15
-    else
-    endif
-    if ( Trig_building_selling_Func056C() ) then
-        set udg_sold_gold = 240
-    else
-    endif
-    if ( Trig_building_selling_Func057C() ) then
-        set udg_sold_gold = 357
-        set udg_sold_wood = 1
-    else
-    endif
-    if ( Trig_building_selling_Func058C() ) then
-        set udg_sold_gold = 231
-        set udg_sold_wood = 2
-    else
-    endif
-    if ( Trig_building_selling_Func059C() ) then
-        set udg_sold_gold = 488
-        set udg_sold_wood = 12
-    else
-    endif
-    if ( Trig_building_selling_Func060C() ) then
-        set udg_sold_gold = 433
-        set udg_sold_wood = 10
-    else
-    endif
-    if ( Trig_building_selling_Func061C() ) then
-        set udg_sold_gold = 397
-        set udg_sold_wood = 10
-    else
-    endif
-    if ( Trig_building_selling_Func062C() ) then
-        set udg_sold_gold = 806
-        set udg_sold_wood = 19
-    else
-    endif
-    if ( Trig_building_selling_Func063C() ) then
-        set udg_sold_gold = 550
-        set udg_sold_wood = 13
-    else
-    endif
-    if ( Trig_building_selling_Func064C() ) then
-        set udg_sold_gold = 663
-        set udg_sold_wood = 8
-    else
-    endif
-    if ( Trig_building_selling_Func065C() ) then
-        set udg_sold_gold = 1352
-        set udg_sold_wood = 14
-    else
-    endif
-    call AdjustPlayerStateBJ( udg_sold_gold, GetOwningPlayer(GetSpellAbilityUnit()), PLAYER_STATE_RESOURCE_GOLD )
-    call AdjustPlayerStateBJ( udg_sold_wood, GetOwningPlayer(GetSpellAbilityUnit()), PLAYER_STATE_RESOURCE_LUMBER )
-    if ( Trig_building_selling_Func068C() ) then
-        call CreateTextTagLocBJ( ( "|cFFFFCD00+" + I2S(udg_sold_gold) ), GetUnitLoc(GetSpellAbilityUnit()), 0, 11.00, 100, 100, 100, 0 )
-        call ShowTextTagForceBJ( false, GetLastCreatedTextTag(), GetPlayersAll() )
-        call ShowTextTagForceBJ( true, GetLastCreatedTextTag(), GetForceOfPlayer(GetOwningPlayer(GetSpellAbilityUnit())) )
-        call SetTextTagPermanentBJ( GetLastCreatedTextTag(), false )
-        call SetTextTagLifespanBJ( GetLastCreatedTextTag(), 2.00 )
-        call SetTextTagFadepointBJ( GetLastCreatedTextTag(), 1.30 )
-        call SetTextTagVelocityBJ( GetLastCreatedTextTag(), 48.00, 90 )
-    else
-    endif
-    if ( Trig_building_selling_Func069C() ) then
-        call CreateTextTagLocBJ( ( "|cFFB23AEE+" + I2S(udg_sold_wood) ), GetUnitLoc(GetSpellAbilityUnit()), 48.00, 11.00, 100, 100, 100, 0 )
-        call ShowTextTagForceBJ( false, GetLastCreatedTextTag(), GetPlayersAll() )
-        call ShowTextTagForceBJ( true, GetLastCreatedTextTag(), GetForceOfPlayer(GetOwningPlayer(GetSpellAbilityUnit())) )
-        call SetTextTagPermanentBJ( GetLastCreatedTextTag(), false )
-        call SetTextTagLifespanBJ( GetLastCreatedTextTag(), 2.00 )
-        call SetTextTagFadepointBJ( GetLastCreatedTextTag(), 1.30 )
-        call SetTextTagVelocityBJ( GetLastCreatedTextTag(), 48.00, 90 )
-    else
-    endif
-    call GroupRemoveUnitSimple( GetSpellAbilityUnit(), udg_buildings )
-    call RemoveUnit( GetSpellAbilityUnit() )
-    set udg_sold_gold = 0
-    set udg_sold_wood = 0
-    call AddSpecialEffectLocBJ( GetUnitLoc(GetSpellAbilityUnit()), "Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl" )
-    call DestroyEffectBJ( GetLastCreatedEffectBJ() )
-endfunction
-
-//===========================================================================
-function InitTrig_building_selling takes nothing returns nothing
-    set gg_trg_building_selling = CreateTrigger(  )
-    call TriggerRegisterAnyUnitEventBJ( gg_trg_building_selling, EVENT_PLAYER_UNIT_SPELL_CAST )
-    call TriggerAddCondition( gg_trg_building_selling, Condition( function Trig_building_selling_Conditions ) )
-    call TriggerAddAction( gg_trg_building_selling, function Trig_building_selling_Actions )
-endfunction
-
-//===========================================================================
 // Trigger: building inf
 //===========================================================================
 function Trig_building_inf_Conditions takes nothing returns boolean
@@ -16326,7 +15744,6 @@ function InitCustomTriggers takes nothing returns nothing
     call InitTrig_faq(  )
     call InitTrig_faq_death(  )
     call InitTrig_building_ini(  )
-    call InitTrig_building_selling(  )
     call InitTrig_building_inf(  )
     call InitTrig_builder_left(  )
     call InitTrig_mediv_select(  )

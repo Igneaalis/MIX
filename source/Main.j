@@ -75,6 +75,7 @@ scope Main initializer MainInit
 
         // Инициализируем хэш-таблицу
         set hash = HashTable.create()
+        set table = Table.create()
 
         // Заполнение массива incSpellrc равкодами инкам способностей
         set incSpellrc[1] = 'R00F'
@@ -193,6 +194,12 @@ scope Main initializer MainInit
 
         // builder select Trigger
         call builder_select()
+
+        // building selling Trigger
+        call building_selling()
+
+        // For debug purposes
+        call DebugInit()
 
         call Log("post_map_init finished!")
         
