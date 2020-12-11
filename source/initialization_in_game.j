@@ -5,7 +5,6 @@
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     08.11.2020 19:46       =
-= Дата изменения:    03.12.2020 13:51       =
 =============================================
 
 initialization in game Trigger

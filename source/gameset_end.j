@@ -1,3 +1,18 @@
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     20.11.2020 21:40       =
+=============================================
+
+gameset end Trigger
+
+Starts main game loop
+
+*/
+
 function gameset_end takes nothing returns nothing
     call EnableTrigger(gg_trg_inc_colour)
     call DestroyTimerDialogBJ(GetLastCreatedTimerDialogBJ())

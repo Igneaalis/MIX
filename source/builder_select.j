@@ -1,3 +1,18 @@
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     11.12.2020 15:00       =
+=============================================
+
+builder select Trigger
+
+Реализация выбора расы
+
+*/
+
 globals
     integer array peonsId[12]
 endglobals
