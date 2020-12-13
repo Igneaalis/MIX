@@ -30,6 +30,7 @@ Get-Content -Path "./source/income/Income_upg.j" | Add-Content $OutputFile
 Get-Content -Path "./source/income/Income_upgA.j" | Add-Content $OutputFile
 Get-Content -Path "./source/income/Income_upgR.j" | Add-Content $OutputFile
 Get-Content -Path "./source/income/Income_upgTQ.j" | Add-Content $OutputFile
+Get-Content -Path "./source/income/inc_colour.j" | Add-Content $OutputFile
 Get-Content -Path "./source/builder_select.j" | Add-Content $OutputFile
 Get-Content -Path "./source/building_selling.j" | Add-Content $OutputFile
 Get-Content -Path "./source/debug.j" | Add-Content $OutputFile

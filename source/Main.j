@@ -50,8 +50,8 @@ scope Main initializer MainInit
             endif
 
             // Сообщение об обратной связи
-            set Feedback_RU = "Связаться со мной можно по электронной почте, буду рад ответить на любые вопросы: " + strEmail + "\n "
-            set Feedback_EN = "If you see an issue, please, leave the feedback/suggestions in the E-Mail: " + strEmail + "\n "
+            set Feedback_RU = "Связь со мной: " + strEmail + " и Discord: " + strDiscord + "\n "
+            set Feedback_EN = "My contacts: " + strEmail + " and Discord: " + strDiscord + "\n "
             if (Locale() == "RU") then
                 call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_RU)
             else
@@ -197,6 +197,9 @@ scope Main initializer MainInit
 
         // building selling Trigger
         call building_selling()
+        
+        // inc colour Trigger
+        call inc_colour()
 
         // For debug purposes
         call DebugInit()
