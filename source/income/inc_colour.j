@@ -1,3 +1,18 @@
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     13.12.2020 16:21       =
+=============================================
+
+inc_colour Trigger
+
+Income Objective OnDestroy()
+
+*/
+
 function inc_colour_actions takes nothing returns nothing
     local unit IncomeObjectiveUnit = GetDyingUnit() // IncomeObject
     local player IncomeObjectReceiever = GetOwningPlayer(GetKillingUnit()) // Who gets IncomeObject

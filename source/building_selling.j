@@ -105,9 +105,9 @@ function building_selling_actions takes nothing returns nothing
     call RemoveUnit(u)
     call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl", GetUnitX(u), GetUnitY(u)))
 
-    set tt = null
     set u = null
     set p = null
+    set tt = null
 endfunction
 
 //===========================================================================
