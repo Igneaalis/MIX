@@ -11,54 +11,10 @@
 
 */
 
-library NokladrLib
+library NokladrLib uses ColorsLib
     globals
-        constant string GOLD =      "|cffffcc00"
-        constant string WHITE =     "|cffffffff"
-        constant string RED =       "|cffff0202"    // Player(0)
-        constant string BLUE =      "|cff0041ff"    // Player(1)
-        constant string TEAL =      "|cff1be5b8"    // Player(2)
-        constant string PURPLE =    "|cff530080"    // Player(3)
-        constant string YELLOW =    "|cffffff00"    // Player(4)
-        constant string ORANGE =    "|cfffe890D"    // Player(5)
-        constant string GREEN =     "|cff1fbf00"    // Player(6)
-        constant string PINK =      "|cffe45aaa"    // Player(7)
-        constant string GRAY =      "|cff949596"    // Player(8)
-        constant string LB =        "|cff7dbef1"    // Player(9)
-        constant string DG =        "|cff0f6145"    // Player(10)
-        constant string BROWN =     "|cff4d2903"    // Player(11)
         integer array time[3] // time[0] - секунды, time[1] - минуты, time[2] - часы
     endglobals
-
-    // Возвращает цвет игрока взависимости от его ID.
-    function C_IntToColor takes integer i returns string
-        if i == 0 then
-            return RED
-        elseif i == 1 then
-            return BLUE
-        elseif i == 2 then
-            return TEAL
-        elseif i == 3 then
-            return PURPLE
-        elseif i == 4 then
-            return YELLOW
-        elseif i == 5 then
-            return ORANGE
-        elseif i == 6 then
-            return GREEN
-        elseif i == 7 then
-            return PINK
-        elseif i == 8 then
-            return GRAY
-        elseif i == 9 then
-            return LB
-        elseif i == 10 then
-            return DG
-        elseif i == 11 then
-            return BROWN
-        endif
-        return ""
-    endfunction
 
     // Отображает сообщение об ошибке
     function C_ErrorMsg takes string s returns nothing
