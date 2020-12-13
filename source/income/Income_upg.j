@@ -145,10 +145,10 @@ function Trig_income_upg_actions_contr_to_pl takes player p, integer count_resea
     call TimerStart(t, contr_to_pl_time, false, function Timer_contr_to_pl_actions)
 
     call DestroyForce(gr_p)
-    set mes = null
-    set rand_p = null
-    set t = null
     set gr_p = null
+    set rand_p = null
+    set mes = null
+    set t = null
 endfunction
 
 function Trig_income_upg_actions_goldmining takes player p, integer number_p, integer research_rc returns nothing

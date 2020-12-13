@@ -46,5 +46,7 @@ function faq_active_init takes nothing returns nothing
     call TriggerRegisterDialogEvent(t, faq_dialog)
     call TriggerAddAction(t, function faq_active)
     call TriggerAddCondition(t, Condition(function faq_active_condition))
+
+    set t = null
 endfunction
 

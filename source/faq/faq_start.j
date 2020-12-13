@@ -20,7 +20,7 @@ function faq_start_timer_actions takes nothing returns nothing
 endfunction
 
 function faq_start takes nothing returns nothing
-    debug set udg_gameset_time_first = 30.00
+    debug set udg_gameset_time_first = timeBeforeFirstWave
     call TimerStart(udg_gameset_timer, udg_gameset_time_first, false, function faq_start_timer_actions) // After settings were set
 
     set faq_timerdialog = CreateTimerDialog(udg_gameset_timer) // Timer dialog in upper-left corner for commands and settings

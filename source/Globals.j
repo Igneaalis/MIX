@@ -15,10 +15,13 @@ globals
     boolean IsDevInGame = false                                                                 // Условие: один из разработчиков в игре?
     Table table                                                                                 // Инициализация таблицы
     HashTable hash                                                                              // Инициализация хэш-таблицы
-    constant string strVersion = "0.0.1"                                                        // Версия карты, семантическое версионирование: (Major, Minor, Patch)
+    constant string strVersion = "0.0.2"                                                        // Версия карты, семантическое версионирование: (Major, Minor, Patch)
     constant string Version = "Test"                                                            // Тип версии {Test, Release}
     constant string strEmail = (LB + "Nostaleal.ru|r" + GOLD + "@|r" + LB + "yandex.ru|r")      // E-Mail адрес
-    constant string strBuild_Time = "8 November 2020"                                           // Время создания билда карты
+    constant string strDiscord = (LB + "! ! Nokladr|r" + GOLD + "#|r" + LB + "2205|r")          // Discord тэг
+    constant string strBuild_Time = "13 December 2020"                                          // Время создания билда карты
+
+    debug constant real timeBeforeFirstWave = 10.00                                             // Время перед началом первой волны
 
     leaderboard Leaderboard                                                                     // Таблица лидеров
 

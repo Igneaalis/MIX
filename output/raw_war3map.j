@@ -337,6 +337,217 @@ library BJObjectId // 1.0 http://www.hiveworkshop.com/threads/287128/
     endstruct
 
 endlibrary
+library ColorsLib
+
+    globals
+        constant string GOLD =      "|cffffcc00"
+        constant string WHITE =     "|cffffffff"
+
+        constant string RED =       "|cffff0202"    // Player(0)  Player(0x00)
+        constant string BLUE =      "|cff0041ff"    // Player(1)  Player(0x01)
+        constant string TEAL =      "|cff1be5b8"    // Player(2)  Player(0x02)
+        constant string PURPLE =    "|cff530080"    // Player(3)  Player(0x03)
+        constant string YELLOW =    "|cffffff00"    // Player(4)  Player(0x04)
+        constant string ORANGE =    "|cfffe890D"    // Player(5)  Player(0x05)
+        constant string GREEN =     "|cff1fbf00"    // Player(6)  Player(0x06)
+        constant string PINK =      "|cffe45aaa"    // Player(7)  Player(0x07)
+        constant string GRAY =      "|cff949596"    // Player(8)  Player(0x08)
+        constant string LB =        "|cff7dbef1"    // Player(9)  Player(0x09)
+        constant string DG =        "|cff0f6145"    // Player(10) Player(0x0A)
+        constant string BROWN =     "|cff4d2903"    // Player(11) Player(0x0B)
+
+        constant string MAROON =    "|cff9c0000"    // Player(12) Player(0x0C)
+        constant string NAVY =      "|cff0000c3"    // Player(13) Player(0x0D)
+        constant string TURQUOISE = "|cff00ebff"    // Player(14) Player(0x0E)
+        constant string VIOLET =    "|cffbd00ff"    // Player(15) Player(0x0F)
+        constant string WHEAT =     "|cffecce87"    // Player(16) Player(0x10)
+        constant string PEACH =     "|cfff7a58b"    // Player(17) Player(0x11)
+        constant string MINT =      "|cffbfff81"    // Player(18) Player(0x12)
+        constant string LAVENDER =  "|cffdbb8eb"    // Player(19) Player(0x13)
+        constant string COAL =      "|cff4f5055"    // Player(20) Player(0x14)
+        constant string SNOW =      "|cffecf0ff"    // Player(21) Player(0x15)
+        constant string EMERALD =   "|cff00781e"    // Player(22) Player(0x16)
+        constant string PEANUT =    "|cffa56f34"    // Player(23) Player(0x17)
+        constant string BLACK =     "|cff2e2d2e"    // Player(24) Player(0x18)
+    endglobals
+
+    // Возвращает цвет игрока взависимости от его ID.
+    function C_IntToColor takes integer i returns string
+        if i == 0 then
+            return RED
+        elseif i == 1 then
+            return BLUE
+        elseif i == 2 then
+            return TEAL
+        elseif i == 3 then
+            return PURPLE
+        elseif i == 4 then
+            return YELLOW
+        elseif i == 5 then
+            return ORANGE
+        elseif i == 6 then
+            return GREEN
+        elseif i == 7 then
+            return PINK
+        elseif i == 8 then
+            return GRAY
+        elseif i == 9 then
+            return LB
+        elseif i == 10 then
+            return DG
+        elseif i == 11 then
+            return BROWN
+        elseif i == 12 then
+            return MAROON
+        elseif i == 13 then
+            return NAVY
+        elseif i == 14 then
+            return TURQUOISE
+        elseif i == 15 then
+            return VIOLET
+        elseif i == 16 then
+            return WHEAT
+        elseif i == 17 then
+            return PEACH
+        elseif i == 18 then
+            return MINT
+        elseif i == 19 then
+            return LAVENDER
+        elseif i == 20 then
+            return COAL
+        elseif i == 21 then
+            return SNOW
+        elseif i == 22 then
+            return EMERALD
+        elseif i == 23 then
+            return PEANUT
+        elseif i == 24 then
+            return BLACK
+        else
+            return WHITE
+        endif
+    endfunction
+
+    struct Color
+        integer red
+        integer blue
+        integer green
+
+        // Takes player and returns Color struct with red, green, blue integer fields in 0-255 range
+        static method create takes player p returns Color
+            local Color color = Color.allocate()
+            local integer i = GetPlayerId(p)
+
+            if i == 0 then
+                set color.red = 0xff
+                set color.green = 0x02
+                set color.blue = 0x02
+            elseif i == 1 then
+                set color.red = 0x00
+                set color.green = 0xff
+                set color.blue = 0x41
+            elseif i == 2 then
+                set color.red = 0x1b
+                set color.green = 0xe5
+                set color.blue = 0xb8
+            elseif i == 3 then
+                set color.red = 0x53
+                set color.green = 0x00
+                set color.blue = 0x80
+            elseif i == 4 then
+                set color.red = 0xff
+                set color.green = 0xff
+                set color.blue = 0x00
+            elseif i == 5 then
+                set color.red = 0xfe
+                set color.green = 0x89
+                set color.blue = 0x0d
+            elseif i == 6 then
+                set color.red = 0x1f
+                set color.green = 0xbf
+                set color.blue = 0x00
+            elseif i == 7 then
+                set color.red = 0xe4
+                set color.green = 0x5a
+                set color.blue = 0xaa
+            elseif i == 8 then
+                set color.red = 0x94
+                set color.green = 0x95
+                set color.blue = 0x96
+            elseif i == 9 then
+                set color.red = 0x7d
+                set color.green = 0xbe
+                set color.blue = 0xf1
+            elseif i == 10 then
+                set color.red = 0x0f
+                set color.green = 0x61
+                set color.blue = 0x45
+            elseif i == 11 then
+                set color.red = 0x4d
+                set color.green = 0x29
+                set color.blue = 0x03
+            elseif i == 12 then
+                set color.red = 0x9c
+                set color.green = 0x00
+                set color.blue = 0x00
+            elseif i == 13 then
+                set color.red = 0x00
+                set color.green = 0x00
+                set color.blue = 0xc3
+            elseif i == 14 then
+                set color.red = 0x00
+                set color.green = 0xeb
+                set color.blue = 0xff
+            elseif i == 15 then
+                set color.red = 0xbd
+                set color.green = 0x00
+                set color.blue = 0xff
+            elseif i == 16 then
+                set color.red = 0xec
+                set color.green = 0xce
+                set color.blue = 0x87
+            elseif i == 17 then
+                set color.red = 0xf7
+                set color.green = 0xa5
+                set color.blue = 0x8b
+            elseif i == 18 then
+                set color.red = 0xbf
+                set color.green = 0xff
+                set color.blue = 0x81
+            elseif i == 19 then
+                set color.red = 0xdb
+                set color.green = 0xb8
+                set color.blue = 0xeb
+            elseif i == 20 then
+                set color.red = 0x4f
+                set color.green = 0x50
+                set color.blue = 0x55
+            elseif i == 21 then
+                set color.red = 0xec
+                set color.green = 0xf0
+                set color.blue = 0xff
+            elseif i == 22 then
+                set color.red = 0x00
+                set color.green = 0x78
+                set color.blue = 0x1e
+            elseif i == 23 then
+                set color.red = 0xa5
+                set color.green = 0x6f
+                set color.blue = 0x34
+            elseif i == 24 then
+                set color.red = 0x2e
+                set color.green = 0x2d
+                set color.blue = 0x2e
+            else
+                set color.red = 0xff
+                set color.green = 0xff
+                set color.blue = 0xff
+            endif
+            return color
+        endmethod
+    endstruct
+
+endlibrary
 /*****************************************************************************
 *
 *    RegisterNativeEvent v1.1.1.5 https://www.hiveworkshop.com/threads/250266/
@@ -1778,54 +1989,10 @@ endlibrary
 
 */
 
-library NokladrLib
+library NokladrLib uses ColorsLib
     globals
-        constant string GOLD =      "|cffffcc00"
-        constant string WHITE =     "|cffffffff"
-        constant string RED =       "|cffff0202"    // Player(0)
-        constant string BLUE =      "|cff0041ff"    // Player(1)
-        constant string TEAL =      "|cff1be5b8"    // Player(2)
-        constant string PURPLE =    "|cff530080"    // Player(3)
-        constant string YELLOW =    "|cffffff00"    // Player(4)
-        constant string ORANGE =    "|cfffe890D"    // Player(5)
-        constant string GREEN =     "|cff1fbf00"    // Player(6)
-        constant string PINK =      "|cffe45aaa"    // Player(7)
-        constant string GRAY =      "|cff949596"    // Player(8)
-        constant string LB =        "|cff7dbef1"    // Player(9)
-        constant string DG =        "|cff0f6145"    // Player(10)
-        constant string BROWN =     "|cff4d2903"    // Player(11)
         integer array time[3] // time[0] - секунды, time[1] - минуты, time[2] - часы
     endglobals
-
-    // Возвращает цвет игрока взависимости от его ID.
-    function C_IntToColor takes integer i returns string
-        if i == 0 then
-            return RED
-        elseif i == 1 then
-            return BLUE
-        elseif i == 2 then
-            return TEAL
-        elseif i == 3 then
-            return PURPLE
-        elseif i == 4 then
-            return YELLOW
-        elseif i == 5 then
-            return ORANGE
-        elseif i == 6 then
-            return GREEN
-        elseif i == 7 then
-            return PINK
-        elseif i == 8 then
-            return GRAY
-        elseif i == 9 then
-            return LB
-        elseif i == 10 then
-            return DG
-        elseif i == 11 then
-            return BROWN
-        endif
-        return ""
-    endfunction
 
     // Отображает сообщение об ошибке
     function C_ErrorMsg takes string s returns nothing
@@ -2087,10 +2254,13 @@ globals
     boolean IsDevInGame = false                                                                 // Условие: один из разработчиков в игре?
     Table table                                                                                 // Инициализация таблицы
     HashTable hash                                                                              // Инициализация хэш-таблицы
-    constant string strVersion = "0.0.1"                                                        // Версия карты, семантическое версионирование: (Major, Minor, Patch)
+    constant string strVersion = "0.0.2"                                                        // Версия карты, семантическое версионирование: (Major, Minor, Patch)
     constant string Version = "Test"                                                            // Тип версии {Test, Release}
     constant string strEmail = (LB + "Nostaleal.ru|r" + GOLD + "@|r" + LB + "yandex.ru|r")      // E-Mail адрес
-    constant string strBuild_Time = "8 November 2020"                                           // Время создания билда карты
+    constant string strDiscord = (LB + "! ! Nokladr|r" + GOLD + "#|r" + LB + "2205|r")          // Discord тэг
+    constant string strBuild_Time = "13 December 2020"                                          // Время создания билда карты
+
+    debug constant real timeBeforeFirstWave = 10.00                                             // Время перед началом первой волны
 
     leaderboard Leaderboard                                                                     // Таблица лидеров
 
@@ -2504,7 +2674,7 @@ function faq_start_timer_actions takes nothing returns nothing
 endfunction
 
 function faq_start takes nothing returns nothing
-    debug set udg_gameset_time_first = 30.00
+    debug set udg_gameset_time_first = timeBeforeFirstWave
     call TimerStart(udg_gameset_timer, udg_gameset_time_first, false, function faq_start_timer_actions) // After settings were set
 
     set faq_timerdialog = CreateTimerDialog(udg_gameset_timer) // Timer dialog in upper-left corner for commands and settings
@@ -2656,6 +2826,8 @@ function faq_active_init takes nothing returns nothing
     call TriggerRegisterDialogEvent(t, faq_dialog)
     call TriggerAddAction(t, function faq_active)
     call TriggerAddCondition(t, Condition(function faq_active_condition))
+
+    set t = null
 endfunction
 
 /*
@@ -2954,10 +3126,10 @@ function Trig_income_upg_actions_contr_to_pl takes player p, integer count_resea
     call TimerStart(t, contr_to_pl_time, false, function Timer_contr_to_pl_actions)
 
     call DestroyForce(gr_p)
-    set mes = null
-    set rand_p = null
-    set t = null
     set gr_p = null
+    set rand_p = null
+    set mes = null
+    set t = null
 endfunction
 
 function Trig_income_upg_actions_goldmining takes player p, integer number_p, integer research_rc returns nothing
@@ -3532,6 +3704,69 @@ function InitTrig_income_upgTQ takes nothing returns nothing
 
     set t = null
 endfunction
+function inc_colour_actions takes nothing returns nothing
+    local unit IncomeObjectiveUnit = GetDyingUnit() // IncomeObject
+    local player IncomeObjectReceiever = GetOwningPlayer(GetKillingUnit()) // Who gets IncomeObject
+    local unit IncomeObjectiveNewUnit // Replace IncomeObject
+    local player IncomeObjectOwner = GetOwningPlayer(IncomeObjectiveUnit) // Who loses IncomeObject
+    local boolean IsHugeGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == 'n003')
+    local boolean IsSmallGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == 'n004')
+    local boolean IsFlag = (GetUnitTypeId(IncomeObjectiveUnit) == 'n005')
+    local boolean IsOwnerTheReceiver = (IncomeObjectOwner == IncomeObjectReceiever)
+    local real IncomeObjectiveUnitX = GetUnitX(IncomeObjectiveUnit)
+    local real IncomeObjectiveUnitY = GetUnitY(IncomeObjectiveUnit)
+    local Color playerColor = Color.create(IncomeObjectReceiever) // Color Struct from NokladrLib.j
+
+    if not (IsHugeGoldMine or IsSmallGoldMine or IsFlag) then
+        return // No actions
+    endif
+
+    call RemoveUnit(IncomeObjectiveUnit) // Remove old IncomeObject to replace it with a new one
+    set IncomeObjectiveNewUnit = CreateUnit(IncomeObjectReceiever, GetUnitTypeId(IncomeObjectiveUnit), IncomeObjectiveUnitX, IncomeObjectiveUnitY, bj_UNIT_FACING)
+    call SetUnitVertexColor(IncomeObjectiveNewUnit, playerColor.red, playerColor.green, playerColor.blue, 255) // Adjusts color to match receiver's one
+
+    set IncomeObjectiveUnit = null
+    set IncomeObjectReceiever = null
+    set IncomeObjectiveNewUnit = null
+    set IncomeObjectOwner = null
+    call playerColor.destroy()
+endfunction
+
+function inc_colour takes nothing returns nothing
+    local trigger t = CreateTrigger()
+
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0C), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0D), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0E), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0F), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x10), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x11), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x12), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x13), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x14), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x15), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x16), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x17), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x18), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x19), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x1A), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x1B), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerAddAction(t, function inc_colour_actions)
+
+    set t = null
+endfunction
 /*
 
 =============================================
@@ -3943,8 +4178,8 @@ scope Main initializer MainInit
             endif
 
             // Сообщение об обратной связи
-            set Feedback_RU = "Связаться со мной можно по электронной почте, буду рад ответить на любые вопросы: " + strEmail + "\n "
-            set Feedback_EN = "If you see an issue, please, leave the feedback/suggestions in the E-Mail: " + strEmail + "\n "
+            set Feedback_RU = "Связь со мной: " + strEmail + " и Discord: " + strDiscord + "\n "
+            set Feedback_EN = "My contacts: " + strEmail + " and Discord: " + strDiscord + "\n "
             if (Locale() == "RU") then
                 call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_RU)
             else
@@ -4090,6 +4325,9 @@ scope Main initializer MainInit
 
         // building selling Trigger
         call building_selling()
+        
+        // inc colour Trigger
+        call inc_colour()
 
         // For debug purposes
         call DebugInit()
@@ -4481,6 +4719,7 @@ globals
     trigger                 gg_trg_parodys_set_cast    = null
     trigger                 gg_trg_parodys_cast        = null
     trigger                 gg_trg_parody_dies         = null
+    trigger                 gg_trg_inc_colour_Copy     = null
 endglobals
 
 function InitGlobals takes nothing returns nothing
@@ -10363,298 +10602,6 @@ function InitTrig_inc_per_second takes nothing returns nothing
 endfunction
 
 //===========================================================================
-// Trigger: inc colour
-//===========================================================================
-function Trig_inc_colour_Func004C takes nothing returns boolean
-    if ( ( GetUnitTypeId(GetDyingUnit()) == 'n003' ) ) then
-        return true
-    endif
-    if ( ( GetUnitTypeId(GetDyingUnit()) == 'n004' ) ) then
-        return true
-    endif
-    if ( ( GetUnitTypeId(GetDyingUnit()) == 'n005' ) ) then
-        return true
-    endif
-    return false
-endfunction
-
-function Trig_inc_colour_Conditions takes nothing returns boolean
-    if ( not Trig_inc_colour_Func004C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_colour_Func002Func001Func001Func001Func001Func001Func001Func001Func001C takes nothing returns boolean
-    if ( not ( RectContainsUnit(gg_rct_leftmid, GetDyingUnit()) == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_colour_Func002Func001Func001Func001Func001Func001Func001Func001C takes nothing returns boolean
-    if ( not ( RectContainsUnit(gg_rct_downmid, GetDyingUnit()) == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_colour_Func002Func001Func001Func001Func001Func001Func001C takes nothing returns boolean
-    if ( not ( RectContainsUnit(gg_rct_rightmid, GetDyingUnit()) == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_colour_Func002Func001Func001Func001Func001Func001C takes nothing returns boolean
-    if ( not ( RectContainsUnit(gg_rct_upmid, GetDyingUnit()) == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_colour_Func002Func001Func001Func001Func001C takes nothing returns boolean
-    if ( not ( RectContainsUnit(gg_rct_upleft, GetDyingUnit()) == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_colour_Func002Func001Func001Func001C takes nothing returns boolean
-    if ( not ( RectContainsUnit(gg_rct_downleft, GetDyingUnit()) == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_colour_Func002Func001Func001C takes nothing returns boolean
-    if ( not ( RectContainsUnit(gg_rct_downright, GetDyingUnit()) == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_colour_Func002Func001C takes nothing returns boolean
-    if ( not ( RectContainsUnit(gg_rct_upright, GetDyingUnit()) == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_colour_Func002C takes nothing returns boolean
-    if ( not ( RectContainsUnit(gg_rct_centreCENTRE, GetDyingUnit()) == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_colour_Func003Func001A takes nothing returns nothing
-    call SetUnitVertexColorBJ( GetEnumUnit(), 100, 100.00, 100.00, 0 )
-endfunction
-
-function Trig_inc_colour_Func003Func004001003 takes nothing returns boolean
-    return ( GetUnitTypeId(GetFilterUnit()) == 'n006' )
-endfunction
-
-function Trig_inc_colour_Func003Func004A takes nothing returns nothing
-    call SetUnitColor( GetEnumUnit(), PLAYER_COLOR_MAROON )
-endfunction
-
-function Trig_inc_colour_Func003Func005Func001A takes nothing returns nothing
-    call SetUnitVertexColorBJ( GetEnumUnit(), 100, 0.00, 0.00, 0 )
-endfunction
-
-function Trig_inc_colour_Func003Func005C takes nothing returns boolean
-    if ( not ( GetOwningPlayer(GetKillingUnitBJ()) == Player(0) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_colour_Func003Func006Func001A takes nothing returns nothing
-    call SetUnitVertexColorBJ( GetEnumUnit(), 0.00, 40.00, 100.00, 0 )
-endfunction
-
-function Trig_inc_colour_Func003Func006C takes nothing returns boolean
-    if ( not ( GetOwningPlayer(GetKillingUnitBJ()) == Player(1) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_colour_Func003Func007Func001A takes nothing returns nothing
-    call SetUnitVertexColorBJ( GetEnumUnit(), 0.00, 100.00, 100.00, 0 )
-endfunction
-
-function Trig_inc_colour_Func003Func007C takes nothing returns boolean
-    if ( not ( GetOwningPlayer(GetKillingUnitBJ()) == Player(2) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_colour_Func003Func008Func001A takes nothing returns nothing
-    call SetUnitVertexColorBJ( GetEnumUnit(), 40.00, 0.00, 100.00, 0 )
-endfunction
-
-function Trig_inc_colour_Func003Func008C takes nothing returns boolean
-    if ( not ( GetOwningPlayer(GetKillingUnitBJ()) == Player(3) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_colour_Func003Func009Func001A takes nothing returns nothing
-    call SetUnitVertexColorBJ( GetEnumUnit(), 100.00, 100.00, 0.00, 0 )
-endfunction
-
-function Trig_inc_colour_Func003Func009C takes nothing returns boolean
-    if ( not ( GetOwningPlayer(GetKillingUnitBJ()) == Player(4) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_colour_Func003Func010Func001A takes nothing returns nothing
-    call SetUnitVertexColorBJ( GetEnumUnit(), 100.00, 60.00, 0.00, 0 )
-endfunction
-
-function Trig_inc_colour_Func003Func010C takes nothing returns boolean
-    if ( not ( GetOwningPlayer(GetKillingUnitBJ()) == Player(5) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_colour_Func003Func011Func001A takes nothing returns nothing
-    call SetUnitVertexColorBJ( GetEnumUnit(), 0.00, 100.00, 0.00, 0 )
-endfunction
-
-function Trig_inc_colour_Func003Func011C takes nothing returns boolean
-    if ( not ( GetOwningPlayer(GetKillingUnitBJ()) == Player(6) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_colour_Func003Func012Func001A takes nothing returns nothing
-    call SetUnitVertexColorBJ( GetEnumUnit(), 100.00, 0.00, 80.00, 0 )
-endfunction
-
-function Trig_inc_colour_Func003Func012C takes nothing returns boolean
-    if ( not ( GetOwningPlayer(GetKillingUnitBJ()) == Player(7) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_colour_Func003Func015001003 takes nothing returns boolean
-    return ( GetUnitTypeId(GetFilterUnit()) == 'n006' )
-endfunction
-
-function Trig_inc_colour_Func003Func015A takes nothing returns nothing
-    call SetUnitColor( GetEnumUnit(), GetPlayerColor(GetOwningPlayer(GetKillingUnitBJ())) )
-endfunction
-
-function Trig_inc_colour_Func003C takes nothing returns boolean
-    if ( not ( GetOwningPlayer(GetDyingUnit()) != GetOwningPlayer(GetKillingUnitBJ()) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_colour_Actions takes nothing returns nothing
-    call MoveRectToLoc( gg_rct_inc, GetUnitLoc(GetDyingUnit()) )
-    if ( Trig_inc_colour_Func002C() ) then
-        set udg_goldmine_colour = 0
-    else
-        if ( Trig_inc_colour_Func002Func001C() ) then
-            set udg_goldmine_colour = 1
-        else
-            if ( Trig_inc_colour_Func002Func001Func001C() ) then
-                set udg_goldmine_colour = 2
-            else
-                if ( Trig_inc_colour_Func002Func001Func001Func001C() ) then
-                    set udg_goldmine_colour = 3
-                else
-                    if ( Trig_inc_colour_Func002Func001Func001Func001Func001C() ) then
-                        set udg_goldmine_colour = 4
-                    else
-                        if ( Trig_inc_colour_Func002Func001Func001Func001Func001Func001C() ) then
-                            set udg_goldmine_colour = 5
-                        else
-                            if ( Trig_inc_colour_Func002Func001Func001Func001Func001Func001Func001C() ) then
-                                set udg_goldmine_colour = 6
-                            else
-                                if ( Trig_inc_colour_Func002Func001Func001Func001Func001Func001Func001Func001C() ) then
-                                    set udg_goldmine_colour = 7
-                                else
-                                    if ( Trig_inc_colour_Func002Func001Func001Func001Func001Func001Func001Func001Func001C() ) then
-                                        set udg_goldmine_colour = 8
-                                    else
-                                    endif
-                                endif
-                            endif
-                        endif
-                    endif
-                endif
-            endif
-        endif
-    endif
-    if ( Trig_inc_colour_Func003C() ) then
-        if ( Trig_inc_colour_Func003Func005C() ) then
-            call ForGroupBJ( udg_light[udg_goldmine_colour], function Trig_inc_colour_Func003Func005Func001A )
-        else
-        endif
-        if ( Trig_inc_colour_Func003Func006C() ) then
-            call ForGroupBJ( udg_light[udg_goldmine_colour], function Trig_inc_colour_Func003Func006Func001A )
-        else
-        endif
-        if ( Trig_inc_colour_Func003Func007C() ) then
-            call ForGroupBJ( udg_light[udg_goldmine_colour], function Trig_inc_colour_Func003Func007Func001A )
-        else
-        endif
-        if ( Trig_inc_colour_Func003Func008C() ) then
-            call ForGroupBJ( udg_light[udg_goldmine_colour], function Trig_inc_colour_Func003Func008Func001A )
-        else
-        endif
-        if ( Trig_inc_colour_Func003Func009C() ) then
-            call ForGroupBJ( udg_light[udg_goldmine_colour], function Trig_inc_colour_Func003Func009Func001A )
-        else
-        endif
-        if ( Trig_inc_colour_Func003Func010C() ) then
-            call ForGroupBJ( udg_light[udg_goldmine_colour], function Trig_inc_colour_Func003Func010Func001A )
-        else
-        endif
-        if ( Trig_inc_colour_Func003Func011C() ) then
-            call ForGroupBJ( udg_light[udg_goldmine_colour], function Trig_inc_colour_Func003Func011Func001A )
-        else
-        endif
-        if ( Trig_inc_colour_Func003Func012C() ) then
-            call ForGroupBJ( udg_light[udg_goldmine_colour], function Trig_inc_colour_Func003Func012Func001A )
-        else
-        endif
-        call CreateNUnitsAtLoc( 1, GetUnitTypeId(GetDyingUnit()), GetOwningPlayer(GetKillingUnitBJ()), GetRectCenter(gg_rct_inc), bj_UNIT_FACING )
-        call RemoveUnit( GetDyingUnit() )
-        call ForGroupBJ( GetUnitsInRangeOfLocMatching(128.00, GetUnitLoc(GetLastCreatedUnit()), Condition(function Trig_inc_colour_Func003Func015001003)), function Trig_inc_colour_Func003Func015A )
-    else
-        call ForGroupBJ( udg_light[udg_goldmine_colour], function Trig_inc_colour_Func003Func001A )
-        call CreateNUnitsAtLoc( 1, GetUnitTypeId(GetDyingUnit()), Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_inc), bj_UNIT_FACING )
-        call RemoveUnit( GetDyingUnit() )
-        call ForGroupBJ( GetUnitsInRangeOfLocMatching(128.00, GetUnitLoc(GetLastCreatedUnit()), Condition(function Trig_inc_colour_Func003Func004001003)), function Trig_inc_colour_Func003Func004A )
-    endif
-endfunction
-
-//===========================================================================
-function InitTrig_inc_colour takes nothing returns nothing
-    set gg_trg_inc_colour = CreateTrigger(  )
-    call DisableTrigger( gg_trg_inc_colour )
-    call TriggerRegisterAnyUnitEventBJ( gg_trg_inc_colour, EVENT_PLAYER_UNIT_DEATH )
-    call TriggerAddCondition( gg_trg_inc_colour, Condition( function Trig_inc_colour_Conditions ) )
-    call TriggerAddAction( gg_trg_inc_colour, function Trig_inc_colour_Actions )
-endfunction
-
-//===========================================================================
 // Trigger: inc upg
 //===========================================================================
 function Trig_inc_upg_Actions takes nothing returns nothing
@@ -15746,7 +15693,6 @@ function InitCustomTriggers takes nothing returns nothing
     call InitTrig_inc_ini(  )
     call InitTrig_inc_rotate(  )
     call InitTrig_inc_per_second(  )
-    call InitTrig_inc_colour(  )
     call InitTrig_inc_upg(  )
     call InitTrig_income_effects(  )
     call InitTrig_Weather(  )
