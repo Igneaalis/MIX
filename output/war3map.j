@@ -58,7 +58,7 @@ constant boolean LIBRARY_NokladrLib=true
 //endglobals from NokladrLib
 //globals from RegisterNativeEvent:
 constant boolean LIBRARY_RegisterNativeEvent=true
-integer RegisterNativeEvent__eventIndex= 500
+integer RegisterNativeEvent___eventIndex= 500
 //endglobals from RegisterNativeEvent
 //globals from MIXLib:
 constant boolean LIBRARY_MIXLib=true
@@ -99,8 +99,6 @@ constant string Version= "Test"
 constant string strEmail= ( LB + "Nostaleal.ru|r" + GOLD + "@|r" + LB + "yandex.ru|r" )
 constant string strDiscord= ( LB + "! ! Nokladr|r" + GOLD + "#|r" + LB + "2205|r" )
 constant string strBuild_Time= "13 December 2020"
-
-constant real timeBeforeFirstWave= 10.00
 
 leaderboard Leaderboard
 
@@ -633,8 +631,8 @@ constant integer si__TableArray=50
 integer s__TableArray_tempTable
 integer s__TableArray_tempEnd
 constant integer si__HashTable=51
-constant integer si__RegisterNativeEvent__NativeEvent=52
-integer s__RegisterNativeEvent__NativeEvent_table
+constant integer si__RegisterNativeEvent___NativeEvent=52
+integer s__RegisterNativeEvent___NativeEvent_table
 constant integer si__DB=53
 integer si__DB_F=0
 integer si__DB_I=0
@@ -657,7 +655,6 @@ unit array s__UnitRecycler___List_unit
 integer array s__UnitRecycler___List_recycler
 integer array s__UnitRecycler___List_prev
 integer array s__UnitRecycler___List_next
-integer s__UnitRecycler___List_stocked
 constant integer si__UnitRecycler___UnitRecycler=56
 integer s__UnitRecycler___UnitRecycler_rawCodeIdTable
 integer s__UnitRecycler___UnitRecycler_timerTable
@@ -667,9 +664,9 @@ integer array s__UnitRecycler___UnitRecycler_stackSize
 integer array s__UnitRecycler___UnitRecycler_indexStack
 integer array s__UnitRecycler___UnitRecycler_head
 constant integer si__UnitRecycler___Initializer=57
-constant integer si__ResourcePreloader__S=58
-integer s__ResourcePreloader__S_tb
-unit s__ResourcePreloader__S_dummy
+constant integer si__ResourcePreloader___S=58
+integer s__ResourcePreloader___S_tb
+unit s__ResourcePreloader___S_dummy
 constant integer si__UnitStruct=59
 integer si__UnitStruct_F=0
 integer si__UnitStruct_I=0
@@ -720,7 +717,6 @@ function s__UnitDB__allocate takes nothing returns integer
         set this=si__UnitDB_I
     endif
     if (this>8190) then
-        call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1000.,"Unable to allocate id for an object of type: UnitDB")
         return 0
     endif
 
@@ -731,10 +727,8 @@ endfunction
 //Generated destructor of UnitDB
 function s__UnitDB_deallocate takes integer this returns nothing
     if this==null then
-            call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1000.,"Attempt to destroy a null struct of type: UnitDB")
         return
     elseif (si__UnitDB_V[this]!=-1) then
-            call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1000.,"Double free of type: UnitDB")
         return
     endif
     set si__UnitDB_V[this]=si__UnitDB_F
@@ -761,7 +755,6 @@ function s__UnitStruct__allocate takes nothing returns integer
         set this=si__UnitStruct_I
     endif
     if (this>8190) then
-        call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1000.,"Unable to allocate id for an object of type: UnitStruct")
         return 0
     endif
 
@@ -772,10 +765,8 @@ endfunction
 //Generated destructor of UnitStruct
 function s__UnitStruct_deallocate takes integer this returns nothing
     if this==null then
-            call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1000.,"Attempt to destroy a null struct of type: UnitStruct")
         return
     elseif (si__UnitStruct_V[this]!=-1) then
-            call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1000.,"Double free of type: UnitStruct")
         return
     endif
     set si__UnitStruct_V[this]=si__UnitStruct_F
@@ -792,7 +783,6 @@ function s__Playerdb__allocate takes nothing returns integer
         set this=si__Playerdb_I
     endif
     if (this>8190) then
-        call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1000.,"Unable to allocate id for an object of type: Playerdb")
         return 0
     endif
 
@@ -803,10 +793,8 @@ endfunction
 //Generated destructor of Playerdb
 function s__Playerdb_deallocate takes integer this returns nothing
     if this==null then
-            call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1000.,"Attempt to destroy a null struct of type: Playerdb")
         return
     elseif (si__Playerdb_V[this]!=-1) then
-            call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1000.,"Double free of type: Playerdb")
         return
     endif
     set si__Playerdb_V[this]=si__Playerdb_F
@@ -823,7 +811,6 @@ function s__DB__allocate takes nothing returns integer
         set this=si__DB_I
     endif
     if (this>8190) then
-        call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1000.,"Unable to allocate id for an object of type: DB")
         return 0
     endif
 
@@ -842,10 +829,8 @@ endfunction
 //Generated destructor of DB
 function s__DB_deallocate takes integer this returns nothing
     if this==null then
-            call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1000.,"Attempt to destroy a null struct of type: DB")
         return
     elseif (si__DB_V[this]!=-1) then
-            call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1000.,"Double free of type: DB")
         return
     endif
     set si__DB_V[this]=si__DB_F
@@ -862,7 +847,6 @@ function s__Color__allocate takes nothing returns integer
         set this=si__Color_I
     endif
     if (this>8190) then
-        call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1000.,"Unable to allocate id for an object of type: Color")
         return 0
     endif
 
@@ -873,10 +857,8 @@ endfunction
 //Generated destructor of Color
 function s__Color_deallocate takes integer this returns nothing
     if this==null then
-            call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1000.,"Attempt to destroy a null struct of type: Color")
         return
     elseif (si__Color_V[this]!=-1) then
-            call DisplayTimedTextToPlayer(GetLocalPlayer(),0,0,1000.,"Double free of type: Color")
         return
     endif
     set si__Color_V[this]=si__Color_F
@@ -1350,7 +1332,7 @@ endfunction
         endfunction
        
 //Implemented from module ReviveUnit___Init:
-        function s__Revive_ReviveUnit___Init__onInit takes nothing returns nothing
+        function s__Revive_ReviveUnit___Init___onInit takes nothing returns nothing
             set ReviveUnit___rx=GetRectMaxX(bj_mapInitialPlayableArea) - 1
             set ReviveUnit___ry=GetRectMaxY(bj_mapInitialPlayableArea) - 1
             set ReviveUnit___reviver=CreateUnit(Player(15), ReviveUnit___DUMMY, ReviveUnit___rx, ReviveUnit___ry, 0)
@@ -2352,17 +2334,16 @@ endfunction
     
         //local Table tb = Table.create()
         function s__Table_create takes nothing returns integer
-            local integer this= s__Table__getindex(s__Table___dex__get_list(),0)
+            local integer this= (LoadInteger(Table___ht, ((Table___listK)), (0))) // INLINED!!
         
             if this == 0 then
                 set this=Table___more + 1
                 set Table___more=this
             else
-                call s__Table__setindex(s__Table___dex__get_list(),0, s__Table__getindex(s__Table___dex__get_list(),this))
-                call s__Table_remove(s__Table___dex__get_list(),this) //Clear hashed memory
+                call SaveInteger(Table___ht, ((Table___listK)), (0), ( (LoadInteger(Table___ht, ((Table___listK)), (this))))) // INLINED!!
+                call RemoveSavedInteger(Table___ht, ((Table___listK)), (this)) //Clear hashed memory // INLINED!!
             endif
         
-             call s__Table__setindex(s__Table___dex__get_list(),this, - 1)
             return this
         endfunction
     
@@ -2371,15 +2352,11 @@ endfunction
         //     call tb.destroy()
         //
         function s__Table_destroy takes integer this returns nothing
-             if s__Table__getindex(s__Table___dex__get_list(),this) != - 1 then
-                 call BJDebugMsg("Table Error: Tried to double-free instance: " + I2S(this))
-                 return
-             endif
         
-            call s__Table_flush(this)
+            call FlushChildHashtable(Table___ht, (this)) // INLINED!!
         
-            call s__Table__setindex(s__Table___dex__get_list(),this, s__Table__getindex(s__Table___dex__get_list(),0))
-            call s__Table__setindex(s__Table___dex__get_list(),0, this)
+            call SaveInteger(Table___ht, ((Table___listK)), (this), ( (LoadInteger(Table___ht, ((Table___listK)), (0))))) // INLINED!!
+            call SaveInteger(Table___ht, ((Table___listK)), (0), ( this)) // INLINED!!
         endfunction
     
 //ignored textmacro command: TABLE_BC_METHODS()
@@ -2392,29 +2369,25 @@ endfunction
         //    local TableArray ta = TableArray[array_size]
         //
         function s__TableArray__staticgetindex takes integer array_size returns integer
-            local integer tb= s__Table__getindex(s__Table___dex__get_size(),array_size)
-            local integer this= s__Table__getindex(tb,0)
+            local integer tb= (LoadInteger(Table___ht, ((Table___sizeK)), (array_size))) // INLINED!!
+            local integer this= (LoadInteger(Table___ht, (tb), (0))) // INLINED!!
         
-             if array_size <= 0 then
-                 call BJDebugMsg("TypeError: Invalid specified TableArray size: " + I2S(array_size))
-                 return 0
-             endif
         
             if this == 0 then
                 set this=Table___less - array_size
                 set Table___less=this
             else
-                call s__Table__setindex(tb,0, s__Table__getindex(tb,this)) //Set the last destroyed to the last-last destroyed
-                call s__Table_remove(tb,this) //Clear hashed memory
+                call SaveInteger(Table___ht, (tb), (0), ( (LoadInteger(Table___ht, (tb), (this))))) //Set the last destroyed to the last-last destroyed // INLINED!!
+                call RemoveSavedInteger(Table___ht, (tb), (this)) //Clear hashed memory // INLINED!!
             endif
         
-            call s__Table__setindex(s__Table___dex__get_size(),this, array_size) //This remembers the array size
+            call SaveInteger(Table___ht, ((Table___sizeK)), (this), ( array_size)) //This remembers the array size // INLINED!!
             return this
         endfunction
     
         //Returns the size of the TableArray
         function s__TableArray__get_size takes integer this returns integer
-            return s__Table__getindex(s__Table___dex__get_size(),this)
+            return (LoadInteger(Table___ht, ((Table___sizeK)), (this))) // INLINED!!
         endfunction
     
         //This magic method enables two-dimensional[array][syntax] for Tables,
@@ -2427,16 +2400,16 @@ endfunction
         //Inline-friendly when not running in debug mode
         //
         function s__TableArray__getindex takes integer this,integer key returns integer
-//#             static if true then
-                    local integer i= s__TableArray__get_size(this)
-                    if i == 0 then
-                        call BJDebugMsg("IndexError: Tried to get key from invalid TableArray instance: " + I2S(this))
-                        return 0
-                    elseif key < 0 or key >= i then
-                        call BJDebugMsg("IndexError: Tried to get key [" + I2S(key) + "] from outside TableArray bounds: " + I2S(i))
-                        return 0
-                    endif
-//#             endif
+
+
+
+
+
+
+
+
+
+
             return this + key
         endfunction
     
@@ -2446,23 +2419,19 @@ endfunction
         //need to (ie. if you were flushing all child-keys as you used them).
         //
         function s__TableArray_destroy takes integer this returns nothing
-            local integer tb= s__Table__getindex(s__Table___dex__get_size(),s__TableArray__get_size(this))
+            local integer tb= (LoadInteger(Table___ht, ((Table___sizeK)), ((LoadInteger(Table___ht, ((Table___sizeK)), ((this))))))) // INLINED!!
         
-             if s__TableArray__get_size(this) == 0 then
-                 call BJDebugMsg("TypeError: Tried to destroy an invalid TableArray: " + I2S(this))
-                 return
-             endif
         
             if tb == 0 then
                 //Create a Table to index recycled instances with their array size
                 set tb=s__Table_create()
-                call s__Table__setindex(s__Table___dex__get_size(),s__TableArray__get_size(this), tb)
+                call SaveInteger(Table___ht, ((Table___sizeK)), ((LoadInteger(Table___ht, ((Table___sizeK)), ((this))))), ( tb)) // INLINED!!
             endif
         
-            call s__Table_remove(s__Table___dex__get_size(),this) //Clear the array size from hash memory
+            call RemoveSavedInteger(Table___ht, ((Table___sizeK)), (this)) //Clear the array size from hash memory // INLINED!!
         
-            call s__Table__setindex(tb,this, s__Table__getindex(tb,0))
-            call s__Table__setindex(tb,0, this)
+            call SaveInteger(Table___ht, (tb), (this), ( (LoadInteger(Table___ht, (tb), (0))))) // INLINED!!
+            call SaveInteger(Table___ht, (tb), (0), ( this)) // INLINED!!
         endfunction
     
     
@@ -2477,7 +2446,7 @@ endfunction
                 set end=s__TableArray_tempEnd
             endif
             loop
-                call s__Table_flush(tb)
+                call FlushChildHashtable(Table___ht, (tb)) // INLINED!!
                 set tb=tb + 1
                 exitwhen tb == end
             endloop
@@ -2487,12 +2456,8 @@ endfunction
         //similar to the FlushParentHashtable native than this.
         //
         function s__TableArray_flush takes integer this returns nothing
-             if s__TableArray__get_size(this) == 0 then
-                 call BJDebugMsg("TypeError: Tried to flush an invalid TableArray instance: " + I2S(this))
-                 return
-             endif
             set s__TableArray_tempTable=this
-            set s__TableArray_tempEnd=this + s__TableArray__get_size(this)
+            set s__TableArray_tempEnd=this + (LoadInteger(Table___ht, ((Table___sizeK)), ((this)))) // INLINED!!
             call ForForce(bj_FORCE_PLAYER[0], function s__TableArray_clean)
             call s__TableArray_destroy(this)
         endfunction
@@ -2505,10 +2470,10 @@ endfunction
         //Basically, it creates a Table in the place of the parent key if
         //it didn't already get created earlier.
         function s__HashTable__getindex takes integer this,integer index returns integer
-            local integer t= s__Table__getindex((this),index)
+            local integer t= (LoadInteger(Table___ht, ((this)), (index))) // INLINED!!
             if t == 0 then
                 set t=s__Table_create()
-                call s__Table__setindex((this),index, t) //whoops! Forgot that line. I'm out of practice!
+                call SaveInteger(Table___ht, ((this)), (index), ( t)) //whoops! Forgot that line. I'm out of practice! // INLINED!!
             endif
             return t
         endfunction
@@ -2516,16 +2481,16 @@ endfunction
         //You need to call this on each parent key that you used if you
         //intend to destroy the HashTable or simply no longer need that key.
         function s__HashTable_remove takes integer this,integer index returns nothing
-            local integer t= s__Table__getindex((this),index)
+            local integer t= (LoadInteger(Table___ht, ((this)), (index))) // INLINED!!
             if t != 0 then
                 call s__Table_destroy(t)
-                call s__Table_remove((this),index)
+                call RemoveSavedInteger(Table___ht, ((this)), (index)) // INLINED!!
             endif
         endfunction
     
         //Added in version 4.1
         function s__HashTable_has takes integer this,integer index returns boolean
-            return s__Table_has((this),index)
+            return (HaveSavedInteger(Table___ht, ((this)), (index))) // INLINED!!
         endfunction
     
         //HashTables are just fancy Table indices.
@@ -2545,12 +2510,10 @@ endfunction
 
     // Отображает сообщение об ошибке
     function C_ErrorMsg takes string s returns nothing
-         call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, ( RED + "Ошибка: " + s + "|r" ))
     endfunction
 
     // Лог сообщений
     function Log takes string s returns nothing
-         call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, ( GOLD + "Log:|r " + GREEN + s + "|r" ))
     endfunction
 
     // Устанавливает всем компьютерным игрокам соответствующее имя
@@ -2732,43 +2695,43 @@ endfunction
 
 
 
-//#         static if LIBRARY_Table then
-//#         else
-//#             static hashtable table = InitHashtable()
-//#         endif
-//Implemented from module RegisterNativeEvent__NativeEventInit:
-        function s__RegisterNativeEvent__NativeEvent_RegisterNativeEvent__NativeEventInit__onInit takes nothing returns nothing
-//#             static if LIBRARY_Table then
-                    set s__RegisterNativeEvent__NativeEvent_table=s__TableArray__staticgetindex(0x2000)
-//#             endif
+
+
+
+
+//Implemented from module RegisterNativeEvent___NativeEventInit:
+        function s__RegisterNativeEvent___NativeEvent_RegisterNativeEvent___NativeEventInit___onInit takes nothing returns nothing
+
+                set s__RegisterNativeEvent___NativeEvent_table=s__TableArray__staticgetindex(0x2000)
+
         endfunction
 
     function IsNativeEventRegistered takes integer whichIndex,integer whichEvent returns boolean
-//#         static if LIBRARY_Table then
-                return s__Table___triggers_has(s__Table__get_trigger(s__TableArray__getindex(s__RegisterNativeEvent__NativeEvent_table,whichEvent)),whichIndex)
-//#         else
-//#             return HaveSavedHandle(RegisterNativeEvent__NativeEvent.table, whichEvent, whichIndex)
-//#         endif
+
+            return (HaveSavedHandle(Table___ht, (((((s__RegisterNativeEvent___NativeEvent_table) + (whichEvent))))), (whichIndex))) // INLINED!!
+
+
+
     endfunction
 
     function RegisterNativeEventTrigger takes integer whichIndex,integer whichEvent returns boolean
         if not IsNativeEventRegistered(whichIndex , whichEvent) then
-//#             static if LIBRARY_Table then
-                    call s__Table___triggers__setindex(s__Table__get_trigger(s__TableArray__getindex(s__RegisterNativeEvent__NativeEvent_table,whichEvent)),whichIndex, CreateTrigger())
-//#             else
-//#                 call SaveTriggerHandle(RegisterNativeEvent__NativeEvent.table, whichEvent, whichIndex, CreateTrigger())
-//#             endif
+
+                call SaveTriggerHandle(Table___ht, (((((s__RegisterNativeEvent___NativeEvent_table) + (whichEvent))))), (whichIndex), ( CreateTrigger())) // INLINED!!
+
+
+
             return true
         endif
         return false
     endfunction
 
     function GetIndexNativeEventTrigger takes integer whichIndex,integer whichEvent returns trigger
-//#         static if LIBRARY_Table then
-                return s__Table___triggers__getindex(s__Table__get_trigger(s__TableArray__getindex(s__RegisterNativeEvent__NativeEvent_table,whichEvent)),whichIndex)
-//#         else
-//#             return LoadTriggerHandle(RegisterNativeEvent__NativeEvent.table, whichEvent, whichIndex)
-//#         endif
+
+            return (LoadTriggerHandle(Table___ht, (((((s__RegisterNativeEvent___NativeEvent_table) + (whichEvent))))), (whichIndex))) // INLINED!!
+
+
+
     endfunction
 
     function GetNativeEventTrigger takes integer whichEvent returns trigger
@@ -2776,9 +2739,9 @@ endfunction
     endfunction
 
     function CreateNativeEvent takes nothing returns integer
-        local integer eventId= RegisterNativeEvent__eventIndex
+        local integer eventId= RegisterNativeEvent___eventIndex
         call RegisterNativeEventTrigger(bj_MAX_PLAYER_SLOTS , eventId)
-        set RegisterNativeEvent__eventIndex=RegisterNativeEvent__eventIndex + 1
+        set RegisterNativeEvent___eventIndex=RegisterNativeEvent___eventIndex + 1
         return eventId
     endfunction
 
@@ -2792,7 +2755,7 @@ endfunction
     endfunction
 
     function UnregisterNativeEventHandler takes integer whichEvent,triggercondition handler returns nothing
-        call TriggerRemoveCondition(GetNativeEventTrigger(whichEvent), handler)
+        call TriggerRemoveCondition((GetIndexNativeEventTrigger(bj_MAX_PLAYER_SLOTS , (whichEvent))), handler) // INLINED!!
     endfunction
 
 
@@ -2830,7 +2793,7 @@ endfunction
 //library RegisterPlayerUnitEvent:
 
     function GetAnyPlayerUnitEventTrigger takes playerunitevent whichEvent returns trigger
-        return GetNativeEventTrigger(GetHandleId(whichEvent))
+        return (GetIndexNativeEventTrigger(bj_MAX_PLAYER_SLOTS , (GetHandleId(whichEvent)))) // INLINED!!
     endfunction
 
     function GetPlayerUnitEventTrigger takes player whichPlayer,playerunitevent whichEvent returns trigger
@@ -2843,7 +2806,7 @@ endfunction
         local trigger t= null
 
         if RegisterNativeEventTrigger(bj_MAX_PLAYER_SLOTS , eventId) then
-            set t=GetNativeEventTrigger(eventId)
+            set t=(GetIndexNativeEventTrigger(bj_MAX_PLAYER_SLOTS , (eventId))) // INLINED!!
             loop
                 call TriggerRegisterPlayerUnitEvent(t, Player(index), whichEvent, null)
                 set index=index + 1
@@ -2852,7 +2815,7 @@ endfunction
             set t=null
         endif
 
-        call RegisterNativeEvent(eventId , func)
+call RegisterIndexNativeEvent(bj_MAX_PLAYER_SLOTS , (eventId ) , ( func)) // INLINED!!
     endfunction
 
     function RegisterPlayerUnitEvent takes player whichPlayer,playerunitevent whichEvent,code func returns nothing
@@ -2874,12 +2837,12 @@ endfunction
 
 
     
-//#     static if UnitRecycler___AUTO_RECYCLE_DEAD then
-            function UnitRecycler___DeathTime takes unit u returns real
-                
-                return 8.00
-            endfunction
-//#     endif
+
+        function UnitRecycler___DeathTime takes unit u returns real
+            
+            return 8.00
+        endfunction
+
 
     // Filters units allowed for recycling
     function UnitRecycler___UnitTypeFilter takes unit u returns boolean
@@ -2896,15 +2859,14 @@ endfunction
 
 
 
-
         constant function s__UnitRecycler___List__get_head takes nothing returns integer
             return 0
         endfunction
 
         function s__UnitRecycler___List_stockUnit takes integer this,unit u returns nothing
-            local integer node= s__UnitRecycler___List_recycler[s__UnitRecycler___List__get_head()]
+            local integer node= s__UnitRecycler___List_recycler[(0)] // INLINED!!
             local integer last= s__UnitRecycler___List_prev[this]
-            set s__UnitRecycler___List_recycler[s__UnitRecycler___List__get_head()]=s__UnitRecycler___List_recycler[node]
+            set s__UnitRecycler___List_recycler[(0)]=s__UnitRecycler___List_recycler[node] // INLINED!!
             set s__UnitRecycler___List_prev[this]=node
             set s__UnitRecycler___List_next[last]=node
             set s__UnitRecycler___List_prev[node]=last
@@ -2913,15 +2875,13 @@ endfunction
             call PauseUnit(u, true)
             call SetUnitX(u, UnitRecycler___unitCampX)
             call SetUnitY(u, UnitRecycler___unitCampY)
-             call s__Table___booleans__setindex(s__Table__get_boolean(s__UnitRecycler___List_stocked),GetHandleId(u), true)
         endfunction
 
         function s__UnitRecycler___List_addUnit takes integer this,unit u,real angle returns boolean
             if u != null and not IsUnitType(u, UNIT_TYPE_HERO) and UnitRecycler___UnitTypeFilter(u) then
                 if not UnitAlive(u) and not ReviveUnit(u) then
-//#                     static if LIBRARY_ErrorMessage then
-//#                          call ThrowWarning(true, "UnitRecycler", "addUnit()", "UnitRecycler___List", GetHandleId(u), "Unable to recycle unit: Unable to revive dead unit")
-//#                     endif
+
+
                     return false
                 endif
                 call s__UnitRecycler___List_stockUnit(this,u)
@@ -2961,7 +2921,6 @@ endfunction
                     call SetUnitPosition(bj_lastCreatedUnit, x, y)
                     call SetUnitFacing(bj_lastCreatedUnit, angle)
                     call PauseUnit(bj_lastCreatedUnit, false)
-                     call s__Table___booleans_remove(s__Table__get_boolean(s__UnitRecycler___List_stocked),GetHandleId(bj_lastCreatedUnit))
                 endif
                 return bj_lastCreatedUnit
             endif
@@ -2976,17 +2935,16 @@ endfunction
                 set this=this + 1
                 exitwhen this == 8190
             endloop
-             set s__UnitRecycler___List_stocked=s__Table_create()
         endfunction
 
 
 
 
         function s__UnitRecycler___UnitRecycler_getRawCodeId takes integer rawCode returns integer
-            local integer i= s__Table__getindex(s__UnitRecycler___UnitRecycler_rawCodeIdTable,rawCode)
+            local integer i= (LoadInteger(Table___ht, (s__UnitRecycler___UnitRecycler_rawCodeIdTable), (rawCode))) // INLINED!!
             if i == 0 then
                 set s__UnitRecycler___UnitRecycler_rawCodeCount=s__UnitRecycler___UnitRecycler_rawCodeCount + 1
-                call s__Table__setindex(s__UnitRecycler___UnitRecycler_rawCodeIdTable,rawCode, s__UnitRecycler___UnitRecycler_rawCodeCount)
+                call SaveInteger(Table___ht, (s__UnitRecycler___UnitRecycler_rawCodeIdTable), (rawCode), ( s__UnitRecycler___UnitRecycler_rawCodeCount)) // INLINED!!
                 set i=s__UnitRecycler___UnitRecycler_rawCodeCount
             endif
             return i
@@ -2995,8 +2953,8 @@ endfunction
         function s__UnitRecycler___UnitRecycler_getHead takes integer id,integer index returns integer
             local integer this= s__UnitRecycler___UnitRecycler_head[id * UnitRecycler___ANGLE_COUNT + index]
             if this == 0 then
-                set this=s__UnitRecycler___List_recycler[s__UnitRecycler___List__get_head()]
-                set s__UnitRecycler___List_recycler[s__UnitRecycler___List__get_head()]=s__UnitRecycler___List_recycler[this]
+                set this=s__UnitRecycler___List_recycler[(0)] // INLINED!!
+                set s__UnitRecycler___List_recycler[(0)]=s__UnitRecycler___List_recycler[this] // INLINED!!
                 set s__UnitRecycler___List_prev[this]=this
                 set s__UnitRecycler___List_next[this]=this
                 set s__UnitRecycler___UnitRecycler_head[id * UnitRecycler___ANGLE_COUNT + index]=this
@@ -3058,23 +3016,23 @@ endfunction
         function s__UnitRecycler___UnitRecycler_delayedRecycle takes nothing returns nothing
             local timer t= GetExpiredTimer()
             local integer key= GetHandleId(t)
-            call s__UnitRecycler___UnitRecycler_add(s__Table___units__getindex(s__Table__get_unit(s__UnitRecycler___UnitRecycler_timerTable),key))
-            call s__Table___units_remove(s__Table__get_unit(s__UnitRecycler___UnitRecycler_timerTable),key)
+            call s__UnitRecycler___UnitRecycler_add((LoadUnitHandle(Table___ht, (((s__UnitRecycler___UnitRecycler_timerTable))), (key)))) // INLINED!!
+            call RemoveSavedHandle(Table___ht, (((s__UnitRecycler___UnitRecycler_timerTable))), (key)) // INLINED!!
             call DestroyTimer(t)
             set t=null
         endfunction
         function s__UnitRecycler___UnitRecycler_delayedRecycleEx takes nothing returns nothing
             local timer t= GetExpiredTimer()
             local integer key= GetHandleId(t)
-            call s__UnitRecycler___UnitRecycler_add(s__Table___units__getindex(s__Table__get_unit(s__UnitRecycler___UnitRecycler_timerTable),key))
-            call s__Table___units_remove(s__Table__get_unit(s__UnitRecycler___UnitRecycler_timerTable),key)
+            call s__UnitRecycler___UnitRecycler_add((LoadUnitHandle(Table___ht, (((s__UnitRecycler___UnitRecycler_timerTable))), (key)))) // INLINED!!
+            call RemoveSavedHandle(Table___ht, (((s__UnitRecycler___UnitRecycler_timerTable))), (key)) // INLINED!!
             call DestroyTimer(t)
             set t=null
         endfunction
 
         function s__UnitRecycler___UnitRecycler_addDelayed takes unit u,real delay,code callback returns nothing
             local timer t= CreateTimer()
-            call s__Table___units__setindex(s__Table__get_unit(s__UnitRecycler___UnitRecycler_timerTable),GetHandleId(t), u)
+            call SaveUnitHandle(Table___ht, (((s__UnitRecycler___UnitRecycler_timerTable))), (GetHandleId(t)), ( u)) // INLINED!!
             call TimerStart(t, delay, false, callback)
             set t=null
         endfunction
@@ -3094,80 +3052,58 @@ endfunction
     //========================================================================================================
 
     function GetRecycledUnit takes player owner,integer rawCode,real x,real y,real facing returns unit
-//#         static if true and LIBRARY_ErrorMessage then
-//#             call UnitRecycler___UnitRecycler.get(owner, rawCode, x, y, facing)
-//#             call ThrowError(bj_lastCreatedUnit == null, "UnitRecycler", "GetRecycledUnit()", "", 0, "Specified unit type does not exist")
-//#             call ThrowError(IsHeroUnitId(rawCode), "UnitRecycler", "GetRecycledUnit()", GetUnitName(bj_lastCreatedUnit), 0, "Specified unit type is a hero")
-//#             return bj_lastCreatedUnit
-//#         else
-                return s__UnitRecycler___UnitRecycler_get(owner , rawCode , x , y , facing)
-//#         endif
+
+
+
+
+
+
+            return s__UnitRecycler___UnitRecycler_get(owner , rawCode , x , y , facing)
+
     endfunction
 
     function GetRecycledUnitEx takes player owner,integer rawCode,real x,real y,real facing returns unit
         if not IsHeroUnitId(rawCode) then
             return s__UnitRecycler___UnitRecycler_get(owner , rawCode , x , y , facing)
         endif
-//#         static if LIBRARY_ErrorMessage then
-//#              call ThrowWarning(true, "UnitRecycler", "GetRecycledUnitEx()", "", 0, "Cannot retrieve a hero unit, creating new unit")
-//#         endif
+
+
         return CreateUnit(owner, rawCode, x, y, facing)
     endfunction
 
     function RecycleUnit takes unit u returns boolean
-//#         static if LIBRARY_ErrorMessage then
-//#              call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnit()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
-//#              call ThrowWarning(u == null, "UnitRecycler", "RecycleUnit()", "", 0, "Attempted to recycle a null unit")
-//#              call ThrowWarning(IsHeroUnitId(GetUnitTypeId(u)), "UnitRecycler", "RecycleUnit()", GetUnitName(u), 0, "Attempted to recycle a hero unit")
-//#              call ThrowWarning(not UnitRecycler___UnitTypeFilter(u), "UnitRecycler", "RecycleUnit()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
-//#         endif
+
+
         return s__UnitRecycler___UnitRecycler_add(u)
     endfunction
 
     function RecycleUnitEx takes unit u returns boolean
-//#         static if LIBRARY_ErrorMessage then
-//#              call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnitEx()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
-//#              call ThrowWarning(u == null, "UnitRecycler", "RecycleUnitEx()", "", 0, "Attempted to recycle a null unit")
-//#              call ThrowWarning(not UnitRecycler___UnitTypeFilter(u), "UnitRecycler", "RecycleUnitEx()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
-//#         endif
+
+
         if not s__UnitRecycler___UnitRecycler_add(u) then
             call RemoveUnit(u)
-//#             static if LIBRARY_ErrorMessage then
-//#                  call ThrowWarning(u != null, "UnitRecycler", "RecycleUnitEx()", GetUnitName(u), 0, "Cannot recycle the specified unit, removing unit")
-//#             endif
+
+
             return false
         endif
         return true
     endfunction
 
     function RecycleUnitDelayed takes unit u,real delay returns nothing
-//#         static if LIBRARY_ErrorMessage then
-//#              call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnitDelayed()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
-//#              call ThrowWarning(u == null, "UnitRecycler", "RecycleUnitDelayed()", "", 0, "Attempted to recycle a null unit")
-//#              call ThrowWarning(IsHeroUnitId(GetUnitTypeId(u)), "UnitRecycler", "RecycleUnitDelayed()", GetUnitName(u), 0, "Attempted to recycle a hero unit")
-//#              call ThrowWarning(not UnitRecycler___UnitTypeFilter(u), "UnitRecycler", "RecycleUnitDelayed()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
-//#         endif
+
+
         call s__UnitRecycler___UnitRecycler_addDelayed(u , delay , function s__UnitRecycler___UnitRecycler_delayedRecycle)
     endfunction
 
     function RecycleUnitDelayedEx takes unit u,real delay returns nothing
-//#         static if LIBRARY_ErrorMessage then
-//#              call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnitDelayedEx()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
-//#              call ThrowWarning(u == null, "UnitRecycler", "RecycleUnitDelayedEx()", "", 0, "Attempted to recycle a null unit")
-//#              call ThrowWarning(not UnitRecycler___UnitTypeFilter(u), "UnitRecycler", "RecycleUnitDelayedEx()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
-//#         endif
+
+
         call s__UnitRecycler___UnitRecycler_addDelayed(u , delay , function s__UnitRecycler___UnitRecycler_delayedRecycleEx)
     endfunction
 
     function UnitAddToStock takes integer rawCode returns boolean
-//#         static if LIBRARY_ErrorMessage then
-//#              local unit u = CreateUnit(UnitRecycler___OWNER, rawCode, 0, 0, 0)
-//#              call ThrowWarning(u == null, "UnitRecycler", "UnitAddToStock()", "", 0, "Attempted to stock a non-existent unit type")
-//#              call ThrowWarning(IsHeroUnitId(rawCode), "UnitRecycler", "UnitAddToStock()", GetUnitName(u), 0, "Attempted to stock a hero unit")
-//#              call ThrowWarning(not UnitRecycler___UnitTypeFilter(u), "UnitRecycler", "UnitAddToStock()", GetUnitName(u), 0, "Attempted to stock an invalid unit type")
-//#              call RemoveUnit(u)
-//#              set u = null
-//#         endif
+
+
         return s__UnitRecycler___UnitRecycler_stock(rawCode)
     endfunction
 
@@ -3175,59 +3111,58 @@ endfunction
 
 
 
-//#         static if UnitRecycler___AUTO_RECYCLE_DEAD then
-                function s__UnitRecycler___Initializer_onDeath takes nothing returns nothing
-                    local unit u= GetTriggerUnit()
-//#                 static if LIBRARY_ErrorMessage then
-//#                      call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "", GetUnitName(u), 0, "A unit in stock has been killed!")
-//#                 endif
-                    if UnitRecycler___UnitTypeFilter(u) and not IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitType(u, UNIT_TYPE_STRUCTURE) then
-                        call RecycleUnitDelayedEx(u , UnitRecycler___DeathTime(u))
-                    endif
-                    set u=null
-                endfunction
-    
-                function s__UnitRecycler___Initializer_autoRecycler takes nothing returns nothing
-//#                 static if UnitRecycler___AUTO_RECYCLE_DEAD then
-//#                     static if LIBRARY_RegisterPlayerUnitEvent then
-                            call RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_DEATH , function s__UnitRecycler___Initializer_onDeath)
-//#                     else
-//#                         local trigger t = CreateTrigger()
-//#                         local code c = function UnitRecycler___Initializer.onDeath
-//#                         local integer i = 16
-//#                         loop
-//#                             set i = i - 1
-//#                             call TriggerRegisterPlayerUnitEvent(t, Player(i), EVENT_PLAYER_UNIT_DEATH, null)
-//#                             exitwhen i == 0
-//#                         endloop
-//#                         call TriggerAddCondition(t, Filter(c))
-//#                         set t = null
-//#                     endif
-//#                 endif
-                endfunction
-//#         endif
+
+            function s__UnitRecycler___Initializer_onDeath takes nothing returns nothing
+                local unit u= GetTriggerUnit()
+
+
+                if UnitRecycler___UnitTypeFilter(u) and not IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitType(u, UNIT_TYPE_STRUCTURE) then
+                    call s__UnitRecycler___UnitRecycler_addDelayed((u ) , (( UnitRecycler___DeathTime(u))*1.0) , function s__UnitRecycler___UnitRecycler_delayedRecycleEx) // INLINED!!
+                endif
+                set u=null
+            endfunction
+
+            function s__UnitRecycler___Initializer_autoRecycler takes nothing returns nothing
+
+
+                        call RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_DEATH , function s__UnitRecycler___Initializer_onDeath)
+
+
+
+
+
+
+
+
+
+
+
+
+
+            endfunction
+
 
         function s__UnitRecycler___Initializer_init takes nothing returns nothing
             call s__UnitRecycler___List_init()
             call s__UnitRecycler___UnitRecycler_init()
-//#             static if UnitRecycler___AUTO_RECYCLE_DEAD then
-                    call s__UnitRecycler___Initializer_autoRecycler()
-//#             endif
+
+                call RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_DEATH , function s__UnitRecycler___Initializer_onDeath) // INLINED!!
+
             call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, "|CFFFFCC00UnitRecycler|R library is ready!")
         endfunction
 //Implemented from module UnitRecycler___Init:
-        function s__UnitRecycler___Initializer_UnitRecycler___Init__onInit takes nothing returns nothing
+        function s__UnitRecycler___Initializer_UnitRecycler___Init___onInit takes nothing returns nothing
             call s__UnitRecycler___Initializer_init()
         endfunction
 
 
-//#     static if true and LIBRARY_ErrorMessage then
-//#         function UnitRecycler___DisplayError takes unit removedUnit returns nothing
-//#             call ThrowError(UnitRecycler___List.stocked.boolean[GetHandleId(removedUnit)], "UnitRecycler", "RemoveUnit()", GetUnitName(removedUnit), 0, "Attempted to remove a stocked unit")
-//#         endfunction
-//# 
-//#         hook RemoveUnit UnitRecycler___DisplayError
-//#     endif
+
+
+
+
+
+
+
 
 
 //library UnitRecycler ends
@@ -3245,27 +3180,27 @@ endfunction
 
     //========================================================================================================
 
-    function ResourcePreloader__DoUnitPreload takes integer id returns nothing
-//#         static if LIBRARY_UnitRecycler then
-                call RecycleUnitEx(CreateUnit(Player(PLAYER_NEUTRAL_PASSIVE), id, 0, 0, 270))
-//#         else
-//#             call RemoveUnit(CreateUnit(Player(PLAYER_NEUTRAL_PASSIVE), id, 0, 0, 0))
-//#         endif
+    function ResourcePreloader___DoUnitPreload takes integer id returns nothing
+
+            call RecycleUnitEx(CreateUnit(Player(PLAYER_NEUTRAL_PASSIVE), id, 0, 0, 270))
+
+
+
     endfunction
 
-    function ResourcePreloader__DoItemPreload takes integer id returns nothing
-        call RemoveItem(UnitAddItemById(s__ResourcePreloader__S_dummy, id))
+    function ResourcePreloader___DoItemPreload takes integer id returns nothing
+        call RemoveItem(UnitAddItemById(s__ResourcePreloader___S_dummy, id))
     endfunction
 
-    function ResourcePreloader__DoAbilityPreload takes integer id returns boolean
-        return UnitAddAbility(s__ResourcePreloader__S_dummy, id) and UnitRemoveAbility(s__ResourcePreloader__S_dummy, id)
+    function ResourcePreloader___DoAbilityPreload takes integer id returns boolean
+        return UnitAddAbility(s__ResourcePreloader___S_dummy, id) and UnitRemoveAbility(s__ResourcePreloader___S_dummy, id)
     endfunction
 
-    function ResourcePreloader__DoEffectPreload takes string path returns nothing
-        call DestroyEffect(AddSpecialEffect(path, GetUnitX(s__ResourcePreloader__S_dummy), GetUnitY(s__ResourcePreloader__S_dummy)))
+    function ResourcePreloader___DoEffectPreload takes string path returns nothing
+        call DestroyEffect(AddSpecialEffect(path, GetUnitX(s__ResourcePreloader___S_dummy), GetUnitY(s__ResourcePreloader___S_dummy)))
     endfunction
 
-    function ResourcePreloader__DoSoundPreload takes string path returns nothing
+    function ResourcePreloader___DoSoundPreload takes string path returns nothing
         local sound s= CreateSound(path, false, false, false, 10, 10, "")
         call SetSoundVolume(s, 0)
         call StartSound(s)
@@ -3275,159 +3210,159 @@ endfunction
 
 //textmacro instance: PRELOAD_TYPE("Unit", "integer", "unit", "what", "0")
     function PreloadUnit takes integer what returns nothing
-//#         static if LIBRARY_Table then
-                if s__Table___booleans__getindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader__S_tb,0)),what) then
-                    return
-                endif
-                call s__Table___booleans__setindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader__S_tb,0)),what, true)
-                call ResourcePreloader__DoUnitPreload(what)
-//#         else
-//#             if LoadBoolean(ResourcePreloader__S.tb, 0, what) then
-//#                 return
-//#             endif
-//#             call SaveBoolean(ResourcePreloader__S.tb, 0, what, true)
-//#             call ResourcePreloader__DoUnitPreload(what)
-//#         endif
+
+            if (LoadBoolean(Table___ht, (((((s__ResourcePreloader___S_tb) + (0))))), (what))) then // INLINED!!
+                return
+            endif
+            call SaveBoolean(Table___ht, (((((s__ResourcePreloader___S_tb) + (0))))), (what), ( true)) // INLINED!!
+            call RecycleUnitEx(CreateUnit(Player(PLAYER_NEUTRAL_PASSIVE), (what), 0, 0, 270)) // INLINED!!
+
+
+
+
+
+
+
     endfunction
 //end of: PRELOAD_TYPE("Unit", "integer", "unit", "what", "0")
 //textmacro instance: PRELOAD_TYPE("Item", "integer", "item", "what", "1")
     function PreloadItem takes integer what returns nothing
-//#         static if LIBRARY_Table then
-                if s__Table___booleans__getindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader__S_tb,1)),what) then
-                    return
-                endif
-                call s__Table___booleans__setindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader__S_tb,1)),what, true)
-                call ResourcePreloader__DoItemPreload(what)
-//#         else
-//#             if LoadBoolean(ResourcePreloader__S.tb, 1, what) then
-//#                 return
-//#             endif
-//#             call SaveBoolean(ResourcePreloader__S.tb, 1, what, true)
-//#             call ResourcePreloader__DoItemPreload(what)
-//#         endif
+
+            if (LoadBoolean(Table___ht, (((((s__ResourcePreloader___S_tb) + (1))))), (what))) then // INLINED!!
+                return
+            endif
+            call SaveBoolean(Table___ht, (((((s__ResourcePreloader___S_tb) + (1))))), (what), ( true)) // INLINED!!
+            call RemoveItem(UnitAddItemById(s__ResourcePreloader___S_dummy, (what))) // INLINED!!
+
+
+
+
+
+
+
     endfunction
 //end of: PRELOAD_TYPE("Item", "integer", "item", "what", "1")
 //textmacro instance: PRELOAD_TYPE("Ability", "integer", "ability", "what", "2")
     function PreloadAbility takes integer what returns nothing
-//#         static if LIBRARY_Table then
-                if s__Table___booleans__getindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader__S_tb,2)),what) then
-                    return
-                endif
-                call s__Table___booleans__setindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader__S_tb,2)),what, true)
-                call ResourcePreloader__DoAbilityPreload(what)
-//#         else
-//#             if LoadBoolean(ResourcePreloader__S.tb, 2, what) then
-//#                 return
-//#             endif
-//#             call SaveBoolean(ResourcePreloader__S.tb, 2, what, true)
-//#             call ResourcePreloader__DoAbilityPreload(what)
-//#         endif
+
+            if (LoadBoolean(Table___ht, (((((s__ResourcePreloader___S_tb) + (2))))), (what))) then // INLINED!!
+                return
+            endif
+            call SaveBoolean(Table___ht, (((((s__ResourcePreloader___S_tb) + (2))))), (what), ( true)) // INLINED!!
+            call ResourcePreloader___DoAbilityPreload(what)
+
+
+
+
+
+
+
     endfunction
 //end of: PRELOAD_TYPE("Ability", "integer", "ability", "what", "2")
 //textmacro instance: PRELOAD_TYPE("Effect", "string", "effect", "StringHash(what)", "3")
     function PreloadEffect takes string what returns nothing
-//#         static if LIBRARY_Table then
-                if s__Table___booleans__getindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader__S_tb,3)),StringHash(what)) then
-                    return
-                endif
-                call s__Table___booleans__setindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader__S_tb,3)),StringHash(what), true)
-                call ResourcePreloader__DoEffectPreload(what)
-//#         else
-//#             if LoadBoolean(ResourcePreloader__S.tb, 3, StringHash(what)) then
-//#                 return
-//#             endif
-//#             call SaveBoolean(ResourcePreloader__S.tb, 3, StringHash(what), true)
-//#             call ResourcePreloader__DoEffectPreload(what)
-//#         endif
+
+            if (LoadBoolean(Table___ht, (((((s__ResourcePreloader___S_tb) + (3))))), (StringHash(what)))) then // INLINED!!
+                return
+            endif
+            call SaveBoolean(Table___ht, (((((s__ResourcePreloader___S_tb) + (3))))), (StringHash(what)), ( true)) // INLINED!!
+            call DestroyEffect(AddSpecialEffect((what), GetUnitX(s__ResourcePreloader___S_dummy), GetUnitY(s__ResourcePreloader___S_dummy))) // INLINED!!
+
+
+
+
+
+
+
     endfunction
 //end of: PRELOAD_TYPE("Effect", "string", "effect", "StringHash(what)", "3")
 //textmacro instance: PRELOAD_TYPE("Sound", "string", "sound", "StringHash(what)", "4")
     function PreloadSound takes string what returns nothing
-//#         static if LIBRARY_Table then
-                if s__Table___booleans__getindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader__S_tb,4)),StringHash(what)) then
-                    return
-                endif
-                call s__Table___booleans__setindex(s__Table__get_boolean(s__TableArray__getindex(s__ResourcePreloader__S_tb,4)),StringHash(what), true)
-                call ResourcePreloader__DoSoundPreload(what)
-//#         else
-//#             if LoadBoolean(ResourcePreloader__S.tb, 4, StringHash(what)) then
-//#                 return
-//#             endif
-//#             call SaveBoolean(ResourcePreloader__S.tb, 4, StringHash(what), true)
-//#             call ResourcePreloader__DoSoundPreload(what)
-//#         endif
+
+            if (LoadBoolean(Table___ht, (((((s__ResourcePreloader___S_tb) + (4))))), (StringHash(what)))) then // INLINED!!
+                return
+            endif
+            call SaveBoolean(Table___ht, (((((s__ResourcePreloader___S_tb) + (4))))), (StringHash(what)), ( true)) // INLINED!!
+            call ResourcePreloader___DoSoundPreload(what)
+
+
+
+
+
+
+
     endfunction
 //end of: PRELOAD_TYPE("Sound", "string", "sound", "StringHash(what)", "4")
 
-//#     static if LIBRARY_BJObjectId then
-    //textmacro instance: RANGED_PRELOAD_TYPE("Unit")
-        function PreloadUnitEx takes integer start,integer end returns nothing
-            local boolean forward= start < end
-            loop
-                call PreloadUnit(start)
-                exitwhen start == end
-                if forward then
-                    set start=s__BJObjectId_plus_1((start))
-                    exitwhen start > end
-                else
-                    set start=s__BJObjectId_minus_1((start))
-                    exitwhen start < end
-                endif
-            endloop
-        endfunction
-    //end of: RANGED_PRELOAD_TYPE("Unit")
-    //textmacro instance: RANGED_PRELOAD_TYPE("Item")
-        function PreloadItemEx takes integer start,integer end returns nothing
-            local boolean forward= start < end
-            loop
-                call PreloadItem(start)
-                exitwhen start == end
-                if forward then
-                    set start=s__BJObjectId_plus_1((start))
-                    exitwhen start > end
-                else
-                    set start=s__BJObjectId_minus_1((start))
-                    exitwhen start < end
-                endif
-            endloop
-        endfunction
-    //end of: RANGED_PRELOAD_TYPE("Item")
-    //textmacro instance: RANGED_PRELOAD_TYPE("Ability")
-        function PreloadAbilityEx takes integer start,integer end returns nothing
-            local boolean forward= start < end
-            loop
-                call PreloadAbility(start)
-                exitwhen start == end
-                if forward then
-                    set start=s__BJObjectId_plus_1((start))
-                    exitwhen start > end
-                else
-                    set start=s__BJObjectId_minus_1((start))
-                    exitwhen start < end
-                endif
-            endloop
-        endfunction
-    //end of: RANGED_PRELOAD_TYPE("Ability")
-//#     endif
+
+//textmacro instance: RANGED_PRELOAD_TYPE("Unit")
+    function PreloadUnitEx takes integer start,integer end returns nothing
+        local boolean forward= start < end
+        loop
+            call PreloadUnit(start)
+            exitwhen start == end
+            if forward then
+                set start=s__BJObjectId_plus_1((start))
+                exitwhen start > end
+            else
+                set start=s__BJObjectId_minus_1((start))
+                exitwhen start < end
+            endif
+        endloop
+    endfunction
+//end of: RANGED_PRELOAD_TYPE("Unit")
+//textmacro instance: RANGED_PRELOAD_TYPE("Item")
+    function PreloadItemEx takes integer start,integer end returns nothing
+        local boolean forward= start < end
+        loop
+            call PreloadItem(start)
+            exitwhen start == end
+            if forward then
+                set start=s__BJObjectId_plus_1((start))
+                exitwhen start > end
+            else
+                set start=s__BJObjectId_minus_1((start))
+                exitwhen start < end
+            endif
+        endloop
+    endfunction
+//end of: RANGED_PRELOAD_TYPE("Item")
+//textmacro instance: RANGED_PRELOAD_TYPE("Ability")
+    function PreloadAbilityEx takes integer start,integer end returns nothing
+        local boolean forward= start < end
+        loop
+            call PreloadAbility(start)
+            exitwhen start == end
+            if forward then
+                set start=s__BJObjectId_plus_1((start))
+                exitwhen start > end
+            else
+                set start=s__BJObjectId_minus_1((start))
+                exitwhen start < end
+            endif
+        endloop
+    endfunction
+//end of: RANGED_PRELOAD_TYPE("Ability")
+
 
     //========================================================================================================
 
 
-//#         static if LIBRARY_Table then
-//#         else
-//#             static hashtable tb = InitHashtable()
-//#         endif
-//Implemented from module ResourcePreloader__Init:
-        function s__ResourcePreloader__S_ResourcePreloader__Init__onInit takes nothing returns nothing
+
+
+
+
+//Implemented from module ResourcePreloader___Init:
+        function s__ResourcePreloader___S_ResourcePreloader___Init___onInit takes nothing returns nothing
             local rect world= GetWorldBounds()
-//#             static if LIBRARY_Table then
-                    set s__ResourcePreloader__S_tb=s__TableArray__staticgetindex(5)
-//#             endif
-            set s__ResourcePreloader__S_dummy=CreateUnit(ResourcePreloader_PRELOAD_UNIT_OWNER, ResourcePreloader_PRELOAD_UNIT_TYPE_ID, 0, 0, 0)
-            call SetUnitY(s__ResourcePreloader__S_dummy, GetRectMaxY(world) + ResourcePreloader_PRELOAD_UNIT_Y_BOUNDS_EXTENSION)
-            call UnitAddAbility(s__ResourcePreloader__S_dummy, 'AInv')
-            call UnitAddAbility(s__ResourcePreloader__S_dummy, 'Avul')
-            call UnitRemoveAbility(s__ResourcePreloader__S_dummy, 'Amov')
+
+                set s__ResourcePreloader___S_tb=s__TableArray__staticgetindex(5)
+
+            set s__ResourcePreloader___S_dummy=CreateUnit(ResourcePreloader_PRELOAD_UNIT_OWNER, ResourcePreloader_PRELOAD_UNIT_TYPE_ID, 0, 0, 0)
+            call SetUnitY(s__ResourcePreloader___S_dummy, GetRectMaxY(world) + ResourcePreloader_PRELOAD_UNIT_Y_BOUNDS_EXTENSION)
+            call UnitAddAbility(s__ResourcePreloader___S_dummy, 'AInv')
+            call UnitAddAbility(s__ResourcePreloader___S_dummy, 'Avul')
+            call UnitRemoveAbility(s__ResourcePreloader___S_dummy, 'Amov')
             call RemoveRect(world)
             set world=null
         endfunction
@@ -3543,30 +3478,30 @@ function gameset_owner takes nothing returns nothing
         set i=i + 1
     endloop
 
-//#     static if  not true  then
-//#         // Notification for game owner
-//#         call DisplayTimedTextToPlayer(udg_game_owner, 0., 0., 10., "Вы получили права " + GREEN + "владельца игры|r.")
-//#     endif
+
+        // Notification for game owner
+        call DisplayTimedTextToPlayer(udg_game_owner, 0., 0., 10., "Вы получили права " + GREEN + "владельца игры|r.")
+
 
     // Opt. begin
-    if ( GetTimeInSeconds() < R2I(udg_gameset_time_first) ) then // Shows commands and settings only at game start
+    if ( (s__time[0] + s__time[1] * 60 + s__time[2] * 3600) < R2I(udg_gameset_time_first) ) then // Shows commands and settings only at game start // INLINED!!
         if ( udg_info[GetConvertedPlayerId(udg_game_owner)] == true ) then // Checks Info flag of game owner
-//#             static if  not true  then
-//#                 // Shows all available commands and settings
-//#                 call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "Настройка карты (доступно первые " + ( I2S(R2I(udg_gameset_time_first)) + " сек.)" ) ) )
-//#                 call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_gameset_time) ) + " ) " ) + "|cFFFF0000-time xxx|r, где xxx - время перед началом нового раунда (от 20 до 60 сек.)" ) )
-//#                 call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_wave_time) ) + " ) " ) + "|cFFFF0000-arena xxx|r. Где xxx - начальное время раунда на арене (от 60 сек. до 150 сек.)" ) )
-//#                 if (udg_building_status == true) then
-//#                     call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( 1 ) " + "|cFFFF0000-build x|r, при x=0 - во время раунда можно строить/улучшать юнитов при x=1 - нельзя" ) )
-//#                 else
-//#                     call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( 0 ) " + "|cFFFF0000-build x|r, при x=0 - во время раунда можно строить/улучшать юнитов при x=1 - нельзя" ) )
-//#                 endif
-//#                 call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( " + ( I2S(udg_const_point[0]) + ( "-" + ( I2S(udg_const_point[1]) + " ) |cFFFF0000-point ##|r." ) ) ) ) )
-//#                 call DisplayTextToForce( GetForceOfPlayer(udg_game_owner), "Первый # - минимальное число контрольных точек, появляющихся на арене. Второй # - максимальное число контрольных точек, оно не может превышать первый номер, а также число 9." )
-//#                 call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_mode) ) + " ) " ) + "|cFFFF0000-mode #. |r" ) )
-//#                 call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, "Если # = 1, то мини-игры будут чередоваться каждую вторую волну.\nЕсли # = 2, то мини-игр не будет совсем.\nЕсли # = 3, то мини-игры буду каждые 3 волны." )
-//#                 call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( ( "( " + I2S(udg_gg) ) + " ) " ) + "|cFFFF0000-gg ##|r. Где ## - волна, после которой закончится игра (от 9 до " ) + ( I2S(( ( udg_mini_game_max * 2 ) + 3 )) + " )." ) ) )
-//#             endif
+
+                // Shows all available commands and settings
+                call DisplayTimedTextToForce(GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "Настройка карты (доступно первые " + ( I2S(R2I(udg_gameset_time_first)) + " сек.)" ) ))
+                call DisplayTimedTextToForce(GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_gameset_time) ) + " ) " ) + "|cFFFF0000-time xxx|r, где xxx - время перед началом нового раунда (от 20 до 60 сек.)" ))
+                call DisplayTimedTextToForce(GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_wave_time) ) + " ) " ) + "|cFFFF0000-arena xxx|r. Где xxx - начальное время раунда на арене (от 60 сек. до 150 сек.)" ))
+                if ( udg_building_status == true ) then
+                    call DisplayTimedTextToForce(GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( 1 ) |cFFFF0000-build x|r, при x=0 - во время раунда можно строить/улучшать юнитов при x=1 - нельзя" ))
+                else
+                    call DisplayTimedTextToForce(GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( 0 ) |cFFFF0000-build x|r, при x=0 - во время раунда можно строить/улучшать юнитов при x=1 - нельзя" ))
+                endif
+                call DisplayTimedTextToForce(GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( " + ( I2S(udg_const_point[0]) + ( "-" + ( I2S(udg_const_point[1]) + " ) |cFFFF0000-point ##|r." ) ) ) ))
+                call DisplayTextToForce(GetForceOfPlayer(udg_game_owner), "Первый # - минимальное число контрольных точек, появляющихся на арене. Второй # - максимальное число контрольных точек, оно не может превышать первый номер, а также число 9.")
+                call DisplayTimedTextToForce(GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_mode) ) + " ) " ) + "|cFFFF0000-mode #. |r" ))
+                call DisplayTimedTextToForce(GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, "Если # = 1, то мини-игры будут чередоваться каждую вторую волну.\nЕсли # = 2, то мини-игр не будет совсем.\nЕсли # = 3, то мини-игры буду каждые 3 волны.")
+                call DisplayTimedTextToForce(GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( ( "( " + I2S(udg_gg) ) + " ) " ) + "|cFFFF0000-gg ##|r. Где ## - волна, после которой закончится игра (от 9 до " ) + ( I2S(( ( udg_mini_game_max * 2 ) + 3 )) + " )." ) ))
+
 
         endif
     endif
@@ -3638,7 +3573,7 @@ function faq_hide_dialog takes nothing returns nothing
 endfunction
 
 function faq_flush takes nothing returns nothing
-    call UnfadeMap() // Unfades map
+    call SetDayNightModels("Environment\\DNC\\DNCDalaran\\DNCDalaranTerrain\\DNCDalaranTerrain.mdl", "Environment\\DNC\\DNCDalaran\\DNCDalaranUnit\\DNCDalaranUnit.mdl") // Unfades map // INLINED!!
     call ForForce(udg_players_group, function faq_hide_dialog) // Hides voting dialog
     call DestroyTextTag(s__faq_tts[0]) // Уничтожает плавающий текст с голосами "За"
     call DestroyTextTag(s__faq_tts[1]) // Уничтожает плавающий текст с голосами "За"
@@ -3654,7 +3589,6 @@ function faq_start_timer_actions takes nothing returns nothing
 endfunction
 
 function faq_start takes nothing returns nothing
-     set udg_gameset_time_first=timeBeforeFirstWave
     call TimerStart(udg_gameset_timer, udg_gameset_time_first, false, function faq_start_timer_actions) // After settings were set
 
     set faq_timerdialog=CreateTimerDialog(udg_gameset_timer) // Timer dialog in upper-left corner for commands and settings
@@ -3702,7 +3636,7 @@ endfunction
 
 //===========================================================================
 function faq_ini takes nothing returns nothing
-    call FadeMap() // Сделать всю карту чёрной
+    call SetDayNightModels("", "") // Сделать всю карту чёрной // INLINED!!
 
     // ---За---
     // Плавающий текст с требуемым кол-вом голосов "За"
@@ -3724,13 +3658,13 @@ function faq_ini takes nothing returns nothing
     // Кнопка отклонения просмотра обучения
     set s__faq_buttons[1]= DialogAddButton(faq_dialog, "Нет", 0)
 
-//#     static if true then
-            call faq_stop() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
-//#     else
-//#         call TimerStart(CreateTimer(), 1.00, true, function faq_voting_timer_counter) // Makes duration of voting visible in faq dialog's title
-//#         call faq_voting_timer_counter() // First tick of timer
-//#         call ForForce(udg_players_group, function faq_show_dialog) // Shows faq dialog to all players
-//#     endif
+
+
+
+        call TimerStart(CreateTimer(), 1.00, true, function faq_voting_timer_counter) // Makes duration of voting visible in faq dialog's title
+        call faq_voting_timer_counter() // First tick of timer
+        call ForForce(udg_players_group, function faq_show_dialog) // Shows faq dialog to all players
+
 endfunction
 
 
@@ -3982,7 +3916,7 @@ endfunction
 // Работа таймера Вклад в игрока
 function Timer_contr_to_pl_actions takes nothing returns nothing
     local timer t= GetExpiredTimer()
-    local player p= s__Table___players__getindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),GetHandleId(t))
+    local player p= (LoadPlayerHandle(Table___ht, (((s__HashTable__getindex(hash,StringHash("income"))))), (GetHandleId(t)))) // INLINED!!
     local integer count_research= GetPlayerTechCount(p, contr_to_pl_rc, true)
     local integer gold= contr_to_pl_gold + ( contr_to_pl_gold_mod * ( count_research - 1 ) )
     local integer lumber= contr_to_pl_lumber + ( contr_to_pl_lumber_mod * ( count_research - 1 ) )
@@ -4038,7 +3972,7 @@ function Trig_income_upg_actions_contr_to_pl takes player p,integer count_resear
     call DisplayTimedTextToPlayer(rand_p, 0, 0, 10.00, mes)
 
     set t=CreateTimer()
-    call s__Table___players__setindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),GetHandleId(t), rand_p)
+    call SavePlayerHandle(Table___ht, (((s__HashTable__getindex(hash,StringHash("income"))))), (GetHandleId(t)), ( rand_p)) // INLINED!!
     call TimerStart(t, contr_to_pl_time, false, function Timer_contr_to_pl_actions)
 
     call DestroyForce(gr_p)
@@ -4477,10 +4411,10 @@ function Trig_income_upgTQ_Actions_group takes nothing returns nothing
     local boolean b1
     local boolean b2
     local player p= GetOwningPlayer(u)
-    local player p_k= s__Table___players__getindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),StringHash("player_killer"))
-    local player p_v= s__Table___players__getindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),StringHash("player_victim"))
+    local player p_k= (LoadPlayerHandle(Table___ht, (((s__HashTable__getindex(hash,StringHash("income"))))), (StringHash("player_killer")))) // INLINED!!
+    local player p_v= (LoadPlayerHandle(Table___ht, (((s__HashTable__getindex(hash,StringHash("income"))))), (StringHash("player_victim")))) // INLINED!!
     local real damage= cursed_mine_damage_for_lvl
-    local unit damage_u= s__Table___units__getindex(s__Table__get_unit(s__HashTable__getindex(hash,StringHash("income"))),StringHash("victim"))
+    local unit damage_u= (LoadUnitHandle(Table___ht, (((s__HashTable__getindex(hash,StringHash("income"))))), (StringHash("victim")))) // INLINED!!
 
     set b1=IsUnitInGroup(u, udg_wave_units)
     set b2=( p == p_k )
@@ -4533,9 +4467,9 @@ function Trig_income_upgTQ_Actions takes nothing returns nothing
 
     call GroupEnumUnitsInRange(gr, x, y, range_damage, null)
 
-    call s__Table___players__setindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),StringHash("player_killer"), p_k)
-    call s__Table___players__setindex(s__Table__get_player(s__HashTable__getindex(hash,StringHash("income"))),StringHash("player_victim"), p_v)
-    call s__Table___units__setindex(s__Table__get_unit(s__HashTable__getindex(hash,StringHash("income"))),StringHash("victim"), victim)
+    call SavePlayerHandle(Table___ht, (((s__HashTable__getindex(hash,StringHash("income"))))), (StringHash("player_killer")), ( p_k)) // INLINED!!
+    call SavePlayerHandle(Table___ht, (((s__HashTable__getindex(hash,StringHash("income"))))), (StringHash("player_victim")), ( p_v)) // INLINED!!
+    call SaveUnitHandle(Table___ht, (((s__HashTable__getindex(hash,StringHash("income"))))), (StringHash("victim")), ( victim)) // INLINED!!
 
     call ForGroup(gr, function Trig_income_upgTQ_Actions_group)
 
@@ -4584,6 +4518,8 @@ function InitTrig_income_upgTQ takes nothing returns nothing
 
     set t=null
 endfunction
+
+
 function inc_colour_actions takes nothing returns nothing
     local unit IncomeObjectiveUnit= GetDyingUnit()
     local player IncomeObjectReceiever= GetOwningPlayer(GetKillingUnit())
@@ -4689,15 +4625,15 @@ function builder_select_actions takes nothing returns nothing
 
     call SelectUnitForPlayerSingle(peon, owner_of_peon) // Selects peon for player
     call ForGroup(group_of_dummies, function C_RemoveEnumUnits) // Remove dummies
-//#     static if true then
-            call AddGoldToPlayer(100000 , owner_of_peon)
-            call AddLumberToPlayer(100000 , owner_of_peon)
-            call SetPlayerTechResearched(owner_of_peon, 'R018', 1) // Улучшение "12 исследований"
-            call SetPlayerTechResearched(owner_of_peon, 'R019', 1) // Улучшение "20 исследований"
-//#         else
-//#         call AddGoldToPlayer(base_gold, owner_of_peon) // Check Globals.j
-//#         call AddLumberToPlayer(base_gems, owner_of_peon) // Check Globals.j
-//#     endif
+
+
+
+
+
+
+        call AddGoldToPlayer(base_gold , owner_of_peon) // Check Globals.j
+        call AddLumberToPlayer(base_gems , owner_of_peon) // Check Globals.j
+
     call CreateUnit(owner_of_peon, 'hbla', x, y, bj_UNIT_FACING) // Юнит "Замок"
     call CreateUnit(owner_of_peon, 'hwtw', x - 450, y + 640, bj_UNIT_FACING) // Юнит "Улучшения"
     call SetUnitPosition(peon, x, y - 250) // Peon's position
@@ -4774,14 +4710,14 @@ endfunction
             local integer us= s__UnitStruct__allocate()
             set s__UnitStruct_gold_raw[us]=gold * 0.8
             set s__UnitStruct_lumber_raw[us]=lumber * 0.8
-            if ( s__UDBLib___usarr[s__Table__getindex(table,parentUnitTypeId)] != null ) then
-                set s__UnitStruct_gold[us]=R2I(s__UnitStruct_gold_raw[us] + sc__UnitStruct_GetGoldRaw(s__UDBLib___usarr[s__Table__getindex(table,parentUnitTypeId)]))
-                set s__UnitStruct_lumber[us]=R2I(s__UnitStruct_lumber_raw[us] + sc__UnitStruct_GetLumberRaw(s__UDBLib___usarr[s__Table__getindex(table,parentUnitTypeId)]))
+            if ( s__UDBLib___usarr[(LoadInteger(Table___ht, (table), (parentUnitTypeId)))] != null ) then // INLINED!!
+                set s__UnitStruct_gold[us]=R2I(s__UnitStruct_gold_raw[us] + (s__UnitStruct_gold_raw[(s__UDBLib___usarr[(LoadInteger(Table___ht, (table), (parentUnitTypeId)))])])) // INLINED!!
+                set s__UnitStruct_lumber[us]=R2I(s__UnitStruct_lumber_raw[us] + (s__UnitStruct_lumber_raw[(s__UDBLib___usarr[(LoadInteger(Table___ht, (table), (parentUnitTypeId)))])])) // INLINED!!
             else
                 set s__UnitStruct_gold[us]=IMaxBJ(R2I(gold * 0.8), 1)
                 set s__UnitStruct_lumber[us]=IMaxBJ(R2I(lumber * 0.8), 1)
             endif
-            call s__Table__setindex(table,unitTypeId, UDBLib___usarrcounter)
+            call SaveInteger(Table___ht, (table), (unitTypeId), ( UDBLib___usarrcounter)) // INLINED!!
             set s__UDBLib___usarr[UDBLib___usarrcounter]= us
             set UDBLib___usarrcounter=UDBLib___usarrcounter + 1
             return us
@@ -4805,7 +4741,7 @@ endfunction
 
 
         function s__UnitDB__getindex takes integer this,unit u returns integer
-            return s__UDBLib___usarr[s__Table__getindex(table,GetUnitTypeId(u))]
+            return s__UDBLib___usarr[(LoadInteger(Table___ht, (table), (GetUnitTypeId(u))))] // INLINED!!
         endfunction
 
 // scope UDBLib ends
@@ -4817,8 +4753,8 @@ endfunction
 function building_selling_actions takes nothing returns nothing
     local unit u= GetSpellAbilityUnit()
     local player p= GetTriggerPlayer()
-    local integer gold= s__UnitStruct_GetGold(s__UnitDB__getindex(udb,u))
-    local integer lumber= s__UnitStruct_GetLumber(s__UnitDB__getindex(udb,u))
+    local integer gold= (s__UnitStruct_gold[(s__UnitDB__getindex(udb,u))]) // INLINED!!
+    local integer lumber= (s__UnitStruct_lumber[(s__UnitDB__getindex(udb,u))]) // INLINED!!
     local texttag tt
     call GroupRemoveUnit(udg_buildings, u)
 
@@ -4848,9 +4784,9 @@ function building_selling_actions takes nothing returns nothing
     call RemoveUnit(u)
     call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl", GetUnitX(u), GetUnitY(u)))
 
-    set tt=null
     set u=null
     set p=null
+    set tt=null
 endfunction
 
 //===========================================================================
@@ -4962,9 +4898,9 @@ function building_selling takes nothing returns nothing
     set t=null
 endfunction
 function DebugInit takes nothing returns nothing
-//#     static if true then
-            
-//#     endif
+
+
+
 endfunction
 
 
@@ -4985,53 +4921,53 @@ endfunction
         local integer i= 0
 
 
-//#         static if  not true  then
-//#             // Отображает strVar_** в зависимости от типа карты
-//#             set strTestWarning_RU = "В данной версии вы можете увидеть десинхронизацию, баги, неправильную работу способностей и ошиКБи в словах."
-//#             set strWarning_RU = (RED + "Внимание:|r " + "вы играете в " + Version + " версию " + strVersion + ". ")
-//#             set strTestWarning_EN = "In this version you can experience desyncs, bugs, and miTSakes in localization."
-//#             set strWarning_EN = (RED + "Caution:|r " + "you are playing in " + Version + " version " + strVersion + ". ")
-//#             if (Version != "" and strVersion != "") then
-//#                 if (Version == "Test") then
-//#                     set strVar_RU = strWarning_RU + strTestWarning_RU + "\n "
-//#                     set strVar_EN = strWarning_EN + strTestWarning_EN + "\n "
-//#                 elseif (Version == "Release") then
-//#                     set strVar_RU = "Вы играете в " + GREEN + "стабильную|r " + strVersion + " версию.\n "
-//#                     set strVar_EN = "You are playing in " + GREEN + "stable|r " + strVersion + " version.\n "
-//#                 endif
-//#                 if (Locale() == "RU") then
-//#                     call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 25, strVar_RU)
-//#                 else
-//#                     call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 25, strVar_EN)
-//#                 endif
-//#             endif
-//# 
-//#             // Сообщение об обратной связи
-//#             set Feedback_RU = "Связь со мной: " + strEmail + " и Discord: " + strDiscord + "\n "
-//#             set Feedback_EN = "My contacts: " + strEmail + " and Discord: " + strDiscord + "\n "
-//#             if (Locale() == "RU") then
-//#                 call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_RU)
-//#             else
-//#                 call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_EN)
-//#             endif
-//# 
-//#             // Условие: один из разработчиков в игре?
-//#             loop
-//#                 exitwhen (i > 11)
-//#                 if (GetPlayerName(Player(i)) == "Nokladr" or GetPlayerName(Player(i)) == "Nokladr#2429") then
-//#                     if (Locale() == "RU") then
-//#                         call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 35, ("С вами играет создатель данной карты, " + C_IntToColor(i) + "Nokladr#2429" + "|r. Критика приветствуется :)\n "))
-//#                     else
-//#                         call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 35, ("You are playing with author, " + C_IntToColor(i) + "Nokladr#2429" + "|r. Any feedback is welcome :)\n "))
-//#                     endif
-//#                     set IsDevInGame = true
-//#                 endif
-//#                 set i = i + 1
-//#             endloop
-//#         endif
+
+            // Отображает strVar_** в зависимости от типа карты
+            set strTestWarning_RU="В данной версии вы можете увидеть десинхронизацию, баги, неправильную работу способностей и ошиКБи в словах."
+            set strWarning_RU=( RED + "Внимание:|r вы играете в " + Version + " версию " + strVersion + ". " )
+            set strTestWarning_EN="In this version you can experience desyncs, bugs, and miTSakes in localization."
+            set strWarning_EN=( RED + "Caution:|r you are playing in " + Version + " version " + strVersion + ". " )
+            if ( Version != "" and strVersion != "" ) then
+                if ( Version == "Test" ) then
+                    set strVar_RU=strWarning_RU + strTestWarning_RU + "\n "
+                    set strVar_EN=strWarning_EN + strTestWarning_EN + "\n "
+                elseif ( Version == "Release" ) then
+                    set strVar_RU="Вы играете в " + GREEN + "стабильную|r " + strVersion + " версию.\n "
+                    set strVar_EN="You are playing in " + GREEN + "stable|r " + strVersion + " version.\n "
+                endif
+                if ( Locale() == "RU" ) then
+                    call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 25, strVar_RU)
+                else
+                    call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 25, strVar_EN)
+                endif
+            endif
+
+            // Сообщение об обратной связи
+            set Feedback_RU="Связь со мной: " + strEmail + " и Discord: " + strDiscord + "\n "
+            set Feedback_EN="My contacts: " + strEmail + " and Discord: " + strDiscord + "\n "
+            if ( Locale() == "RU" ) then
+                call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_RU)
+            else
+                call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_EN)
+            endif
+
+            // Условие: один из разработчиков в игре?
+            loop
+                exitwhen ( i > 11 )
+                if ( GetPlayerName(Player(i)) == "Nokladr" or GetPlayerName(Player(i)) == "Nokladr#2429" ) then
+                    if ( Locale() == "RU" ) then
+                        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 35, ( "С вами играет создатель данной карты, " + C_IntToColor(i) + "Nokladr#2429|r. Критика приветствуется :)\n " ))
+                    else
+                        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 35, ( "You are playing with author, " + C_IntToColor(i) + "Nokladr#2429|r. Any feedback is welcome :)\n " ))
+                    endif
+                    set IsDevInGame=true
+                endif
+                set i=i + 1
+            endloop
+
 
         // Инициализируем хэш-таблицу
-        set hash=s__HashTable_create()
+        set hash=(s__Table_create()) // INLINED!!
         set table=s__Table_create()
 
         // Заполнение массива incSpellrc равкодами инкам способностей
@@ -6780,7 +6716,7 @@ function Trig_scoreboard_ini_Actions takes nothing returns nothing
     set bj_forLoopAIndexEnd=8
     loop
         exitwhen bj_forLoopAIndex > bj_forLoopAIndexEnd
-        if ( Trig_scoreboard_ini_Func002Func001001() ) then
+        if ( (IsPlayerInForce(ConvertedPlayer(GetForLoopIndexA()), udg_players_group) == true) ) then // INLINED!!
             set udg_scoreboard_limit=GetForLoopIndexA()
         else
             call DoNothing()
@@ -7499,42 +7435,42 @@ function Trig_set_wave_region_rotate_Actions takes nothing returns nothing
                     if ( Trig_set_wave_region_rotate_Func004Func001Func001Func001Func003C() ) then
                         set udg_region_status[udg_random]=true
                         set udg_region_player_status[udg_j]=true
-                        if ( Trig_set_wave_region_rotate_Func004Func001Func001Func001Func003Func004001() ) then
+                        if ( (udg_random == 1) ) then // INLINED!!
                             set udg_region_spawn[udg_j]=gg_rct_start1
                         else
                             call DoNothing()
                         endif
-                        if ( Trig_set_wave_region_rotate_Func004Func001Func001Func001Func003Func005001() ) then
+                        if ( (udg_random == 2) ) then // INLINED!!
                             set udg_region_spawn[udg_j]=gg_rct_start2
                         else
                             call DoNothing()
                         endif
-                        if ( Trig_set_wave_region_rotate_Func004Func001Func001Func001Func003Func006001() ) then
+                        if ( (udg_random == 3) ) then // INLINED!!
                             set udg_region_spawn[udg_j]=gg_rct_start3
                         else
                             call DoNothing()
                         endif
-                        if ( Trig_set_wave_region_rotate_Func004Func001Func001Func001Func003Func007001() ) then
+                        if ( (udg_random == 4) ) then // INLINED!!
                             set udg_region_spawn[udg_j]=gg_rct_start4
                         else
                             call DoNothing()
                         endif
-                        if ( Trig_set_wave_region_rotate_Func004Func001Func001Func001Func003Func008001() ) then
+                        if ( (udg_random == 5) ) then // INLINED!!
                             set udg_region_spawn[udg_j]=gg_rct_start5
                         else
                             call DoNothing()
                         endif
-                        if ( Trig_set_wave_region_rotate_Func004Func001Func001Func001Func003Func009001() ) then
+                        if ( (udg_random == 6) ) then // INLINED!!
                             set udg_region_spawn[udg_j]=gg_rct_start6
                         else
                             call DoNothing()
                         endif
-                        if ( Trig_set_wave_region_rotate_Func004Func001Func001Func001Func003Func010001() ) then
+                        if ( (udg_random == 7) ) then // INLINED!!
                             set udg_region_spawn[udg_j]=gg_rct_start7
                         else
                             call DoNothing()
                         endif
-                        if ( Trig_set_wave_region_rotate_Func004Func001Func001Func001Func003Func011001() ) then
+                        if ( (udg_random == 8) ) then // INLINED!!
                             set udg_region_spawn[udg_j]=gg_rct_start8
                         else
                             call DoNothing()
@@ -7665,7 +7601,7 @@ function Trig_set_wave_unit_spawn_Func003Func010Func001Func002Func001001 takes n
 endfunction
 
 function Trig_set_wave_unit_spawn_Func003Func010Func001Func002A takes nothing returns nothing
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func001Func002Func001001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'hbla') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'h01O', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
@@ -7940,322 +7876,322 @@ function Trig_set_wave_unit_spawn_Func003Func010Func002Func064001 takes nothing 
 endfunction
 
 function Trig_set_wave_unit_spawn_Func003Func010Func002A takes nothing returns nothing
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func001001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h002') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'hfoo', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func002001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h004') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'hhes', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func003001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h005') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'hcth', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func004001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h003') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'hrif', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func005001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h007') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'h006', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func006001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h008') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'nhea', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func007001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h009') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'hmpr', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func008001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h00A') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'nemi', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func009001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h00B') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'nhym', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func010001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h00C') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'hkni', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func011001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h00E') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'h00D', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func012001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h00F') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'nbld', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func013001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h00J') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'hsor', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func014001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h00L') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'h00K', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func015001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h00N') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'h00M', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func016001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h00P') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'nrog', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func017001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h00Q') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'hspt', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func018001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h00R') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'h00O', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func019001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h00U') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'hgyr', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func020001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h00V') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'h00S', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func021001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h00W') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'h00T', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func022001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h012') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'hmtt', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func023001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h013') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'h010', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func024001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h014') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'h011', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func025001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h016') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'uske', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func026001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h017') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'nska', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func027001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h018') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'ndmu', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func028001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h019') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'unec', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func029001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01A') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'ugho', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func030001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01B') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'ucry', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func031001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01C') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'uabo', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func032001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01D') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'uban', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func033001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01E') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'nrvd', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func034001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01F') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'ufro', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func035001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01H') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'esen', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func036001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01I') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'earc', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func037001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01J') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'ewsp', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func038001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01K') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'edot', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func039001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01L') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'edry', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func040001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01M') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'efdr', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func041001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01N') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'edoc', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func042001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01P') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'ebal', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func043001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01Q') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'emtg', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func044001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01R') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'echm', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func045001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01S') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'ogru', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func046001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01T') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'ohun', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func047001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01V') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'okod', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func048001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01W') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'nw2w', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func049001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01X') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'orai', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func050001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01Y') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'otbk', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func051001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h01Z') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'owyv', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func052001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h020') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'oshm', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func053001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h021') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'otau', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func054001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h022') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'nbdk', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func055001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h026') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'nmyr', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func056001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h027') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'nsnp', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func057001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h028') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'nrel', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func058001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h02A') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'nnsw', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func059001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h02B') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'nnrg', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func060001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h02C') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'nhyc', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func061001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h02D') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'nwgs', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func062001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h02E') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'nnsu', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func063001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h02F') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'nsgb', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
     endif
-    if ( Trig_set_wave_unit_spawn_Func003Func010Func002Func064001() ) then
+    if ( (GetUnitTypeId(GetEnumUnit()) == 'h02G') ) then // INLINED!!
         call CreateNUnitsAtLocFacingLocBJ(1, 'nahy', GetEnumPlayer(), GetRectCenter(udg_region_spawn[GetConvertedPlayerId(GetEnumPlayer())]), GetRectCenter(gg_rct_centreCENTRE))
     else
         call DoNothing()
@@ -8929,7 +8865,7 @@ function Trig_wave_end_timer_Func011Func002Func009001002002 takes nothing return
 endfunction
 
 function Trig_wave_end_timer_Func011Func002Func009001002 takes nothing returns boolean
-    return GetBooleanAnd(Trig_wave_end_timer_Func011Func002Func009001002001(), Trig_wave_end_timer_Func011Func002Func009001002002())
+    return GetBooleanAnd((IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == true), (IsUnitType(GetFilterUnit(), UNIT_TYPE_SAPPER) == true)) // INLINED!!
 endfunction
 
 function Trig_wave_end_timer_Func011Func002Func009A takes nothing returns nothing
@@ -9127,7 +9063,7 @@ function Trig_wave_rotation_Func003Func006001002002 takes nothing returns boolea
 endfunction
 
 function Trig_wave_rotation_Func003Func006001002 takes nothing returns boolean
-    return GetBooleanAnd(Trig_wave_rotation_Func003Func006001002001(), Trig_wave_rotation_Func003Func006001002002())
+    return GetBooleanAnd((IsUnitAliveBJ(GetFilterUnit()) == true), (IsUnitInGroup(GetFilterUnit(), udg_wave_units) == true)) // INLINED!!
 endfunction
 
 function Trig_wave_rotation_Func003Func006A takes nothing returns nothing
@@ -9440,7 +9376,7 @@ function Trig_wave_rotation_Func005001002002 takes nothing returns boolean
 endfunction
 
 function Trig_wave_rotation_Func005001002 takes nothing returns boolean
-    return GetBooleanAnd(Trig_wave_rotation_Func005001002001(), Trig_wave_rotation_Func005001002002())
+    return GetBooleanAnd((IsUnitAliveBJ(GetFilterUnit()) == true), (IsUnitInGroup(GetFilterUnit(), udg_wave_units) == true)) // INLINED!!
 endfunction
 
 function Trig_wave_rotation_Func005A takes nothing returns nothing
@@ -9457,7 +9393,7 @@ function Trig_wave_rotation_Func006001002002 takes nothing returns boolean
 endfunction
 
 function Trig_wave_rotation_Func006001002 takes nothing returns boolean
-    return GetBooleanAnd(Trig_wave_rotation_Func006001002001(), Trig_wave_rotation_Func006001002002())
+    return GetBooleanAnd((IsUnitAliveBJ(GetFilterUnit()) == true), (IsUnitInGroup(GetFilterUnit(), udg_wave_units) == true)) // INLINED!!
 endfunction
 
 function Trig_wave_rotation_Func006A takes nothing returns nothing
@@ -9474,7 +9410,7 @@ function Trig_wave_rotation_Func007001002002 takes nothing returns boolean
 endfunction
 
 function Trig_wave_rotation_Func007001002 takes nothing returns boolean
-    return GetBooleanAnd(Trig_wave_rotation_Func007001002001(), Trig_wave_rotation_Func007001002002())
+    return GetBooleanAnd((IsUnitAliveBJ(GetFilterUnit()) == true), (IsUnitInGroup(GetFilterUnit(), udg_wave_units) == true)) // INLINED!!
 endfunction
 
 function Trig_wave_rotation_Func007A takes nothing returns nothing
@@ -9487,22 +9423,22 @@ function Trig_wave_rotation_Actions takes nothing returns nothing
     set udg_cycle_i=1
     loop
         exitwhen udg_cycle_i > 4
-        if ( Trig_wave_rotation_Func003Func001001() ) then
+        if ( (udg_cycle_i == 1) ) then // INLINED!!
             set udg_FFF=gg_rct_fastarenaSPAWN1
         else
             call DoNothing()
         endif
-        if ( Trig_wave_rotation_Func003Func002001() ) then
+        if ( (udg_cycle_i == 2) ) then // INLINED!!
             set udg_FFF=gg_rct_fastarenaSPAWN2
         else
             call DoNothing()
         endif
-        if ( Trig_wave_rotation_Func003Func003001() ) then
+        if ( (udg_cycle_i == 3) ) then // INLINED!!
             set udg_FFF=gg_rct_fastarenaSPAWN3
         else
             call DoNothing()
         endif
-        if ( Trig_wave_rotation_Func003Func004001() ) then
+        if ( (udg_cycle_i == 4) ) then // INLINED!!
             set udg_FFF=gg_rct_fastarenaSPAWN4
         else
             call DoNothing()
@@ -10057,7 +9993,7 @@ function Trig_wave_end_Func002Func020001002002 takes nothing returns boolean
 endfunction
 
 function Trig_wave_end_Func002Func020001002 takes nothing returns boolean
-    return GetBooleanAnd(Trig_wave_end_Func002Func020001002001(), Trig_wave_end_Func002Func020001002002())
+    return GetBooleanAnd((IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == true), (IsUnitType(GetFilterUnit(), UNIT_TYPE_SAPPER) == true)) // INLINED!!
 endfunction
 
 function Trig_wave_end_Func002Func020A takes nothing returns nothing
@@ -10921,7 +10857,7 @@ function Trig_inc_per_second_Func002001002002 takes nothing returns boolean
 endfunction
 
 function Trig_inc_per_second_Func002001002 takes nothing returns boolean
-    return GetBooleanAnd(Trig_inc_per_second_Func002001002001(), Trig_inc_per_second_Func002001002002())
+    return GetBooleanAnd((GetUnitTypeId(GetFilterUnit()) == 'n003'), (GetOwningPlayer(GetFilterUnit()) != Player(PLAYER_NEUTRAL_PASSIVE))) // INLINED!!
 endfunction
 
 function Trig_inc_per_second_Func002A takes nothing returns nothing
@@ -10952,7 +10888,7 @@ function Trig_inc_per_second_Func003001002002 takes nothing returns boolean
 endfunction
 
 function Trig_inc_per_second_Func003001002 takes nothing returns boolean
-    return GetBooleanAnd(Trig_inc_per_second_Func003001002001(), Trig_inc_per_second_Func003001002002())
+    return GetBooleanAnd((GetUnitTypeId(GetFilterUnit()) == 'n004'), (GetOwningPlayer(GetFilterUnit()) != Player(PLAYER_NEUTRAL_PASSIVE))) // INLINED!!
 endfunction
 
 function Trig_inc_per_second_Func003A takes nothing returns nothing
@@ -10983,7 +10919,7 @@ function Trig_inc_per_second_Func004001002002 takes nothing returns boolean
 endfunction
 
 function Trig_inc_per_second_Func004001002 takes nothing returns boolean
-    return GetBooleanAnd(Trig_inc_per_second_Func004001002001(), Trig_inc_per_second_Func004001002002())
+    return GetBooleanAnd((GetUnitTypeId(GetFilterUnit()) == 'n005'), (GetOwningPlayer(GetFilterUnit()) != Player(PLAYER_NEUTRAL_PASSIVE))) // INLINED!!
 endfunction
 
 function Trig_inc_per_second_Func004A takes nothing returns nothing
@@ -11393,7 +11329,7 @@ function Trig_Storm_effect_Func006001002002 takes nothing returns boolean
 endfunction
 
 function Trig_Storm_effect_Func006001002 takes nothing returns boolean
-    return GetBooleanAnd(Trig_Storm_effect_Func006001002001(), Trig_Storm_effect_Func006001002002())
+    return GetBooleanAnd((IsUnitInGroup(GetFilterUnit(), udg_wave_units) == true), (IsUnitAliveBJ(GetFilterUnit()) == true)) // INLINED!!
 endfunction
 
 function Trig_Storm_effect_Func006A takes nothing returns nothing
@@ -11463,7 +11399,7 @@ function Trig_Armageddon_effect_Func005Func001003001001002002 takes nothing retu
 endfunction
 
 function Trig_Armageddon_effect_Func005Func001003001001002 takes nothing returns boolean
-    return GetBooleanAnd(Trig_Armageddon_effect_Func005Func001003001001002001(), Trig_Armageddon_effect_Func005Func001003001001002002())
+    return GetBooleanAnd((IsPlayerEnemy(GetOwningPlayer(GetFilterUnit()), Player(PLAYER_NEUTRAL_AGGRESSIVE)) == true), (IsUnitAliveBJ(GetFilterUnit()) == true)) // INLINED!!
 endfunction
 
 function Trig_Armageddon_effect_Func005A takes nothing returns nothing
@@ -11505,7 +11441,7 @@ function Trig_Armageddon_effect_2_Func001003001001002002 takes nothing returns b
 endfunction
 
 function Trig_Armageddon_effect_2_Func001003001001002 takes nothing returns boolean
-    return GetBooleanAnd(Trig_Armageddon_effect_2_Func001003001001002001(), Trig_Armageddon_effect_2_Func001003001001002002())
+    return GetBooleanAnd((IsPlayerEnemy(GetOwningPlayer(GetFilterUnit()), Player(PLAYER_NEUTRAL_AGGRESSIVE)) == true), (IsUnitAliveBJ(GetFilterUnit()) == true)) // INLINED!!
 endfunction
 
 function Trig_Armageddon_effect_2_Actions takes nothing returns nothing
@@ -12669,11 +12605,11 @@ function Trig_ghost_Func001Func001001002003002002 takes nothing returns boolean
 endfunction
 
 function Trig_ghost_Func001Func001001002003002 takes nothing returns boolean
-    return GetBooleanAnd(Trig_ghost_Func001Func001001002003002001(), Trig_ghost_Func001Func001001002003002002())
+    return GetBooleanAnd((GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetDyingUnit())), (GetFilterUnit() != GetDyingUnit())) // INLINED!!
 endfunction
 
 function Trig_ghost_Func001Func001001002003 takes nothing returns boolean
-    return GetBooleanAnd(Trig_ghost_Func001Func001001002003001(), Trig_ghost_Func001Func001001002003002())
+    return GetBooleanAnd((IsUnitAliveBJ(GetFilterUnit()) == true), (GetBooleanAnd((GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetDyingUnit())), (GetFilterUnit() != GetDyingUnit())))) // INLINED!!
 endfunction
 
 function Trig_ghost_Func001Func001A takes nothing returns nothing
@@ -12695,11 +12631,11 @@ function Trig_ghost_Func001Func002001001003002002 takes nothing returns boolean
 endfunction
 
 function Trig_ghost_Func001Func002001001003002 takes nothing returns boolean
-    return GetBooleanAnd(Trig_ghost_Func001Func002001001003002001(), Trig_ghost_Func001Func002001001003002002())
+    return GetBooleanAnd((GetFilterUnit() != GetDyingUnit()), (GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetDyingUnit()))) // INLINED!!
 endfunction
 
 function Trig_ghost_Func001Func002001001003 takes nothing returns boolean
-    return GetBooleanAnd(Trig_ghost_Func001Func002001001003001(), Trig_ghost_Func001Func002001001003002())
+    return GetBooleanAnd((IsUnitAliveBJ(GetFilterUnit()) == true), (GetBooleanAnd((GetFilterUnit() != GetDyingUnit()), (GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetDyingUnit()))))) // INLINED!!
 endfunction
 
 function Trig_ghost_Func001C takes nothing returns boolean
@@ -12785,7 +12721,7 @@ function Trig_rejuvenation_Func001001002003002 takes nothing returns boolean
 endfunction
 
 function Trig_rejuvenation_Func001001002003 takes nothing returns boolean
-    return GetBooleanAnd(Trig_rejuvenation_Func001001002003001(), Trig_rejuvenation_Func001001002003002())
+    return GetBooleanAnd((IsUnitAliveBJ(GetFilterUnit()) == true), (GetOwningPlayer(GetFilterUnit()) == GetOwningPlayer(GetSpellAbilityUnit()))) // INLINED!!
 endfunction
 
 function Trig_rejuvenation_Func001A takes nothing returns nothing
@@ -12827,7 +12763,7 @@ function Trig_tip_Func001Func003001001003002 takes nothing returns boolean
 endfunction
 
 function Trig_tip_Func001Func003001001003 takes nothing returns boolean
-    return GetBooleanAnd(Trig_tip_Func001Func003001001003001(), Trig_tip_Func001Func003001001003002())
+    return GetBooleanAnd((IsUnitAliveBJ(GetFilterUnit()) == true), (GetUnitTypeId(GetFilterUnit()) == 'h00Z')) // INLINED!!
 endfunction
 
 function Trig_tip_Func001C takes nothing returns boolean
@@ -13782,7 +13718,7 @@ function Trig_zombie_ini_finish_Func007Func007001001002002 takes nothing returns
 endfunction
 
 function Trig_zombie_ini_finish_Func007Func007001001002 takes nothing returns boolean
-    return GetBooleanAnd(Trig_zombie_ini_finish_Func007Func007001001002001(), Trig_zombie_ini_finish_Func007Func007001001002002())
+    return GetBooleanAnd((GetUnitTypeId(GetFilterUnit()) == 'h00I'), (IsUnitAliveBJ(GetFilterUnit()) == true)) // INLINED!!
 endfunction
 
 function Trig_zombie_ini_finish_Func007C takes nothing returns boolean
@@ -13855,7 +13791,7 @@ function Trig_zombie_death_Func010Func003001001002002 takes nothing returns bool
 endfunction
 
 function Trig_zombie_death_Func010Func003001001002 takes nothing returns boolean
-    return GetBooleanAnd(Trig_zombie_death_Func010Func003001001002001(), Trig_zombie_death_Func010Func003001001002002())
+    return GetBooleanAnd((GetUnitTypeId(GetFilterUnit()) == 'h00I'), (IsUnitAliveBJ(GetFilterUnit()) == true)) // INLINED!!
 endfunction
 
 function Trig_zombie_death_Func010C takes nothing returns boolean
@@ -15924,7 +15860,7 @@ function Trig_parodys_set_cast_Func002Func001Func008Func001001003001002 takes no
 endfunction
 
 function Trig_parodys_set_cast_Func002Func001Func008Func001001003001 takes nothing returns boolean
-    return GetBooleanAnd(Trig_parodys_set_cast_Func002Func001Func008Func001001003001001(), Trig_parodys_set_cast_Func002Func001Func008Func001001003001002())
+    return GetBooleanAnd((IsUnitAliveBJ(GetFilterUnit()) == true), (IsPlayerInForce(GetOwningPlayer(GetFilterUnit()), udg_players_group) == true)) // INLINED!!
 endfunction
 
 function Trig_parodys_set_cast_Func002Func001Func008Func001001003002 takes nothing returns boolean
@@ -15932,7 +15868,7 @@ function Trig_parodys_set_cast_Func002Func001Func008Func001001003002 takes nothi
 endfunction
 
 function Trig_parodys_set_cast_Func002Func001Func008Func001001003 takes nothing returns boolean
-    return GetBooleanAnd(Trig_parodys_set_cast_Func002Func001Func008Func001001003001(), Trig_parodys_set_cast_Func002Func001Func008Func001001003002())
+    return GetBooleanAnd((GetBooleanAnd((IsUnitAliveBJ(GetFilterUnit()) == true), (IsPlayerInForce(GetOwningPlayer(GetFilterUnit()), udg_players_group) == true))), (GetUnitTypeId(GetFilterUnit()) == 'odkt')) // INLINED!!
 endfunction
 
 function Trig_parodys_set_cast_Func002Func001Func008Func001A takes nothing returns nothing
@@ -16392,13 +16328,13 @@ function main takes nothing returns nothing
     call CreateAllUnits()
     call InitBlizzard()
 
-call ExecuteFunc("jasshelper__initstructs191299703")
+call ExecuteFunc("jasshelper__initstructs192619812")
 call ExecuteFunc("MIXLib___MIXLibInit")
 call MainInit()
 
     call InitGlobals()
     call InitCustomTriggers()
-    call RunInitializationTriggers()
+    call ConditionalTriggerExecute(gg_trg_initialization) // INLINED!!
 
 endfunction
 
@@ -16448,7 +16384,7 @@ set f__result_real= s__UnitStruct_lumber_raw[this]
    return true
 endfunction
 
-function jasshelper__initstructs191299703 takes nothing returns nothing
+function jasshelper__initstructs192619812 takes nothing returns nothing
     set st__UnitStruct_GetGoldRaw=CreateTrigger()
     call TriggerAddCondition(st__UnitStruct_GetGoldRaw,Condition( function sa__UnitStruct_GetGoldRaw))
     set st__UnitStruct_GetLumberRaw=CreateTrigger()
@@ -16456,7 +16392,7 @@ function jasshelper__initstructs191299703 takes nothing returns nothing
 
 
 
-call ExecuteFunc("s__Revive_ReviveUnit___Init__onInit")
+call ExecuteFunc("s__Revive_ReviveUnit___Init___onInit")
 
 
 
@@ -16506,15 +16442,15 @@ call ExecuteFunc("s__Revive_ReviveUnit___Init__onInit")
 
 
 
-call ExecuteFunc("s__RegisterNativeEvent__NativeEvent_RegisterNativeEvent__NativeEventInit__onInit")
+call ExecuteFunc("s__RegisterNativeEvent___NativeEvent_RegisterNativeEvent___NativeEventInit___onInit")
 
 
 
 
 
-call ExecuteFunc("s__UnitRecycler___Initializer_UnitRecycler___Init__onInit")
+call ExecuteFunc("s__UnitRecycler___Initializer_UnitRecycler___Init___onInit")
 
-call ExecuteFunc("s__ResourcePreloader__S_ResourcePreloader__Init__onInit")
+call ExecuteFunc("s__ResourcePreloader___S_ResourcePreloader___Init___onInit")
 
 
 

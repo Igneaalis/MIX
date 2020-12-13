@@ -15,7 +15,7 @@
                 "${workspaceFolder}/tools/common.j",
                 "${workspaceFolder}/tools/Blizzard.j",
                 "${workspaceFolder}/output/war3map.j",
-                "${workspaceFolder}/output/MIX 0.0.1.w3x"
+                "${workspaceFolder}/output/MIX 0.0.2.w3x"
             ],
             "dependsOrder": "sequence",
             "dependsOn": ["compile", "jasshelper"],
@@ -37,7 +37,7 @@
                 "${workspaceFolder}/tools/common.j",
                 "${workspaceFolder}/tools/Blizzard.j",
                 "${workspaceFolder}/output/war3map.j",
-                "${workspaceFolder}/output/MIX 0.0.1.w3x"
+                "${workspaceFolder}/output/MIX 0.0.2.w3x"
             ],
             "dependsOrder": "sequence",
             "dependsOn": ["compile", "jasshelper debug"],
@@ -125,7 +125,7 @@
             "args": [
                 "-launch",
                 "-loadfile",
-                "${workspaceFolder}/output/MIX 0.0.1.w3x"
+                "${workspaceFolder}/output/MIX 0.0.2.w3x"
             ],
             "dependsOrder": "sequence",
             "dependsOn": ["Build"],
@@ -146,7 +146,7 @@
             "args": [
                 "-launch",
                 "-loadfile",
-                "${workspaceFolder}/output/MIX 0.0.1.w3x"
+                "${workspaceFolder}/output/MIX 0.0.2.w3x"
             ],
             "dependsOrder": "sequence",
             "dependsOn": ["Build debug"],

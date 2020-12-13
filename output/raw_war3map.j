@@ -3703,6 +3703,21 @@ function InitTrig_income_upgTQ takes nothing returns nothing
 
     set t = null
 endfunction
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     13.12.2020 16:21       =
+=============================================
+
+inc_colour Trigger
+
+Income Objective OnDestroy()
+
+*/
+
 function inc_colour_actions takes nothing returns nothing
     local unit IncomeObjectiveUnit = GetDyingUnit() // IncomeObject
     local player IncomeObjectReceiever = GetOwningPlayer(GetKillingUnit()) // Who gets IncomeObject
@@ -4007,9 +4022,9 @@ function building_selling_actions takes nothing returns nothing
     call RemoveUnit(u)
     call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl", GetUnitX(u), GetUnitY(u)))
 
-    set tt = null
     set u = null
     set p = null
+    set tt = null
 endfunction
 
 //===========================================================================
