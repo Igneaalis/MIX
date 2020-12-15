@@ -204,6 +204,9 @@ scope Main initializer MainInit
         // For debug purposes
         call DebugInit()
 
+        // Disable Damage Detection System until fast arena begins
+        // call DisableTrigger(DDS)
+
         call Log("post_map_init finished!")
         
     endfunction

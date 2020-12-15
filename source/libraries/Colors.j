@@ -1,4 +1,4 @@
-library ColorsLib
+library Colors
 
     globals
         constant string GOLD =      "|cffffcc00"

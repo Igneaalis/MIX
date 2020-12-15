@@ -1,343 +1,105 @@
-library BJObjectId // 1.0 http://www.hiveworkshop.com/threads/287128/
 
-//! novjass
+// Arcing Text Tag v1.0.0.3 by Maker
 
-// creating:
-
-    // from native object-id / integer
-    set oid = BJObjectId('A000')
-
-    // from string
-    set oid = BJObjectId.from_str("I001")
-
-
-// printing:
-
-    call BJDebugMsg(oid.to_str())
-
-
-// looping through a set of object-id(s)
-
-    // forward
-    local BJObjectId oid = BJObjectId('A000')
-    local BJObjectId last_oid = BJObjectId('A010')
-    loop
-        exitwhen oid > last_oid
-        // do stuff
-        set oid = oid.plus_1()
-    endloop
-
-    // backward
-    local BJObjectId oid = BJObjectId('A010')
-    local BJObjectId last_oid = BJObjectId('A000')
-    loop
-        exitwhen oid < last_oid
-        // do stuff
-        set oid = oid.minus_1()
-    endloop
-
-
-// mapping BJObjectId(s) to array-indices / struct instances
-
-    local integer index
-    local MyStruct my_struct
-
-    set index = BJObjectId('H000').to_unit_index()
-    set my_struct = MyStruct( BJObjectId('h001').to_unit_index() )
-
-    set index = BJObjectId('I000').to_item_index()
-    set my_struct = BJObjectId('I001').to_item_index() // don't really need the MyStruct cast (because vJass =))
-
-    set index = BJObjectId('B000').to_destructable_index()
-    set my_struct = BJObjectId('B001').to_destructable_index()
-
-    set index = BJObjectId('D000').to_doodad_index()
-    set my_struct = BJObjectId('D001').to_doodad_index()
-
-    set index = BJObjectId('A000').to_ability_index()
-    set my_struct = BJObjectId('A001').to_ability_index()
-
-    set index = BJObjectId('B000').to_buff_index()
-    set my_struct = BJObjectId('B001').to_buff_index()
-
-    set index = BJObjectId('R000').to_upgrade_index()
-    set my_struct = BJObjectId('R001').to_upgrade_index()
-
-    // for campaign objects the methods have a "c" after the "to_"
-    set index = BJObjectId('A000').to_cunit_index()
-    set index = BJObjectId('A000').to_cability_index()
-    ...
-
-// NOTE: the to_*_index methods break for object-id(s) > 'XXOZ', i.e
-// 900 is the maximum number of objects you can have and still be able to use those methods;
-// the reason is that the object-id(s) after 'XXOZ' have indices > 8190
-
-//! endnovjass
-
-    struct BJObjectId extends array
-
-        static method from_str takes string oid returns thistype
-            // '0' = 48 .. '9' = 57,
-            // 'A' = 65 .. 'Z' = 90
-            // 'a' = 97 .. 'z' = 122
-            //
-            // index(<chr>):
-            // '0' = 0; chr(0 + 48) = '0' = 48
-            // 'A' = 17; chr(17 + 48) = 'A' = 65
-            // 'a' = 49; chr(49 + 48) = 'a' = 97
-            //
-            local string chars = "0123456789.......ABCDEFGHIJKLMNOPQRSTUVWXYZ......abcdefghijklmnopqrstuvwxyz"
-            local integer this = 0
-            local integer i
-            local integer j
-            local integer ordinal
-            local string chr
-            local integer pow_256 = 1
-
-            set i = 3
+library ArcingTextTag
+    globals
+        private constant    real    SIZE_MIN        = 0.014         // Minimum size of text
+        private constant    real    SIZE_BONUS      = 0.006         // Text size increase
+        private constant    real    TIME_LIFE       = 1.0           // How long the text lasts
+        private constant    real    TIME_FADE       = 0.8           // When does the text start to fade
+        private constant    real    Z_OFFSET        = 50            // Height above unit
+        private constant    real    Z_OFFSET_BON    = 50            // How much extra height the text gains
+        private constant    real    VELOCITY        = 2             // How fast the text move in x/y plane
+        private constant    real    ANGLE           = bj_PI/2       // Movement angle of the text. Does not apply if
+                                                                    // ANGLE_RND is true
+        private constant    boolean ANGLE_RND       = true          // Is the angle random or fixed
+        private             timer   TMR             = CreateTimer()
+    endglobals
+   
+    struct ArcingTextTag extends array
+        private texttag tt
+        private real as         // angle, sin component
+        private real ac         // angle, cos component
+        private real ah         // arc height
+        private real t          // time
+        private real x          // origin x
+        private real y          // origin y
+        private string s        // text
+        private static integer array next
+        private static integer array prev
+        private static integer array rn
+        private static integer ic           = 0       // Instance count  
+       
+        private static method update takes nothing returns nothing
+            local thistype this=next[0]
+            local real p
             loop
-                exitwhen i < 0
-                set chr = SubString(oid, i, i + 1)
-
-                set j = 0
-                loop
-                    exitwhen j >= 75
-
-                    if chr == SubString(chars, j, j + 1) then
-                        set this = this + (j + 48) * pow_256
-                        set pow_256 = pow_256 * 256
-                        exitwhen true
+                set p = Sin(bj_PI*.t)
+                set .t = .t - 0.03125
+                set .x = .x + .ac
+                set .y = .y + .as
+                call SetTextTagPos(.tt, .x, .y, Z_OFFSET + Z_OFFSET_BON * p)
+                call SetTextTagText(.tt, .s, SIZE_MIN + SIZE_BONUS * p)
+                if .t <= 0 then
+                    set .tt = null
+                    set next[prev[this]] = next[this]
+                    set prev[next[this]] = prev[this]
+                    set rn[this] = rn[0]
+                    set rn[0] = this
+                    if next[0]==0 then
+                        call PauseTimer(TMR)
                     endif
-
-                    set j = j + 1
-                endloop
-
-                set i = i - 1
+                endif
+                set this = next[this]
+                exitwhen this == 0
             endloop
-
+        endmethod
+       
+        public static method create takes string s, unit u returns thistype
+            local thistype this = rn[0]
+            static if ANGLE_RND then
+                local real a = GetRandomReal(0, 2*bj_PI)
+            else
+                local real a = ANGLE
+            endif
+            if this == 0 then
+                set ic = ic + 1
+                set this = ic
+            else
+                set rn[0] = rn[this]
+            endif
+           
+            set next[this] = 0
+            set prev[this] = prev[0]
+            set next[prev[0]] = this
+            set prev[0] = this
+           
+            set .s = s
+            set .x = GetUnitX(u)
+            set .y = GetUnitY(u)
+            set .t = TIME_LIFE
+            set .as = Sin(a)*VELOCITY
+            set .ac = Cos(a)*VELOCITY
+            set .ah = 0.
+           
+            if IsUnitVisible(u, GetLocalPlayer()) then
+                set .tt = CreateTextTag()
+                call SetTextTagPermanent(.tt, false)
+                call SetTextTagLifespan(.tt, TIME_LIFE)
+                call SetTextTagFadepoint(.tt, TIME_FADE)
+                call SetTextTagText(.tt, s, SIZE_MIN)
+                call SetTextTagPos(.tt, .x, .y, Z_OFFSET)
+            endif
+           
+            if prev[this] == 0 then
+                call TimerStart(TMR, 0.03125, true, function thistype.update)
+            endif
+           
             return this
         endmethod
-
-        method to_str takes nothing returns string
-            local string chars = "0123456789.......ABCDEFGHIJKLMNOPQRSTUVWXYZ......abcdefghijklmnopqrstuvwxyz"
-            local integer t = this
-            local integer i
-            local integer b
-            local string result = ""
-
-            set i = t
-            set t = i / 0x100
-            set b = i - t * 0x100 - 48
-            set result = SubString(chars, b, b + 1) + result
-
-            set i = t
-            set t = i / 0x100
-            set b = i - t * 0x100 - 48
-            set result = SubString(chars, b, b + 1) + result
-
-            set i = t
-            set t = i / 0x100
-            set b = i - t * 0x100 - 48
-            set result = SubString(chars, b, b + 1) + result
-
-            set t = t - 48
-            set result = SubString(chars, t, t + 1) + result
-
-            return result
-        endmethod
-
-        method plus_1 takes nothing returns thistype
-            local integer t = this
-            local integer i
-            local integer b1
-            local integer b2
-            local integer b3
-            local integer b4
-
-            set i = t
-            set t = i / 0x100
-            set b4 = i - t * 0x100
-
-            if b4 < 'Z' then
-                if b4 != '9' then
-                    set i = i + 1
-                else
-                    set i = i + 8
-                endif
-            else
-
-                set i = t
-                set t = i / 0x100
-                set b3 = i - t * 0x100
-                if b3 < 'Z' then
-                    if b3 != '9' then
-                        set i = i * 0x00000100 + 0x00000100 + '0'
-                    else
-                        set i = i * 0x00000100 + 0x00000800 + '0'
-                    endif
-                else
-
-                    set i = t
-                    set t = i / 0x100
-                    set b2 = i - t * 0x100
-                    if b2 < 'Z' then
-                        if b2 != '9' then
-                            set i = i * 0x00010000 + 0x00010000 + '0' * 0x00000100 + '0'
-                        else
-                            set i = i * 0x00010000 + 0x00080000 + '0' * 0x00000100 + '0'
-                        endif
-                    else
-
-                        set i = t
-                        if i != '9' then
-                            set i = i * 0x01000000 + 0x01000000 + '0' * 0x00010000 + '0' * 0x00000100 + '0'
-                        else
-                            set i = i * 0x01000000 + 0x08000000 + '0' * 0x00010000 + '0' * 0x00000100 + '0'
-                        endif
-                    endif
-                endif
-            endif
-
-            return i
-        endmethod
-
-        method minus_1 takes nothing returns thistype
-            local integer t = this
-            local integer i
-            local integer b1
-            local integer b2
-            local integer b3
-            local integer b4
-
-            set i = t
-            set t = i / 0x100
-            set b4 = i - t * 0x100
-            if b4 > '0' then
-                if b4 != 'A' then
-                    set i = i - 1
-                else
-                    set i = i - 8
-                endif
-            else
-
-                set i = t
-                set t = i / 0x100
-                set b3 = i - t * 0x100
-                if b3 > '0' then
-                    if b3 != 'A' then
-                        set i = i * 0x00000100 - 0x00000100 + 'Z'
-                    else
-                        set i = i * 0x00000100 - 0x00000800 + 'Z'
-                    endif
-                else
-
-                    set i = t
-                    set t = i / 0x100
-                    set b2 = i - t * 0x100
-                    if b2 > '0' then
-                        if b2 != 'A' then
-                            set i = i * 0x00010000 - 0x00010000 + 'Z' * 0x00000100 + 'Z'
-                        else
-                            set i = i * 0x00010000 - 0x00080000 + 'Z' * 0x00000100 + 'Z'
-                        endif
-                    else
-
-                        set i = t
-                        if i != 'A' then
-                            set i = i * 0x01000000 - 0x01000000 + 'Z' * 0x00010000 + 'Z' * 0x00000100 + 'Z'
-                        else
-                            set i = i * 0x01000000 - 0x08000000 + 'Z' * 0x00010000 + 'Z' * 0x00000100 + 'Z'
-                        endif
-                    endif
-                endif
-            endif
-
-            return i
-        endmethod
-
-        method operator< takes thistype other returns boolean
-            return integer(this) < integer(other)
-        endmethod
-
-        private static integer array first_unit_oid
-        private static integer array first_cunit_oid
-        private static method onInit takes nothing returns nothing
-            set first_unit_oid['H'] = 'H000'
-            set first_unit_oid['h'] = 'h000'
-            set first_unit_oid['O'] = 'O000'
-            set first_unit_oid['o'] = 'o000'
-            set first_unit_oid['E'] = 'E000'
-            set first_unit_oid['e'] = 'e000'
-            set first_unit_oid['U'] = 'U000'
-            set first_unit_oid['u'] = 'u000'
-            set first_unit_oid['N'] = 'N000'
-            set first_unit_oid['n'] = 'n000'
-
-            set first_cunit_oid['H'] = 'H600'
-            set first_cunit_oid['h'] = 'h600'
-            set first_cunit_oid['O'] = 'O600'
-            set first_cunit_oid['o'] = 'o600'
-            set first_cunit_oid['E'] = 'E600'
-            set first_cunit_oid['e'] = 'e600'
-            set first_cunit_oid['U'] = 'U600'
-            set first_cunit_oid['u'] = 'u600'
-            set first_cunit_oid['N'] = 'N600'
-            set first_cunit_oid['n'] = 'n600'
-        endmethod
-
-        method to_unit_index takes nothing returns integer
-            return this - first_unit_oid[this / 0x01000000] + 1
-        endmethod
-        method to_cunit_index takes nothing returns integer
-            return this - first_cunit_oid[this / 0x01000000] + 1
-        endmethod
-
-        method to_item_index takes nothing returns integer
-            return this - 'I000' + 1
-        endmethod
-        method to_citem_index takes nothing returns integer
-            return this - 'I600' + 1
-        endmethod
-
-        method to_destructable_index takes nothing returns integer
-            return this - 'B000' + 1
-        endmethod
-        method to_cdestructable_index takes nothing returns integer
-            return this - 'B600' + 1
-        endmethod
-
-        method to_doodad_index takes nothing returns integer
-            return this - 'D000' + 1
-        endmethod
-        method to_cdoodad_index takes nothing returns integer
-            return this - 'D600' + 1
-        endmethod
-
-        method to_ability_index takes nothing returns integer
-            return this - 'A000' + 1
-        endmethod
-        method to_cability_index takes nothing returns integer
-            return this - 'A600' + 1
-        endmethod
-
-        method to_buff_index takes nothing returns integer
-            return this - 'B000' + 1
-        endmethod
-        method to_cbuff_index takes nothing returns integer
-            return this - 'B600' + 1
-        endmethod
-
-        method to_upgrade_index takes nothing returns integer
-            return this - 'R000' + 1
-        endmethod
-        method to_cupgrade_index takes nothing returns integer
-            return this - 'R600' + 1
-        endmethod
-
     endstruct
-
 endlibrary
-library ColorsLib
+library Colors
 
     globals
         constant string GOLD =      "|cffffcc00"
@@ -548,480 +310,452 @@ library ColorsLib
     endstruct
 
 endlibrary
-/*****************************************************************************
-*
-*    RegisterNativeEvent v1.1.1.5 https://www.hiveworkshop.com/threads/250266/
-*       by Bannar
-*
-*    Storage of trigger handles for native events.
-*
-******************************************************************************
-*
-*    Optional requirements:
-*
-*       Table by Bribe
-*          hiveworkshop.com/threads/snippet-new-table.188084/
-*
-******************************************************************************
-*
-*    Important:
-*
-*       Avoid using TriggerSleepAction within functions registered.
-*       Destroy native event trigger on your own responsibility.
-*
-******************************************************************************
-*
-*    Core:
-*
-*       function IsNativeEventRegistered takes integer whichIndex, integer whichEvent returns boolean
-*          Whether index whichIndex has already been attached to event whichEvent.
-*
-*       function RegisterNativeEventTrigger takes integer whichIndex, integer eventId returns boolean
-*          Registers whichIndex within whichEvent scope and assigns new trigger handle for it.
-*
-*       function GetIndexNativeEventTrigger takes integer whichIndex, integer whichEvent returns trigger
-*          Retrieves trigger handle for event whichEvent specific to provided index whichIndex.
-*
-*       function GetNativeEventTrigger takes integer whichEvent returns trigger
-*          Retrieves trigger handle for event whichEvent.
-*
-*
-*    Custom events:
-*
-*       function CreateNativeEvent takes nothing returns integer
-*          Returns unique id for new event and registers it with RegisterNativeEvent.
-*
-*       function RegisterIndexNativeEvent takes integer whichIndex, integer whichEvent, code func returns triggercondition
-*          Registers new event handler func for event whichEvent specific to index whichIndex.
-*
-*       function RegisterNativeEvent takes integer whichEvent, code func returns triggercondition
-*          Registers new event handler func for specified event whichEvent.
-*
-*       function UnregisterNativeEventHandler takes integer whichEvent, triggercondition handler returns nothing
-*          Unregisters specified event handler for event whichEvent. Requires Warcraft 1.30.4+.
-*
-*****************************************************************************/
-library RegisterNativeEvent uses optional Table
-
+library UnitRecycler initializer UnitRecyclerInit uses Colors, ArcingTextTag
+    //******************************************************************************
+    //*
+    //* Unit Recycler
+    //* By moyack. 2017
+    //*
+    //* ============================================================================
+    //* Credits to Litany, DioD, Captain Griffen, Troll Brain and other nice guys  *
+    //* for their suggestions, comments and ideas.                                 *
+    //* ============================================================================
+    //*
+    //* This library allows to your map to reuse died units, which saves memory.
+    //* It's very useful in AoS or footies games, where the unit spawning is a
+    //* common task.
+    //*
+    //* How it works?
+    //* =============
+    //*
+    //* The script detects if a unit reach the dying point (defined by the MIN_LIFE
+    //* constant), and if the damage can kill the unit, then it is sent to the dump
+    //* for further recycling. For custom situations like summoning or when a unit
+    //* enters to the map, you just have to use the functions provided by this 
+    //* library.
+    //*
+    //* Functions
+    //* =========
+    //* 
+    //* in order to recycle a unit, you can use these function:
+    //*
+    //*  => RecycleUnit(<unit variable>) returns unit
+    //*     -----------------------------------------
+    //*     This function takes as argument a unit, and returns the unit recycled.
+    //*     if there's a unit of the same typeid in the dump, it will use this unit
+    //*     instead of the one from the function input, removing it immediately, 
+    //*     otherwise this script will return the same unit.
+    //* 
+    //*  => CreateUnitEx(player, unitid, x, y, angle) returns unit
+    //*     ------------------------------------------------------
+    //*     Like the native function but tries to recycle the unit if avaliable in the dump
+    //*
+    //*  => KillUnitEx(<unit variable>) returns nothing
+    //*     -------------------------------------------
+    //*     Like the native function but it recycles the unit before killing it.
+    //*
+    //*  => RemoveUnitEx(<unit variable>) returns nothing
+    //*     ---------------------------------------------
+    //*     Like the native function but it recycles the unit.
+    //*
+    //*  => IsUnitDead(<unit variable>) returns boolean
+    //*     -------------------------------------------
+    //*     This function returns a boolean argument that indicates if the unit is dead or not.
+    //*     Remember that a unit is dead if it's in the Heaven group.
+    //*
+    //*  => ReplaceDummy(<unit variable>) returns unit
+    //*     -------------------------------------------
+    //*     This function returns a replacement unit without killing the output unit.
+    //*
+    //*  => CreateDummy(player, unitid, x, y, angle) returns unit
+    //*     ------------------------------------------------------
+    //*     Like the CreateUnit function but the returned unit won't be affected by the damage
+    //*     detection nor will be recycled automatically
+    //*
+    //*  => TriggerRegisterAnyUnitRecycleEvent(trigger t) returns nothing
+    //*     -------------------------------------------------------------
+    //*     All the trigger registered in this way will activate when a unit is about to be recycled
+    //*     (in other words, it triggers before it dies). You can use this functions to retrieve the
+    //*     the units involved in this event:
+    //*
+    //*      # GetRecycledUnit() returns the units that is going to be recycled
+    //*      # GetRecycleDummyUnit() returns the dummy unit which will die instead of the recycled unit
+    //*      # GetRecycleAttacker() returns the unit that "kills" the recycled unit
+    //*
+    //*  => IsUnitDummy(unit u) returns boolean
+    //*     -----------------------------------
+    //*     Checks if a unit can be recycled or not. Dummy units are not recycled, they're used as 
+    //*     placeholder of the unit about to die...
+    //*
+    //*  => GetUnitsInHeaven() returns group 
+    //*     --------------------------------
+    //*     Returns the group which contains the units in the heaven. Useful to do checks and
+    //*     operations on them.
+    //*
+    //*
+    //* For Damage detection, you just need to use these functions:
+    //*
+    //*  => AddDamageCondition(<Boolexpr variable>) returns nothing
+    //*     -------------------------------------------------------
+    //*     Just add a condition function which manage the damaged unit and the script
+    //*     will use it with all the the units in the DD.D group.
+    //*
+    //*  => DoNonDetectableDamage(unit, widget, damage, boolean_attack, boolean_ranged, attacktype, damagetype, weapontype) returns boolean
+    //*     -------------------------------------------------------------------------------------------------------------------------------
+    //*     Like the UnitDamageTarget function, but it can be used inside condition functions.
+    //*     How to know if you need to use it? if you use UnitDamageTarget() inside a DD function and 
+    //*     it freezes the game until it kills the attacked unit(s), then you have to replace that
+    //*     function by this custom one.
+    //********************************************************************************
+    //* CONFIGURATION PART
     globals
-        private integer eventIndex = 500 // 0-499 reserved for Blizzard native events
-    endglobals
+        private constant real     MIN_LIFE = 0.405          // the experimental death value that will be used to activate
+                                                            // the fake death of units. units that reach this value or less
+                                                            // won't die and they will be recycled.
+        private constant boolean  AUTO_LOC = false          // If it's set to true, it will place automatically the heaven in one
+                                                            // non visible corner of the map, else, it will use the HEAVEN_POS
+                                                            // as a heaven location
+        private constant player   DUMMY_PLAYER = Player(0)  // sets the player owner of the unit's heaven
+        private constant real     MANA_FACTOR = 1           // sets the initial mana amount (as percentage of maximum mana)
+                                                            // to recycled units when they are just placed in the game.
+                                                            // This constant is used only by CreateUnitEx function.
+        
+        private location HEAVEN_POS = Location(7500, -6150) // Indicates the heaven's location.
 
-    private module NativeEventInit
-        private static method onInit takes nothing returns nothing
-            static if LIBRARY_Table then
-                set table = TableArray[0x2000]
+        trigger DDS
+    endglobals
+    //* END CONFIGURATION PART
+    
+    globals
+        private group Heaven // where worthy units go when they die...
+    endglobals
+    
+    // this is a key functions part just to make homogeneus the unit management, please don't edit this unless
+    // you know what are you doing, ok??
+    private keyword Kill
+    
+    private function PrepareUnit takes unit u returns nothing
+        call SelectUnit(u, false)
+        call UnitRemoveBuffs(u, true, true)
+        call UnitResetCooldown(u)
+        call SetUnitInvulnerable(u, true)
+        call SetWidgetLife(u, GetUnitState(u, UNIT_STATE_MAX_LIFE))
+        call PauseUnit(u, true)
+        call GroupAddUnit(Heaven, u)
+    endfunction
+    
+    private function MoveUnit takes unit u returns nothing
+        call SetUnitOwner(u, DUMMY_PLAYER, true)
+        call SetUnitX(u, GetLocationX(HEAVEN_POS))
+        call SetUnitY(u, GetLocationY(HEAVEN_POS))
+    endfunction
+    
+    private function PlaceDummy takes unit d, unit u returns nothing
+        call GroupAddUnit(Kill.corpse, d)
+        call SetUnitUseFood(d, false)
+        call SetUnitState(d, UNIT_STATE_MANA, GetUnitState(u, UNIT_STATE_MANA))
+        call SetUnitFlyHeight(d, GetUnitFlyHeight(u), 0.)
+        //call SetCSData(d, GetCSData(u)) //used to pass attached data via CSData to the corpse...
+        call SetUnitPathing(d, false)
+        call SetUnitX(d, GetUnitX(u))
+        call SetUnitY(d, GetUnitY(u))
+    endfunction
+    // end key functions...
+    
+    private struct Trigger // struct to manage the EventRecycleUnit
+        private static integer i = 0
+        static unit R = null // recycled unit
+        static unit D = null // dummy unit
+        static unit A = null // attacker unit
+        trigger t
+        
+        static method AddTrigger takes trigger t returns nothing
+            local thistype T = thistype.allocate()
+            set T.t = t
+            set thistype.i = integer(T)
+        endmethod
+        
+        static method evaluate takes unit r, unit d, unit a returns nothing
+            local integer i = 1
+            local Trigger T
+            set thistype.R = r
+            set thistype.D = d
+            set thistype.A = a
+            loop
+                exitwhen i > Trigger.i
+                set T =thistype(i)
+                if T.t != null and TriggerEvaluate(T.t) then
+                    call TriggerExecute(T.t)
+                endif
+                set i = i + 1
+            endloop
+        endmethod
+    endstruct
+    
+    private struct Kill // struct used to manage the killed units...
+        static group corpse // group of units that won't be touched by the damage detection (corpses and dummy units for instance)
+        
+        static method Do takes unit u, unit killer returns nothing
+            local unit d = CreateUnit(GetOwningPlayer(u), GetUnitTypeId(u), GetUnitX(u), GetUnitY(u), GetUnitFacing(u))
+            call SetUnitInvulnerable(u, true)
+            call PlaceDummy(d, u)
+            call SetWidgetLife(d, 1.)
+            call Trigger.evaluate(u, d, killer)
+            call UnitDamageTarget(killer, d, 2., true, false, ATTACK_TYPE_CHAOS, DAMAGE_TYPE_UNIVERSAL, WEAPON_TYPE_WHOKNOWS)
+            call PrepareUnit(u)
+            call MoveUnit(u)
+            set d = null
+        endmethod
+        
+        private static method ManageSummoned takes nothing returns nothing
+            if IsUnitInGroup(GetSummonedUnit(), Kill.corpse) then
+                // this part will run when a corpse is resurrected, so this units are suitable to
+                // be controlled by the damage detection.
+                call GroupRemoveUnit(Kill.corpse, GetSummonedUnit())
+                call SetUnitPathing(GetSummonedUnit(), true)
             endif
         endmethod
-    endmodule
-
-    private struct NativeEvent extends array
-        static if LIBRARY_Table then
-            static TableArray table
-        else
-            static hashtable table = InitHashtable()
-        endif
-        implement NativeEventInit
+        
+        private static method onInit takes nothing returns nothing
+            local trigger t = CreateTrigger()
+            call TriggerRegisterAnyUnitEventBJ(t, EVENT_PLAYER_UNIT_SUMMON)
+            call TriggerAddAction(t, function Kill.ManageSummoned)
+            set Kill.corpse = CreateGroup()
+            set t = null
+        endmethod
     endstruct
-
-    function IsNativeEventRegistered takes integer whichIndex, integer whichEvent returns boolean
-        static if LIBRARY_Table then
-            return NativeEvent.table[whichEvent].trigger.has(whichIndex)
+    
+    private struct DD // damage detection struct, because damage detection can be so easy...
+        static group D // group of unit that will have damage detection
+        static trigger T
+        static timer Tm = CreateTimer() // used to control the infinite looping when is used UnitDamageTarget over the same triggering unit 
+        
+        // Add the attacked unit to the damage detection if the unit is not in the unit group
+        private static method AddUnit takes unit d returns nothing
+            if not IsUnitInGroup(d, thistype.D) and not IsUnitInGroup(d, Kill.corpse) then
+                // debug call DisplayTimedTextToForce(bj_FORCE_ALL_PLAYERS,2,"Added " + GetUnitName(d) + " to the DD")
+                call TriggerRegisterUnitEvent(thistype.T, d, EVENT_UNIT_DAMAGED)
+                call GroupAddUnit(thistype.D, d)
+            endif
+        endmethod
+        
+        private static method Attacked takes nothing returns nothing
+            call thistype.AddUnit(GetTriggerUnit())
+        endmethod
+        
+        private static method Spelled takes nothing returns nothing
+            if GetSpellTargetUnit() != null then
+                call thistype.AddUnit(GetSpellTargetUnit())
+            endif
+        endmethod
+        
+        static method AntiLoop takes nothing returns nothing
+            call EnableTrigger(thistype.T)
+        endmethod
+        
+        private static method onInit takes nothing returns nothing
+            set thistype.T = CreateTrigger()
+            set thistype.D = CreateGroup()
+            call TriggerRegisterAnyUnitEventBJ(thistype.T, EVENT_PLAYER_UNIT_ATTACKED)
+            call TriggerAddAction(thistype.T, function thistype.Attacked)
+            set thistype.T = CreateTrigger()
+            call TriggerRegisterAnyUnitEventBJ(thistype.T, EVENT_PLAYER_UNIT_SPELL_EFFECT)
+            call TriggerAddAction(thistype.T, function thistype.Spelled)
+            set thistype.T = CreateTrigger()
+        endmethod
+    
+    endstruct  // you see, it's not bigger than this :)
+    
+    private struct UR  // unit recycling struct
+        static group Temp = CreateGroup()
+        static unit U = null
+        
+        static method FromDump takes nothing returns boolean
+            if IsUnitInGroup(GetFilterUnit(), Heaven) and IsUnitType(GetFilterUnit(), UNIT_TYPE_DEAD) == false then
+                set thistype.U = GetFilterUnit()
+            endif
+            return false
+        endmethod
+        
+        static method UseRecycled takes unit u returns unit
+            local real x = GetUnitX(u)
+            local real y = GetUnitY(u)
+            local real f = GetUnitFacing(u)
+            local real m = GetUnitState(u, UNIT_STATE_MANA)
+            local player p = GetOwningPlayer(u)
+            set thistype.U = null
+            call GroupEnumUnitsOfTypeCounted(thistype.Temp, UnitId2String(GetUnitTypeId(u)), Condition(function thistype.FromDump), 1)
+            if thistype.U != null then
+                // debug call DisplayTimedTextToForce(bj_FORCE_ALL_PLAYERS, 2, GetUnitName(thistype.U) + " is being reused...")
+                call SetUnitInvulnerable(thistype.U, false)
+                call GroupRemoveUnit(Heaven, thistype.U)
+                call PauseUnit(thistype.U, true)
+                call SetUnitPosition(thistype.U, x, y)
+                call SetUnitFacing(thistype.U, f)
+                call SetUnitOwner(thistype.U, p, true)
+                call SetUnitState(thistype.U, UNIT_STATE_MANA, m)
+                call SetUnitPathing(thistype.U, true)
+                call PauseUnit(thistype.U, false)
+                call RemoveUnit(u)
+                set u = null
+                return thistype.U
+            else
+                return u
+            endif
+        endmethod
+        
+        private static method onRecycle takes nothing returns boolean
+            local unit u = GetTriggerUnit()
+            if IsUnitType(u, UNIT_TYPE_HERO) == false and IsUnitType(u, UNIT_TYPE_STRUCTURE) == false and IsUnitType(u, UNIT_TYPE_SUMMONED) == false and GetWidgetLife(u) - GetEventDamage() <= MIN_LIFE then
+                call Kill.Do(u, GetEventDamageSource())  // place a dummy to replace the unit
+                                                         // and returns the corpse
+                // debug call DisplayTimedTextFromPlayer(Player(15),0,0,2, GetUnitName(u) + " has been sent to the dump...")
+            endif
+            set u = null
+            return false
+        endmethod
+        
+        private static method onInit takes nothing returns nothing
+            local rect r = GetWorldBounds()
+            set Heaven = CreateGroup()
+            call TriggerAddCondition(DD.T, Condition(function thistype.onRecycle))
+            if AUTO_LOC then
+                call MoveLocation(HEAVEN_POS, GetRectMinX(r), GetRectMinY(r))
+            endif
+            call RemoveRect(r)
+            set r = null
+        endmethod
+    endstruct
+    
+    //*====================
+    //* User functions... *
+    //*====================
+    function RecycleUnit takes unit u returns unit
+        return UR.UseRecycled(u)
+    endfunction
+    
+    function CreateUnitEx takes player p, integer id, real x, real y, real f returns unit
+        set UR.U = null
+        call GroupEnumUnitsOfTypeCounted(UR.Temp, UnitId2String(id), Condition(function UR.FromDump), 1)
+        if UR.U != null then
+            // debug call DisplayTimedTextToForce(bj_FORCE_ALL_PLAYERS,2, GetUnitName(UR.U) + " is being reused...")
+            call SetUnitInvulnerable(UR.U, false)
+            call GroupRemoveUnit(Heaven, UR.U)
+            call PauseUnit(UR.U, true)
+            call SetUnitPosition(UR.U, x, y)
+            call SetUnitFacing(UR.U, f)
+            call SetUnitOwner(UR.U, p, true)
+            call SetUnitState(UR.U, UNIT_STATE_MANA, GetUnitState(UR.U, UNIT_STATE_MAX_MANA) * MANA_FACTOR)
+            call SetUnitPathing(UR.U, true)
+            call PauseUnit(UR.U, false)
+            return UR.U
+        endif
+        return CreateUnit(p, id, x, y, f)
+    endfunction
+    
+    function KillUnitEx takes unit u returns nothing
+        local unit d
+        if IsUnitType(u, UNIT_TYPE_HERO) == false and IsUnitType(u, UNIT_TYPE_STRUCTURE) == false then
+            set d = CreateUnit(GetOwningPlayer(u), GetUnitTypeId(u), GetUnitX(u), GetUnitY(u), GetUnitFacing(u))
+            call Trigger.evaluate(u, d, null)
+            call PrepareUnit(u)
+            call PlaceDummy(d, u)
+            call KillUnit(d)
+            call MoveUnit(u)
         else
-            return HaveSavedHandle(NativeEvent.table, whichEvent, whichIndex)
+            call KillUnit(u)
+        endif
+        set d = null
+    endfunction
+    
+    function RemoveUnitEx takes unit u returns nothing
+        if IsUnitType(u, UNIT_TYPE_HERO) == false and IsUnitType(u, UNIT_TYPE_STRUCTURE) == false then
+            call Trigger.evaluate(u, null, null)
+            call PrepareUnit(u)
+            call MoveUnit(u)
+        else
+            call RemoveUnit(u)
         endif
     endfunction
-
-    function RegisterNativeEventTrigger takes integer whichIndex, integer whichEvent returns boolean
-        if not IsNativeEventRegistered(whichIndex, whichEvent) then
-            static if LIBRARY_Table then
-                set NativeEvent.table[whichEvent].trigger[whichIndex] = CreateTrigger()
-            else
-                call SaveTriggerHandle(NativeEvent.table, whichEvent, whichIndex, CreateTrigger())
-            endif
-            return true
+    
+    function IsUnitDead takes unit u returns boolean
+        return IsUnitInGroup(u, Heaven)
+    endfunction
+    
+    function ReplaceDummy takes unit u returns unit 
+        local unit d
+        if IsUnitType(u, UNIT_TYPE_HERO) == false and IsUnitType(u, UNIT_TYPE_STRUCTURE) == false then
+            set d = CreateUnit(GetOwningPlayer(u), GetUnitTypeId(u), GetUnitX(u), GetUnitY(u), GetUnitFacing(u))
+            call PlaceDummy(d, u)
+            call SetWidgetLife(d, GetWidgetLife(u))
+            call PrepareUnit(u)
+            call MoveUnit(u)
+            call SetUnitPathing(d, true)
+        else
+            set d = null
         endif
+        return d
+    endfunction
+    
+    function CreateDummy takes player p, integer id, real x, real y, real f returns unit
+        local unit u = CreateUnit(p, id, x, y, f)
+        call GroupAddUnit(Kill.corpse, u)
+        return u
+    endfunction
+    
+    // TriggerRecyclefunctions. this trigger happens before the triggered unit is going to die...
+    function TriggerRegisterAnyUnitRecycleEvent takes trigger t returns nothing
+        call Trigger.AddTrigger(t)
+    endfunction
+    
+    constant function GetRecycledUnit takes nothing returns unit 
+        // returns the recycled unit...
+        return Trigger.R
+    endfunction
+    
+    constant function GetRecycleDummyUnit takes nothing returns unit 
+        // returns the dummy unit...
+        return Trigger.D
+    endfunction
+    
+    constant function GetRecycleAttacker takes nothing returns unit 
+        // returns the attacker who "kills" the recycled unit...
+        return Trigger.A
+    endfunction
+    
+    constant function IsUnitDummy takes unit u returns boolean
+        // Checks if a unit can be recycled or not. Dummy units are not recycled, they're used as placeholder...
+        return IsUnitInGroup(u, Kill.corpse)
+    endfunction
+    
+    constant function GetUnitsInHeaven takes nothing returns group
+        // Checks if a unit can be recycled or not. Dummy units are not recycled, they're used as placeholder...
+        return Heaven
+    endfunction
+    
+    // Damage detection system functions...
+    function AddDamageCondition takes boolexpr b returns nothing
+        call TriggerAddCondition(DD.T, b)
+    endfunction
+    
+    function DoNonDetectableDamage takes unit u, widget t, real damage, boolean attack, boolean ranged, attacktype AT, damagetype DT, weapontype WT returns boolean
+        call DisableTrigger(DD.T)
+        call TimerStart(DD.Tm, 0., false, function DD.AntiLoop)
+        return UnitDamageTarget(u, t, damage, attack, ranged, AT, DT, WT)
+    endfunction
+
+    private function ShowDamage takes nothing returns boolean
+        /*This function is added with the AddDamageCondition() function in order to add a script that manages
+        the damaged units, in this case, it will show the damage received, just in the attack impact...*/
+        call ArcingTextTag.create((GOLD + I2S(R2I(GetEventDamage())) + "|r"), GetTriggerUnit())
         return false
     endfunction
 
-    function GetIndexNativeEventTrigger takes integer whichIndex, integer whichEvent returns trigger
-        static if LIBRARY_Table then
-            return NativeEvent.table[whichEvent].trigger[whichIndex]
-        else
-            return LoadTriggerHandle(NativeEvent.table, whichEvent, whichIndex)
-        endif
+    function UnitRecyclerInit takes nothing returns nothing
+        set DDS = DD.T
+        call AddDamageCondition(Condition(function ShowDamage))
     endfunction
-
-    function GetNativeEventTrigger takes integer whichEvent returns trigger
-        return GetIndexNativeEventTrigger(bj_MAX_PLAYER_SLOTS, whichEvent)
-    endfunction
-
-    function CreateNativeEvent takes nothing returns integer
-        local integer eventId = eventIndex
-        call RegisterNativeEventTrigger(bj_MAX_PLAYER_SLOTS, eventId)
-        set eventIndex = eventIndex + 1
-        return eventId
-    endfunction
-
-    function RegisterIndexNativeEvent takes integer whichIndex, integer whichEvent, code func returns triggercondition
-        call RegisterNativeEventTrigger(whichIndex, whichEvent)
-        return TriggerAddCondition(GetIndexNativeEventTrigger(whichIndex, whichEvent), Condition(func))
-    endfunction
-
-    function RegisterNativeEvent takes integer whichEvent, code func returns triggercondition
-        return RegisterIndexNativeEvent(bj_MAX_PLAYER_SLOTS, whichEvent, func)
-    endfunction
-
-    function UnregisterNativeEventHandler takes integer whichEvent, triggercondition handler returns nothing
-        call TriggerRemoveCondition(GetNativeEventTrigger(whichEvent), handler)
-    endfunction
-
-endlibrary
-/*****************************************************************************
-*
-*    RegisterPlayerUnitEvent v1.0.3.2 https://www.hiveworkshop.com/threads/250266/
-*       by Bannar
-*
-*    Register version of TriggerRegisterPlayerUnitEvent.
-*
-*    Special thanks to Magtheridon96, Bribe, azlier and BBQ for the original library version.
-*
-******************************************************************************
-*
-*    Requirements:
-*
-*       RegisterNativeEvent by Bannar
-*          hiveworkshop.com/threads/snippet-registerevent-pack.250266/
-*
-******************************************************************************
-*
-*    Functions:
-*
-*       function GetAnyPlayerUnitEventTrigger takes playerunitevent whichEvent returns trigger
-*          Retrieves trigger handle for playerunitevent whichEvent.
-*
-*       function GetPlayerUnitEventTrigger takes player whichPlayer, playerunitevent whichEvent returns trigger
-*          Retrieves trigger handle for playerunitevent whichEvent specific to player whichPlayer.
-*
-*       function RegisterAnyPlayerUnitEvent takes playerunitevent whichEvent, code func returns nothing
-*          Registers generic playerunitevent whichEvent adding code func as callback.
-*
-*       function RegisterPlayerUnitEvent takes player whichPlayer, playerunitevent whichEvent, code func returns nothing
-*          Registers playerunitevent whichEvent for player whichPlayer adding code func as callback.
-*
-*****************************************************************************/
-library RegisterPlayerUnitEvent requires RegisterNativeEvent
-
-    function GetAnyPlayerUnitEventTrigger takes playerunitevent whichEvent returns trigger
-        return GetNativeEventTrigger(GetHandleId(whichEvent))
-    endfunction
-
-    function GetPlayerUnitEventTrigger takes player whichPlayer, playerunitevent whichEvent returns trigger
-        return GetIndexNativeEventTrigger(GetPlayerId(whichPlayer), GetHandleId(whichEvent))
-    endfunction
-
-    function RegisterAnyPlayerUnitEvent takes playerunitevent whichEvent, code func returns nothing
-        local integer eventId = GetHandleId(whichEvent)
-        local integer index = 0
-        local trigger t = null
-
-        if RegisterNativeEventTrigger(bj_MAX_PLAYER_SLOTS, eventId) then
-            set t = GetNativeEventTrigger(eventId)
-            loop
-                call TriggerRegisterPlayerUnitEvent(t, Player(index), whichEvent, null)
-                set index = index + 1
-                exitwhen index == bj_MAX_PLAYER_SLOTS
-            endloop
-            set t = null
-        endif
-
-        call RegisterNativeEvent(eventId, func)
-    endfunction
-
-    function RegisterPlayerUnitEvent takes player whichPlayer, playerunitevent whichEvent, code func returns nothing
-        local integer playerId = GetPlayerId(whichPlayer)
-        local integer eventId = GetHandleId(whichEvent)
-
-        if RegisterNativeEventTrigger(playerId, eventId) then
-            call TriggerRegisterPlayerUnitEvent(GetIndexNativeEventTrigger(playerId, eventId), whichPlayer, whichEvent, null)
-        endif
-
-        call RegisterIndexNativeEvent(playerId, eventId, func)
-    endfunction
-
-endlibrary
-library ResourcePreloader /* v1.5.0 https://www.hiveworkshop.com/threads/287358/
-
-
-    */uses /*
-
-    */optional BJObjectId   /*   http://www.hiveworkshop.com/threads/287128/
-    */optional Table        /*   http://www.hiveworkshop.com/threads/188084/
-    */optional UnitRecycler /*   http://www.hiveworkshop.com/threads/286701/
-
-
-    *///! novjass
-
-    [CREDITS]
-    /*
-        AGD - Author
-        IcemanBo - for suggesting further improvements
-        Silvenon - for the sound preloading method
-        JAKEZINC - Suggestions
-
-    */
-    |-----|
-    | API |
-    |-----|
-
-        function PreloadUnit takes integer rawcode returns nothing/*
-            - Assigns a certain type of unit to be preloaded
-
-      */function PreloadItem takes integer rawcode returns nothing/*
-            - Assigns a certain type of item to be preloaded
-
-      */function PreloadAbility takes integer rawcode returns nothing/*
-            - Assigns a certain type of ability to be preloaded
-
-      */function PreloadEffect takes string modelPath returns nothing/*
-            - Assigns a certain type of effect to be preloaded
-
-      */function PreloadSound takes string soundPath returns nothing/*
-            - Assigns a certain type of sound to be preloaded
-
-
-      The following functions requires the BJObjectId library:
-
-      */function PreloadUnitEx takes integer start, integer end returns nothing/*
-            - Assigns a range of units to be preloaded
-
-      */function PreloadItemEx takes integer start, integer end returns nothing/*
-            - Assigns a range of items to be preloaded
-
-      */function PreloadAbilityEx takes integer start, integer end returns nothing/*
-            - Assigns a range of abilities to be preloaded
-
-
-    *///! endnovjass
-
-    /*
-    *   Configuration
-    */
-    globals
-        /*
-        *   Preload dummy unit type id
-        */
-        public integer PRELOAD_UNIT_TYPE_ID                     = 'uloc'
-        /*
-        *   Owner of the preload dummy
-        */
-        public player PRELOAD_UNIT_OWNER                        = Player(PLAYER_NEUTRAL_PASSIVE)
-        /*
-        *   Dummy unit's y-coordinate will be positioned at (Max Y of WorldBounds) + this value
-        */
-        public real PRELOAD_UNIT_Y_BOUNDS_EXTENSION             = 0.00
-    endglobals
-
-    //========================================================================================================
-    //            Do not try to change below this line if you're not so sure on what you're doing.            
-    //========================================================================================================
-
-    private keyword S
-
-    //============================================== TextMacros ==============================================
-
-    //! textmacro PRELOAD_TYPE takes NAME, ARG, TYPE, INDEX, I
-    function Preload$NAME$ takes $ARG$ what returns nothing
-        static if LIBRARY_Table then
-            if S.tb[$I$].boolean[$INDEX$] then
-                return
-            endif
-            set S.tb[$I$].boolean[$INDEX$] = true
-            call Do$NAME$Preload(what)
-        else
-            if LoadBoolean(S.tb, $I$, $INDEX$) then
-                return
-            endif
-            call SaveBoolean(S.tb, $I$, $INDEX$, true)
-            call Do$NAME$Preload(what)
-        endif
-    endfunction
-    //! endtextmacro
-
-    //! textmacro RANGED_PRELOAD_TYPE takes NAME
-    function Preload$NAME$Ex takes integer start, integer end returns nothing
-        local boolean forward = start < end
-        loop
-            call Preload$NAME$(start)
-            exitwhen start == end
-            if forward then
-                set start = BJObjectId(start).plus_1()
-                exitwhen start > end
-            else
-                set start = BJObjectId(start).minus_1()
-                exitwhen start < end
-            endif
-        endloop
-    endfunction
-    //! endtextmacro
-
-    //========================================================================================================
-
-    private function DoUnitPreload takes integer id returns nothing
-        static if LIBRARY_UnitRecycler then
-            call RecycleUnitEx(CreateUnit(Player(PLAYER_NEUTRAL_PASSIVE), id, 0, 0, 270))
-        else
-            call RemoveUnit(CreateUnit(Player(PLAYER_NEUTRAL_PASSIVE), id, 0, 0, 0))
-        endif
-    endfunction
-
-    private function DoItemPreload takes integer id returns nothing
-        call RemoveItem(UnitAddItemById(S.dummy, id))
-    endfunction
-
-    private function DoAbilityPreload takes integer id returns boolean
-        return UnitAddAbility(S.dummy, id) and UnitRemoveAbility(S.dummy, id)
-    endfunction
-
-    private function DoEffectPreload takes string path returns nothing
-        call DestroyEffect(AddSpecialEffect(path, GetUnitX(S.dummy), GetUnitY(S.dummy)))
-    endfunction
-
-    private function DoSoundPreload takes string path returns nothing
-        local sound s = CreateSound(path, false, false, false, 10, 10, "")
-        call SetSoundVolume(s, 0)
-        call StartSound(s)
-        call KillSoundWhenDone(s)
-        set s = null
-    endfunction
-
-    //! runtextmacro PRELOAD_TYPE("Unit", "integer", "unit", "what", "0")
-    //! runtextmacro PRELOAD_TYPE("Item", "integer", "item", "what", "1")
-    //! runtextmacro PRELOAD_TYPE("Ability", "integer", "ability", "what", "2")
-    //! runtextmacro PRELOAD_TYPE("Effect", "string", "effect", "StringHash(what)", "3")
-    //! runtextmacro PRELOAD_TYPE("Sound", "string", "sound", "StringHash(what)", "4")
-
-    static if LIBRARY_BJObjectId then
-    //! runtextmacro RANGED_PRELOAD_TYPE("Unit")
-    //! runtextmacro RANGED_PRELOAD_TYPE("Item")
-    //! runtextmacro RANGED_PRELOAD_TYPE("Ability")
-    endif
-
-    //========================================================================================================
-
-    private module Init
-        private static method onInit takes nothing returns nothing
-            local rect world = GetWorldBounds()
-            static if LIBRARY_Table then
-                set tb = TableArray[5]
-            endif
-            set dummy = CreateUnit(PRELOAD_UNIT_OWNER, PRELOAD_UNIT_TYPE_ID, 0, 0, 0)
-            call SetUnitY(dummy, GetRectMaxY(world) + PRELOAD_UNIT_Y_BOUNDS_EXTENSION)
-            call UnitAddAbility(dummy, 'AInv')
-            call UnitAddAbility(dummy, 'Avul')
-            call UnitRemoveAbility(dummy, 'Amov')
-            call RemoveRect(world)
-            set world = null
-        endmethod
-    endmodule
-
-    private struct S extends array
-        static if LIBRARY_Table then
-            static TableArray tb
-        else
-            static hashtable tb = InitHashtable()
-        endif
-        static unit dummy
-        implement Init
-    endstruct
-
-
-endlibrary
-library ReviveUnit /* 2.0.0.0 https://www.hiveworkshop.com/threads/186696/
-***************************************************
-*
-*   Resurrects a unit from his corpse, retaining
-*   its handle ID, facing, and position.
-*
-***************************************************
-*
-*   ReviveUnit(unit whichUnit) returns boolean
-*       - Resurrects the input unit.
-*
-***************************************************
-*
-*   Configurables
-*       - Remove the ! from //! after saving.
-*/
-    // external ObjectMerger w3a AHre URez anam "Dummy Resurrection" aher 0 acat "" atat "" Hre1 1 1 aare 1 0 aran 1 0 acdn 1 0 amcs 1 0 atar 1 "Air,Dead,Enemy,Friend,Ground,Neutral"
-    // external ObjectMerger w3u ushd eRez unam "Dummy" uabi "Aloc,Avul" ucbs 0 ucpt 0 umdl ".mdl" usca "0.01" ushu "None" umvh 0 umvs 0 ufoo 0 umpi 100000 umpm 100000 umpr 1000 usid 0 usin 0
-       
-    globals
-        private constant integer DUMMY = 'eRez'
-        private constant integer RESURRECT = 'URez'
-    endglobals
-/*
-***************************************************
-*
-*   Notes
-*       - Does not work on units without corpses.
-*       - The resurrected unit's mana is determined
-*         by the field: "Mana - Initial Amount"
-*
-***************************************************
-*
-*   Importing: Automatic
-*       - Copy and paste this trigger.
-*       - Save the map, close it, and reopen it
-*       - Remove the exclamation ! from the object
-*         merger lines above.
-*
-*   Importing: Manual
-*       - Copy and paste this trigger.
-*       - Copy and paste the dummy unit and resurrection
-*         ability from the object editor.
-*       - Change the configurable raw codes as necessary.
-*
-***************************************************/
-
-    globals
-        private unit reviver
-        private real rx
-        private real ry
-    endglobals
-   
-    function ReviveUnit takes unit u returns boolean
-        local boolean success
-        if IsUnitType(u, UNIT_TYPE_HERO) == true then
-            return ReviveHero(u, GetUnitX(u), GetUnitY(u), false)
-        else
-            call SetUnitX(reviver, GetUnitX(u))
-            call SetUnitY(reviver, GetUnitY(u))
-            set success = IssueImmediateOrderById(reviver, 852094)
-            call SetUnitX(reviver, rx)
-            call SetUnitY(reviver, ry)
-        endif
-        return success
-    endfunction
-   
-    private module Init
-        private static method onInit takes nothing returns nothing
-            set rx = GetRectMaxX(bj_mapInitialPlayableArea) - 1
-            set ry = GetRectMaxY(bj_mapInitialPlayableArea) - 1
-            set reviver = CreateUnit(Player(15), DUMMY, rx, ry, 0)
-            call SetUnitPathing(reviver, false)
-            call UnitAddAbility(reviver, RESURRECT)
-        endmethod
-    endmodule
-   
-    struct Revive extends array
-        // For backwards compatibility
-        static method Unit takes unit whichUnit returns boolean
-            return ReviveUnit(whichUnit)
-        endmethod
-       
-        implement Init
-    endstruct
+    
 endlibrary
 library Table /* made by Bribe, special thanks to Vexorian & Nestharus, version 4.1.0.1. http://www.hiveworkshop.com/threads/188084/
    
@@ -1498,484 +1232,6 @@ library Table /* made by Bribe, special thanks to Vexorian & Nestharus, version 
     endstruct
 
 endlibrary
-library UnitRecycler /* v1.4.1 https://www.hiveworkshop.com/threads/286701/
-
-
-    */requires /*
-
-    */ReviveUnit                        /*  https://www.hiveworkshop.com/threads/186696/
-    */Table                             /*  https://www.hiveworkshop.com/threads/188084/
-    */optional RegisterPlayerUnitEvent  /*  https://www.hiveworkshop.com/threads/250266/
-    */optional ErrorMessage             /*  https://github.com/nestharus/JASS/blob/master/jass/Systems/ErrorMessage/main.j
-
-
-    This system is important because CreateUnit() is one of the most processor-intensive function in
-    the game and there are reports that even after they are removed, they still leave some bit of memory
-    consumption (0.04 KB) on the RAM. Therefore, it would be very helpful if you can minimize unit
-    creation or so. This system also allows you to recycle dead units to avoid permanent 0.04 KB memory
-    leak for each future CreateUnit() call.
-
-    As of v1.4, the system now takes into consideration the facing angle of units - like most dummy
-    recycling systems do. But it is recommended to use DummyRecyclers for dummy units since they are
-    specially made for such uses, and use this UnitRecycler for the other non-dummy units.
-
-
-    [Credits]
-        AGD - Author
-        Aniki - For suggesting ideas on further improvements
-        Other guys in the warcraft modding community - for discovering the permanent memory leak from units
-
-    *///! novjass
-
-    |-----|
-    | API |
-    |-----|
-
-        function GetRecycledUnit takes player owner, integer rawCode, real x, real y, real facing returns unit/*
-            - Returns unit of specified ID from the stock of recycled units. If there's none in the stock that
-              matched the specified unit's rawcode, it will create a new unit instead
-            - Returns null if the rawcode's unit-type is a hero or non-existent
-
-      */function GetRecycledUnitEx takes player owner, integer rawCode, real x, real y, real facing returns unit/*
-            - Works similar to GetRecycledUnit() except that if the input rawcode's unit-type is a hero, it will
-              be created via CreateUnit() instead
-            - You can use this as an alternative to CreateUnit()
-
-      */function RecycleUnit takes unit u returns boolean/*
-            - Recycles the specified unit and returns a boolean value depending on the success of the operation
-            - Does nothing to hero units
-
-      */function RecycleUnitEx takes unit u returns boolean/*
-            - Works similar to RecycleUnit() except that if <u> is not recyclable, it will be removed via
-              RemoveUnit() instead
-            - You can use this as an alternative to RemoveUnit()
-
-      */function RecycleUnitDelayed takes unit u, real delay returns nothing/*
-            - Recycles the specified unit after <delay> seconds
-
-      */function RecycleUnitDelayedEx takes unit u, real delay returns nothing/*
-            - Works similar to RecycleUnitDelayed() except that it calls RecycleUnitEx() instead of RecycleUnit()
-
-      */function UnitAddToStock takes integer rawCode returns boolean/*
-            - Creates a unit of type ID and adds it to the stock of recycled units then returns a boolean value
-              depending on the success of the operation
-
-    *///! endnovjass
-
-    //CONFIGURATION SECTION
-
-
-    globals
-    /*
-        The owner of the stocked/recycled units                                         */
-        private constant player OWNER               = Player(15)
-    /*
-        Determines if dead units will be automatically recycled
-        after a delay designated by the <constant function
-        DeathTime below>                                                                */
-        private constant boolean AUTO_RECYCLE_DEAD  = true
-    /*
-        Angle group count per unit type
-        If you don't need the precision in unit facing angles, you should set this
-        value to 1
-        (Note: The maximum number of different kinds of unit type that you can use
-        with this system is limited to <8190/ANGLE_COUNT - 1> )                         */
-        private constant integer ANGLE_COUNT = 8
-
-    endglobals
-
-    /* The delay before dead units will be automatically recycled in case when
-       AUTO_RECYCLE_DEAD == true                                                        */
-    static if AUTO_RECYCLE_DEAD then
-        private function DeathTime takes unit u returns real
-            /*if <condition> then
-                  return someValue
-              elseif <condition> then
-                  return someValue
-              endif                 */
-            return 8.00
-        endfunction
-    endif
-
-    // Filters units allowed for recycling
-    private function UnitTypeFilter takes unit u returns boolean
-        return not IsUnitIllusion(u) and not IsUnitType(u, UNIT_TYPE_SUMMONED)
-    endfunction
-
-    /* When recycling a unit back to the stock, these resets will be applied to the
-       unit. You can add more actions to this or you can delete this module if you
-       don't need it.                                                                   */
-    private module UnitRecyclerResets
-        call SetUnitScale(u, 1, 0, 0)
-        call SetUnitVertexColor(u, 255, 255, 255, 255)
-        call SetUnitFlyHeight(u, GetUnitDefaultFlyHeight(u), 0)
-    endmodule
-
-
-    //END OF CONFIGURATION
-
-    //== Do not do changes below this line if you're not so sure on what you're doing ==
-    native UnitAlive takes unit u returns boolean
-
-    globals
-        private constant real ANGLE_INTERVAL = 360.00/ANGLE_COUNT
-        private constant real HALF_INTERVAL = ANGLE_INTERVAL/2.00
-        private real unitCampX
-        private real unitCampY
-    endglobals
-
-    private struct List extends array
-
-        unit unit
-        thistype recycler
-        thistype prev
-        thistype next
-        debug static Table stocked
-
-        static constant method operator head takes nothing returns thistype
-            return 0
-        endmethod
-
-        method stockUnit takes unit u returns nothing
-            local thistype node = head.recycler
-            local thistype last = this.prev
-            set head.recycler = node.recycler
-            set this.prev = node
-            set last.next = node
-            set node.prev = last
-            set node.next = this
-            set node.unit = u
-            call PauseUnit(u, true)
-            call SetUnitX(u, unitCampX)
-            call SetUnitY(u, unitCampY)
-            debug set stocked.boolean[GetHandleId(u)] = true
-        endmethod
-
-        method addUnit takes unit u, real angle returns boolean
-            if u != null and not IsUnitType(u, UNIT_TYPE_HERO) and UnitTypeFilter(u) then
-                if not UnitAlive(u) and not ReviveUnit(u) then
-                    static if LIBRARY_ErrorMessage then
-                        debug call ThrowWarning(true, "UnitRecycler", "addUnit()", "thistype", GetHandleId(u), "Unable to recycle unit: Unable to revive dead unit")
-                    endif
-                    return false
-                endif
-                call this.stockUnit(u)
-                call SetUnitFacing(u, angle)
-                call SetUnitOwner(u, OWNER, true)
-                call SetWidgetLife(u, GetUnitState(u, UNIT_STATE_MAX_LIFE))
-                call SetUnitState(u, UNIT_STATE_MANA, GetUnitState(u, UNIT_STATE_MAX_MANA))
-                implement optional UnitRecyclerResets
-                return true
-            endif
-            return false
-        endmethod
-
-        method getUnit takes player owner, integer id, real x, real y, real angle returns unit
-            local thistype first
-            local thistype next
-            local real facing
-            local real deltaAngle
-            if not IsHeroUnitId(id) then
-                set first = this.next
-                set deltaAngle = RAbsBJ(GetUnitFacing(first.unit) - angle)
-                if deltaAngle > 180.00 then
-                    set deltaAngle = 360.00 - deltaAngle
-                endif
-                if first == this or deltaAngle > HALF_INTERVAL then
-                    set bj_lastCreatedUnit = CreateUnit(owner, id, x, y, angle)
-                else
-                    set bj_lastCreatedUnit = first.unit
-                    set first.unit = null
-                    set next = first.next
-                    set next.prev = this
-                    set this.next = next
-                    call SetUnitOwner(bj_lastCreatedUnit, owner, true)
-                    call SetUnitPosition(bj_lastCreatedUnit, x, y)
-                    call SetUnitFacing(bj_lastCreatedUnit, angle)
-                    call PauseUnit(bj_lastCreatedUnit, false)
-                    debug call stocked.boolean.remove(GetHandleId(bj_lastCreatedUnit))
-                endif
-                return bj_lastCreatedUnit
-            endif
-            return null
-        endmethod
-
-        static method init takes nothing returns nothing
-            local thistype this = 0
-            set thistype(8190).recycler = 0
-            loop
-                set this.recycler = this + 1
-                set this = this + 1
-                exitwhen this == 8190
-            endloop
-            debug set stocked = Table.create()
-        endmethod
-
-    endstruct
-
-    private struct UnitRecycler extends array
-
-        private static Table rawCodeIdTable
-        private static Table timerTable
-        private static integer rawCodeCount = 0
-        private static integer array position
-        private static integer array stackSize
-        private static integer array indexStack
-        private static List array head
-
-        private static method getRawCodeId takes integer rawCode returns integer
-            local integer i = rawCodeIdTable[rawCode]
-            if i == 0 then
-                set rawCodeCount = rawCodeCount + 1
-                set rawCodeIdTable[rawCode] = rawCodeCount
-                set i = rawCodeCount
-            endif
-            return i
-        endmethod
-
-        private static method getHead takes integer id, integer index returns List
-            local List this = head[id*ANGLE_COUNT + index]
-            if this == 0 then
-                set this = List.head.recycler
-                set List.head.recycler = this.recycler
-                set this.prev = this
-                set this.next = this
-                set head[id*ANGLE_COUNT + index] = this
-            endif
-            return this
-        endmethod
-
-        private static method getListIndex takes integer id returns integer
-            if stackSize[id] == 0 then
-                if position[id] < ANGLE_COUNT - 1 then
-                    set position[id] = position[id] + 1
-                    return position[id]
-                endif
-                set position[id] = 0
-                return 0
-            endif
-            set stackSize[id] = stackSize[id] - 1
-            return indexStack[id*ANGLE_COUNT + stackSize[id]]
-        endmethod
-
-        static method stock takes integer rawCode returns boolean
-            local integer id
-            local integer index
-            local unit u
-            if not IsHeroUnitId(rawCode) then
-                set id = getRawCodeId(rawCode)
-                set index = getListIndex(id)
-                set u = CreateUnit(OWNER, rawCode, 0.00, 0.00, index*ANGLE_INTERVAL)
-                if u != null and not IsUnitType(u, UNIT_TYPE_HERO) and UnitTypeFilter(u) then
-                    call getHead(id, index).stockUnit(u)
-                    set u = null
-                    return true
-                endif
-            endif
-            return false
-        endmethod
-
-        static method add takes unit u returns boolean
-            local integer id = getRawCodeId(GetUnitTypeId(u))
-            local integer index = getListIndex(id)
-            return getHead(id, index).addUnit(u, index*ANGLE_INTERVAL)
-        endmethod
-
-        static method get takes player owner, integer rawCode, real x, real y, real angle returns unit
-            local integer id = getRawCodeId(rawCode)
-            local integer index = R2I(angle/ANGLE_INTERVAL)
-            if angle - ANGLE_INTERVAL*index > ANGLE_INTERVAL/2.00 then
-                if index < ANGLE_COUNT - 1 then
-                    set index = index + 1
-                else
-                    set index = 0
-                endif
-            endif
-            set indexStack[id*ANGLE_COUNT + stackSize[id]] = index
-            set stackSize[id] = stackSize[id] + 1
-            return getHead(id, index).getUnit(owner, rawCode, x, y, angle)
-        endmethod
-
-        static method delayedRecycle takes nothing returns nothing
-            local timer t = GetExpiredTimer()
-            local integer key = GetHandleId(t)
-            call add(timerTable.unit[key])
-            call timerTable.unit.remove(key)
-            call DestroyTimer(t)
-            set t = null
-        endmethod
-        static method delayedRecycleEx takes nothing returns nothing
-            local timer t = GetExpiredTimer()
-            local integer key = GetHandleId(t)
-            call add(timerTable.unit[key])
-            call timerTable.unit.remove(key)
-            call DestroyTimer(t)
-            set t = null
-        endmethod
-
-        static method addDelayed takes unit u, real delay, code callback returns nothing
-            local timer t = CreateTimer()
-            set timerTable.unit[GetHandleId(t)] = u
-            call TimerStart(t, delay, false, callback)
-            set t = null
-        endmethod
-
-        static method init takes nothing returns nothing
-            local rect bounds = GetWorldBounds()
-            // Hide recycled units at the top of the map beyond reach of the camera
-            set unitCampX = 0.00
-            set unitCampY = GetRectMaxY(bounds) + 1000.00
-            call RemoveRect(bounds)
-            set bounds = null
-            set rawCodeIdTable = Table.create()
-            set timerTable = Table.create()
-        endmethod
-
-    endstruct
-
-    //========================================================================================================
-
-    function GetRecycledUnit takes player owner, integer rawCode, real x, real y, real facing returns unit
-        static if DEBUG_MODE and LIBRARY_ErrorMessage then
-            call UnitRecycler.get(owner, rawCode, x, y, facing)
-            call ThrowError(bj_lastCreatedUnit == null, "UnitRecycler", "GetRecycledUnit()", "", 0, "Specified unit type does not exist")
-            call ThrowError(IsHeroUnitId(rawCode), "UnitRecycler", "GetRecycledUnit()", GetUnitName(bj_lastCreatedUnit), 0, "Specified unit type is a hero")
-            return bj_lastCreatedUnit
-        else
-            return UnitRecycler.get(owner, rawCode, x, y, facing)
-        endif
-    endfunction
-
-    function GetRecycledUnitEx takes player owner, integer rawCode, real x, real y, real facing returns unit
-        if not IsHeroUnitId(rawCode) then
-            return UnitRecycler.get(owner, rawCode, x, y, facing)
-        endif
-        static if LIBRARY_ErrorMessage then
-            debug call ThrowWarning(true, "UnitRecycler", "GetRecycledUnitEx()", "", 0, "Cannot retrieve a hero unit, creating new unit")
-        endif
-        return CreateUnit(owner, rawCode, x, y, facing)
-    endfunction
-
-    function RecycleUnit takes unit u returns boolean
-        static if LIBRARY_ErrorMessage then
-            debug call ThrowError(List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnit()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
-            debug call ThrowWarning(u == null, "UnitRecycler", "RecycleUnit()", "", 0, "Attempted to recycle a null unit")
-            debug call ThrowWarning(IsHeroUnitId(GetUnitTypeId(u)), "UnitRecycler", "RecycleUnit()", GetUnitName(u), 0, "Attempted to recycle a hero unit")
-            debug call ThrowWarning(not UnitTypeFilter(u), "UnitRecycler", "RecycleUnit()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
-        endif
-        return UnitRecycler.add(u)
-    endfunction
-
-    function RecycleUnitEx takes unit u returns boolean
-        static if LIBRARY_ErrorMessage then
-            debug call ThrowError(List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnitEx()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
-            debug call ThrowWarning(u == null, "UnitRecycler", "RecycleUnitEx()", "", 0, "Attempted to recycle a null unit")
-            debug call ThrowWarning(not UnitTypeFilter(u), "UnitRecycler", "RecycleUnitEx()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
-        endif
-        if not UnitRecycler.add(u) then
-            call RemoveUnit(u)
-            static if LIBRARY_ErrorMessage then
-                debug call ThrowWarning(u != null, "UnitRecycler", "RecycleUnitEx()", GetUnitName(u), 0, "Cannot recycle the specified unit, removing unit")
-            endif
-            return false
-        endif
-        return true
-    endfunction
-
-    function RecycleUnitDelayed takes unit u, real delay returns nothing
-        static if LIBRARY_ErrorMessage then
-            debug call ThrowError(List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnitDelayed()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
-            debug call ThrowWarning(u == null, "UnitRecycler", "RecycleUnitDelayed()", "", 0, "Attempted to recycle a null unit")
-            debug call ThrowWarning(IsHeroUnitId(GetUnitTypeId(u)), "UnitRecycler", "RecycleUnitDelayed()", GetUnitName(u), 0, "Attempted to recycle a hero unit")
-            debug call ThrowWarning(not UnitTypeFilter(u), "UnitRecycler", "RecycleUnitDelayed()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
-        endif
-        call UnitRecycler.addDelayed(u, delay, function UnitRecycler.delayedRecycle)
-    endfunction
-
-    function RecycleUnitDelayedEx takes unit u, real delay returns nothing
-        static if LIBRARY_ErrorMessage then
-            debug call ThrowError(List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "RecycleUnitDelayedEx()", GetUnitName(u), 0, "Attempted to recycle an already recycled unit")
-            debug call ThrowWarning(u == null, "UnitRecycler", "RecycleUnitDelayedEx()", "", 0, "Attempted to recycle a null unit")
-            debug call ThrowWarning(not UnitTypeFilter(u), "UnitRecycler", "RecycleUnitDelayedEx()", GetUnitName(u), 0, "Attempted to recycle an invalid unit type")
-        endif
-        call UnitRecycler.addDelayed(u, delay, function UnitRecycler.delayedRecycleEx)
-    endfunction
-
-    function UnitAddToStock takes integer rawCode returns boolean
-        static if LIBRARY_ErrorMessage then
-            debug local unit u = CreateUnit(OWNER, rawCode, 0, 0, 0)
-            debug call ThrowWarning(u == null, "UnitRecycler", "UnitAddToStock()", "", 0, "Attempted to stock a non-existent unit type")
-            debug call ThrowWarning(IsHeroUnitId(rawCode), "UnitRecycler", "UnitAddToStock()", GetUnitName(u), 0, "Attempted to stock a hero unit")
-            debug call ThrowWarning(not UnitTypeFilter(u), "UnitRecycler", "UnitAddToStock()", GetUnitName(u), 0, "Attempted to stock an invalid unit type")
-            debug call RemoveUnit(u)
-            debug set u = null
-        endif
-        return UnitRecycler.stock(rawCode)
-    endfunction
-
-    //========================================================================================================
-
-    private module Init
-        private static method onInit takes nothing returns nothing
-            call init()
-        endmethod
-    endmodule
-
-    private struct Initializer extends array
-
-        static if AUTO_RECYCLE_DEAD then
-            private static method onDeath takes nothing returns nothing
-                local unit u = GetTriggerUnit()
-                static if LIBRARY_ErrorMessage then
-                    debug call ThrowError(List.stocked.boolean[GetHandleId(u)], "UnitRecycler", "", GetUnitName(u), 0, "A unit in stock has been killed!")
-                endif
-                if UnitTypeFilter(u) and not IsUnitType(u, UNIT_TYPE_HERO) and not IsUnitType(u, UNIT_TYPE_STRUCTURE) then
-                    call RecycleUnitDelayedEx(u, DeathTime(u))
-                endif
-                set u = null
-            endmethod
-
-            private static method autoRecycler takes nothing returns nothing
-                static if AUTO_RECYCLE_DEAD then
-                    static if LIBRARY_RegisterPlayerUnitEvent then
-                        call RegisterAnyPlayerUnitEvent(EVENT_PLAYER_UNIT_DEATH, function thistype.onDeath)
-                    else
-                        local trigger t = CreateTrigger()
-                        local code c = function thistype.onDeath
-                        local integer i = 16
-                        loop
-                            set i = i - 1
-                            call TriggerRegisterPlayerUnitEvent(t, Player(i), EVENT_PLAYER_UNIT_DEATH, null)
-                            exitwhen i == 0
-                        endloop
-                        call TriggerAddCondition(t, Filter(c))
-                        set t = null
-                    endif
-                endif
-            endmethod
-        endif
-
-        private static method init takes nothing returns nothing
-            call List.init()
-            call UnitRecycler.init()
-            static if AUTO_RECYCLE_DEAD then
-                call autoRecycler()
-            endif
-            call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, "|CFFFFCC00UnitRecycler|R library is ready!")
-        endmethod
-        implement Init
-
-    endstruct
-
-    static if DEBUG_MODE and LIBRARY_ErrorMessage then
-        private function DisplayError takes unit removedUnit returns nothing
-            call ThrowError(List.stocked.boolean[GetHandleId(removedUnit)], "UnitRecycler", "RemoveUnit()", GetUnitName(removedUnit), 0, "Attempted to remove a stocked unit")
-        endfunction
-
-        hook RemoveUnit DisplayError
-    endif
-
-endlibrary
 /*
 
 =============================================
@@ -1989,7 +1245,7 @@ endlibrary
 
 */
 
-library NokladrLib uses ColorsLib
+library NokladrLib uses Colors
     globals
         integer array time[3] // time[0] - секунды, time[1] - минуты, time[2] - часы
     endglobals
@@ -3598,8 +2854,8 @@ function Trig_income_upgTQ_Actions_group takes nothing returns nothing
     local player p = GetOwningPlayer(u) // владелец юнита
     local player p_k = hash[StringHash("income")].player[StringHash("player_killer")] // владелец убийцы
     local player p_v = hash[StringHash("income")].player[StringHash("player_victim")] // владелец рудника(жертвы)
-    local real damage                                                                 // урон за уровень улучшения, переменная устанавливается в Globals.j
     local unit damage_u = hash[StringHash("income")].unit[StringHash("victim")]       // рудник
+    local real damage
 
     set b1 = IsUnitInGroup(u, udg_wave_units)
     set b2 = (p == p_k)
@@ -3632,25 +2888,22 @@ function Trig_income_upgTQ_Actions takes nothing returns nothing
     local real x_ef
     local real y_ef
     local real range = cursed_mine_cast_range
-    local integer count_wave = cursed_mine_count_wave
-    local real angle = 360.00 / I2R(count_wave)
+    local real angle = 360.00 / cursed_mine_count_wave
     local group gr = CreateGroup()
-    local real range_damage = cursed_mine_range_damage
     local integer gold
     local integer lumber
-    local integer percent = cursed_mine_percent
     local string s1
     local string s2
     
     loop
-        exitwhen i > count_wave
+        exitwhen i > cursed_mine_count_wave
         set x_ef = x + range * Cos(angle * i * bj_DEGTORAD)
         set y_ef = y + range * Sin(angle * i * bj_DEGTORAD)
         call DestroyEffect(AddSpecialEffect(name_ef, x_ef, y_ef))
         set i = i + 1
     endloop
 
-    call GroupEnumUnitsInRange(gr, x, y, range_damage, null)
+    call GroupEnumUnitsInRange(gr, x, y, cursed_mine_range_damage, null)
 
     set hash[StringHash("income")].player[StringHash("player_killer")] = p_k
     set hash[StringHash("income")].player[StringHash("player_victim")] = p_v
@@ -3658,8 +2911,8 @@ function Trig_income_upgTQ_Actions takes nothing returns nothing
 
     call ForGroup(gr, function Trig_income_upgTQ_Actions_group)
 
-    set gold = GetPlayerState(p_k, PLAYER_STATE_RESOURCE_GOLD) * percent / 100
-    set lumber = GetPlayerState(p_k, PLAYER_STATE_RESOURCE_LUMBER) * percent / 100
+    set gold = GetPlayerState(p_k, PLAYER_STATE_RESOURCE_GOLD) * cursed_mine_percent / 100
+    set lumber = GetPlayerState(p_k, PLAYER_STATE_RESOURCE_LUMBER) * cursed_mine_percent / 100
 
     call AddGoldToPlayer(gold, p_v)
     call AddGoldToPlayer(-gold, p_k)
@@ -3671,11 +2924,11 @@ function Trig_income_upgTQ_Actions takes nothing returns nothing
     call DisplayTextToPlayer(p_v, 0, 0, s1)
     call DisplayTextToPlayer(p_k, 0, 0, s2)
 
+    set killer = null
+    set victim = null
     call DestroyGroup(gr)
     set name_ef = null
     set gr = null
-    set killer = null
-    set victim = null
     set p_v = null
     set p_k = null
     set s1 = null
@@ -4345,6 +3598,9 @@ scope Main initializer MainInit
 
         // For debug purposes
         call DebugInit()
+
+        // Disable Damage Detection System until fast arena begins
+        // call DisableTrigger(DDS)
 
         call Log("post_map_init finished!")
         

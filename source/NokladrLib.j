@@ -11,7 +11,7 @@
 
 */
 
-library NokladrLib uses ColorsLib
+library NokladrLib uses Colors
     globals
         integer array time[3] // time[0] - секунды, time[1] - минуты, time[2] - часы
     endglobals
