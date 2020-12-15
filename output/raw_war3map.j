@@ -3569,8 +3569,8 @@ function Trig_income_upgTQ_Conditions takes nothing returns boolean
     local unit victim = GetDyingUnit()          // unit who was killed by killer
     local integer v_rc = GetUnitTypeId(victim)  // raw code of victim unit
     local integer k_rc = GetUnitTypeId(killer)  // raw code of killer unit
-    local player p_v = GetOwningPlayer(victim)  // owner of victim unit
-    local player p_k = GetOwningPlayer(killer)  // owner of killer unit
+    local player playerVictim = GetOwningPlayer(victim)  // owner of victim unit
+    local player playerKiller = GetOwningPlayer(killer)  // owner of killer unit
 
     // n003 - Gold Mine большой
     // n004 - Gold Mine маленький
@@ -3578,13 +3578,13 @@ function Trig_income_upgTQ_Conditions takes nothing returns boolean
     set IsIncomeObjective = ((v_rc == 'n003') or (v_rc == 'n004') or (v_rc == 'n005'))
 
     // Не действует на игроков с уровнем улучшения "Проклятый рудник" ниже вашего на 1 и выше.
-    set DoesVictimHasUpgrade = GetPlayerTechCount(p_v, cursed_mine_rc, true) > 0
-    set DoesVictimsUpgradeGreaterThanKillers = (GetPlayerTechCount(p_v, cursed_mine_rc, true) - 1) > GetPlayerTechCount(p_k, cursed_mine_rc, true)
+    set DoesVictimHasUpgrade = GetPlayerTechCount(playerVictim, cursed_mine_rc, true) > 0
+    set DoesVictimsUpgradeGreaterThanKillers = GetPlayerTechCount(playerVictim, cursed_mine_rc, true) > GetPlayerTechCount(playerKiller, cursed_mine_rc, true)
 
     set killer = null
     set victim = null
-    set p_v = null
-    set p_k = null
+    set playerVictim = null
+    set playerKiller = null
     return IsIncomeObjective and DoesVictimHasUpgrade and DoesVictimsUpgradeGreaterThanKillers
 endfunction
 
@@ -3592,21 +3592,21 @@ endfunction
 // Функция вызывается к каждому юниту около погибшего рудника
 // Если юнит принадлежит убившему и юнит находится в группе udg_wave_units(!!! понять, что за группа), ему наносится урон от рудника типа chaos
 function Trig_income_upgTQ_Actions_group takes nothing returns nothing
-    local unit u = GetEnumUnit()                                                              // сам юнит
+    local unit u = GetEnumUnit() // сам юнит
     local boolean b1
     local boolean b2
-    local player p = GetOwningPlayer(u)                                                       // владелец юнита
-    local player p_k = hash[StringHash("income")].player[StringHash("player_killer")]         // владелец убийцы
-    local player p_v = hash[StringHash("income")].player[StringHash("player_victim")]         // владелец рудника(жертвы)
-    local real damage = cursed_mine_damage_for_lvl                                            // урон за уровень улучшения, переменная устанавливается в Globals.j
-    local unit damage_u = hash[StringHash("income")].unit[StringHash("victim")]               // рудник
+    local player p = GetOwningPlayer(u) // владелец юнита
+    local player p_k = hash[StringHash("income")].player[StringHash("player_killer")] // владелец убийцы
+    local player p_v = hash[StringHash("income")].player[StringHash("player_victim")] // владелец рудника(жертвы)
+    local real damage                                                                 // урон за уровень улучшения, переменная устанавливается в Globals.j
+    local unit damage_u = hash[StringHash("income")].unit[StringHash("victim")]       // рудник
 
     set b1 = IsUnitInGroup(u, udg_wave_units)
     set b2 = (p == p_k)
     if b1 and b2 then
-        set damage = damage * I2R(GetPlayerTechCount(p_v, cursed_mine_rc, true))              // формула расчёта урона: урон = cursed_mine_damage_for_lvl * уровень улучшения
+        set damage = cursed_mine_damage_for_lvl * GetPlayerTechCount(p_v, cursed_mine_rc, true) // формула расчёта урона: урон = cursed_mine_damage_for_lvl * уровень улучшения
         // !!!
-        call UnitDamageTargetBJ(damage_u, u, damage, ATTACK_TYPE_CHAOS, DAMAGE_TYPE_NORMAL)
+        call UnitDamageTargetBJ(damage_u, u, damage, ATTACK_TYPE_CHAOS, DAMAGE_TYPE_NORMAL) // DAMAGE_TYPE_UNIVERSAL - чистый урон без armor reduction
         // -----
     endif
 
@@ -4137,7 +4137,7 @@ function building_selling takes nothing returns nothing
 endfunction
 function DebugInit takes nothing returns nothing
     static if DEBUG_MODE then
-        
+        // call Log("Hello world!")
     endif
 endfunction
 /*
