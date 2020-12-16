@@ -49,7 +49,7 @@ function defeat takes player p returns nothing
     local dialog  d = DialogCreate()
     call RemovePlayer(p, PLAYER_GAME_RESULT_DEFEAT)
     if (GetPlayerController(p) == MAP_CONTROL_USER) then
-        if (Locale() == "RU") then
+        if (Locale.evaluate() == "RU") then
             call DialogSetMessage(d, "Вы проиграли!")
         else
             call DialogSetMessage(d, "You was defeated!")

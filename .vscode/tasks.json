@@ -14,7 +14,7 @@
             "args": [
                 "${workspaceFolder}/tools/common.j",
                 "${workspaceFolder}/tools/Blizzard.j",
-                "${workspaceFolder}/output/war3map.j",
+                "${workspaceFolder}/output/raw_war3map.j",
                 "${workspaceFolder}/output/MIX 0.0.2.w3x"
             ],
             "dependsOrder": "sequence",
@@ -37,7 +37,7 @@
                 "--debug",
                 "${workspaceFolder}/tools/common.j",
                 "${workspaceFolder}/tools/Blizzard.j",
-                "${workspaceFolder}/output/war3map.j",
+                "${workspaceFolder}/output/raw_war3map.j",
                 "${workspaceFolder}/output/MIX 0.0.2.w3x"
             ],
             "dependsOrder": "sequence",

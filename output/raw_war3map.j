@@ -1,3 +1,1037 @@
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     20.11.2020 22:46       =
+=============================================
+
+faq library-ish
+
+Globals and common functions for faq
+
+*/
+
+library FAQ uses NokladrLib
+
+    globals
+        boolean IsFaqActive = true // Disables faq_counter() and faq_active() if false
+        timerdialog faq_timerdialog // Timer dialog in upper-left corner for commands and settings
+        integer faq_vote_yes = 0 // Голосов "За"
+        integer faq_vote_no = 0 // Голосов "Против"
+        real faq_voting_duration = 6.00 // Duration of voting
+        texttag array faq_tts[4] // Плавающий текст для отображения голосования
+        button array faq_buttons[2] // Кнопки в меню голосования
+        dialog faq_dialog = DialogCreate() // Меню с голосованием
+    endglobals
+
+    function faq_get_castle takes nothing returns nothing
+        local player p = GetEnumPlayer()
+        call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, p, 0) // Resets camera angle
+        call PanCameraToTimedLocForPlayer(p, GetPlayerStartLocationLoc(p), 0) // Focuses camera at castle you own
+        call SelectUnitForPlayerSingle(GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(p, 'ntav')), p) // Selects tavern
+        set p = null
+    endfunction
+
+    function faq_show_dialog takes nothing returns nothing
+        call DialogDisplay(GetEnumPlayer(), faq_dialog, true) // Shows voting dialog
+    endfunction
+
+    function faq_hide_dialog takes nothing returns nothing
+        call DialogDisplay(GetEnumPlayer(), faq_dialog, false) // Hides voting dialog
+    endfunction
+
+    function faq_flush takes nothing returns nothing
+        call UnfadeMap() // Unfades map
+        call ForForce(udg_players_group, function faq_hide_dialog) // Hides voting dialog
+        call DestroyTextTag(faq_tts[0]) // Уничтожает плавающий текст с голосами "За"
+        call DestroyTextTag(faq_tts[1]) // Уничтожает плавающий текст с голосами "За"
+        call DestroyTextTag(faq_tts[2]) // Уничтожает плавающий текст с голосами "Против"
+        call DestroyTextTag(faq_tts[3]) // Уничтожает плавающий текст с голосами "Против"
+    endfunction
+
+endlibrary
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     21.11.2020 21:02       =
+=============================================
+
+faq active Trigger
+
+Voting for viewing faq guide.
+
+*/
+
+function faq_active_condition takes nothing returns boolean
+    // Disables faq_counter() and faq_active() if false
+    return IsFaqActive
+endfunction
+
+function faq_active takes nothing returns nothing
+    if (GetClickedButton() == faq_buttons[0]) then // Кнопка "Да"
+        set faq_vote_yes = faq_vote_yes + 1 // Голосов "За"
+        call SetTextTagText(faq_tts[2], I2S(faq_vote_yes), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "За"
+        if (faq_vote_yes >= (CountPlayersInForceBJ(udg_players_group) / 2)) then // Если голосов "За" 1/1, 1/2, 1/3, 2/4, 2/5, 3/6, 3/7, 4/8 
+            set IsFaqActive = false // Disables faq_counter() and faq_active()
+            call faq_flush.execute() // Destroys all texttags, hides faq_dialog, reveals map
+            call TriggerExecute(gg_trg_faq) // Enables faq guide
+            call TriggerSleepAction(51.8) // Duration of faq guide
+            call ForForce(udg_players_group, function faq_get_castle) // Focuses camera at castle you own
+            call faq_start.execute() // Commands and settings
+        endif
+    else // Кнопка "Нет"
+        set faq_vote_no = faq_vote_no + 1 // Голосов "Против"
+        call SetTextTagText(faq_tts[3], I2S(faq_vote_no), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "Против"
+        if (faq_vote_no > (CountPlayersInForceBJ(udg_players_group) / 2)) then  // Если голосов "За" 1/1, 2/2, 2/3, 3/4, 3/5, 4/6, 4/7, 5/8 
+            call faq_stop.execute() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
+        endif
+    endif
+endfunction
+
+function faq_active_init takes nothing returns nothing
+    local trigger t = CreateTrigger()
+
+    // Triggers if faq_dialog's buttons were clicked
+    call TriggerRegisterDialogEvent(t, faq_dialog)
+    call TriggerAddAction(t, function faq_active)
+    call TriggerAddCondition(t, Condition(function faq_active_condition))
+
+    set t = null
+endfunction
+
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     20.11.2020 16:00       =
+=============================================
+
+faq ini Trigger
+
+Starts voting for faq guide
+
+*/
+
+function faq_voting_timer_counter takes nothing returns nothing
+    local timer t = GetExpiredTimer()
+
+    if (faq_voting_duration >= 1.00 and IsFaqActive) then // If voting exists
+        call DialogSetMessage(faq_dialog, ("Посмотреть обучение (" + WHITE + R2S(faq_voting_duration) + " сек.|r)"))
+        set faq_voting_duration = faq_voting_duration - 1.00
+    else
+        call PauseTimer(t)
+        call DestroyTimer(t)
+        if (IsFaqActive) then // If there are not enough votes
+            call faq_stop.execute() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
+        endif
+    endif
+
+    set t = null
+endfunction
+
+//===========================================================================
+function faq_ini takes nothing returns nothing
+    call FadeMap() // Сделать всю карту чёрной
+
+    // ---За---
+    // Плавающий текст с требуемым кол-вом голосов "За"
+    set faq_tts[0] = NewTextTag((GREEN + "\"ЗА\"|r нужно " + I2S(CountPlayersInForceBJ(udg_players_group) / 2)), gg_rct_guideyes, 14.00)
+    
+    // Плавающий текст с кол-вом голосов "За"
+    set faq_tts[2] = NewTextTag(I2S(faq_vote_yes), gg_rct_guideyesvote, 10.00)
+
+    // Кнопка подтверждения просмотра обучения
+    set faq_buttons[0] = DialogAddButton(faq_dialog, "Да", 0)
+
+    // ---Против---
+    // Плавающий текст с требуемым кол-вом голосов "Против"
+    set faq_tts[1] = NewTextTag((RED + "\"ПРОТИВ\"|r нужно более " + I2S(CountPlayersInForceBJ(udg_players_group) / 2)), gg_rct_guideno, 14.00)
+
+    // Плавающий текст с кол-вом голосов "Против"
+    set faq_tts[3] = NewTextTag(I2S(faq_vote_no), gg_rct_guidenovote, 10.00)
+
+    // Кнопка отклонения просмотра обучения
+    set faq_buttons[1] = DialogAddButton(faq_dialog, "Нет", 0)
+
+    static if DEBUG_MODE then
+        call faq_stop.execute() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
+    else
+        call TimerStart(CreateTimer(), 1.00, true, function faq_voting_timer_counter) // Makes duration of voting visible in faq dialog's title
+        call faq_voting_timer_counter() // First tick of timer
+        call ForForce(udg_players_group, function faq_show_dialog) // Shows faq dialog to all players
+    endif
+endfunction
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     21.11.2020 21:03       =
+=============================================
+
+faq start Trigger
+
+Shows all available commands and settings.
+
+*/
+
+function faq_start_timer_actions takes nothing returns nothing
+    call DestroyTimerDialog(faq_timerdialog) // Destroys timer dialog for commands and settings
+    call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 15, "|cFFFF0000Команда |cFFFFFFFF-info|r |cFFFF0000отключит сообщения о штрафах и мини-арене.|r")
+
+    call DisableTrigger(gg_trg_cmd_time)
+    call DisableTrigger(gg_trg_cmd_build)
+    call DisableTrigger(gg_trg_cmd_mode)
+    call DisableTrigger(gg_trg_cmd_point)
+    call DisableTrigger(gg_trg_cmd_arena)
+    call ForceArena.execute()
+    // call TriggerExecute( gg_trg_set_wave_start_main )
+    // call TriggerExecute( gg_trg_set_wave_timer )
+    // call TriggerExecute( gg_trg_set_wave_region_rotate )
+    // call TriggerExecute( gg_trg_set_wave_unit_spawn )
+endfunction
+
+function faq_start takes nothing returns nothing
+    debug set udg_gameset_time_first = timeBeforeFirstWave
+    call TimerStart(udg_gameset_timer, udg_gameset_time_first, false, function faq_start_timer_actions) // After settings were set
+
+    set faq_timerdialog = CreateTimerDialog(udg_gameset_timer) // Timer dialog in upper-left corner for commands and settings
+    call TimerDialogSetTitle(faq_timerdialog, "Настройка карты") // Title of timer dialog
+    call TimerDialogDisplay(faq_timerdialog, true) // Shows timer dialog
+
+    call gameset_owner.execute() // Sets owner of game
+    call TriggerExecute(gg_trg_scoreboard_ini) // Shows scoreboard
+endfunction
+
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     20.11.2020 16:00       =
+=============================================
+
+faq stop Trigger
+
+Stops voting for faq guide
+
+*/
+
+function faq_stop takes nothing returns nothing
+    set IsFaqActive = false // Disables faq_counter() and faq_active()
+    call faq_flush.execute() // Destroys all texttags, hides faq_dialog, reveals map
+    call ForForce(udg_players_group, function faq_get_castle) // Focuses camera at castle you own
+    call faq_start.execute() // Commands and settings
+endfunction
+/*
+
+=============================================
+= Файл создал:       Glady                  =
+= Discord:           ! ! Gladiator#3635     =
+= E-Mail:            glady007rus@gmail.com  =
+= Дата создания:     08.11.2020 20:42       =
+=============================================
+
+Исследования инкома.
+!!! - важная информация
+
+*/
+function Trig_income_upg_Conditions takes nothing returns boolean
+    local integer i = 1
+    local integer research_rc = GetResearched()
+    loop
+        exitwhen i == incSpellrc_count
+        if research_rc == incSpellrc[i] then
+            return true
+        endif
+        set i = i + 1
+    endloop
+    return false
+endfunction
+
+// Действие улучшения Развитие ради развития
+function Trig_income_upg_actions_evforev takes player p returns nothing
+    local real r
+    local integer bonus_gold
+    local integer bonus_lumber
+
+    set r = evforev_bonus_res_mod * I2R(GetPlayerTechCount(p, evforev_rc, true)) + evforev_bonus_res
+    set bonus_gold = R2I(r * I2R(GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)))
+    set bonus_lumber = R2I(r * I2R(GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER)))
+
+    call AddGoldToPlayer(bonus_gold, p)
+    call AddLumberToPlayer(bonus_lumber, p)
+    
+endfunction
+
+function Aggrgame_conditions takes nothing returns boolean
+    return IsUnitType(GetFilterUnit(), UNIT_TYPE_PEON)
+endfunction
+
+function Aggrgame_group takes nothing returns nothing
+    local unit u = GetEnumUnit()
+    if GetUnitAbilityLevel(u, aggrgame_aura_rc) == 0 then
+        call UnitAddAbility(u, aggrgame_aura_rc)
+    else
+        call IncUnitAbilityLevel(u, aggrgame_aura_rc)
+    endif
+    set u = null
+endfunction
+
+// Действие улучшения Агрессивной игры
+function Trig_income_upg_actions_aggrgame takes player p returns nothing
+    local group gr
+    
+    set gr = CreateGroup()
+    call GroupEnumUnitsOfPlayer(gr, p, Condition(function Aggrgame_conditions)) 
+    call ForGroup(gr, function Aggrgame_group)
+    
+    call DestroyGroup(gr)
+    set gr = null
+endfunction
+
+// Добавить в группу игроков всех играющих игроков
+function AllPlayingPlayers takes force gr_p returns nothing
+    local integer i = 1
+    local player p
+
+    loop
+        exitwhen i > max_players
+        set p = Player(i)
+        if (GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING) and (GetPlayerController(p) == MAP_CONTROL_USER) then
+            call ForceAddPlayer(gr_p, p)
+        endif
+        set i = i + 1
+    endloop
+
+    set p = null
+endfunction
+
+// Работа таймера Вклад в игрока
+function Timer_contr_to_pl_actions takes nothing returns nothing
+    local timer t = GetExpiredTimer()
+    local player p = hash[StringHash("income")].player[GetHandleId(t)]
+    local integer count_research = GetPlayerTechCount(p, contr_to_pl_rc, true)
+    local integer gold = contr_to_pl_gold + (contr_to_pl_gold_mod * (count_research - 1))
+    local integer lumber = contr_to_pl_lumber + (contr_to_pl_lumber_mod * (count_research - 1))
+    local string s1
+    local string s2
+
+    set gold = R2I(contr_to_pl_multy * I2R(gold))
+    set lumber = R2I(contr_to_pl_multy * I2R(lumber))
+
+    call AddGoldToPlayer(gold, p)
+    call AddLumberToPlayer(lumber, p)
+
+    set s1 = "Доход с вложения в игрока: |cFFFFCD00" + I2S(gold)
+    set s2 = "Доход с вложения в игрока: |cFFB23AEE" + I2S(lumber)
+    
+    call DisplayTextToPlayer(p, 0, 0, s1)
+    call DisplayTextToPlayer(p, 0, 0, s2)
+    // !!! Найти причину, зачем увеличивается лвл улучшения Подождите 5 минут
+    call SetPlayerTechResearched(p, wait_five_minutes_rc, count_research)
+    // ----------------------------------------------------------------------
+
+    call PauseTimer(t)
+    call DestroyTimer(t)
+    set p = null
+    set t = null
+    set s1 = null
+    set s2 = null
+endfunction
+
+// Действие улучшения Вклад в игрока
+function Trig_income_upg_actions_contr_to_pl takes player p, integer count_research returns nothing
+    local force gr_p
+    local player rand_p
+    local integer bonus_gold
+    local integer bonus_lumber
+    local string mes
+    local timer t
+
+    set gr_p = CreateForce()
+    call AllPlayingPlayers(gr_p)
+    call ForceRemovePlayer(gr_p, p)
+    set rand_p = ForcePickRandomPlayer(gr_p)
+
+    set bonus_gold = contr_to_pl_gold + (contr_to_pl_gold_mod * (count_research - 1))
+    set bonus_lumber = contr_to_pl_lumber + (contr_to_pl_lumber_mod * (count_research - 1))
+
+    call AddGoldToPlayer(bonus_gold, rand_p)
+    call AddLumberToPlayer(bonus_lumber, rand_p)
+
+    set mes = "В вас вложились: |cFFFFCD00" + I2S(bonus_gold)
+    call DisplayTimedTextToPlayer(rand_p, 0, 0, 10.00, mes)
+    set mes = "В вас вложились: |cFFB23AEE" + I2S(bonus_lumber)
+    call DisplayTimedTextToPlayer(rand_p, 0, 0, 10.00, mes)
+
+    set t = CreateTimer()
+    set hash[StringHash("income")].player[GetHandleId(t)] = rand_p
+    call TimerStart(t, contr_to_pl_time, false, function Timer_contr_to_pl_actions)
+
+    call DestroyForce(gr_p)
+    set gr_p = null
+    set rand_p = null
+    set mes = null
+    set t = null
+endfunction
+
+function Trig_income_upg_actions_goldmining takes player p, integer number_p, integer research_rc returns nothing
+    local integer lvl_research = GetPlayerTechCount(p, research_rc, true)
+
+    set udg_income_gold[number_p] = udg_income_gold[number_p] + goldmining_income[lvl_research]
+    set udg_income_goldmine_c[number_p] = udg_income_goldmine_c[number_p] + goldmining_main_mine[lvl_research]
+    set udg_income_goldmine_l[number_p] = udg_income_goldmine_l[number_p] + goldmining_extra_mine[lvl_research]
+
+endfunction
+
+// Смещает все элементы массива на один вверх, последний пропадает, на первый слот ставится игрок p
+function Trig_income_upg_actions_ticket takes player p returns nothing
+    local integer i = max_ticket_list - 1
+    loop
+        exitwhen i < 1
+        set ticket_list[i] = ticket_list[i - 1]
+        set i = i - 1
+    endloop
+    set  ticket_list[0] = p
+endfunction
+
+// Действие улучшения Драгоценные камни
+function Trig_income_upg_actions_jewelry takes integer number_p returns nothing
+    set udg_income_wood[number_p] = udg_income_wood[number_p] + jewelry_lumber_for_lvl
+endfunction
+
+// Действие улучшения Вклад
+function Trig_income_upg_actions_contr takes player p, integer count_research returns nothing
+    local string s1
+    local string s2 
+    local integer gold = contr_gold + ((count_research - 1) * contr_gold_mod)
+    local integer lumber = contr_lumber + ((count_research - 1) * contr_lumber_mod)
+
+    set gold = gold * contr_percent / 100
+    set lumber = lumber * contr_percent / 100
+    set s1 = "Доход с вклада: |cFFFFCD00" + I2S(gold)
+    set s2 = "Доход за вклад: |cFFB23AEE" + I2S(lumber)
+    
+    call AddGoldToPlayer(gold, p)
+    call AddLumberToPlayer(lumber, p)
+    call DisplayTextToPlayer(p, 0, 0, s1)
+    call DisplayTextToPlayer(p, 0, 0, s2)
+
+    set s1 = null
+    set s2 = null
+endfunction
+
+// Поиск номера таймера
+function find_number_timer takes timer t returns integer
+    local integer number_timer = 0
+    local integer i = 1 
+
+    loop
+        exitwhen i > max_players
+        if (t == stab_timer_gold[i]) or (t == stab_timer_lumber[i]) then
+            set number_timer = i
+        endif
+        set i = i + 1
+    endloop
+
+    return number_timer
+endfunction
+
+// Работа таймера stab_timer_gold
+function stab_timer_gold_actions takes nothing returns nothing
+    local player p
+    local integer number_p
+    local integer count_research
+    local timer t = GetExpiredTimer()
+
+    set number_p = find_number_timer(t)
+    set p = Player(number_p - 1)
+    set count_research = GetPlayerTechCount(p, stab_rc, true)
+
+    call AddGoldToPlayer(stab_gold[count_research], p)
+
+    set p = null
+    set t = null
+endfunction
+
+// Работа таймера stab_timer_lumber
+function stab_timer_lumber_actions takes nothing returns nothing
+    local player p
+    local integer number_p
+    local integer count_research
+    local timer t = GetExpiredTimer()
+
+    set number_p = find_number_timer(t)
+    set p = Player(number_p - 1)
+    set count_research = GetPlayerTechCount(p, stab_rc, true)
+
+    call AddLumberToPlayer(stab_lumber[count_research], p)
+
+    set p = null
+    set t = null
+endfunction
+
+// Действие улучшения Стабильность
+function Trig_income_upg_actions_stab takes integer number_p, integer count_research returns nothing
+    if count_research == 1 then
+        set stab_timer_gold[number_p] = CreateTimer()
+        set stab_timer_lumber[number_p] = CreateTimer()
+    endif
+
+    call TimerStart(stab_timer_gold[number_p], stab_time_gold[count_research], true, function stab_timer_gold_actions)
+    call TimerStart(stab_timer_lumber[number_p], stab_time_lumber[count_research], true, function stab_timer_lumber_actions)
+endfunction
+
+// Условие улучшения Лидерство, удалить юнитов Больше всех убийств за прошедший раунд и Или лидерство по очкам арены за пошедший раунд
+function Trig_income_upg_actions_leadership_group takes nothing returns nothing
+    local unit u = GetEnumUnit()
+    local integer u_rc = GetUnitTypeId(u)
+
+    if (u_rc == most_point_kill_last_round) or (u_rc == or_leadership_arena_last_round) then
+        call RemoveUnit(u)
+    endif
+
+    set u = null
+endfunction
+
+// Действие улучшения Лидерство
+function Trig_income_upg_actions_leadership takes player p, integer number_p returns nothing
+    local group gr = CreateGroup()
+
+    set udg_leader_kf[number_p] = udg_leader_kf[number_p] + leadership_bonus
+    call GroupEnumUnitsOfPlayer(gr, p, null)
+
+    // !!! Муторная система с группой, разобраться
+    call ForGroup(gr, function Trig_income_upg_actions_leadership_group)
+    //----------------------------------------------
+
+    call DestroyGroup(gr)
+    set gr = null
+endfunction
+
+// Основное тело
+function Trig_income_upg_Actions takes nothing returns nothing
+    local unit u = GetTriggerUnit()
+    local player p = GetOwningPlayer(u)
+    local integer number_p = GetConvertedPlayerId(p)
+    local integer count_upg = udg_scoreboard_upg[number_p]
+    local integer research_rc = GetResearched()
+    local integer bonus_gold
+    local integer bonus_lumber
+    local integer count_research = GetPlayerTechCount(p, research_rc, true)
+    local real r
+
+    set count_upg = count_upg + 1
+    set udg_scoreboard_upg[number_p] = count_upg
+
+    // Обновление значений кол-ва исследований в таблице
+    call MultiboardSetItemValueBJ(udg_scoreboard, 5, (number_p + 1), I2S(count_upg))
+
+    // Кол-во исследований(улучшений)
+    if count_upg == count_research_for_t1 then 
+        call SetPlayerTechResearched(p, t1_research_rc, 1)
+    elseif count_upg == count_research_for_t2 then
+        call SetPlayerTechResearched(p, t2_research_rc, 1)
+    endif
+
+    // Грабёж
+    if research_rc == robbery_rc then 
+        if GetPlayerTechCount(p, robbery_rc, true) == 3 then
+            call SetPlayerTechResearched(p, robbery_lvl3_rc, 1)
+        elseif GetPlayerTechCount(p, robbery_rc, true) == 5 then
+            call SetPlayerTechResearched(p, robbery_lvl5_rc, 1)
+        endif
+    endif
+    
+    // Развитие ради развития
+    if GetPlayerTechCount(p, evforev_rc, true) > 0 then
+        call Trig_income_upg_actions_evforev(p)
+    endif
+
+    // Агрессивная игра
+    // Выделяем всех наших юнитов типа рабочий
+    // и даём им ауру на скорость атаки и скорость бега, если
+    // её нет, повышаем её уровень
+    // !!!стоит переделать, если всего 1 рабочий, проще его в переменные забить и давать способность ему напрямую
+    if research_rc == aggrgame_rc then 
+        call Trig_income_upg_actions_aggrgame(p)
+    endif
+        
+    // Вклад в игрока
+    // !!!добавить удаление улучшения, если игрок один на карте
+    if research_rc == contr_to_pl_rc then
+        call Trig_income_upg_actions_contr_to_pl(p, count_research)
+    endif
+
+    // Золотодобыча
+    if research_rc == goldmining_rc then
+        call Trig_income_upg_actions_goldmining(p, number_p, research_rc)
+    endif
+
+    // Билет
+    if research_rc == ticket_rc then
+        call Trig_income_upg_actions_ticket(p)
+    endif
+
+    // Драгоценные камни
+    if research_rc == jewelry_rc then
+        call Trig_income_upg_actions_jewelry(number_p)
+    endif
+
+    // Вклад
+    if research_rc == contr_rc then
+        call Trig_income_upg_actions_contr(p, count_research)
+    endif
+
+    // Стабильность
+    if research_rc == stab_rc then
+        call Trig_income_upg_actions_stab(number_p, count_research)
+    endif
+
+    // Лидерство
+    if research_rc == leadership_rc then
+        call Trig_income_upg_actions_leadership(p, number_p)
+    endif
+
+    set p = null
+    set u = null
+endfunction
+
+//===========================================================================
+function InitTrig_income_upg takes nothing returns nothing
+    local trigger t = CreateTrigger()
+
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+    call TriggerAddCondition(t, Condition(function Trig_income_upg_Conditions))
+    call TriggerAddAction(t, function Trig_income_upg_Actions)
+    
+    set t = null
+endfunction
+/*
+
+=============================================
+= Файл создал:       Glady                  =
+= Discord:           ! ! Gladiator#3635     =
+= E-Mail:            glady007rus@gmail.com  =
+= Дата создания:     22.11.2020 13:00       =
+=============================================
+
+Улучшение инкома Грабёж.
+!!! - важная информация
+
+*/
+
+function Trig_income_upgA_Conditions takes nothing returns boolean
+    local boolean b1
+    local boolean b2
+    local boolean b3
+    local boolean b4
+    local unit killer = GetKillingUnit()
+    local unit victim = GetDyingUnit()
+    local player p_k = GetOwningPlayer(killer)
+    local player p_v = GetOwningPlayer(victim)
+    
+    set b1 = GetPlayerTechCountSimple(robbery_rc, p_k) > 0
+    set b2 = IsUnitInGroup(killer, udg_wave_units)
+    set b3 = IsPlayerEnemy(p_v, p_k)
+    set b4 = GetUnitTypeId(GetDyingUnit()) == castle_rc
+    
+    set p_k = null
+    set p_v = null
+    set killer = null
+    set victim = null
+    
+    return b1 and b2 and b3 and b4
+
+endfunction
+
+function Trig_income_upgA_Actions takes nothing returns nothing
+    local unit killer = GetKillingUnit()
+    local unit victim = GetDyingUnit()
+    local player p_k = GetOwningPlayer(killer)
+    local player p_v = GetOwningPlayer(victim) 
+    local integer gold = GetPlayerState(p_v, PLAYER_STATE_RESOURCE_GOLD)
+    local integer lumber = GetPlayerState(p_v, PLAYER_STATE_RESOURCE_LUMBER)
+    local integer lvl_research = GetPlayerTechCountSimple(robbery_rc, p_k)
+    local integer p_k_n = GetConvertedPlayerId(p_k)
+    local integer p_v_n = GetConvertedPlayerId(p_v)
+    local real multy = robbery_pr_f[lvl_research] * 0.01
+    local string killer_mes
+    local string victim_mes
+    local string color_k = udg_players_colour[p_k_n]
+    local string color_v = udg_players_colour[p_v_n]
+    local string name_k = udg_players_name[p_k_n]
+    local string name_v = udg_players_name[p_v_n]
+
+    set gold = R2I(I2R(gold) * multy)
+    set lumber = R2I(I2R(lumber) * multy)
+    
+    call AddGoldToPlayer(gold, p_k)
+    call AddGoldToPlayer(-gold, p_v)
+    call AddLumberToPlayer(lumber, p_k)
+    call AddLumberToPlayer(-lumber, p_v)
+
+    set killer_mes = "Вы украли |cFFFFCD00" + I2S(gold) + "|r ед. золота и |cFFB23AEE" + I2S(lumber) + "|r ед. самоцветов у игрока " + color_v + name_v
+    set victim_mes = "Вас ограбил игрок " + color_k + name_k
+    call DisplayTextToPlayer(p_k, 0, 0, killer_mes)
+    call DisplayTextToPlayer(p_v, 0, 0, victim_mes)
+
+    set p_k = null
+    set p_v = null
+    set killer = null
+    set victim = null
+    set killer_mes = null
+    set victim_mes = null
+    set color_k = null
+    set color_v = null
+    set name_k = null
+    set name_v = null
+endfunction
+
+//===========================================================================
+function InitTrig_income_upgA takes nothing returns nothing
+    local trigger t = CreateTrigger()
+
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerAddCondition(t, Condition( function Trig_income_upgA_Conditions))
+    call TriggerAddAction(t, function Trig_income_upgA_Actions)
+    
+    set t = null
+endfunction
+/*
+
+=============================================
+= Файл создал:       Glady                  =
+= Discord:           ! ! Gladiator#3635     =
+= E-Mail:            glady007rus@gmail.com  =
+= Дата создания:     11.11.2020 20:00       =
+=============================================
+
+Улучшение инкома Мёртвые деньги.
+!!! - важная информация
+
+*/
+
+function Trig_income_upgR_Conditions takes nothing returns boolean
+    local boolean b1
+    local boolean b2
+    local boolean b3
+    local unit killer = GetKillingUnit()
+    local unit victim = GetDyingUnit()
+    local player p_k = GetOwningPlayer(killer)
+    local player p_v = GetOwningPlayer(victim)
+    
+    set b1 = GetPlayerTechCountSimple(deadmoney_rc, p_k) > 0
+    set b2 = IsUnitInGroup(killer, udg_wave_units)
+    set b3 = IsPlayerEnemy(p_v, p_k)
+    
+    set p_k = null
+    set p_v = null
+    set killer = null
+    set victim = null
+    
+    return b1 and b2 and b3
+
+endfunction
+
+function Trig_income_upgR_Actions takes nothing returns nothing
+    local unit killer = GetKillingUnit()
+    local player p_k = GetOwningPlayer(killer)
+    local integer n = deadmoney_money_for_lvl
+    local integer sum
+
+    set sum = n * GetPlayerTechCountSimple(deadmoney_rc, p_k)
+    call AddGoldToPlayer(sum, p_k)
+
+    set killer = null
+    set p_k = null
+endfunction
+
+//===========================================================================
+function InitTrig_income_upgR takes nothing returns nothing
+    local trigger t = CreateTrigger()
+
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerAddCondition(t, Condition( function Trig_income_upgR_Conditions))
+    call TriggerAddAction(t, function Trig_income_upgR_Actions)
+    
+    set t = null
+endfunction
+
+/*
+
+=============================================
+= Файл создал:       Glady                  =
+= Discord:           ! ! Gladiator#3635     =
+= E-Mail:            glady007rus@gmail.com  =
+= Дата создания:     22.11.2020 18:00       =
+=============================================
+
+Улучшение инкома Проклятый рудник.
+!!! - важная информация
+
+*/
+
+function Trig_income_upgTQ_Conditions takes nothing returns boolean
+    local boolean IsIncomeObjective = false
+    local boolean DoesVictimHasUpgrade = false
+    local boolean DoesVictimsUpgradeGreaterThanKillers = false
+    local unit killer = GetKillingUnit()        // unit who has killed victim
+    local unit victim = GetDyingUnit()          // unit who was killed by killer
+    local integer v_rc = GetUnitTypeId(victim)  // raw code of victim unit
+    local integer k_rc = GetUnitTypeId(killer)  // raw code of killer unit
+    local player playerVictim = GetOwningPlayer(victim)  // owner of victim unit
+    local player playerKiller = GetOwningPlayer(killer)  // owner of killer unit
+
+    // n003 - Gold Mine большой
+    // n004 - Gold Mine маленький
+    // n005 - Флаг
+    set IsIncomeObjective = ((v_rc == 'n003') or (v_rc == 'n004') or (v_rc == 'n005'))
+
+    // Не действует на игроков с уровнем улучшения "Проклятый рудник" ниже вашего на 1 и выше.
+    set DoesVictimHasUpgrade = GetPlayerTechCount(playerVictim, cursed_mine_rc, true) > 0
+    set DoesVictimsUpgradeGreaterThanKillers = GetPlayerTechCount(playerVictim, cursed_mine_rc, true) > GetPlayerTechCount(playerKiller, cursed_mine_rc, true)
+
+    set killer = null
+    set victim = null
+    set playerVictim = null
+    set playerKiller = null
+    return IsIncomeObjective and DoesVictimHasUpgrade and DoesVictimsUpgradeGreaterThanKillers
+endfunction
+
+// !!! Урон юнитам наносит сам рудник, но после смерти он передаётся убийце, проверить, что урон наносится до передачи
+// Функция вызывается к каждому юниту около погибшего рудника
+// Если юнит принадлежит убившему и юнит находится в группе udg_wave_units(!!! понять, что за группа), ему наносится урон от рудника типа chaos
+function Trig_income_upgTQ_Actions_group takes nothing returns nothing
+    local unit u = GetEnumUnit() // сам юнит
+    local boolean b1
+    local boolean b2
+    local player p = GetOwningPlayer(u) // владелец юнита
+    local player p_k = hash[StringHash("income")].player[StringHash("player_killer")] // владелец убийцы
+    local player p_v = hash[StringHash("income")].player[StringHash("player_victim")] // владелец рудника(жертвы)
+    local unit damage_u = hash[StringHash("income")].unit[StringHash("victim")]       // рудник
+    local real damage
+
+    set b1 = IsUnitInGroup(u, udg_wave_units)
+    set b2 = (p == p_k)
+    if b1 and b2 then
+        set damage = cursed_mine_damage_for_lvl * GetPlayerTechCount(p_v, cursed_mine_rc, true) // формула расчёта урона: урон = cursed_mine_damage_for_lvl * уровень улучшения
+        // !!!
+        call UnitDamageTargetBJ(damage_u, u, damage, ATTACK_TYPE_CHAOS, DAMAGE_TYPE_NORMAL) // DAMAGE_TYPE_UNIVERSAL - чистый урон без armor reduction
+        // -----
+    endif
+
+    set p = null
+    set p_k = null
+    set p_v = null
+    set u = null
+endfunction
+
+function Trig_income_upgTQ_Actions takes nothing returns nothing
+    local unit killer = GetKillingUnit()
+    local unit victim = GetDyingUnit()
+    local integer v_rc = GetUnitTypeId(victim)
+    local integer k_rc = GetUnitTypeId(killer)
+    local integer i = 1
+    local player p_v = GetOwningPlayer(victim)
+    local player p_k = GetOwningPlayer(killer)
+    local integer n_p_v = GetConvertedPlayerId(p_v)
+    local integer n_p_k = GetConvertedPlayerId(p_k)
+    local string name_ef = "Objects\\Spawnmodels\\Undead\\UndeadDissipate\\UndeadDissipate.mdl"
+    local real x = GetUnitX(victim)
+    local real y = GetUnitY(victim)
+    local real x_ef
+    local real y_ef
+    local real range = cursed_mine_cast_range
+    local real angle = 360.00 / cursed_mine_count_wave
+    local group gr = CreateGroup()
+    local integer gold
+    local integer lumber
+    local string s1
+    local string s2
+    
+    loop
+        exitwhen i > cursed_mine_count_wave
+        set x_ef = x + range * Cos(angle * i * bj_DEGTORAD)
+        set y_ef = y + range * Sin(angle * i * bj_DEGTORAD)
+        call DestroyEffect(AddSpecialEffect(name_ef, x_ef, y_ef))
+        set i = i + 1
+    endloop
+
+    call GroupEnumUnitsInRange(gr, x, y, cursed_mine_range_damage, null)
+
+    set hash[StringHash("income")].player[StringHash("player_killer")] = p_k
+    set hash[StringHash("income")].player[StringHash("player_victim")] = p_v
+    set hash[StringHash("income")].unit[StringHash("victim")] = victim
+
+    call ForGroup(gr, function Trig_income_upgTQ_Actions_group)
+
+    set gold = GetPlayerState(p_k, PLAYER_STATE_RESOURCE_GOLD) * cursed_mine_percent / 100
+    set lumber = GetPlayerState(p_k, PLAYER_STATE_RESOURCE_LUMBER) * cursed_mine_percent / 100
+
+    call AddGoldToPlayer(gold, p_v)
+    call AddGoldToPlayer(-gold, p_k)
+    call AddLumberToPlayer(lumber, p_v)
+    call AddLumberToPlayer(-lumber, p_k)
+
+    set s1 = "Вы украли |cFFFFCD00" + I2S(gold) + "|r ед. золота и |cFFB23AEE" + I2S(lumber) + "|r ед. самоцветов у игрока " + udg_players_colour[n_p_k] + udg_players_name[n_p_k]
+    set s2 = "Вас ограбил игрок " + udg_players_colour[n_p_v] + udg_players_name[n_p_v]
+    call DisplayTextToPlayer(p_v, 0, 0, s1)
+    call DisplayTextToPlayer(p_k, 0, 0, s2)
+
+    set killer = null
+    set victim = null
+    call DestroyGroup(gr)
+    set name_ef = null
+    set gr = null
+    set p_v = null
+    set p_k = null
+    set s1 = null
+    set s2 = null
+endfunction
+
+//===========================================================================
+function InitTrig_income_upgTQ takes nothing returns nothing
+    local trigger t = CreateTrigger()
+
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerAddCondition(t, Condition(function Trig_income_upgTQ_Conditions))
+    call TriggerAddAction(t, function Trig_income_upgTQ_Actions)
+
+    set t = null
+endfunction
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     13.12.2020 16:21       =
+=============================================
+
+inc_colour Trigger
+
+Income Objective OnDestroy()
+
+*/
+
+function inc_colour_actions takes nothing returns nothing
+    local unit IncomeObjectiveUnit = GetDyingUnit() // IncomeObject
+    local player IncomeObjectReceiever = GetOwningPlayer(GetKillingUnit()) // Who gets IncomeObject
+    local unit IncomeObjectiveNewUnit // Replace IncomeObject
+    local player IncomeObjectOwner = GetOwningPlayer(IncomeObjectiveUnit) // Who loses IncomeObject
+    local boolean IsHugeGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == 'n003')
+    local boolean IsSmallGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == 'n004')
+    local boolean IsFlag = (GetUnitTypeId(IncomeObjectiveUnit) == 'n005')
+    local boolean IsOwnerTheReceiver = (IncomeObjectOwner == IncomeObjectReceiever)
+    local real IncomeObjectiveUnitX = GetUnitX(IncomeObjectiveUnit)
+    local real IncomeObjectiveUnitY = GetUnitY(IncomeObjectiveUnit)
+    local Color playerColor = Color.create(IncomeObjectReceiever) // Color Struct from NokladrLib.j
+
+    if not (IsHugeGoldMine or IsSmallGoldMine or IsFlag) then
+        return // No actions
+    endif
+
+    call RemoveUnit(IncomeObjectiveUnit) // Remove old IncomeObject to replace it with a new one
+    set IncomeObjectiveNewUnit = CreateUnit(IncomeObjectReceiever, GetUnitTypeId(IncomeObjectiveUnit), IncomeObjectiveUnitX, IncomeObjectiveUnitY, bj_UNIT_FACING)
+    call SetUnitVertexColor(IncomeObjectiveNewUnit, playerColor.red, playerColor.green, playerColor.blue, 255) // Adjusts color to match receiver's one
+
+    set IncomeObjectiveUnit = null
+    set IncomeObjectReceiever = null
+    set IncomeObjectiveNewUnit = null
+    set IncomeObjectOwner = null
+    call playerColor.destroy()
+endfunction
+
+function inc_colour takes nothing returns nothing
+    local trigger t = CreateTrigger()
+
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0C), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0D), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0E), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x0F), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x10), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x11), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x12), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x13), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x14), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x15), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x16), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x17), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x18), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x19), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x1A), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerRegisterPlayerUnitEvent(t, Player(0x1B), EVENT_PLAYER_UNIT_DEATH, null)
+    call TriggerAddAction(t, function inc_colour_actions)
+
+    set t = null
+endfunction
 
 library ArcingTextTag  // Arcing Text Tag v1.0.0.3 by Maker https://www.hiveworkshop.com/threads/228710/
     globals
@@ -1473,227 +2507,131 @@ library UnitRecycler initializer UnitRecyclerInit uses Colors, ArcingTextTag, Lo
     endfunction
     
 endlibrary
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     01.11.2020 18:41       =
-=============================================
-
-Объявление глобальных переменных
-
-*/
-
 globals
-    boolean IsDevInGame = false                                                                 // Условие: один из разработчиков в игре?
-    Table table                                                                                 // Инициализация таблицы
-    HashTable hash                                                                              // Инициализация хэш-таблицы
-    constant string strVersion = "0.0.2"                                                        // Версия карты, семантическое версионирование: (Major, Minor, Patch)
-    constant string Version = "Test"                                                            // Тип версии {Test, Release}
-    constant string strEmail = (LB + "Nostaleal.ru|r" + GOLD + "@|r" + LB + "yandex.ru|r")      // E-Mail адрес
-    constant string strDiscord = (LB + "! ! Nokladr|r" + GOLD + "#|r" + LB + "2205|r")          // Discord тэг
-    constant string strBuild_Time = "13 December 2020"                                          // Время создания билда карты
-
-    debug constant real timeBeforeFirstWave = 10.00                                             // Время перед началом первой волны
-
-    leaderboard Leaderboard                                                                     // Таблица лидеров
-
-    constant integer finalWave = 15
-    constant integer numberOfMinigames = 8
-    
-    constant integer base_gold = 755                                                            // Кол-во золота в начале игры
-    constant integer base_gems = 22                                                             // Кол-во гемов в начале игры
-
-    constant integer incSpellrc_count = 14                                                      // Кол-во инкам способностей(значение увеличено на 1 для удобства)
-    constant integer count_research_for_t1 = 12                                                 // Кол-во улучшений для доступа к т1
-    constant integer count_research_for_t2 = 20                                                 // Кол-во улучшений для доступа к т2      
-    constant integer max_players = 8                                                            // Максимальное кол-во игроков
-
-    integer array incSpellrc[incSpellrc_count]                                                  // Массив инкам способностей(заполнение в Main.j, function map_init)
-    player array ticket_list[max_ticket_list]
-
-    // Равкоды инкам улучшений и связанных с ними способностей
-    constant integer t1_research_rc = 'R018'                                                    // 12 исследований (т2 юниты Медива)
-    constant integer t2_research_rc = 'R019'                                                    // 20 исследований (т3 юниты Медива)
-    constant integer robbery_lvl3_rc = 'R023'                                                   // Грабёж(3 уровень)
-    constant integer robbery_lvl5_rc = 'R024'                                                   // Грабёж(5 уровень)
-    constant integer robbery_rc = 'R00J'                                                        // Грабёж
-    constant integer evforev_rc = 'R00R'                                                        // Развитие ради развития
-    constant integer aggrgame_rc = 'R02K'                                                       // Агрессивная игра
-    constant integer aggrgame_aura_rc = 'S000'                                                  // Аура Агрессивной игры
-    constant integer contr_to_pl_rc = 'R027'                                                    // Вклад в игрока
-    constant integer goldmining_rc = 'R00F'                                                     // Золотодобыча
-    constant integer ticket_rc = 'R00G'                                                         // Билет
-    constant integer jewelry_rc = 'R00H'                                                        // Драгоценные камни
-    constant integer deadmoney_rc = 'R00I'                                                      // Мёртвые деньги
-    constant integer contr_rc = 'R00Q'                                                          // Вклад
-    constant integer stab_rc = 'R00S'                                                           // Стабильность
-    constant integer wait_five_minutes_rc = 'R028'                                              // Подождите 5 минут, дополнительное улучшение для Вклада в игрока
-    constant integer leadership_rc = 'R029'                                                     // Лидерство
-    constant integer cursed_mine_rc = 'R02I'                                                    // Проклятый рудник
-
-    // Равкоды
-    constant integer castle_rc = 'h01O'
-    constant integer most_point_kill_last_round = 'h023'
-    constant integer or_leadership_arena_last_round = 'h024'
-    constant integer big_mine_rc = 'n003'
-    constant integer small_mine_rc = 'n004'
-    constant integer flag_rc = 'n005'
-
-    // Настройки улучшения Вклад в игрока
-    constant integer contr_to_pl_gold = 300
-    constant integer contr_to_pl_gold_mod = 100
-    constant integer contr_to_pl_lumber = 10
-    constant integer contr_to_pl_lumber_mod = 5
-    constant real contr_to_pl_time = 300 // в секундах
-    constant real contr_to_pl_multy = 2
-    
-    // Настройки улучшения Грабёж, заполнение массива в Main.j
-    constant integer robbery_pr_count = 7
-    real array robbery_pr_f[robbery_pr_count]
-    real array robbery_pr_s[robbery_pr_count]
-
-    // Настройки улучшения Вклад
-    constant integer contr_gold = 200
-    constant integer contr_gold_mod = 100
-    constant integer contr_lumber = 8
-    constant integer contr_lumber_mod = 6
-    constant integer contr_percent = 150 // процент
-
-    // Настройки улучшения Стабильность, заполнение массива в Main.j
-    constant integer stab_count = 7
-    real array stab_time_gold[stab_count]
-    real array stab_time_lumber[stab_count]
-    integer array stab_gold[stab_count]
-    integer array stab_lumber[stab_count]
-    timer array stab_timer_gold[max_players]
-    timer array stab_timer_lumber[max_players]
-
-    // Настройки улучшения Лидерство
-    constant real leadership_bonus = 0.2
-
-    // Настройки улучшения Проклятый рудник
-    constant integer cursed_mine_percent = 3
-    constant real cursed_mine_range_damage = 700
-    constant integer cursed_mine_count_wave = 8
-    constant real cursed_mine_cast_range = 468
-    constant real cursed_mine_damage_for_lvl = 100
-
-    // Настройки улучшения Мёртвые деньги
-    constant integer deadmoney_money_for_lvl = 8
-
-    // Настройки улучшения Драгоценные камни
-    constant integer jewelry_lumber_for_lvl = 1
-
-    // Настройки улучшения Билет
-    constant integer max_ticket_list = 5
-
-    // Настройки улучшения Золотодобыча, заполнение массива в Main.j
-    constant integer goldmining_count = 6
-    integer array goldmining_main_mine[goldmining_count]
-    integer array goldmining_extra_mine[goldmining_count]
-    integer array goldmining_income[goldmining_count]
-
-    // Настройки улучшения Развитие ради развития
-    constant real evforev_bonus_res = 0.01
-    constant real evforev_bonus_res_mod = 0.01
-
-    // Настройки улучшения Агрессивная игра
-    // Аура - aggrgame_aura_rc, внутри неё менять скорость боя и перемещения
+    constant integer Arena_ArraySize = 8
+    rect array Arena_StartRectForPlayer[Arena_ArraySize]
+    constant integer Arena_RectListSize = 8
+    rect array Arena_RectList[Arena_RectListSize]
+    real Arena_Time = 120.00
+    constant real Arena_DebugTime = 10.00
+    timerdialog Arena_TimerDialog
+    constant integer Array_UnitTypeIdOffset = 49 * 256 * 256 // https://xgm.guru/p/wc3/rawcode-to-string
 endglobals
-/*
 
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     01.11.2020 18:30       =
-=============================================
-
-*/
-
-function Locale takes nothing returns string
-    local string s = GetLocalizedString("CHEATENABLED")
-    if (s == "Чит включен!") then
-        set s = "RU"
-    else
-        set s = "EN"
-    endif
-    return s
-
-endfunction
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     01.11.2020 21:19       =
-=============================================
-
-Реализация окна победы/поражения.
-
-*/
-
-function defeat_clear takes nothing returns nothing
-    call RemoveUnit(GetEnumUnit())
+function ForceArena_Conditions takes nothing returns boolean
+    return IsUnitInGroup(GetFilterUnit(), udg_buildings)
 endfunction
 
-function defeat_quit takes nothing returns nothing
-    call EndGame(true)
+function ForceArena_ForPlayerUnits takes nothing returns nothing
+    local player p = GetEnumPlayer()
+    local unit u = GetEnumUnit()
+    local real x = GetRectCenterX(Arena_StartRectForPlayer[GetPlayerId(p)])
+    local real y = GetRectCenterY(Arena_StartRectForPlayer[GetPlayerId(p)])
+    // debug call Log(I2S('h008') + " / " + I2S('ha08') + " / " + I2S('ha08' - 'h008') + " / " + I2S(offset))
+    call GroupAddUnit(udg_wave_units, CreateUnitEx(p, (GetUnitTypeId(u) + Array_UnitTypeIdOffset), x, y, 270))
+    // debug call Log("ForceArena_ForPlayerUnits: unit = " + GetUnitName(u))
+
+    set p = null
+    set u = null
 endfunction
 
-function win takes player p returns nothing
-    local trigger t = CreateTrigger()
-    local dialog  d = DialogCreate()
-    call RemovePlayer(p, PLAYER_GAME_RESULT_VICTORY)
-    if (GetPlayerController(p) == MAP_CONTROL_USER) then
-        call DialogSetMessage(d, GetLocalizedString("GAMEOVER_VICTORY_MSG"))
-        call TriggerRegisterDialogButtonEvent(t, DialogAddButton(d, GetLocalizedString("GAMEOVER_CONTINUE"), GetLocalizedHotkey("GAMEOVER_CONTINUE")))
-        call TriggerAddAction(t, function defeat_quit)
-        set t = CreateTrigger()
-        call TriggerRegisterDialogButtonEvent(t, DialogAddButton(d, GetLocalizedString("GAMEOVER_QUIT_MISSION"), GetLocalizedHotkey("GAMEOVER_QUIT_MISSION")))
-        call TriggerAddAction(t, function defeat_quit)
-        if (GetLocalPlayer() == p) then
-            call EnableUserControl(true)
-            call EnableUserUI(false)
-        endif
-        call DialogDisplay(p, d, true)
-        if (GetLocalPlayer() == p) then
-            call VolumeGroupSetVolume(SOUND_VOLUMEGROUP_UI, 1.)
-            call StartSound(bj_victoryDialogSound)
-        endif
-    endif
+function ForceArena_ForPlayer takes nothing returns nothing
+    local player p = GetEnumPlayer()
+    local group g
+    local real x = GetRectCenterX(Arena_StartRectForPlayer[GetPlayerId(p)])
+    local real y = GetRectCenterY(Arena_StartRectForPlayer[GetPlayerId(p)])
+
+    // debug call Log("ForceArena_ForPlayer: player = " + GetPlayerName(p))
+
+    call GroupAddUnit(udg_castle_unit, CreateUnitEx(p, castle_rc, x, y, 270))
+
+    set g = GetUnitsOfPlayerMatching(p, Condition(function ForceArena_Conditions))
+    call ForGroup(g, function ForceArena_ForPlayerUnits)
+
+    call PanCameraToTimedForPlayer(p, x, y, 0)
+    call CinematicFadeBJ(bj_CINEFADETYPE_FADEOUTIN, 2, "ReplaceableTextures\\CameraMasks\\White_mask.blp", 0, 0, 0, 0)
+    
+    set p = null
+    call DestroyGroup(g)
+    set g = null
+endfunction
+
+function ArenaFlush takes nothing returns nothing
+    local integer i
+
+    set i = 0
+    loop
+        exitwhen i >= Arena_ArraySize
+        set Arena_StartRectForPlayer[i] = null
+        set i = i + 1
+    endloop
+endfunction
+
+function Arena_Timer_OnExpire takes nothing returns nothing
+    local timer t = GetExpiredTimer()
+    
+    call DestroyTimerDialog(Arena_TimerDialog)
+    call PauseTimer(t)
+    call DestroyTimer(t)
+    call ForceFastArena.execute()
+
     set t = null
-    set d = null
 endfunction
 
-function defeat takes player p returns nothing
-    local trigger t = CreateTrigger()
-    local dialog  d = DialogCreate()
-    call RemovePlayer(p, PLAYER_GAME_RESULT_DEFEAT)
-    if (GetPlayerController(p) == MAP_CONTROL_USER) then
-        if (Locale() == "RU") then
-            call DialogSetMessage(d, "Вы проиграли!")
-        else
-            call DialogSetMessage(d, "You was defeated!")
+function ForceArena takes nothing returns nothing
+    local integer i
+    local integer j
+    local integer random
+    local timer t = CreateTimer()
+
+    call ArenaFlush()
+
+    set i = 0
+    loop
+        exitwhen i >= Arena_ArraySize
+
+        if GetPlayerSlotState(Player(i)) == PLAYER_SLOT_STATE_PLAYING then
+            set random = GetRandomInt(0, Arena_RectListSize - 1)
+            set Arena_StartRectForPlayer[i] = Arena_RectList[random]
+
+            set j = 0
+            loop
+                exitwhen j >= i
+
+                if Arena_StartRectForPlayer[j] == Arena_RectList[random] then
+                    set random = GetRandomInt(0, Arena_RectListSize - 1)
+                    set Arena_StartRectForPlayer[i] = Arena_RectList[random]
+                    set j = 0
+                else
+                    set j = j + 1
+                endif
+            endloop
+
+            // debug call Log("ForceArena: Rect = " + I2S(random) + " of player = " + GetPlayerName(Player(i)))
         endif
-        call TriggerRegisterDialogButtonEvent(t, DialogAddButton(d, GetLocalizedString("GAMEOVER_QUIT_MISSION"), GetLocalizedHotkey("GAMEOVER_QUIT_MISSION")))
-        call TriggerAddAction(t, function defeat_quit)
-        if (GetLocalPlayer() == p) then
-            call EnableUserControl(true)
-            call EnableUserUI(false)
-        endif
-        call DialogDisplay(p, d, true)
-        if (GetLocalPlayer() == p) then
-            call VolumeGroupSetVolume(SOUND_VOLUMEGROUP_UI, 1.)
-            call StartSound(bj_defeatDialogSound)
-        endif
-    endif
+
+        set i = i + 1
+    endloop
+
+    call ForForce(udg_players_group, function ForceArena_ForPlayer)
+    call TimerStart(t, Arena_Time, false, function Arena_Timer_OnExpire)
+    set Arena_TimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
+    call TimerDialogSetTitle(Arena_TimerDialog, "Арена") // Title of timer dialog
+    call TimerDialogDisplay(Arena_TimerDialog, true) // Shows timer dialog
+
     set t = null
-    set d = null
+endfunction
+
+function ArenaInit takes nothing returns nothing
+    debug set Arena_Time = Arena_DebugTime
+    set Arena_RectList[0] = gg_rct_start1
+    set Arena_RectList[1] = gg_rct_start2
+    set Arena_RectList[2] = gg_rct_start3
+    set Arena_RectList[3] = gg_rct_start4
+    set Arena_RectList[4] = gg_rct_start5
+    set Arena_RectList[5] = gg_rct_start6
+    set Arena_RectList[6] = gg_rct_start7
+    set Arena_RectList[7] = gg_rct_start8
 endfunction
 globals
     constant integer FA_ArraySize = 28
@@ -1930,132 +2868,6 @@ function FastArenaInit takes nothing returns nothing
     call AddDamageCondition(Condition(function FastArena_OnDamage))
 endfunction
 globals
-    constant integer Arena_ArraySize = 8
-    rect array Arena_StartRectForPlayer[Arena_ArraySize]
-    constant integer Arena_RectListSize = 8
-    rect array Arena_RectList[Arena_RectListSize]
-    real Arena_Time = 120.00
-    constant real Arena_DebugTime = 10.00
-    timerdialog Arena_TimerDialog
-    constant integer Array_UnitTypeIdOffset = 49 * 256 * 256 // https://xgm.guru/p/wc3/rawcode-to-string
-endglobals
-
-function ForceArena_Conditions takes nothing returns boolean
-    return IsUnitInGroup(GetFilterUnit(), udg_buildings)
-endfunction
-
-function ForceArena_ForPlayerUnits takes nothing returns nothing
-    local player p = GetEnumPlayer()
-    local unit u = GetEnumUnit()
-    local real x = GetRectCenterX(Arena_StartRectForPlayer[GetPlayerId(p)])
-    local real y = GetRectCenterY(Arena_StartRectForPlayer[GetPlayerId(p)])
-    // debug call Log(I2S('h008') + " / " + I2S('ha08') + " / " + I2S('ha08' - 'h008') + " / " + I2S(offset))
-    call GroupAddUnit(udg_wave_units, CreateUnitEx(p, (GetUnitTypeId(u) + Array_UnitTypeIdOffset), x, y, 270))
-    // debug call Log("ForceArena_ForPlayerUnits: unit = " + GetUnitName(u))
-
-    set p = null
-    set u = null
-endfunction
-
-function ForceArena_ForPlayer takes nothing returns nothing
-    local player p = GetEnumPlayer()
-    local group g
-    local real x = GetRectCenterX(Arena_StartRectForPlayer[GetPlayerId(p)])
-    local real y = GetRectCenterY(Arena_StartRectForPlayer[GetPlayerId(p)])
-
-    // debug call Log("ForceArena_ForPlayer: player = " + GetPlayerName(p))
-
-    call GroupAddUnit(udg_castle_unit, CreateUnitEx(p, castle_rc, x, y, 270))
-
-    set g = GetUnitsOfPlayerMatching(p, Condition(function ForceArena_Conditions))
-    call ForGroup(g, function ForceArena_ForPlayerUnits)
-
-    call PanCameraToTimedForPlayer(p, x, y, 0)
-    call CinematicFadeBJ(bj_CINEFADETYPE_FADEOUTIN, 2, "ReplaceableTextures\\CameraMasks\\White_mask.blp", 0, 0, 0, 0)
-    
-    set p = null
-    call DestroyGroup(g)
-    set g = null
-endfunction
-
-function ArenaFlush takes nothing returns nothing
-    local integer i
-
-    set i = 0
-    loop
-        exitwhen i >= Arena_ArraySize
-        set Arena_StartRectForPlayer[i] = null
-        set i = i + 1
-    endloop
-endfunction
-
-function Arena_Timer_OnExpire takes nothing returns nothing
-    local timer t = GetExpiredTimer()
-    
-    call DestroyTimerDialog(Arena_TimerDialog)
-    call PauseTimer(t)
-    call DestroyTimer(t)
-    call ForceFastArena.execute()
-
-    set t = null
-endfunction
-
-function ForceArena takes nothing returns nothing
-    local integer i
-    local integer j
-    local integer random
-    local timer t = CreateTimer()
-
-    call ArenaFlush()
-
-    set i = 0
-    loop
-        exitwhen i >= Arena_ArraySize
-
-        if GetPlayerSlotState(Player(i)) == PLAYER_SLOT_STATE_PLAYING then
-            set random = GetRandomInt(0, Arena_RectListSize - 1)
-            set Arena_StartRectForPlayer[i] = Arena_RectList[random]
-
-            set j = 0
-            loop
-                exitwhen j >= i
-
-                if Arena_StartRectForPlayer[j] == Arena_RectList[random] then
-                    set random = GetRandomInt(0, Arena_RectListSize - 1)
-                    set Arena_StartRectForPlayer[i] = Arena_RectList[random]
-                    set j = 0
-                else
-                    set j = j + 1
-                endif
-            endloop
-
-            // debug call Log("ForceArena: Rect = " + I2S(random) + " of player = " + GetPlayerName(Player(i)))
-        endif
-
-        set i = i + 1
-    endloop
-
-    call ForForce(udg_players_group, function ForceArena_ForPlayer)
-    call TimerStart(t, Arena_Time, false, function Arena_Timer_OnExpire)
-    set Arena_TimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
-    call TimerDialogSetTitle(Arena_TimerDialog, "Арена") // Title of timer dialog
-    call TimerDialogDisplay(Arena_TimerDialog, true) // Shows timer dialog
-
-    set t = null
-endfunction
-
-function ArenaInit takes nothing returns nothing
-    debug set Arena_Time = Arena_DebugTime
-    set Arena_RectList[0] = gg_rct_start1
-    set Arena_RectList[1] = gg_rct_start2
-    set Arena_RectList[2] = gg_rct_start3
-    set Arena_RectList[3] = gg_rct_start4
-    set Arena_RectList[4] = gg_rct_start5
-    set Arena_RectList[5] = gg_rct_start6
-    set Arena_RectList[6] = gg_rct_start7
-    set Arena_RectList[7] = gg_rct_start8
-endfunction
-globals
     constant real relaxWaveTime = 5.00
     timerdialog relaxWaveTimerDialog
 endglobals
@@ -2100,1288 +2912,6 @@ function ForceNextWave takes nothing returns nothing
     call TimerDialogSetTitle(relaxWaveTimerDialog, "Следующая волна") // Title of timer dialog
     call TimerDialogDisplay(relaxWaveTimerDialog, true) // Shows timer dialog
     
-    set t = null
-endfunction
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     20.11.2020 21:07       =
-=============================================
-
-gameset owner Trigger
-
-Sets owner of game.
-Shows all available commands and settings
-Owner can modify game settings.
-
-*/
-
-//===========================================================================
-function gameset_owner takes nothing returns nothing
-    local integer i = 0
-    set udg_game_owner = null // Game owner
-    loop // Sets game owner to a first available player
-        if (GetPlayerSlotState(Player(i)) == PLAYER_SLOT_STATE_PLAYING) then // Must be playing player
-            set udg_game_owner = Player(0)
-        endif
-        exitwhen (udg_game_owner != null or i > 7) // TODO: test
-        set i = i + 1
-    endloop
-
-    static if (not DEBUG_MODE) then
-        // Notification for game owner
-        call DisplayTimedTextToPlayer(udg_game_owner, 0., 0., 10., "Вы получили права " + GREEN + "владельца игры|r.")
-    endif
-
-    // Opt. begin
-    if  (GetTimeInSeconds() < R2I(udg_gameset_time_first)) then // Shows commands and settings only at game start
-        if (udg_info[GetConvertedPlayerId(udg_game_owner)] == true) then // Checks Info flag of game owner
-            static if (not DEBUG_MODE) then
-                // Shows all available commands and settings
-                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "Настройка карты (доступно первые " + ( I2S(R2I(udg_gameset_time_first)) + " сек.)" ) ) )
-                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_gameset_time) ) + " ) " ) + "|cFFFF0000-time xxx|r, где xxx - время перед началом нового раунда (от 20 до 60 сек.)" ) )
-                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_wave_time) ) + " ) " ) + "|cFFFF0000-arena xxx|r. Где xxx - начальное время раунда на арене (от 60 сек. до 150 сек.)" ) )
-                if (udg_building_status == true) then
-                    call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( 1 ) " + "|cFFFF0000-build x|r, при x=0 - во время раунда можно строить/улучшать юнитов при x=1 - нельзя" ) )
-                else
-                    call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( 0 ) " + "|cFFFF0000-build x|r, при x=0 - во время раунда можно строить/улучшать юнитов при x=1 - нельзя" ) )
-                endif
-                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( " + ( I2S(udg_const_point[0]) + ( "-" + ( I2S(udg_const_point[1]) + " ) |cFFFF0000-point ##|r." ) ) ) ) )
-                call DisplayTextToForce( GetForceOfPlayer(udg_game_owner), "Первый # - минимальное число контрольных точек, появляющихся на арене. Второй # - максимальное число контрольных точек, оно не может превышать первый номер, а также число 9." )
-                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_mode) ) + " ) " ) + "|cFFFF0000-mode #. |r" ) )
-                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, "Если # = 1, то мини-игры будут чередоваться каждую вторую волну.\nЕсли # = 2, то мини-игр не будет совсем.\nЕсли # = 3, то мини-игры буду каждые 3 волны." )
-                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( ( "( " + I2S(udg_gg) ) + " ) " ) + "|cFFFF0000-gg ##|r. Где ## - волна, после которой закончится игра (от 9 до " ) + ( I2S(( ( udg_mini_game_max * 2 ) + 3 )) + " )." ) ) )
-            endif
-
-        endif
-    endif
-    // Opt. end
-endfunction
-
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     01.11.2020 18:30       =
-=============================================
-
-Интерфейс внутриигровых сообщений
-
-*/
-
-function OnLeave takes nothing returns nothing
-    local unit u = GetEnumUnit()
-    if (GetUnitTypeId(u) != 'hhdl' and GetUnitTypeId(u) != 'n001') then
-        // Opt. begin
-        if (IsUnitInGroup(u, udg_wave_units) == true) then
-            call GroupRemoveUnitSimple(u, udg_wave_units)
-        endif
-        if (IsUnitInGroup(u, udg_buildings) == true) then
-            call GroupRemoveUnitSimple(u, udg_buildings)
-        endif
-        // Opt. end
-        call RemoveUnit(u)
-    else
-        call SetUnitOwner(u, Player(PLAYER_NEUTRAL_PASSIVE), true)
-    endif
-    set u = null
-endfunction
-
-function SetLeaveMessages takes nothing returns nothing
-    local player p = GetTriggerPlayer()
-    call DisplayTimedTextToPlayer(GetLocalPlayer(), 0., 0., 10., (C_IntToColor(GetPlayerId(p)) + GetPlayerName(p) + "|r " + GOLD + "покидает игру!|r"))
-    call SetPlayerTechResearchedSwap('R00J', 0, p)
-    set pdb[p].scoreboard_result = 0
-    // Opt. begin
-    call ForGroup(GetUnitsOfPlayerMatching(p, null), function OnLeave)
-    call ForceRemovePlayerSimple( GetTriggerPlayer(), udg_players_group )
-    if (p == udg_game_owner) then
-        call gameset_owner()
-    endif
-    call MultiboardSetItemValueBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetTriggerPlayer()) ), ( "|cFF9B9B9B" + udg_players_name[GetConvertedPlayerId(GetTriggerPlayer())] ) )
-    call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetTriggerPlayer()) ), "ReplaceableTextures\\CommandButtonsDisabled\\DISBTNReplay-Loop.blp" )
-    // Opt. end
-    call defeat(p)
-    set p = null
-endfunction
-
-function SetMessagesInit takes nothing returns nothing
-    local trigger t = CreateTrigger()
-
-    call TriggerRegisterPlayerEvent(t, Player(0x00), EVENT_PLAYER_LEAVE)
-    call TriggerRegisterPlayerEvent(t, Player(0x01), EVENT_PLAYER_LEAVE)
-    call TriggerRegisterPlayerEvent(t, Player(0x02), EVENT_PLAYER_LEAVE)
-    call TriggerRegisterPlayerEvent(t, Player(0x03), EVENT_PLAYER_LEAVE)
-    call TriggerRegisterPlayerEvent(t, Player(0x04), EVENT_PLAYER_LEAVE)
-    call TriggerRegisterPlayerEvent(t, Player(0x05), EVENT_PLAYER_LEAVE)
-    call TriggerRegisterPlayerEvent(t, Player(0x06), EVENT_PLAYER_LEAVE)
-    call TriggerRegisterPlayerEvent(t, Player(0x07), EVENT_PLAYER_LEAVE)
-    
-    call TriggerAddAction(t, function SetLeaveMessages)
-    set t = null
-endfunction
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     20.11.2020 22:46       =
-=============================================
-
-faq library-ish
-
-Globals and common functions for faq
-
-*/
-
-globals
-    boolean IsFaqActive = true // Disables faq_counter() and faq_active() if false
-    timerdialog faq_timerdialog // Timer dialog in upper-left corner for commands and settings
-    integer faq_vote_yes = 0 // Голосов "За"
-    integer faq_vote_no = 0 // Голосов "Против"
-    real faq_voting_duration = 6.00 // Duration of voting
-    texttag array faq_tts[4] // Плавающий текст для отображения голосования
-    button array faq_buttons[2] // Кнопки в меню голосования
-    dialog faq_dialog = DialogCreate() // Меню с голосованием
-endglobals
-
-function faq_show_dialog takes nothing returns nothing
-    call DialogDisplay(GetEnumPlayer(), faq_dialog, true) // Shows voting dialog
-endfunction
-
-function faq_hide_dialog takes nothing returns nothing
-    call DialogDisplay(GetEnumPlayer(), faq_dialog, false) // Hides voting dialog
-endfunction
-
-function faq_flush takes nothing returns nothing
-    call UnfadeMap() // Unfades map
-    call ForForce(udg_players_group, function faq_hide_dialog) // Hides voting dialog
-    call DestroyTextTag(faq_tts[0]) // Уничтожает плавающий текст с голосами "За"
-    call DestroyTextTag(faq_tts[1]) // Уничтожает плавающий текст с голосами "За"
-    call DestroyTextTag(faq_tts[2]) // Уничтожает плавающий текст с голосами "Против"
-    call DestroyTextTag(faq_tts[3]) // Уничтожает плавающий текст с голосами "Против"
-endfunction
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     21.11.2020 21:03       =
-=============================================
-
-faq start Trigger
-
-Shows all available commands and settings.
-
-*/
-
-function faq_start_timer_actions takes nothing returns nothing
-    call DestroyTimerDialog(faq_timerdialog) // Destroys timer dialog for commands and settings
-    call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 15, "|cFFFF0000Команда |cFFFFFFFF-info|r |cFFFF0000отключит сообщения о штрафах и мини-арене.|r")
-
-    call DisableTrigger(gg_trg_cmd_time)
-    call DisableTrigger(gg_trg_cmd_build)
-    call DisableTrigger(gg_trg_cmd_mode)
-    call DisableTrigger(gg_trg_cmd_point)
-    call DisableTrigger(gg_trg_cmd_arena)
-    call ForceArena()
-    // call TriggerExecute( gg_trg_set_wave_start_main )
-    // call TriggerExecute( gg_trg_set_wave_timer )
-    // call TriggerExecute( gg_trg_set_wave_region_rotate )
-    // call TriggerExecute( gg_trg_set_wave_unit_spawn )
-endfunction
-
-function faq_start takes nothing returns nothing
-    debug set udg_gameset_time_first = timeBeforeFirstWave
-    call TimerStart(udg_gameset_timer, udg_gameset_time_first, false, function faq_start_timer_actions) // After settings were set
-
-    set faq_timerdialog = CreateTimerDialog(udg_gameset_timer) // Timer dialog in upper-left corner for commands and settings
-    call TimerDialogSetTitle(faq_timerdialog, "Настройка карты") // Title of timer dialog
-    call TimerDialogDisplay(faq_timerdialog, true) // Shows timer dialog
-
-    call gameset_owner() // Sets owner of game
-    call TriggerExecute(gg_trg_scoreboard_ini) // Shows scoreboard
-endfunction
-
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     20.11.2020 16:00       =
-=============================================
-
-faq stop Trigger
-
-Stops voting for faq guide
-
-*/
-
-function faq_get_castle takes nothing returns nothing
-    local player p = GetEnumPlayer()
-    call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, p, 0) // Resets camera angle
-    call PanCameraToTimedLocForPlayer(p, GetPlayerStartLocationLoc(p), 0) // Focuses camera at castle you own
-    call SelectUnitForPlayerSingle(GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(p, 'ntav')), p) // Selects tavern
-    set p = null
-endfunction
-
-function faq_stop takes nothing returns nothing
-    set IsFaqActive = false // Disables faq_counter() and faq_active()
-    call faq_flush() // Destroys all texttags, hides faq_dialog, reveals map
-    call ForForce(udg_players_group, function faq_get_castle) // Focuses camera at castle you own
-    call faq_start() // Commands and settings
-endfunction
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     20.11.2020 16:00       =
-=============================================
-
-faq ini Trigger
-
-Starts voting for faq guide
-
-*/
-
-function faq_voting_timer_counter takes nothing returns nothing
-    local timer t = GetExpiredTimer()
-
-    if (faq_voting_duration >= 1.00 and IsFaqActive) then // If voting exists
-        call DialogSetMessage(faq_dialog, ("Посмотреть обучение (" + WHITE + R2S(faq_voting_duration) + " сек.|r)"))
-        set faq_voting_duration = faq_voting_duration - 1.00
-    else
-        call PauseTimer(t)
-        call DestroyTimer(t)
-        if (IsFaqActive) then // If there are not enough votes
-            call faq_stop() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
-        endif
-    endif
-
-    set t = null
-endfunction
-
-//===========================================================================
-function faq_ini takes nothing returns nothing
-    call FadeMap() // Сделать всю карту чёрной
-
-    // ---За---
-    // Плавающий текст с требуемым кол-вом голосов "За"
-    set faq_tts[0] = NewTextTag((GREEN + "\"ЗА\"|r нужно " + I2S(CountPlayersInForceBJ(udg_players_group) / 2)), gg_rct_guideyes, 14.00)
-    
-    // Плавающий текст с кол-вом голосов "За"
-    set faq_tts[2] = NewTextTag(I2S(faq_vote_yes), gg_rct_guideyesvote, 10.00)
-
-    // Кнопка подтверждения просмотра обучения
-    set faq_buttons[0] = DialogAddButton(faq_dialog, "Да", 0)
-
-    // ---Против---
-    // Плавающий текст с требуемым кол-вом голосов "Против"
-    set faq_tts[1] = NewTextTag((RED + "\"ПРОТИВ\"|r нужно более " + I2S(CountPlayersInForceBJ(udg_players_group) / 2)), gg_rct_guideno, 14.00)
-
-    // Плавающий текст с кол-вом голосов "Против"
-    set faq_tts[3] = NewTextTag(I2S(faq_vote_no), gg_rct_guidenovote, 10.00)
-
-    // Кнопка отклонения просмотра обучения
-    set faq_buttons[1] = DialogAddButton(faq_dialog, "Нет", 0)
-
-    static if DEBUG_MODE then
-        call faq_stop() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
-    else
-        call TimerStart(CreateTimer(), 1.00, true, function faq_voting_timer_counter) // Makes duration of voting visible in faq dialog's title
-        call faq_voting_timer_counter() // First tick of timer
-        call ForForce(udg_players_group, function faq_show_dialog) // Shows faq dialog to all players
-    endif
-endfunction
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     21.11.2020 21:02       =
-=============================================
-
-faq active Trigger
-
-Voting for viewing faq guide.
-
-*/
-
-function faq_active_condition takes nothing returns boolean
-    // Disables faq_counter() and faq_active() if false
-    return IsFaqActive
-endfunction
-
-function faq_active takes nothing returns nothing
-    if (GetClickedButton() == faq_buttons[0]) then // Кнопка "Да"
-        set faq_vote_yes = faq_vote_yes + 1 // Голосов "За"
-        call SetTextTagText(faq_tts[2], I2S(faq_vote_yes), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "За"
-        if (faq_vote_yes >= (CountPlayersInForceBJ(udg_players_group) / 2)) then // Если голосов "За" 1/1, 1/2, 1/3, 2/4, 2/5, 3/6, 3/7, 4/8 
-            set IsFaqActive = false // Disables faq_counter() and faq_active()
-            call faq_flush() // Destroys all texttags, hides faq_dialog, reveals map
-            call TriggerExecute(gg_trg_faq) // Enables faq guide
-            call TriggerSleepAction(51.8) // Duration of faq guide
-            call ForForce(udg_players_group, function faq_get_castle) // Focuses camera at castle you own
-            call faq_start() // Commands and settings
-        endif
-    else // Кнопка "Нет"
-        set faq_vote_no = faq_vote_no + 1 // Голосов "Против"
-        call SetTextTagText(faq_tts[3], I2S(faq_vote_no), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "Против"
-        if (faq_vote_no > (CountPlayersInForceBJ(udg_players_group) / 2)) then  // Если голосов "За" 1/1, 2/2, 2/3, 3/4, 3/5, 4/6, 4/7, 5/8 
-            call faq_stop() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
-        endif
-    endif
-endfunction
-
-function faq_active_init takes nothing returns nothing
-    local trigger t = CreateTrigger()
-
-    // Triggers if faq_dialog's buttons were clicked
-    call TriggerRegisterDialogEvent(t, faq_dialog)
-    call TriggerAddAction(t, function faq_active)
-    call TriggerAddCondition(t, Condition(function faq_active_condition))
-
-    set t = null
-endfunction
-
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     08.11.2020 19:46       =
-=============================================
-
-initialization in game Trigger
-
-Sets mini games' waves, players' constants and units.
-
-*/
-
-function initialization_in_game_wave_mini_condition takes nothing returns boolean
-    local integer i = 0
-    if (udg_random_log == true) then
-        return false
-    endif
-    loop
-        exitwhen i > 8
-        if (udg_wave_mini[i] == (udg_r * 2)) then
-            return false
-        endif
-        set i = i + 1
-    endloop
-    return true
-endfunction
-
-function initialization_in_game_players takes nothing returns nothing
-    local player p = GetEnumPlayer()
-    local real x = GetPlayerStartLocationX(p)
-    local real y = GetPlayerStartLocationY(p)
-    
-    call CameraSetupApplyForPlayer(true, gg_cam_logic, p, 0)
-    if (GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING and GetPlayerController(p) == MAP_CONTROL_USER) then
-        call SetPlayerState(p, PLAYER_STATE_GIVES_BOUNTY, 1)
-        call ForceAddPlayer(udg_players_group, p)
-        set udg_players_name[GetConvertedPlayerId(p)] = GetPlayerName(p)
-        set udg_info[GetConvertedPlayerId(p)] = true
-        set udg_income_gold[GetConvertedPlayerId(p)] = 240
-        set udg_income_wood[GetConvertedPlayerId(p)] = 8
-        set udg_leader_kf[GetConvertedPlayerId(p)] = 1.00
-        set udg_leader_wins[GetConvertedPlayerId(p)] = 0
-        set udg_changeSet[GetConvertedPlayerId(p)] = 3
-        call CreateUnitEx(p, 'ntav', x, y, bj_UNIT_FACING) // Таверна с расами на выбор
-        call CreateUnitEx(p, 'h001', x, y, bj_UNIT_FACING) // Юнит "Выбор героя"
-        call CreateUnitEx(p, 'h029', x, y, bj_UNIT_FACING) // Юнит "Не более 1 погодного эффекта в раунде"
-        call AddGoldToPlayer(100, p) // Золото на выбор расы в таверне
-        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_all, true, false)) // Поле битвы
-        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_minersregion, true, false)) // Миниигра "Минёры"
-        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_fastarena, true, false)) // Миниарена
-        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_horseregion, true, false)) // Миниигра "Конные бега"
-        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_roulette, true, false)) // Миниигра "Казино"
-    endif
-
-    set p = null
-endfunction
-
-function initialization_in_game takes nothing returns nothing
-    local integer i = 0
-    local integer j = 0
-    local unit lastCreatedUnit = null
-    set udg_gg = 15 // Финальная волна
-    set udg_mini_game_max = 8 // Максимальное кол-во миниигр за игру
-    set udg_wave_mini[1] = 4 // Волна с боссом
-    set udg_const_point[0] = 3
-    set udg_const_point[1] = 6
-    set udg_gameset_time_first = 60.00 // Таймер начала до первой волны
-    
-    // Что-то связанное с минииграми
-    loop
-        exitwhen i > udg_mini_game_max
-        if (i != 1) then
-            // Если не миниигра с боссом, то
-            set udg_random_log = false
-            loop // Заполняем wave_mini[] рандомными, неповторяющимися числами (2, 4, 6, ..., 18) - волны, когда будут миниигры. mode = 1 (стандартный режим)
-                exitwhen udg_random_log
-                set udg_r = GetRandomInt(1, (udg_mini_game_max + 1)) // От 1 до 9 (кол-во миниигр)
-                if (initialization_in_game_wave_mini_condition()) then
-                    set udg_random_log = true
-                    set udg_wave_mini[i] = udg_r * 2
-                endif
-            endloop
-        endif
-        set i = i + 1
-    endloop
-    
-    call ForForce(bj_FORCE_ALL_PLAYERS, function initialization_in_game_players)
-    
-    call faq_ini() // Starts voting for faq guide
-
-    // Миниигра казино
-    set udg_r = 0
-    set i = 1
-    loop
-        exitwhen i > 3
-        set j = 1
-        loop
-            exitwhen j > 5
-            set udg_r = udg_r + 1
-            // Opt. begin
-            // 'n001' - Circle of Power
-            set lastCreatedUnit = CreateUnitAtLoc(Player(PLAYER_NEUTRAL_PASSIVE), 'n001', PolarProjectionBJ(PolarProjectionBJ(GetRectCenter(gg_rct_circle), (-256.00 + (256.00 * I2R(i))), 270.00), (-256.00 + (256.00 * I2R(j))), 0), bj_UNIT_FACING)
-            call SetUnitUserData(lastCreatedUnit, udg_r)
-            if (ModuloInteger(udg_r, 2) == 1) then
-                // Z offset = 0
-                // Font size = 11
-                // Red =    100%
-                // Green =  10%
-                // Blue =   10%
-                // Transparency = 0%
-                call CreateTextTagUnitBJ(I2S(udg_r), lastCreatedUnit, 0, 11.00, 100, 10.00, 10.00, 0)
-                call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), udg_players_group)
-                call SetUnitColor(lastCreatedUnit, PLAYER_COLOR_RED)
-            else
-                call CreateTextTagUnitBJ(I2S(udg_r), lastCreatedUnit, 0, 11.00, 10.00, 10.00, 10.00, 0)
-                call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), udg_players_group)
-                call SetUnitColor(lastCreatedUnit, PLAYER_COLOR_MAROON)
-            endif
-            // Opt. end
-            set j = j + 1
-        endloop
-        set i = i + 1
-    endloop
-
-    set lastCreatedUnit = null
-endfunction
-/*
-
-=============================================
-= Файл создал:       Glady                  =
-= Discord:           ! ! Gladiator#3635     =
-= E-Mail:            glady007rus@gmail.com  =
-= Дата создания:     08.11.2020 20:42       =
-=============================================
-
-Исследования инкома.
-!!! - важная информация
-
-*/
-function Trig_income_upg_Conditions takes nothing returns boolean
-    local integer i = 1
-    local integer research_rc = GetResearched()
-    loop
-        exitwhen i == incSpellrc_count
-        if research_rc == incSpellrc[i] then
-            return true
-        endif
-        set i = i + 1
-    endloop
-    return false
-endfunction
-
-// Действие улучшения Развитие ради развития
-function Trig_income_upg_actions_evforev takes player p returns nothing
-    local real r
-    local integer bonus_gold
-    local integer bonus_lumber
-
-    set r = evforev_bonus_res_mod * I2R(GetPlayerTechCount(p, evforev_rc, true)) + evforev_bonus_res
-    set bonus_gold = R2I(r * I2R(GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)))
-    set bonus_lumber = R2I(r * I2R(GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER)))
-
-    call AddGoldToPlayer(bonus_gold, p)
-    call AddLumberToPlayer(bonus_lumber, p)
-    
-endfunction
-
-function Aggrgame_conditions takes nothing returns boolean
-    return IsUnitType(GetFilterUnit(), UNIT_TYPE_PEON)
-endfunction
-
-function Aggrgame_group takes nothing returns nothing
-    local unit u = GetEnumUnit()
-    if GetUnitAbilityLevel(u, aggrgame_aura_rc) == 0 then
-        call UnitAddAbility(u, aggrgame_aura_rc)
-    else
-        call IncUnitAbilityLevel(u, aggrgame_aura_rc)
-    endif
-    set u = null
-endfunction
-
-// Действие улучшения Агрессивной игры
-function Trig_income_upg_actions_aggrgame takes player p returns nothing
-    local group gr
-    
-    set gr = CreateGroup()
-    call GroupEnumUnitsOfPlayer(gr, p, Condition(function Aggrgame_conditions)) 
-    call ForGroup(gr, function Aggrgame_group)
-    
-    call DestroyGroup(gr)
-    set gr = null
-endfunction
-
-// Добавить в группу игроков всех играющих игроков
-function AllPlayingPlayers takes force gr_p returns nothing
-    local integer i = 1
-    local player p
-
-    loop
-        exitwhen i > max_players
-        set p = Player(i)
-        if (GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING) and (GetPlayerController(p) == MAP_CONTROL_USER) then
-            call ForceAddPlayer(gr_p, p)
-        endif
-        set i = i + 1
-    endloop
-
-    set p = null
-endfunction
-
-// Работа таймера Вклад в игрока
-function Timer_contr_to_pl_actions takes nothing returns nothing
-    local timer t = GetExpiredTimer()
-    local player p = hash[StringHash("income")].player[GetHandleId(t)]
-    local integer count_research = GetPlayerTechCount(p, contr_to_pl_rc, true)
-    local integer gold = contr_to_pl_gold + (contr_to_pl_gold_mod * (count_research - 1))
-    local integer lumber = contr_to_pl_lumber + (contr_to_pl_lumber_mod * (count_research - 1))
-    local string s1
-    local string s2
-
-    set gold = R2I(contr_to_pl_multy * I2R(gold))
-    set lumber = R2I(contr_to_pl_multy * I2R(lumber))
-
-    call AddGoldToPlayer(gold, p)
-    call AddLumberToPlayer(lumber, p)
-
-    set s1 = "Доход с вложения в игрока: |cFFFFCD00" + I2S(gold)
-    set s2 = "Доход с вложения в игрока: |cFFB23AEE" + I2S(lumber)
-    
-    call DisplayTextToPlayer(p, 0, 0, s1)
-    call DisplayTextToPlayer(p, 0, 0, s2)
-    // !!! Найти причину, зачем увеличивается лвл улучшения Подождите 5 минут
-    call SetPlayerTechResearched(p, wait_five_minutes_rc, count_research)
-    // ----------------------------------------------------------------------
-
-    call PauseTimer(t)
-    call DestroyTimer(t)
-    set p = null
-    set t = null
-    set s1 = null
-    set s2 = null
-endfunction
-
-// Действие улучшения Вклад в игрока
-function Trig_income_upg_actions_contr_to_pl takes player p, integer count_research returns nothing
-    local force gr_p
-    local player rand_p
-    local integer bonus_gold
-    local integer bonus_lumber
-    local string mes
-    local timer t
-
-    set gr_p = CreateForce()
-    call AllPlayingPlayers(gr_p)
-    call ForceRemovePlayer(gr_p, p)
-    set rand_p = ForcePickRandomPlayer(gr_p)
-
-    set bonus_gold = contr_to_pl_gold + (contr_to_pl_gold_mod * (count_research - 1))
-    set bonus_lumber = contr_to_pl_lumber + (contr_to_pl_lumber_mod * (count_research - 1))
-
-    call AddGoldToPlayer(bonus_gold, rand_p)
-    call AddLumberToPlayer(bonus_lumber, rand_p)
-
-    set mes = "В вас вложились: |cFFFFCD00" + I2S(bonus_gold)
-    call DisplayTimedTextToPlayer(rand_p, 0, 0, 10.00, mes)
-    set mes = "В вас вложились: |cFFB23AEE" + I2S(bonus_lumber)
-    call DisplayTimedTextToPlayer(rand_p, 0, 0, 10.00, mes)
-
-    set t = CreateTimer()
-    set hash[StringHash("income")].player[GetHandleId(t)] = rand_p
-    call TimerStart(t, contr_to_pl_time, false, function Timer_contr_to_pl_actions)
-
-    call DestroyForce(gr_p)
-    set gr_p = null
-    set rand_p = null
-    set mes = null
-    set t = null
-endfunction
-
-function Trig_income_upg_actions_goldmining takes player p, integer number_p, integer research_rc returns nothing
-    local integer lvl_research = GetPlayerTechCount(p, research_rc, true)
-
-    set udg_income_gold[number_p] = udg_income_gold[number_p] + goldmining_income[lvl_research]
-    set udg_income_goldmine_c[number_p] = udg_income_goldmine_c[number_p] + goldmining_main_mine[lvl_research]
-    set udg_income_goldmine_l[number_p] = udg_income_goldmine_l[number_p] + goldmining_extra_mine[lvl_research]
-
-endfunction
-
-// Смещает все элементы массива на один вверх, последний пропадает, на первый слот ставится игрок p
-function Trig_income_upg_actions_ticket takes player p returns nothing
-    local integer i = max_ticket_list - 1
-    loop
-        exitwhen i < 1
-        set ticket_list[i] = ticket_list[i - 1]
-        set i = i - 1
-    endloop
-    set  ticket_list[0] = p
-endfunction
-
-// Действие улучшения Драгоценные камни
-function Trig_income_upg_actions_jewelry takes integer number_p returns nothing
-    set udg_income_wood[number_p] = udg_income_wood[number_p] + jewelry_lumber_for_lvl
-endfunction
-
-// Действие улучшения Вклад
-function Trig_income_upg_actions_contr takes player p, integer count_research returns nothing
-    local string s1
-    local string s2 
-    local integer gold = contr_gold + ((count_research - 1) * contr_gold_mod)
-    local integer lumber = contr_lumber + ((count_research - 1) * contr_lumber_mod)
-
-    set gold = gold * contr_percent / 100
-    set lumber = lumber * contr_percent / 100
-    set s1 = "Доход с вклада: |cFFFFCD00" + I2S(gold)
-    set s2 = "Доход за вклад: |cFFB23AEE" + I2S(lumber)
-    
-    call AddGoldToPlayer(gold, p)
-    call AddLumberToPlayer(lumber, p)
-    call DisplayTextToPlayer(p, 0, 0, s1)
-    call DisplayTextToPlayer(p, 0, 0, s2)
-
-    set s1 = null
-    set s2 = null
-endfunction
-
-// Поиск номера таймера
-function find_number_timer takes timer t returns integer
-    local integer number_timer = 0
-    local integer i = 1 
-
-    loop
-        exitwhen i > max_players
-        if (t == stab_timer_gold[i]) or (t == stab_timer_lumber[i]) then
-            set number_timer = i
-        endif
-        set i = i + 1
-    endloop
-
-    return number_timer
-endfunction
-
-// Работа таймера stab_timer_gold
-function stab_timer_gold_actions takes nothing returns nothing
-    local player p
-    local integer number_p
-    local integer count_research
-    local timer t = GetExpiredTimer()
-
-    set number_p = find_number_timer(t)
-    set p = Player(number_p - 1)
-    set count_research = GetPlayerTechCount(p, stab_rc, true)
-
-    call AddGoldToPlayer(stab_gold[count_research], p)
-
-    set p = null
-    set t = null
-endfunction
-
-// Работа таймера stab_timer_lumber
-function stab_timer_lumber_actions takes nothing returns nothing
-    local player p
-    local integer number_p
-    local integer count_research
-    local timer t = GetExpiredTimer()
-
-    set number_p = find_number_timer(t)
-    set p = Player(number_p - 1)
-    set count_research = GetPlayerTechCount(p, stab_rc, true)
-
-    call AddLumberToPlayer(stab_lumber[count_research], p)
-
-    set p = null
-    set t = null
-endfunction
-
-// Действие улучшения Стабильность
-function Trig_income_upg_actions_stab takes integer number_p, integer count_research returns nothing
-    if count_research == 1 then
-        set stab_timer_gold[number_p] = CreateTimer()
-        set stab_timer_lumber[number_p] = CreateTimer()
-    endif
-
-    call TimerStart(stab_timer_gold[number_p], stab_time_gold[count_research], true, function stab_timer_gold_actions)
-    call TimerStart(stab_timer_lumber[number_p], stab_time_lumber[count_research], true, function stab_timer_lumber_actions)
-endfunction
-
-// Условие улучшения Лидерство, удалить юнитов Больше всех убийств за прошедший раунд и Или лидерство по очкам арены за пошедший раунд
-function Trig_income_upg_actions_leadership_group takes nothing returns nothing
-    local unit u = GetEnumUnit()
-    local integer u_rc = GetUnitTypeId(u)
-
-    if (u_rc == most_point_kill_last_round) or (u_rc == or_leadership_arena_last_round) then
-        call RemoveUnit(u)
-    endif
-
-    set u = null
-endfunction
-
-// Действие улучшения Лидерство
-function Trig_income_upg_actions_leadership takes player p, integer number_p returns nothing
-    local group gr = CreateGroup()
-
-    set udg_leader_kf[number_p] = udg_leader_kf[number_p] + leadership_bonus
-    call GroupEnumUnitsOfPlayer(gr, p, null)
-
-    // !!! Муторная система с группой, разобраться
-    call ForGroup(gr, function Trig_income_upg_actions_leadership_group)
-    //----------------------------------------------
-
-    call DestroyGroup(gr)
-    set gr = null
-endfunction
-
-// Основное тело
-function Trig_income_upg_Actions takes nothing returns nothing
-    local unit u = GetTriggerUnit()
-    local player p = GetOwningPlayer(u)
-    local integer number_p = GetConvertedPlayerId(p)
-    local integer count_upg = udg_scoreboard_upg[number_p]
-    local integer research_rc = GetResearched()
-    local integer bonus_gold
-    local integer bonus_lumber
-    local integer count_research = GetPlayerTechCount(p, research_rc, true)
-    local real r
-
-    set count_upg = count_upg + 1
-    set udg_scoreboard_upg[number_p] = count_upg
-
-    // Обновление значений кол-ва исследований в таблице
-    call MultiboardSetItemValueBJ(udg_scoreboard, 5, (number_p + 1), I2S(count_upg))
-
-    // Кол-во исследований(улучшений)
-    if count_upg == count_research_for_t1 then 
-        call SetPlayerTechResearched(p, t1_research_rc, 1)
-    elseif count_upg == count_research_for_t2 then
-        call SetPlayerTechResearched(p, t2_research_rc, 1)
-    endif
-
-    // Грабёж
-    if research_rc == robbery_rc then 
-        if GetPlayerTechCount(p, robbery_rc, true) == 3 then
-            call SetPlayerTechResearched(p, robbery_lvl3_rc, 1)
-        elseif GetPlayerTechCount(p, robbery_rc, true) == 5 then
-            call SetPlayerTechResearched(p, robbery_lvl5_rc, 1)
-        endif
-    endif
-    
-    // Развитие ради развития
-    if GetPlayerTechCount(p, evforev_rc, true) > 0 then
-        call Trig_income_upg_actions_evforev(p)
-    endif
-
-    // Агрессивная игра
-    // Выделяем всех наших юнитов типа рабочий
-    // и даём им ауру на скорость атаки и скорость бега, если
-    // её нет, повышаем её уровень
-    // !!!стоит переделать, если всего 1 рабочий, проще его в переменные забить и давать способность ему напрямую
-    if research_rc == aggrgame_rc then 
-        call Trig_income_upg_actions_aggrgame(p)
-    endif
-        
-    // Вклад в игрока
-    // !!!добавить удаление улучшения, если игрок один на карте
-    if research_rc == contr_to_pl_rc then
-        call Trig_income_upg_actions_contr_to_pl(p, count_research)
-    endif
-
-    // Золотодобыча
-    if research_rc == goldmining_rc then
-        call Trig_income_upg_actions_goldmining(p, number_p, research_rc)
-    endif
-
-    // Билет
-    if research_rc == ticket_rc then
-        call Trig_income_upg_actions_ticket(p)
-    endif
-
-    // Драгоценные камни
-    if research_rc == jewelry_rc then
-        call Trig_income_upg_actions_jewelry(number_p)
-    endif
-
-    // Вклад
-    if research_rc == contr_rc then
-        call Trig_income_upg_actions_contr(p, count_research)
-    endif
-
-    // Стабильность
-    if research_rc == stab_rc then
-        call Trig_income_upg_actions_stab(number_p, count_research)
-    endif
-
-    // Лидерство
-    if research_rc == leadership_rc then
-        call Trig_income_upg_actions_leadership(p, number_p)
-    endif
-
-    set p = null
-    set u = null
-endfunction
-
-//===========================================================================
-function InitTrig_income_upg takes nothing returns nothing
-    local trigger t = CreateTrigger()
-
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerAddCondition(t, Condition(function Trig_income_upg_Conditions))
-    call TriggerAddAction(t, function Trig_income_upg_Actions)
-    
-    set t = null
-endfunction
-/*
-
-=============================================
-= Файл создал:       Glady                  =
-= Discord:           ! ! Gladiator#3635     =
-= E-Mail:            glady007rus@gmail.com  =
-= Дата создания:     22.11.2020 13:00       =
-=============================================
-
-Улучшение инкома Грабёж.
-!!! - важная информация
-
-*/
-
-function Trig_income_upgA_Conditions takes nothing returns boolean
-    local boolean b1
-    local boolean b2
-    local boolean b3
-    local boolean b4
-    local unit killer = GetKillingUnit()
-    local unit victim = GetDyingUnit()
-    local player p_k = GetOwningPlayer(killer)
-    local player p_v = GetOwningPlayer(victim)
-    
-    set b1 = GetPlayerTechCountSimple(robbery_rc, p_k) > 0
-    set b2 = IsUnitInGroup(killer, udg_wave_units)
-    set b3 = IsPlayerEnemy(p_v, p_k)
-    set b4 = GetUnitTypeId(GetDyingUnit()) == castle_rc
-    
-    set p_k = null
-    set p_v = null
-    set killer = null
-    set victim = null
-    
-    return b1 and b2 and b3 and b4
-
-endfunction
-
-function Trig_income_upgA_Actions takes nothing returns nothing
-    local unit killer = GetKillingUnit()
-    local unit victim = GetDyingUnit()
-    local player p_k = GetOwningPlayer(killer)
-    local player p_v = GetOwningPlayer(victim) 
-    local integer gold = GetPlayerState(p_v, PLAYER_STATE_RESOURCE_GOLD)
-    local integer lumber = GetPlayerState(p_v, PLAYER_STATE_RESOURCE_LUMBER)
-    local integer lvl_research = GetPlayerTechCountSimple(robbery_rc, p_k)
-    local integer p_k_n = GetConvertedPlayerId(p_k)
-    local integer p_v_n = GetConvertedPlayerId(p_v)
-    local real multy = robbery_pr_f[lvl_research] * 0.01
-    local string killer_mes
-    local string victim_mes
-    local string color_k = udg_players_colour[p_k_n]
-    local string color_v = udg_players_colour[p_v_n]
-    local string name_k = udg_players_name[p_k_n]
-    local string name_v = udg_players_name[p_v_n]
-
-    set gold = R2I(I2R(gold) * multy)
-    set lumber = R2I(I2R(lumber) * multy)
-    
-    call AddGoldToPlayer(gold, p_k)
-    call AddGoldToPlayer(-gold, p_v)
-    call AddLumberToPlayer(lumber, p_k)
-    call AddLumberToPlayer(-lumber, p_v)
-
-    set killer_mes = "Вы украли |cFFFFCD00" + I2S(gold) + "|r ед. золота и |cFFB23AEE" + I2S(lumber) + "|r ед. самоцветов у игрока " + color_v + name_v
-    set victim_mes = "Вас ограбил игрок " + color_k + name_k
-    call DisplayTextToPlayer(p_k, 0, 0, killer_mes)
-    call DisplayTextToPlayer(p_v, 0, 0, victim_mes)
-
-    set p_k = null
-    set p_v = null
-    set killer = null
-    set victim = null
-    set killer_mes = null
-    set victim_mes = null
-    set color_k = null
-    set color_v = null
-    set name_k = null
-    set name_v = null
-endfunction
-
-//===========================================================================
-function InitTrig_income_upgA takes nothing returns nothing
-    local trigger t = CreateTrigger()
-
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerAddCondition(t, Condition( function Trig_income_upgA_Conditions))
-    call TriggerAddAction(t, function Trig_income_upgA_Actions)
-    
-    set t = null
-endfunction
-/*
-
-=============================================
-= Файл создал:       Glady                  =
-= Discord:           ! ! Gladiator#3635     =
-= E-Mail:            glady007rus@gmail.com  =
-= Дата создания:     11.11.2020 20:00       =
-=============================================
-
-Улучшение инкома Мёртвые деньги.
-!!! - важная информация
-
-*/
-
-function Trig_income_upgR_Conditions takes nothing returns boolean
-    local boolean b1
-    local boolean b2
-    local boolean b3
-    local unit killer = GetKillingUnit()
-    local unit victim = GetDyingUnit()
-    local player p_k = GetOwningPlayer(killer)
-    local player p_v = GetOwningPlayer(victim)
-    
-    set b1 = GetPlayerTechCountSimple(deadmoney_rc, p_k) > 0
-    set b2 = IsUnitInGroup(killer, udg_wave_units)
-    set b3 = IsPlayerEnemy(p_v, p_k)
-    
-    set p_k = null
-    set p_v = null
-    set killer = null
-    set victim = null
-    
-    return b1 and b2 and b3
-
-endfunction
-
-function Trig_income_upgR_Actions takes nothing returns nothing
-    local unit killer = GetKillingUnit()
-    local player p_k = GetOwningPlayer(killer)
-    local integer n = deadmoney_money_for_lvl
-    local integer sum
-
-    set sum = n * GetPlayerTechCountSimple(deadmoney_rc, p_k)
-    call AddGoldToPlayer(sum, p_k)
-
-    set killer = null
-    set p_k = null
-endfunction
-
-//===========================================================================
-function InitTrig_income_upgR takes nothing returns nothing
-    local trigger t = CreateTrigger()
-
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerAddCondition(t, Condition( function Trig_income_upgR_Conditions))
-    call TriggerAddAction(t, function Trig_income_upgR_Actions)
-    
-    set t = null
-endfunction
-
-/*
-
-=============================================
-= Файл создал:       Glady                  =
-= Discord:           ! ! Gladiator#3635     =
-= E-Mail:            glady007rus@gmail.com  =
-= Дата создания:     22.11.2020 18:00       =
-=============================================
-
-Улучшение инкома Проклятый рудник.
-!!! - важная информация
-
-*/
-
-function Trig_income_upgTQ_Conditions takes nothing returns boolean
-    local boolean IsIncomeObjective = false
-    local boolean DoesVictimHasUpgrade = false
-    local boolean DoesVictimsUpgradeGreaterThanKillers = false
-    local unit killer = GetKillingUnit()        // unit who has killed victim
-    local unit victim = GetDyingUnit()          // unit who was killed by killer
-    local integer v_rc = GetUnitTypeId(victim)  // raw code of victim unit
-    local integer k_rc = GetUnitTypeId(killer)  // raw code of killer unit
-    local player playerVictim = GetOwningPlayer(victim)  // owner of victim unit
-    local player playerKiller = GetOwningPlayer(killer)  // owner of killer unit
-
-    // n003 - Gold Mine большой
-    // n004 - Gold Mine маленький
-    // n005 - Флаг
-    set IsIncomeObjective = ((v_rc == 'n003') or (v_rc == 'n004') or (v_rc == 'n005'))
-
-    // Не действует на игроков с уровнем улучшения "Проклятый рудник" ниже вашего на 1 и выше.
-    set DoesVictimHasUpgrade = GetPlayerTechCount(playerVictim, cursed_mine_rc, true) > 0
-    set DoesVictimsUpgradeGreaterThanKillers = GetPlayerTechCount(playerVictim, cursed_mine_rc, true) > GetPlayerTechCount(playerKiller, cursed_mine_rc, true)
-
-    set killer = null
-    set victim = null
-    set playerVictim = null
-    set playerKiller = null
-    return IsIncomeObjective and DoesVictimHasUpgrade and DoesVictimsUpgradeGreaterThanKillers
-endfunction
-
-// !!! Урон юнитам наносит сам рудник, но после смерти он передаётся убийце, проверить, что урон наносится до передачи
-// Функция вызывается к каждому юниту около погибшего рудника
-// Если юнит принадлежит убившему и юнит находится в группе udg_wave_units(!!! понять, что за группа), ему наносится урон от рудника типа chaos
-function Trig_income_upgTQ_Actions_group takes nothing returns nothing
-    local unit u = GetEnumUnit() // сам юнит
-    local boolean b1
-    local boolean b2
-    local player p = GetOwningPlayer(u) // владелец юнита
-    local player p_k = hash[StringHash("income")].player[StringHash("player_killer")] // владелец убийцы
-    local player p_v = hash[StringHash("income")].player[StringHash("player_victim")] // владелец рудника(жертвы)
-    local unit damage_u = hash[StringHash("income")].unit[StringHash("victim")]       // рудник
-    local real damage
-
-    set b1 = IsUnitInGroup(u, udg_wave_units)
-    set b2 = (p == p_k)
-    if b1 and b2 then
-        set damage = cursed_mine_damage_for_lvl * GetPlayerTechCount(p_v, cursed_mine_rc, true) // формула расчёта урона: урон = cursed_mine_damage_for_lvl * уровень улучшения
-        // !!!
-        call UnitDamageTargetBJ(damage_u, u, damage, ATTACK_TYPE_CHAOS, DAMAGE_TYPE_NORMAL) // DAMAGE_TYPE_UNIVERSAL - чистый урон без armor reduction
-        // -----
-    endif
-
-    set p = null
-    set p_k = null
-    set p_v = null
-    set u = null
-endfunction
-
-function Trig_income_upgTQ_Actions takes nothing returns nothing
-    local unit killer = GetKillingUnit()
-    local unit victim = GetDyingUnit()
-    local integer v_rc = GetUnitTypeId(victim)
-    local integer k_rc = GetUnitTypeId(killer)
-    local integer i = 1
-    local player p_v = GetOwningPlayer(victim)
-    local player p_k = GetOwningPlayer(killer)
-    local integer n_p_v = GetConvertedPlayerId(p_v)
-    local integer n_p_k = GetConvertedPlayerId(p_k)
-    local string name_ef = "Objects\\Spawnmodels\\Undead\\UndeadDissipate\\UndeadDissipate.mdl"
-    local real x = GetUnitX(victim)
-    local real y = GetUnitY(victim)
-    local real x_ef
-    local real y_ef
-    local real range = cursed_mine_cast_range
-    local real angle = 360.00 / cursed_mine_count_wave
-    local group gr = CreateGroup()
-    local integer gold
-    local integer lumber
-    local string s1
-    local string s2
-    
-    loop
-        exitwhen i > cursed_mine_count_wave
-        set x_ef = x + range * Cos(angle * i * bj_DEGTORAD)
-        set y_ef = y + range * Sin(angle * i * bj_DEGTORAD)
-        call DestroyEffect(AddSpecialEffect(name_ef, x_ef, y_ef))
-        set i = i + 1
-    endloop
-
-    call GroupEnumUnitsInRange(gr, x, y, cursed_mine_range_damage, null)
-
-    set hash[StringHash("income")].player[StringHash("player_killer")] = p_k
-    set hash[StringHash("income")].player[StringHash("player_victim")] = p_v
-    set hash[StringHash("income")].unit[StringHash("victim")] = victim
-
-    call ForGroup(gr, function Trig_income_upgTQ_Actions_group)
-
-    set gold = GetPlayerState(p_k, PLAYER_STATE_RESOURCE_GOLD) * cursed_mine_percent / 100
-    set lumber = GetPlayerState(p_k, PLAYER_STATE_RESOURCE_LUMBER) * cursed_mine_percent / 100
-
-    call AddGoldToPlayer(gold, p_v)
-    call AddGoldToPlayer(-gold, p_k)
-    call AddLumberToPlayer(lumber, p_v)
-    call AddLumberToPlayer(-lumber, p_k)
-
-    set s1 = "Вы украли |cFFFFCD00" + I2S(gold) + "|r ед. золота и |cFFB23AEE" + I2S(lumber) + "|r ед. самоцветов у игрока " + udg_players_colour[n_p_k] + udg_players_name[n_p_k]
-    set s2 = "Вас ограбил игрок " + udg_players_colour[n_p_v] + udg_players_name[n_p_v]
-    call DisplayTextToPlayer(p_v, 0, 0, s1)
-    call DisplayTextToPlayer(p_k, 0, 0, s2)
-
-    set killer = null
-    set victim = null
-    call DestroyGroup(gr)
-    set name_ef = null
-    set gr = null
-    set p_v = null
-    set p_k = null
-    set s1 = null
-    set s2 = null
-endfunction
-
-//===========================================================================
-function InitTrig_income_upgTQ takes nothing returns nothing
-    local trigger t = CreateTrigger()
-
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerAddCondition(t, Condition(function Trig_income_upgTQ_Conditions))
-    call TriggerAddAction(t, function Trig_income_upgTQ_Actions)
-
-    set t = null
-endfunction
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     13.12.2020 16:21       =
-=============================================
-
-inc_colour Trigger
-
-Income Objective OnDestroy()
-
-*/
-
-function inc_colour_actions takes nothing returns nothing
-    local unit IncomeObjectiveUnit = GetDyingUnit() // IncomeObject
-    local player IncomeObjectReceiever = GetOwningPlayer(GetKillingUnit()) // Who gets IncomeObject
-    local unit IncomeObjectiveNewUnit // Replace IncomeObject
-    local player IncomeObjectOwner = GetOwningPlayer(IncomeObjectiveUnit) // Who loses IncomeObject
-    local boolean IsHugeGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == 'n003')
-    local boolean IsSmallGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == 'n004')
-    local boolean IsFlag = (GetUnitTypeId(IncomeObjectiveUnit) == 'n005')
-    local boolean IsOwnerTheReceiver = (IncomeObjectOwner == IncomeObjectReceiever)
-    local real IncomeObjectiveUnitX = GetUnitX(IncomeObjectiveUnit)
-    local real IncomeObjectiveUnitY = GetUnitY(IncomeObjectiveUnit)
-    local Color playerColor = Color.create(IncomeObjectReceiever) // Color Struct from NokladrLib.j
-
-    if not (IsHugeGoldMine or IsSmallGoldMine or IsFlag) then
-        return // No actions
-    endif
-
-    call RemoveUnit(IncomeObjectiveUnit) // Remove old IncomeObject to replace it with a new one
-    set IncomeObjectiveNewUnit = CreateUnit(IncomeObjectReceiever, GetUnitTypeId(IncomeObjectiveUnit), IncomeObjectiveUnitX, IncomeObjectiveUnitY, bj_UNIT_FACING)
-    call SetUnitVertexColor(IncomeObjectiveNewUnit, playerColor.red, playerColor.green, playerColor.blue, 255) // Adjusts color to match receiver's one
-
-    set IncomeObjectiveUnit = null
-    set IncomeObjectReceiever = null
-    set IncomeObjectiveNewUnit = null
-    set IncomeObjectOwner = null
-    call playerColor.destroy()
-endfunction
-
-function inc_colour takes nothing returns nothing
-    local trigger t = CreateTrigger()
-
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0C), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0D), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0E), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0F), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x10), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x11), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x12), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x13), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x14), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x15), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x16), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x17), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x18), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x19), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x1A), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x1B), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerAddAction(t, function inc_colour_actions)
-
     set t = null
 endfunction
 /*
@@ -3759,6 +3289,416 @@ endfunction
 = Файл создал:       Nokladr                =
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     01.11.2020 21:19       =
+=============================================
+
+Реализация окна победы/поражения.
+
+*/
+
+function defeat_clear takes nothing returns nothing
+    call RemoveUnit(GetEnumUnit())
+endfunction
+
+function defeat_quit takes nothing returns nothing
+    call EndGame(true)
+endfunction
+
+function win takes player p returns nothing
+    local trigger t = CreateTrigger()
+    local dialog  d = DialogCreate()
+    call RemovePlayer(p, PLAYER_GAME_RESULT_VICTORY)
+    if (GetPlayerController(p) == MAP_CONTROL_USER) then
+        call DialogSetMessage(d, GetLocalizedString("GAMEOVER_VICTORY_MSG"))
+        call TriggerRegisterDialogButtonEvent(t, DialogAddButton(d, GetLocalizedString("GAMEOVER_CONTINUE"), GetLocalizedHotkey("GAMEOVER_CONTINUE")))
+        call TriggerAddAction(t, function defeat_quit)
+        set t = CreateTrigger()
+        call TriggerRegisterDialogButtonEvent(t, DialogAddButton(d, GetLocalizedString("GAMEOVER_QUIT_MISSION"), GetLocalizedHotkey("GAMEOVER_QUIT_MISSION")))
+        call TriggerAddAction(t, function defeat_quit)
+        if (GetLocalPlayer() == p) then
+            call EnableUserControl(true)
+            call EnableUserUI(false)
+        endif
+        call DialogDisplay(p, d, true)
+        if (GetLocalPlayer() == p) then
+            call VolumeGroupSetVolume(SOUND_VOLUMEGROUP_UI, 1.)
+            call StartSound(bj_victoryDialogSound)
+        endif
+    endif
+    set t = null
+    set d = null
+endfunction
+
+function defeat takes player p returns nothing
+    local trigger t = CreateTrigger()
+    local dialog  d = DialogCreate()
+    call RemovePlayer(p, PLAYER_GAME_RESULT_DEFEAT)
+    if (GetPlayerController(p) == MAP_CONTROL_USER) then
+        if (Locale.evaluate() == "RU") then
+            call DialogSetMessage(d, "Вы проиграли!")
+        else
+            call DialogSetMessage(d, "You was defeated!")
+        endif
+        call TriggerRegisterDialogButtonEvent(t, DialogAddButton(d, GetLocalizedString("GAMEOVER_QUIT_MISSION"), GetLocalizedHotkey("GAMEOVER_QUIT_MISSION")))
+        call TriggerAddAction(t, function defeat_quit)
+        if (GetLocalPlayer() == p) then
+            call EnableUserControl(true)
+            call EnableUserUI(false)
+        endif
+        call DialogDisplay(p, d, true)
+        if (GetLocalPlayer() == p) then
+            call VolumeGroupSetVolume(SOUND_VOLUMEGROUP_UI, 1.)
+            call StartSound(bj_defeatDialogSound)
+        endif
+    endif
+    set t = null
+    set d = null
+endfunction
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     20.11.2020 21:07       =
+=============================================
+
+gameset owner Trigger
+
+Sets owner of game.
+Shows all available commands and settings
+Owner can modify game settings.
+
+*/
+
+//===========================================================================
+function gameset_owner takes nothing returns nothing
+    local integer i = 0
+    set udg_game_owner = null // Game owner
+    loop // Sets game owner to a first available player
+        if (GetPlayerSlotState(Player(i)) == PLAYER_SLOT_STATE_PLAYING) then // Must be playing player
+            set udg_game_owner = Player(0)
+        endif
+        exitwhen (udg_game_owner != null or i > 7) // TODO: test
+        set i = i + 1
+    endloop
+
+    static if (not DEBUG_MODE) then
+        // Notification for game owner
+        call DisplayTimedTextToPlayer(udg_game_owner, 0., 0., 10., "Вы получили права " + GREEN + "владельца игры|r.")
+    endif
+
+    // Opt. begin
+    if  (GetTimeInSeconds() < R2I(udg_gameset_time_first)) then // Shows commands and settings only at game start
+        if (udg_info[GetConvertedPlayerId(udg_game_owner)] == true) then // Checks Info flag of game owner
+            static if (not DEBUG_MODE) then
+                // Shows all available commands and settings
+                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "Настройка карты (доступно первые " + ( I2S(R2I(udg_gameset_time_first)) + " сек.)" ) ) )
+                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_gameset_time) ) + " ) " ) + "|cFFFF0000-time xxx|r, где xxx - время перед началом нового раунда (от 20 до 60 сек.)" ) )
+                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_wave_time) ) + " ) " ) + "|cFFFF0000-arena xxx|r. Где xxx - начальное время раунда на арене (от 60 сек. до 150 сек.)" ) )
+                if (udg_building_status == true) then
+                    call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( 1 ) " + "|cFFFF0000-build x|r, при x=0 - во время раунда можно строить/улучшать юнитов при x=1 - нельзя" ) )
+                else
+                    call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( 0 ) " + "|cFFFF0000-build x|r, при x=0 - во время раунда можно строить/улучшать юнитов при x=1 - нельзя" ) )
+                endif
+                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( " + ( I2S(udg_const_point[0]) + ( "-" + ( I2S(udg_const_point[1]) + " ) |cFFFF0000-point ##|r." ) ) ) ) )
+                call DisplayTextToForce( GetForceOfPlayer(udg_game_owner), "Первый # - минимальное число контрольных точек, появляющихся на арене. Второй # - максимальное число контрольных точек, оно не может превышать первый номер, а также число 9." )
+                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_mode) ) + " ) " ) + "|cFFFF0000-mode #. |r" ) )
+                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, "Если # = 1, то мини-игры будут чередоваться каждую вторую волну.\nЕсли # = 2, то мини-игр не будет совсем.\nЕсли # = 3, то мини-игры буду каждые 3 волны." )
+                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( ( "( " + I2S(udg_gg) ) + " ) " ) + "|cFFFF0000-gg ##|r. Где ## - волна, после которой закончится игра (от 9 до " ) + ( I2S(( ( udg_mini_game_max * 2 ) + 3 )) + " )." ) ) )
+            endif
+
+        endif
+    endif
+    // Opt. end
+endfunction
+
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     01.11.2020 18:41       =
+=============================================
+
+Объявление глобальных переменных
+
+*/
+
+globals
+    boolean IsDevInGame = false                                                                 // Условие: один из разработчиков в игре?
+    Table table                                                                                 // Инициализация таблицы
+    HashTable hash                                                                              // Инициализация хэш-таблицы
+    constant string strVersion = "0.0.2"                                                        // Версия карты, семантическое версионирование: (Major, Minor, Patch)
+    constant string Version = "Test"                                                            // Тип версии {Test, Release}
+    constant string strEmail = (LB + "Nostaleal.ru|r" + GOLD + "@|r" + LB + "yandex.ru|r")      // E-Mail адрес
+    constant string strDiscord = (LB + "! ! Nokladr|r" + GOLD + "#|r" + LB + "2205|r")          // Discord тэг
+    constant string strBuild_Time = "13 December 2020"                                          // Время создания билда карты
+
+    debug constant real timeBeforeFirstWave = 10.00                                             // Время перед началом первой волны
+
+    leaderboard Leaderboard                                                                     // Таблица лидеров
+
+    constant integer finalWave = 15
+    constant integer numberOfMinigames = 8
+    
+    constant integer base_gold = 755                                                            // Кол-во золота в начале игры
+    constant integer base_gems = 22                                                             // Кол-во гемов в начале игры
+
+    constant integer incSpellrc_count = 14                                                      // Кол-во инкам способностей(значение увеличено на 1 для удобства)
+    constant integer count_research_for_t1 = 12                                                 // Кол-во улучшений для доступа к т1
+    constant integer count_research_for_t2 = 20                                                 // Кол-во улучшений для доступа к т2      
+    constant integer max_players = 8                                                            // Максимальное кол-во игроков
+
+    integer array incSpellrc[incSpellrc_count]                                                  // Массив инкам способностей(заполнение в Main.j, function map_init)
+    player array ticket_list[max_ticket_list]
+
+    // Равкоды инкам улучшений и связанных с ними способностей
+    constant integer t1_research_rc = 'R018'                                                    // 12 исследований (т2 юниты Медива)
+    constant integer t2_research_rc = 'R019'                                                    // 20 исследований (т3 юниты Медива)
+    constant integer robbery_lvl3_rc = 'R023'                                                   // Грабёж(3 уровень)
+    constant integer robbery_lvl5_rc = 'R024'                                                   // Грабёж(5 уровень)
+    constant integer robbery_rc = 'R00J'                                                        // Грабёж
+    constant integer evforev_rc = 'R00R'                                                        // Развитие ради развития
+    constant integer aggrgame_rc = 'R02K'                                                       // Агрессивная игра
+    constant integer aggrgame_aura_rc = 'S000'                                                  // Аура Агрессивной игры
+    constant integer contr_to_pl_rc = 'R027'                                                    // Вклад в игрока
+    constant integer goldmining_rc = 'R00F'                                                     // Золотодобыча
+    constant integer ticket_rc = 'R00G'                                                         // Билет
+    constant integer jewelry_rc = 'R00H'                                                        // Драгоценные камни
+    constant integer deadmoney_rc = 'R00I'                                                      // Мёртвые деньги
+    constant integer contr_rc = 'R00Q'                                                          // Вклад
+    constant integer stab_rc = 'R00S'                                                           // Стабильность
+    constant integer wait_five_minutes_rc = 'R028'                                              // Подождите 5 минут, дополнительное улучшение для Вклада в игрока
+    constant integer leadership_rc = 'R029'                                                     // Лидерство
+    constant integer cursed_mine_rc = 'R02I'                                                    // Проклятый рудник
+
+    // Равкоды
+    constant integer castle_rc = 'h01O'
+    constant integer most_point_kill_last_round = 'h023'
+    constant integer or_leadership_arena_last_round = 'h024'
+    constant integer big_mine_rc = 'n003'
+    constant integer small_mine_rc = 'n004'
+    constant integer flag_rc = 'n005'
+
+    // Настройки улучшения Вклад в игрока
+    constant integer contr_to_pl_gold = 300
+    constant integer contr_to_pl_gold_mod = 100
+    constant integer contr_to_pl_lumber = 10
+    constant integer contr_to_pl_lumber_mod = 5
+    constant real contr_to_pl_time = 300 // в секундах
+    constant real contr_to_pl_multy = 2
+    
+    // Настройки улучшения Грабёж, заполнение массива в Main.j
+    constant integer robbery_pr_count = 7
+    real array robbery_pr_f[robbery_pr_count]
+    real array robbery_pr_s[robbery_pr_count]
+
+    // Настройки улучшения Вклад
+    constant integer contr_gold = 200
+    constant integer contr_gold_mod = 100
+    constant integer contr_lumber = 8
+    constant integer contr_lumber_mod = 6
+    constant integer contr_percent = 150 // процент
+
+    // Настройки улучшения Стабильность, заполнение массива в Main.j
+    constant integer stab_count = 7
+    real array stab_time_gold[stab_count]
+    real array stab_time_lumber[stab_count]
+    integer array stab_gold[stab_count]
+    integer array stab_lumber[stab_count]
+    timer array stab_timer_gold[max_players]
+    timer array stab_timer_lumber[max_players]
+
+    // Настройки улучшения Лидерство
+    constant real leadership_bonus = 0.2
+
+    // Настройки улучшения Проклятый рудник
+    constant integer cursed_mine_percent = 3
+    constant real cursed_mine_range_damage = 700
+    constant integer cursed_mine_count_wave = 8
+    constant real cursed_mine_cast_range = 468
+    constant real cursed_mine_damage_for_lvl = 100
+
+    // Настройки улучшения Мёртвые деньги
+    constant integer deadmoney_money_for_lvl = 8
+
+    // Настройки улучшения Драгоценные камни
+    constant integer jewelry_lumber_for_lvl = 1
+
+    // Настройки улучшения Билет
+    constant integer max_ticket_list = 5
+
+    // Настройки улучшения Золотодобыча, заполнение массива в Main.j
+    constant integer goldmining_count = 6
+    integer array goldmining_main_mine[goldmining_count]
+    integer array goldmining_extra_mine[goldmining_count]
+    integer array goldmining_income[goldmining_count]
+
+    // Настройки улучшения Развитие ради развития
+    constant real evforev_bonus_res = 0.01
+    constant real evforev_bonus_res_mod = 0.01
+
+    // Настройки улучшения Агрессивная игра
+    // Аура - aggrgame_aura_rc, внутри неё менять скорость боя и перемещения
+endglobals
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     08.11.2020 19:46       =
+=============================================
+
+initialization in game Trigger
+
+Sets mini games' waves, players' constants and units.
+
+*/
+
+function initialization_in_game_wave_mini_condition takes nothing returns boolean
+    local integer i = 0
+    if (udg_random_log == true) then
+        return false
+    endif
+    loop
+        exitwhen i > 8
+        if (udg_wave_mini[i] == (udg_r * 2)) then
+            return false
+        endif
+        set i = i + 1
+    endloop
+    return true
+endfunction
+
+function initialization_in_game_players takes nothing returns nothing
+    local player p = GetEnumPlayer()
+    local real x = GetPlayerStartLocationX(p)
+    local real y = GetPlayerStartLocationY(p)
+    
+    call CameraSetupApplyForPlayer(true, gg_cam_logic, p, 0)
+    if (GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING and GetPlayerController(p) == MAP_CONTROL_USER) then
+        call SetPlayerState(p, PLAYER_STATE_GIVES_BOUNTY, 1)
+        call ForceAddPlayer(udg_players_group, p)
+        set udg_players_name[GetConvertedPlayerId(p)] = GetPlayerName(p)
+        set udg_info[GetConvertedPlayerId(p)] = true
+        set udg_income_gold[GetConvertedPlayerId(p)] = 240
+        set udg_income_wood[GetConvertedPlayerId(p)] = 8
+        set udg_leader_kf[GetConvertedPlayerId(p)] = 1.00
+        set udg_leader_wins[GetConvertedPlayerId(p)] = 0
+        set udg_changeSet[GetConvertedPlayerId(p)] = 3
+        call CreateUnitEx(p, 'ntav', x, y, bj_UNIT_FACING) // Таверна с расами на выбор
+        call CreateUnitEx(p, 'h001', x, y, bj_UNIT_FACING) // Юнит "Выбор героя"
+        call CreateUnitEx(p, 'h029', x, y, bj_UNIT_FACING) // Юнит "Не более 1 погодного эффекта в раунде"
+        call AddGoldToPlayer(100, p) // Золото на выбор расы в таверне
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_all, true, false)) // Поле битвы
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_minersregion, true, false)) // Миниигра "Минёры"
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_fastarena, true, false)) // Миниарена
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_horseregion, true, false)) // Миниигра "Конные бега"
+        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_roulette, true, false)) // Миниигра "Казино"
+    endif
+
+    set p = null
+endfunction
+
+function initialization_in_game takes nothing returns nothing
+    local integer i = 0
+    local integer j = 0
+    local unit lastCreatedUnit = null
+    set udg_gg = 15 // Финальная волна
+    set udg_mini_game_max = 8 // Максимальное кол-во миниигр за игру
+    set udg_wave_mini[1] = 4 // Волна с боссом
+    set udg_const_point[0] = 3
+    set udg_const_point[1] = 6
+    set udg_gameset_time_first = 60.00 // Таймер начала до первой волны
+    
+    // Что-то связанное с минииграми
+    loop
+        exitwhen i > udg_mini_game_max
+        if (i != 1) then
+            // Если не миниигра с боссом, то
+            set udg_random_log = false
+            loop // Заполняем wave_mini[] рандомными, неповторяющимися числами (2, 4, 6, ..., 18) - волны, когда будут миниигры. mode = 1 (стандартный режим)
+                exitwhen udg_random_log
+                set udg_r = GetRandomInt(1, (udg_mini_game_max + 1)) // От 1 до 9 (кол-во миниигр)
+                if (initialization_in_game_wave_mini_condition()) then
+                    set udg_random_log = true
+                    set udg_wave_mini[i] = udg_r * 2
+                endif
+            endloop
+        endif
+        set i = i + 1
+    endloop
+    
+    call ForForce(bj_FORCE_ALL_PLAYERS, function initialization_in_game_players)
+    
+    call faq_ini() // Starts voting for faq guide
+
+    // Миниигра казино
+    set udg_r = 0
+    set i = 1
+    loop
+        exitwhen i > 3
+        set j = 1
+        loop
+            exitwhen j > 5
+            set udg_r = udg_r + 1
+            // Opt. begin
+            // 'n001' - Circle of Power
+            set lastCreatedUnit = CreateUnitAtLoc(Player(PLAYER_NEUTRAL_PASSIVE), 'n001', PolarProjectionBJ(PolarProjectionBJ(GetRectCenter(gg_rct_circle), (-256.00 + (256.00 * I2R(i))), 270.00), (-256.00 + (256.00 * I2R(j))), 0), bj_UNIT_FACING)
+            call SetUnitUserData(lastCreatedUnit, udg_r)
+            if (ModuloInteger(udg_r, 2) == 1) then
+                // Z offset = 0
+                // Font size = 11
+                // Red =    100%
+                // Green =  10%
+                // Blue =   10%
+                // Transparency = 0%
+                call CreateTextTagUnitBJ(I2S(udg_r), lastCreatedUnit, 0, 11.00, 100, 10.00, 10.00, 0)
+                call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), udg_players_group)
+                call SetUnitColor(lastCreatedUnit, PLAYER_COLOR_RED)
+            else
+                call CreateTextTagUnitBJ(I2S(udg_r), lastCreatedUnit, 0, 11.00, 10.00, 10.00, 10.00, 0)
+                call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), udg_players_group)
+                call SetUnitColor(lastCreatedUnit, PLAYER_COLOR_MAROON)
+            endif
+            // Opt. end
+            set j = j + 1
+        endloop
+        set i = i + 1
+    endloop
+
+    set lastCreatedUnit = null
+endfunction
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     01.11.2020 18:30       =
+=============================================
+
+*/
+
+function Locale takes nothing returns string
+    local string s = GetLocalizedString("CHEATENABLED")
+    if (s == "Чит включен!") then
+        set s = "RU"
+    else
+        set s = "EN"
+    endif
+    return s
+
+endfunction
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     01.11.2020 18:28       =
 =============================================
 
@@ -3797,7 +3737,7 @@ scope Main initializer MainInit
                     set strVar_RU = "Вы играете в " + GREEN + "стабильную|r " + strVersion + " версию.\n "
                     set strVar_EN = "You are playing in " + GREEN + "stable|r " + strVersion + " version.\n "
                 endif
-                if (Locale() == "RU") then
+                if (Locale.evaluate() == "RU") then
                     call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 25, strVar_RU)
                 else
                     call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 25, strVar_EN)
@@ -3807,7 +3747,7 @@ scope Main initializer MainInit
             // Сообщение об обратной связи
             set Feedback_RU = "Связь со мной: " + strEmail + " и Discord: " + strDiscord + "\n "
             set Feedback_EN = "My contacts: " + strEmail + " and Discord: " + strDiscord + "\n "
-            if (Locale() == "RU") then
+            if (Locale.evaluate() == "RU") then
                 call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_RU)
             else
                 call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_EN)
@@ -3817,7 +3757,7 @@ scope Main initializer MainInit
             loop
                 exitwhen (i > 11)
                 if (GetPlayerName(Player(i)) == "Nokladr" or GetPlayerName(Player(i)) == "Nokladr#2429") then
-                    if (Locale() == "RU") then
+                    if (Locale.evaluate() == "RU") then
                         call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 35, ("С вами играет создатель данной карты, " + C_IntToColor(i) + "Nokladr#2429" + "|r. Критика приветствуется :)\n "))
                     else
                         call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 35, ("You are playing with author, " + C_IntToColor(i) + "Nokladr#2429" + "|r. Any feedback is welcome :)\n "))
@@ -3933,40 +3873,37 @@ scope Main initializer MainInit
     function post_map_init takes nothing returns nothing
 
         // Сообщения в чате
-        call SetMessagesInit()
+        call SetMessagesInit.execute()
 
         // initialization in game Trigger
-        call initialization_in_game()
+        call initialization_in_game.execute()
 
         // income upg Trigger
-        call InitTrig_income_upg()
-        call InitTrig_income_upgR()
-        call InitTrig_income_upgA()
-        call InitTrig_income_upgTQ()
+        call InitTrig_income_upg.execute()
+        call InitTrig_income_upgR.execute()
+        call InitTrig_income_upgA.execute()
+        call InitTrig_income_upgTQ.execute()
 
         // faq active Trigger
-        call faq_active_init()
+        call faq_active_init.execute()
 
         // builder select Trigger
-        call builder_select()
+        call builder_select.execute()
 
         // building selling Trigger
-        call building_selling()
+        call building_selling.execute()
         
         // inc colour Trigger
-        call inc_colour()
+        call inc_colour.execute()
 
         // Fast Arena Init
-        call FastArenaInit()
+        call FastArenaInit.execute()
 
         // Arena Init
-        call ArenaInit()
-
-        // wave end timer Trigger
-        // call InitTrig_wave_end_timer()
+        call ArenaInit.execute()
 
         // For debug purposes
-        call DebugInit()
+        call DebugInit.execute()
 
         // Disable Damage Detection System until fast arena begins
         call DisableTrigger(DDS)
@@ -3990,6 +3927,70 @@ scope Main initializer MainInit
     endfunction
 
 endscope
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     01.11.2020 18:30       =
+=============================================
+
+Интерфейс внутриигровых сообщений
+
+*/
+
+function OnLeave takes nothing returns nothing
+    local unit u = GetEnumUnit()
+    if (GetUnitTypeId(u) != 'hhdl' and GetUnitTypeId(u) != 'n001') then
+        // Opt. begin
+        if (IsUnitInGroup(u, udg_wave_units) == true) then
+            call GroupRemoveUnitSimple(u, udg_wave_units)
+        endif
+        if (IsUnitInGroup(u, udg_buildings) == true) then
+            call GroupRemoveUnitSimple(u, udg_buildings)
+        endif
+        // Opt. end
+        call RemoveUnit(u)
+    else
+        call SetUnitOwner(u, Player(PLAYER_NEUTRAL_PASSIVE), true)
+    endif
+    set u = null
+endfunction
+
+function SetLeaveMessages takes nothing returns nothing
+    local player p = GetTriggerPlayer()
+    call DisplayTimedTextToPlayer(GetLocalPlayer(), 0., 0., 10., (C_IntToColor(GetPlayerId(p)) + GetPlayerName(p) + "|r " + GOLD + "покидает игру!|r"))
+    call SetPlayerTechResearchedSwap('R00J', 0, p)
+    set pdb[p].scoreboard_result = 0
+    // Opt. begin
+    call ForGroup(GetUnitsOfPlayerMatching(p, null), function OnLeave)
+    call ForceRemovePlayerSimple( GetTriggerPlayer(), udg_players_group )
+    if (p == udg_game_owner) then
+        call gameset_owner.execute()
+    endif
+    call MultiboardSetItemValueBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetTriggerPlayer()) ), ( "|cFF9B9B9B" + udg_players_name[GetConvertedPlayerId(GetTriggerPlayer())] ) )
+    call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetTriggerPlayer()) ), "ReplaceableTextures\\CommandButtonsDisabled\\DISBTNReplay-Loop.blp" )
+    // Opt. end
+    call defeat(p)
+    set p = null
+endfunction
+
+function SetMessagesInit takes nothing returns nothing
+    local trigger t = CreateTrigger()
+
+    call TriggerRegisterPlayerEvent(t, Player(0x00), EVENT_PLAYER_LEAVE)
+    call TriggerRegisterPlayerEvent(t, Player(0x01), EVENT_PLAYER_LEAVE)
+    call TriggerRegisterPlayerEvent(t, Player(0x02), EVENT_PLAYER_LEAVE)
+    call TriggerRegisterPlayerEvent(t, Player(0x03), EVENT_PLAYER_LEAVE)
+    call TriggerRegisterPlayerEvent(t, Player(0x04), EVENT_PLAYER_LEAVE)
+    call TriggerRegisterPlayerEvent(t, Player(0x05), EVENT_PLAYER_LEAVE)
+    call TriggerRegisterPlayerEvent(t, Player(0x06), EVENT_PLAYER_LEAVE)
+    call TriggerRegisterPlayerEvent(t, Player(0x07), EVENT_PLAYER_LEAVE)
+    
+    call TriggerAddAction(t, function SetLeaveMessages)
+    set t = null
+endfunction
 //===========================================================================
 // 
 // MIX |cffffffff0.0.2|r

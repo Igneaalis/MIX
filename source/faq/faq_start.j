@@ -22,7 +22,7 @@ function faq_start_timer_actions takes nothing returns nothing
     call DisableTrigger(gg_trg_cmd_mode)
     call DisableTrigger(gg_trg_cmd_point)
     call DisableTrigger(gg_trg_cmd_arena)
-    call ForceArena()
+    call ForceArena.execute()
     // call TriggerExecute( gg_trg_set_wave_start_main )
     // call TriggerExecute( gg_trg_set_wave_timer )
     // call TriggerExecute( gg_trg_set_wave_region_rotate )
@@ -37,7 +37,7 @@ function faq_start takes nothing returns nothing
     call TimerDialogSetTitle(faq_timerdialog, "Настройка карты") // Title of timer dialog
     call TimerDialogDisplay(faq_timerdialog, true) // Shows timer dialog
 
-    call gameset_owner() // Sets owner of game
+    call gameset_owner.execute() // Sets owner of game
     call TriggerExecute(gg_trg_scoreboard_ini) // Shows scoreboard
 endfunction
 

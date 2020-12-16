@@ -42,7 +42,7 @@ scope Main initializer MainInit
                     set strVar_RU = "Вы играете в " + GREEN + "стабильную|r " + strVersion + " версию.\n "
                     set strVar_EN = "You are playing in " + GREEN + "stable|r " + strVersion + " version.\n "
                 endif
-                if (Locale() == "RU") then
+                if (Locale.evaluate() == "RU") then
                     call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 25, strVar_RU)
                 else
                     call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 25, strVar_EN)
@@ -52,7 +52,7 @@ scope Main initializer MainInit
             // Сообщение об обратной связи
             set Feedback_RU = "Связь со мной: " + strEmail + " и Discord: " + strDiscord + "\n "
             set Feedback_EN = "My contacts: " + strEmail + " and Discord: " + strDiscord + "\n "
-            if (Locale() == "RU") then
+            if (Locale.evaluate() == "RU") then
                 call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_RU)
             else
                 call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_EN)
@@ -62,7 +62,7 @@ scope Main initializer MainInit
             loop
                 exitwhen (i > 11)
                 if (GetPlayerName(Player(i)) == "Nokladr" or GetPlayerName(Player(i)) == "Nokladr#2429") then
-                    if (Locale() == "RU") then
+                    if (Locale.evaluate() == "RU") then
                         call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 35, ("С вами играет создатель данной карты, " + C_IntToColor(i) + "Nokladr#2429" + "|r. Критика приветствуется :)\n "))
                     else
                         call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 35, ("You are playing with author, " + C_IntToColor(i) + "Nokladr#2429" + "|r. Any feedback is welcome :)\n "))
@@ -178,40 +178,37 @@ scope Main initializer MainInit
     function post_map_init takes nothing returns nothing
 
         // Сообщения в чате
-        call SetMessagesInit()
+        call SetMessagesInit.execute()
 
         // initialization in game Trigger
-        call initialization_in_game()
+        call initialization_in_game.execute()
 
         // income upg Trigger
-        call InitTrig_income_upg()
-        call InitTrig_income_upgR()
-        call InitTrig_income_upgA()
-        call InitTrig_income_upgTQ()
+        call InitTrig_income_upg.execute()
+        call InitTrig_income_upgR.execute()
+        call InitTrig_income_upgA.execute()
+        call InitTrig_income_upgTQ.execute()
 
         // faq active Trigger
-        call faq_active_init()
+        call faq_active_init.execute()
 
         // builder select Trigger
-        call builder_select()
+        call builder_select.execute()
 
         // building selling Trigger
-        call building_selling()
+        call building_selling.execute()
         
         // inc colour Trigger
-        call inc_colour()
+        call inc_colour.execute()
 
         // Fast Arena Init
-        call FastArenaInit()
+        call FastArenaInit.execute()
 
         // Arena Init
-        call ArenaInit()
-
-        // wave end timer Trigger
-        // call InitTrig_wave_end_timer()
+        call ArenaInit.execute()
 
         // For debug purposes
-        call DebugInit()
+        call DebugInit.execute()
 
         // Disable Damage Detection System until fast arena begins
         call DisableTrigger(DDS)

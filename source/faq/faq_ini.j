@@ -23,7 +23,7 @@ function faq_voting_timer_counter takes nothing returns nothing
         call PauseTimer(t)
         call DestroyTimer(t)
         if (IsFaqActive) then // If there are not enough votes
-            call faq_stop() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
+            call faq_stop.execute() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
         endif
     endif
 
@@ -55,7 +55,7 @@ function faq_ini takes nothing returns nothing
     set faq_buttons[1] = DialogAddButton(faq_dialog, "Нет", 0)
 
     static if DEBUG_MODE then
-        call faq_stop() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
+        call faq_stop.execute() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
     else
         call TimerStart(CreateTimer(), 1.00, true, function faq_voting_timer_counter) // Makes duration of voting visible in faq dialog's title
         call faq_voting_timer_counter() // First tick of timer

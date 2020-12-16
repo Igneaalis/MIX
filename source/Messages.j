@@ -38,7 +38,7 @@ function SetLeaveMessages takes nothing returns nothing
     call ForGroup(GetUnitsOfPlayerMatching(p, null), function OnLeave)
     call ForceRemovePlayerSimple( GetTriggerPlayer(), udg_players_group )
     if (p == udg_game_owner) then
-        call gameset_owner()
+        call gameset_owner.execute()
     endif
     call MultiboardSetItemValueBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetTriggerPlayer()) ), ( "|cFF9B9B9B" + udg_players_name[GetConvertedPlayerId(GetTriggerPlayer())] ) )
     call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetTriggerPlayer()) ), "ReplaceableTextures\\CommandButtonsDisabled\\DISBTNReplay-Loop.blp" )
