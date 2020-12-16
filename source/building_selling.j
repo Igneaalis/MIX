@@ -24,16 +24,16 @@ scope UnitDatabase
         private real gold_raw
         private real lumber_raw
 
-        static method create takes integer unitTypeId, integer gold, integer lumber, integer parentUnitTypeId returns UnitStruct
+        static method create takes integer unitTypeId, integer parentUnitTypeId returns UnitStruct
             local UnitStruct us = UnitStruct.allocate()
-            set us.gold_raw = gold * 0.8
-            set us.lumber_raw = lumber * 0.8
+            set us.gold_raw = GetUnitGoldCost(unitTypeId) * 0.8
+            set us.lumber_raw = GetUnitWoodCost(unitTypeId) * 0.8
             if (usarr[table[parentUnitTypeId]] != null) then
                 set us.gold = R2I(us.gold_raw + usarr[table[parentUnitTypeId]].GetGoldRaw())
                 set us.lumber = R2I(us.lumber_raw + usarr[table[parentUnitTypeId]].GetLumberRaw())
             else
-                set us.gold = IMaxBJ(R2I(gold * 0.8), 1)
-                set us.lumber = IMaxBJ(R2I(lumber * 0.8), 1)
+                set us.gold = IMaxBJ(R2I(GetUnitGoldCost(unitTypeId) * 0.8), 1)
+                set us.lumber = IMaxBJ(R2I(GetUnitWoodCost(unitTypeId) * 0.8), 1)
             endif
             set table[unitTypeId] = usarrcounter
             set usarr[usarrcounter] = us
@@ -132,89 +132,89 @@ function building_selling takes nothing returns nothing
     set udb = UnitDB.create()
 
     // ---------------------------------Альянс---------------------------------
-    call UnitStruct.create('h002', 97, 1, 0)        // Пехотинец
-    call UnitStruct.create('h004', 56, 1, 'h002')   // Мечник
-    call UnitStruct.create('h005', 146, 1, 'h004')  // Гвардеец
+    call UnitStruct.create('h002', 0)       // Пехотинец
+    call UnitStruct.create('h004', 'h002')  // Мечник
+    call UnitStruct.create('h005', 'h004')  // Гвардеец
 
-    call UnitStruct.create('h003', 144, 1, 0)       // Стрелок
-    call UnitStruct.create('h007', 60, 1, 'h003')   // Снайпер
-    call UnitStruct.create('h008', 203, 2, 'h007')  // Элитная лучница
+    call UnitStruct.create('h003', 0)       // Стрелок
+    call UnitStruct.create('h007', 'h003')  // Снайпер
+    call UnitStruct.create('h008', 'h007')  // Элитная лучница
 
-    call UnitStruct.create('h009', 174, 1, 0)       // Ученик
-    call UnitStruct.create('h00A', 82, 0, 'h009')   // Целитель
-    call UnitStruct.create('h00B', 72, 1, 'h00A')   // Высший целитель
+    call UnitStruct.create('h009', 0)       // Ученик
+    call UnitStruct.create('h00A', 'h009')  // Целитель
+    call UnitStruct.create('h00B', 'h00A')  // Высший целитель
 
-    call UnitStruct.create('h00C', 225, 4, 0)       // Рыцарь
-    call UnitStruct.create('h00E', 170, 6, 'h00C')  // Элитный рыцарь
-    call UnitStruct.create('h00F', 185, 7, 'h00E')  // Генерал
+    call UnitStruct.create('h00C', 0)       // Рыцарь
+    call UnitStruct.create('h00E', 'h00C')  // Элитный рыцарь
+    call UnitStruct.create('h00F', 'h00E')  // Генерал
 
-    call UnitStruct.create('h00J', 178, 2, 0)       // Волшебница
-    call UnitStruct.create('h00L', 60, 1, 'h00J')   // Магистр магии
-    call UnitStruct.create('h00N', 273, 8, 'h00L')  // Архимаг
+    call UnitStruct.create('h00J', 0)       // Волшебница
+    call UnitStruct.create('h00L', 'h00J')  // Магистр магии
+    call UnitStruct.create('h00N', 'h00L')  // Архимаг
 
-    call UnitStruct.create('h00P', 238, 3, 0)       // Наёмник
-    call UnitStruct.create('h00Q', 188, 4, 'h00P')  // Убийца
-    call UnitStruct.create('h00R', 146, 5, 'h00Q')  // Ассасин
+    call UnitStruct.create('h00P', 0)       // Наёмник
+    call UnitStruct.create('h00Q', 'h00P')  // Убийца
+    call UnitStruct.create('h00R', 'h00Q')  // Ассасин
 
-    call UnitStruct.create('h00U', 172, 5, 0)       // Вертолёт
-    call UnitStruct.create('h00V', 58, 5, 'h00U')   // Укреплённый вертолёт
-    call UnitStruct.create('h00W', 762, 5, 'h00V')  // Штурмовой вертолёт
+    call UnitStruct.create('h00U', 0)       // Вертолёт
+    call UnitStruct.create('h00V', 'h00U')  // Укреплённый вертолёт
+    call UnitStruct.create('h00W', 'h00V')  // Штурмовой вертолёт
 
-    call UnitStruct.create('h012', 168, 6, 0)       // Паровая машина
-    call UnitStruct.create('h013', 335, 6, 'h012')  // Мортира
-    call UnitStruct.create('h014', 707, 8, 'h013')  // Паровой танк
+    call UnitStruct.create('h012', 0)       // Паровая машина
+    call UnitStruct.create('h013', 'h012')  // Мортира
+    call UnitStruct.create('h014', 'h013')  // Паровой танк
 
     // ---------------------------------Нежить---------------------------------
 
-    call UnitStruct.create('h016', 217, 2, 0)       // Скелет
-    call UnitStruct.create('h017', 369, 4, 0)       // Скелет-лучник
-    call UnitStruct.create('h018', 341, 3, 0)       // Чумной зомби
-    call UnitStruct.create('h019', 977, 24, 0)      // Некромант
-    call UnitStruct.create('h01A', 555, 13, 0)      // Вурдалак
-    call UnitStruct.create('h01B', 479, 11, 0)      // Слуга неруба
-    call UnitStruct.create('h01C', 681, 18, 0)      // Мясник
-    call UnitStruct.create('h01D', 447, 10, 0)      // Банши
-    call UnitStruct.create('h01E', 1038, 11, 0)     // Рыцарь смерти
-    call UnitStruct.create('h01F', 1351, 15, 0)     // Ледяной змей
+    call UnitStruct.create('h016', 0)  // Скелет
+    call UnitStruct.create('h017', 0)  // Скелет-лучник
+    call UnitStruct.create('h018', 0)  // Чумной зомби
+    call UnitStruct.create('h019', 0)  // Некромант
+    call UnitStruct.create('h01A', 0)  // Вурдалак
+    call UnitStruct.create('h01B', 0)  // Слуга неруба
+    call UnitStruct.create('h01C', 0)  // Мясник
+    call UnitStruct.create('h01D', 0)  // Банши
+    call UnitStruct.create('h01E', 0)  // Рыцарь смерти
+    call UnitStruct.create('h01F', 0)  // Ледяной змей
 
     // ------------------------------Ночные эльфы------------------------------
 
-    call UnitStruct.create('h01H', 361, 4, 0)       // Охотница
-    call UnitStruct.create('h01I', 405, 4, 0)       // Лучница
-    call UnitStruct.create('h01J', 377, 4, 0)       // Дух
-    call UnitStruct.create('h01K', 551, 19, 0)      // Друид-ворон
-    call UnitStruct.create('h01L', 698, 24, 0)      // Дриада
-    call UnitStruct.create('h01M', 512, 18, 0)      // Лесной дракончик
-    call UnitStruct.create('h01N', 505, 17, 0)      // Друид-медведь
-    call UnitStruct.create('h01P', 817, 28, 0)      // Баллиста
-    call UnitStruct.create('h01Q', 888, 22, 0)      // Горный великан
-    call UnitStruct.create('h01R', 1160, 29, 0)     // Химера
+    call UnitStruct.create('h01H', 0)  // Охотница
+    call UnitStruct.create('h01I', 0)  // Лучница
+    call UnitStruct.create('h01J', 0)  // Дух
+    call UnitStruct.create('h01K', 0)  // Друид-ворон
+    call UnitStruct.create('h01L', 0)  // Дриада
+    call UnitStruct.create('h01M', 0)  // Лесной дракончик
+    call UnitStruct.create('h01N', 0)  // Друид-медведь
+    call UnitStruct.create('h01P', 0)  // Баллиста
+    call UnitStruct.create('h01Q', 0)  // Горный великан
+    call UnitStruct.create('h01R', 0)  // Химера
 
     // ----------------------------------Орда----------------------------------
 
-    call UnitStruct.create('h01S', 375, 3, 0)       // Бугай
-    call UnitStruct.create('h01T', 429, 4, 0)       // Охотник за головами
-    call UnitStruct.create('h01V', 401, 4, 0)       // Кодой
-    call UnitStruct.create('h01W', 752, 16, 0)      // Колдун
-    call UnitStruct.create('h01X', 547, 11, 0)      // Рейдер
-    call UnitStruct.create('h01Y', 773, 16, 0)      // Берсерк
-    call UnitStruct.create('h01Z', 668, 14, 0)      // Виверна
-    call UnitStruct.create('h020', 705, 15, 0)      // Шаман
-    call UnitStruct.create('h021', 1232, 12, 0)     // Минотавр
-    call UnitStruct.create('h022', 1950, 19, 0)     // Чёрный дракон
+    call UnitStruct.create('h01S', 0)  // Бугай
+    call UnitStruct.create('h01T', 0)  // Охотник за головами
+    call UnitStruct.create('h01V', 0)  // Кодой
+    call UnitStruct.create('h01W', 0)  // Колдун
+    call UnitStruct.create('h01X', 0)  // Рейдер
+    call UnitStruct.create('h01Y', 0)  // Берсерк
+    call UnitStruct.create('h01Z', 0)  // Виверна
+    call UnitStruct.create('h020', 0)  // Шаман
+    call UnitStruct.create('h021', 0)  // Минотавр
+    call UnitStruct.create('h022', 0)  // Чёрный дракон
 
     // ----------------------------------Наги----------------------------------
 
-    call UnitStruct.create('h026', 290, 1, 0)       // Нага воин
-    call UnitStruct.create('h027', 439, 2, 0)       // Морской дракон
-    call UnitStruct.create('h028', 284, 3, 0)       // Дух моря
-    call UnitStruct.create('h02A', 611, 15, 0)      // Нага-сирена
-    call UnitStruct.create('h02B', 537, 13, 0)      // Нага-гвардеец
-    call UnitStruct.create('h02C', 502, 12, 0)      // Великая черепаха
-    call UnitStruct.create('h02D', 1005, 24, 0)     // Коатль
-    call UnitStruct.create('h02E', 681, 17, 0)      // Заклинательница
-    call UnitStruct.create('h02F', 929, 10, 0)      // Морское чудовище
-    call UnitStruct.create('h02G', 1686, 18, 0)     // Высшая гидра
+    call UnitStruct.create('h026', 0)  // Нага воин
+    call UnitStruct.create('h027', 0)  // Морской дракон
+    call UnitStruct.create('h028', 0)  // Дух моря
+    call UnitStruct.create('h02A', 0)  // Нага-сирена
+    call UnitStruct.create('h02B', 0)  // Нага-гвардеец
+    call UnitStruct.create('h02C', 0)  // Великая черепаха
+    call UnitStruct.create('h02D', 0)  // Коатль
+    call UnitStruct.create('h02E', 0)  // Заклинательница
+    call UnitStruct.create('h02F', 0)  // Морское чудовище
+    call UnitStruct.create('h02G', 0)  // Высшая гидра
 
     set t = null
 endfunction
