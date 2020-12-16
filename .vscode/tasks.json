@@ -34,13 +34,14 @@
             "command": "${workspaceFolder}/tools/JassHelper/jasshelper.exe",
             "group": "build",
             "args": [
+                "--debug",
                 "${workspaceFolder}/tools/common.j",
                 "${workspaceFolder}/tools/Blizzard.j",
                 "${workspaceFolder}/output/war3map.j",
                 "${workspaceFolder}/output/MIX 0.0.2.w3x"
             ],
             "dependsOrder": "sequence",
-            "dependsOn": ["compile", "jasshelper debug"],
+            "dependsOn": ["compile"],
             "presentation": {
                 "echo": true,
                 "reveal": "always",
@@ -118,7 +119,7 @@
             }
         },
         {
-            "label": "Play",
+            "label": "WE",
             "type": "shell",
             "command": "D:/Games/Warcraft III/_retail_/x86_64/World Editor.exe",
             "group": "test",
@@ -139,7 +140,7 @@
             }
         },
         {
-            "label": "Play debug",
+            "label": "WE debug",
             "type": "shell",
             "command": "D:/Games/Warcraft III/_retail_/x86_64/World Editor.exe",
             "group": "test",
@@ -150,6 +151,56 @@
             ],
             "dependsOrder": "sequence",
             "dependsOn": ["Build debug"],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Play debug",
+            "type": "shell",
+            "command": "D:/Games/Warcraft III/_retail_/x86_64/Warcraft III.exe",
+            "group": "test",
+            "args": [
+                "-launch",
+                "-loadfile",
+                "${workspaceFolder}/output/MIX 0.0.2.w3x",
+                "-windowmode windowedfullscreen",
+                "-mapdiff 1",
+                "-testmapprofile Nokladr#2429",
+                "-fixedseed 1"
+            ],
+            "dependsOrder": "sequence",
+            "dependsOn": ["Build debug"],
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": false
+            }
+        },
+        {
+            "label": "Play",
+            "type": "shell",
+            "command": "D:/Games/Warcraft III/_retail_/x86_64/Warcraft III.exe",
+            "group": "test",
+            "args": [
+                "-launch",
+                "-loadfile",
+                "${workspaceFolder}/output/MIX 0.0.2.w3x",
+                "-windowmode windowedfullscreen",
+                "-mapdiff 1",
+                "-testmapprofile Nokladr",
+                "-fixedseed 0"
+            ],
+            "dependsOrder": "sequence",
+            "dependsOn": ["Build"],
             "presentation": {
                 "echo": true,
                 "reveal": "always",
