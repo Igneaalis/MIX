@@ -1,17 +1,4 @@
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     18.02.2016             =
-=============================================
-
-Библиотека общего назначения.
-
-*/
-
-library NokladrLib uses Colors
+library NokladrLib uses Colors, Logs, optional UnitRecycler  // Library by Nokladr https://github.com/Igneaalis/MIX
     globals
         integer array time[3] // time[0] - секунды, time[1] - минуты, time[2] - часы
     endglobals
@@ -21,16 +8,11 @@ library NokladrLib uses Colors
         debug call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, (RED + "Ошибка: " + s + "|r"))
     endfunction
 
-    // Лог сообщений
-    function Log takes string s returns nothing
-        debug call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, (GOLD + "Log:|r " + GREEN + s + "|r"))
-    endfunction
-
     // Устанавливает всем компьютерным игрокам соответствующее имя
     function C_SetComputers takes nothing returns nothing
         local integer i = 0
         loop
-            exitwhen (i > 14)
+            exitwhen (i > 27)
             if (GetPlayerController(Player(i)) == MAP_CONTROL_COMPUTER) then
                 call SetPlayerName(Player(i), "Компьютер")
                 call SetPlayerOnScoreScreen(Player(i), false)
@@ -125,7 +107,11 @@ library NokladrLib uses Colors
 
     // Удаляет выделенных юнитов
     function C_RemoveEnumUnits takes nothing returns nothing
-        call RemoveUnit(GetEnumUnit())
+        if LIBRARY_UnitRecycler then
+            call RemoveUnitEx(GetEnumUnit())
+        else
+            call RemoveUnit(GetEnumUnit())
+        endif
     endfunction
 
     // Добавляет золото игроку

@@ -28,27 +28,15 @@ function initialization_in_game_wave_mini_condition takes nothing returns boolea
     return true
 endfunction
 
-function not_IsUnitIn_id_group takes nothing returns boolean
-    return (not IsUnitInGroup(GetFilterUnit(), udg_id_group))
-endfunction
-
-function initialization_in_game_set_unit_id takes nothing returns nothing
-    // Opt. begin
-    set udg_id = udg_id + 1
-    call GroupAddUnit(udg_id_group, GetEnumUnit())
-    call SetUnitUserData(GetEnumUnit(), udg_id)
-    // Opt. end
-endfunction
-
 function initialization_in_game_players takes nothing returns nothing
     local player p = GetEnumPlayer()
     local real x = GetPlayerStartLocationX(p)
     local real y = GetPlayerStartLocationY(p)
+    
     call CameraSetupApplyForPlayer(true, gg_cam_logic, p, 0)
     if (GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING and GetPlayerController(p) == MAP_CONTROL_USER) then
         call SetPlayerState(p, PLAYER_STATE_GIVES_BOUNTY, 1)
         call ForceAddPlayer(udg_players_group, p)
-        // TODO: Нижние переменные надо перенести в pdb
         set udg_players_name[GetConvertedPlayerId(p)] = GetPlayerName(p)
         set udg_info[GetConvertedPlayerId(p)] = true
         set udg_income_gold[GetConvertedPlayerId(p)] = 240
@@ -56,9 +44,9 @@ function initialization_in_game_players takes nothing returns nothing
         set udg_leader_kf[GetConvertedPlayerId(p)] = 1.00
         set udg_leader_wins[GetConvertedPlayerId(p)] = 0
         set udg_changeSet[GetConvertedPlayerId(p)] = 3
-        call CreateUnit(p, 'ntav', x, y, bj_UNIT_FACING) // Таверна с расами на выбор
-        call CreateUnit(p, 'h001', x, y, bj_UNIT_FACING) // Юнит "Выбор героя"
-        call CreateUnit(p, 'h029', x, y, bj_UNIT_FACING) // Юнит "Не более 1 погодного эффекта в раунде"
+        call CreateUnitEx(p, 'ntav', x, y, bj_UNIT_FACING) // Таверна с расами на выбор
+        call CreateUnitEx(p, 'h001', x, y, bj_UNIT_FACING) // Юнит "Выбор героя"
+        call CreateUnitEx(p, 'h029', x, y, bj_UNIT_FACING) // Юнит "Не более 1 погодного эффекта в раунде"
         call AddGoldToPlayer(100, p) // Золото на выбор расы в таверне
         call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_all, true, false)) // Поле битвы
         call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_minersregion, true, false)) // Миниигра "Минёры"
@@ -80,6 +68,7 @@ function initialization_in_game takes nothing returns nothing
     set udg_const_point[0] = 3
     set udg_const_point[1] = 6
     set udg_gameset_time_first = 60.00 // Таймер начала до первой волны
+    
     // Что-то связанное с минииграми
     loop
         exitwhen i > udg_mini_game_max
@@ -87,7 +76,7 @@ function initialization_in_game takes nothing returns nothing
             // Если не миниигра с боссом, то
             set udg_random_log = false
             loop // Заполняем wave_mini[] рандомными, неповторяющимися числами (2, 4, 6, ..., 18) - волны, когда будут миниигры. mode = 1 (стандартный режим)
-                exitwhen (udg_random_log == true) // TODO: test
+                exitwhen udg_random_log
                 set udg_r = GetRandomInt(1, (udg_mini_game_max + 1)) // От 1 до 9 (кол-во миниигр)
                 if (initialization_in_game_wave_mini_condition()) then
                     set udg_random_log = true
@@ -96,15 +85,6 @@ function initialization_in_game takes nothing returns nothing
             endloop
         endif
         set i = i + 1
-    endloop
-    set udg_r = 0
-    set i = 1
-    loop
-        // Opt. begin
-        exitwhen i > CountUnitsInGroup(GetUnitsInRectAll(GetPlayableMapRect()))
-        call ForGroupBJ(GetUnitsInRectMatching(GetPlayableMapRect(), Condition(function not_IsUnitIn_id_group)), function initialization_in_game_set_unit_id)
-        set i = i + 1
-        // Opt. end
     endloop
     
     call ForForce(bj_FORCE_ALL_PLAYERS, function initialization_in_game_players)

@@ -1,17 +1,4 @@
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     02.11.2020 16:27       =
-=============================================
-
-Структуры данных.
-
-*/
-
-library MIXLib initializer MIXLibInit requires NokladrLib
+library MIXLib initializer MIXLibInit requires NokladrLib  // Library by Nokladr special for MIX Community https://github.com/Igneaalis/MIX
     globals
         Playerdb pdb
         private DB array dbarr[8]

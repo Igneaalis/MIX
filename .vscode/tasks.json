@@ -18,7 +18,7 @@
                 "${workspaceFolder}/output/MIX 0.0.2.w3x"
             ],
             "dependsOrder": "sequence",
-            "dependsOn": ["compile", "jasshelper"],
+            "dependsOn": ["compile"],
             "presentation": {
                 "echo": true,
                 "reveal": "always",
@@ -171,7 +171,7 @@
                 "${workspaceFolder}/output/MIX 0.0.2.w3x",
                 "-windowmode windowedfullscreen",
                 "-mapdiff 1",
-                "-testmapprofile Nokladr#2429",
+                "-testmapprofile Nokladr",
                 "-fixedseed 1"
             ],
             "dependsOrder": "sequence",

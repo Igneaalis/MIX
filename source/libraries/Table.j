@@ -1,65 +1,64 @@
-library Table /* made by Bribe, special thanks to Vexorian & Nestharus, version 4.1.0.1. http://www.hiveworkshop.com/threads/188084/
+library Table  // made by Bribe, special thanks to Vexorian & Nestharus, version 4.1.0.1. http://www.hiveworkshop.com/threads/188084/
    
-    One map, one hashtable. Welcome to NewTable 4.1.0.1
+    // One map, one hashtable. Welcome to NewTable 4.1.0.1
    
-    This newest iteration of Table introduces the new HashTable struct.
-    You can now instantiate HashTables which enables the use of large
-    parent and large child keys, just like a standard hashtable. Previously,
-    the user would have to instantiate a Table to do this on their own which -
-    while doable - is something the user should not have to do if I can add it
-    to this resource myself (especially if they are inexperienced).
+    // This newest iteration of Table introduces the new HashTable struct.
+    // You can now instantiate HashTables which enables the use of large
+    // parent and large child keys, just like a standard hashtable. Previously,
+    // the user would have to instantiate a Table to do this on their own which -
+    // while doable - is something the user should not have to do if I can add it
+    // to this resource myself (especially if they are inexperienced).
    
-    This library was originally called NewTable so it didn't conflict with
-    the API of Table by Vexorian. However, the damage is done and it's too
-    late to change the library name now. To help with damage control, I
-    have provided an extension library called TableBC, which bridges all
-    the functionality of Vexorian's Table except for 2-D string arrays &
-    the ".flush(integer)" method. I use ".flush()" to flush a child hash-
-    table, because I wanted the API in NewTable to reflect the API of real
-    hashtables (I thought this would be more intuitive).
+    // This library was originally called NewTable so it didn't conflict with
+    // the API of Table by Vexorian. However, the damage is done and it's too
+    // late to change the library name now. To help with damage control, I
+    // have provided an extension library called TableBC, which bridges all
+    // the functionality of Vexorian's Table except for 2-D string arrays &
+    // the ".flush(integer)" method. I use ".flush()" to flush a child hash-
+    // table, because I wanted the API in NewTable to reflect the API of real
+    // hashtables (I thought this would be more intuitive).
    
-    API
+    // API
    
-    ------------
-    struct Table
-    | static method create takes nothing returns Table
-    |     create a new Table
-    |    
-    | method destroy takes nothing returns nothing
-    |     destroy it
-    |    
-    | method flush takes nothing returns nothing
-    |     flush all stored values inside of it
-    |    
-    | method remove takes integer key returns nothing
-    |     remove the value at index "key"
-    |    
-    | method operator []= takes integer key, $TYPE$ value returns nothing
-    |     assign "value" to index "key"
-    |    
-    | method operator [] takes integer key returns $TYPE$
-    |     load the value at index "key"
-    |    
-    | method has takes integer key returns boolean
-    |     whether or not the key was assigned
-    |
-    ----------------
-    struct TableArray
-    | static method operator [] takes integer array_size returns TableArray
-    |     create a new array of Tables of size "array_size"
-    |
-    | method destroy takes nothing returns nothing
-    |     destroy it
-    |
-    | method flush takes nothing returns nothing
-    |     flush and destroy it
-    |
-    | method operator size takes nothing returns integer
-    |     returns the size of the TableArray
-    |
-    | method operator [] takes integer key returns Table
-    |     returns a Table accessible exclusively to index "key"
-*/
+    // ------------
+    // struct Table
+    // | static method create takes nothing returns Table
+    // |     create a new Table
+    // |    
+    // | method destroy takes nothing returns nothing
+    // |     destroy it
+    // |    
+    // | method flush takes nothing returns nothing
+    // |     flush all stored values inside of it
+    // |    
+    // | method remove takes integer key returns nothing
+    // |     remove the value at index "key"
+    // |    
+    // | method operator []= takes integer key, $TYPE$ value returns nothing
+    // |     assign "value" to index "key"
+    // |    
+    // | method operator [] takes integer key returns $TYPE$
+    // |     load the value at index "key"
+    // |    
+    // | method has takes integer key returns boolean
+    // |     whether or not the key was assigned
+    // |
+    // ----------------
+    // struct TableArray
+    // | static method operator [] takes integer array_size returns TableArray
+    // |     create a new array of Tables of size "array_size"
+    // |
+    // | method destroy takes nothing returns nothing
+    // |     destroy it
+    // |
+    // | method flush takes nothing returns nothing
+    // |     flush and destroy it
+    // |
+    // | method operator size takes nothing returns integer
+    // |     returns the size of the TableArray
+    // |
+    // | method operator [] takes integer key returns Table
+    // |     returns a Table accessible exclusively to index "key"
    
     globals
         private integer less = 0    //Index generation for TableArrays (below 0).

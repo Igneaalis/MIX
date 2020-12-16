@@ -14,9 +14,19 @@ Shows all available commands and settings.
 */
 
 function faq_start_timer_actions takes nothing returns nothing
-    call gameset_end()
-    call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 15, "|cFFFF0000Команда |cFFFFFFFF-info|r |cFFFF0000отключит сообщения о штрафах и мини-арене.|r")
     call DestroyTimerDialog(faq_timerdialog) // Destroys timer dialog for commands and settings
+    call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 15, "|cFFFF0000Команда |cFFFFFFFF-info|r |cFFFF0000отключит сообщения о штрафах и мини-арене.|r")
+
+    call DisableTrigger(gg_trg_cmd_time)
+    call DisableTrigger(gg_trg_cmd_build)
+    call DisableTrigger(gg_trg_cmd_mode)
+    call DisableTrigger(gg_trg_cmd_point)
+    call DisableTrigger(gg_trg_cmd_arena)
+    call ForceArena()
+    // call TriggerExecute( gg_trg_set_wave_start_main )
+    // call TriggerExecute( gg_trg_set_wave_timer )
+    // call TriggerExecute( gg_trg_set_wave_region_rotate )
+    // call TriggerExecute( gg_trg_set_wave_unit_spawn )
 endfunction
 
 function faq_start takes nothing returns nothing

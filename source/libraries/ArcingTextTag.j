@@ -1,7 +1,5 @@
 
-// Arcing Text Tag v1.0.0.3 by Maker
-
-library ArcingTextTag
+library ArcingTextTag  // Arcing Text Tag v1.0.0.3 by Maker https://www.hiveworkshop.com/threads/228710/
     globals
         private constant    real    SIZE_MIN        = 0.018         // Minimum size of text
         private constant    real    SIZE_BONUS      = 0.006         // Text size increase
@@ -28,7 +26,7 @@ library ArcingTextTag
         private static integer array next
         private static integer array prev
         private static integer array rn
-        private static integer ic           = 0       // Instance count  
+        private static integer ic = 0  // Instance count  
        
         private static method update takes nothing returns nothing
             local thistype this=next[0]

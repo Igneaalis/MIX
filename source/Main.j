@@ -201,11 +201,20 @@ scope Main initializer MainInit
         // inc colour Trigger
         call inc_colour()
 
+        // Fast Arena Init
+        call FastArenaInit()
+
+        // Arena Init
+        call ArenaInit()
+
+        // wave end timer Trigger
+        // call InitTrig_wave_end_timer()
+
         // For debug purposes
         call DebugInit()
 
         // Disable Damage Detection System until fast arena begins
-        // call DisableTrigger(DDS)
+        call DisableTrigger(DDS)
 
         call Log("post_map_init finished!")
         

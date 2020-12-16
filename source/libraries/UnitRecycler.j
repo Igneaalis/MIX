@@ -1,4 +1,4 @@
-library UnitRecycler initializer UnitRecyclerInit uses Colors, ArcingTextTag
+library UnitRecycler initializer UnitRecyclerInit uses Colors, ArcingTextTag, Logs  // https://wc3modding.info/4529/system-unit-recycler-simple-damage-detection-system/
     //******************************************************************************
     //*
     //* Unit Recycler
@@ -103,7 +103,7 @@ library UnitRecycler initializer UnitRecyclerInit uses Colors, ArcingTextTag
         private constant boolean  AUTO_LOC = false          // If it's set to true, it will place automatically the heaven in one
                                                             // non visible corner of the map, else, it will use the HEAVEN_POS
                                                             // as a heaven location
-        private constant player   DUMMY_PLAYER = Player(0)  // sets the player owner of the unit's heaven
+        private constant player   DUMMY_PLAYER = Player(0) // sets the player owner of the unit's heaven
         private constant real     MANA_FACTOR = 1           // sets the initial mana amount (as percentage of maximum mana)
                                                             // to recycled units when they are just placed in the game.
                                                             // This constant is used only by CreateUnitEx function.
@@ -361,6 +361,7 @@ library UnitRecycler initializer UnitRecyclerInit uses Colors, ArcingTextTag
             call Trigger.evaluate(u, null, null)
             call PrepareUnit(u)
             call MoveUnit(u)
+            // debug call Log("RemoveUnitEx: unit = " + GetUnitName(u))
         else
             call RemoveUnit(u)
         endif
@@ -435,6 +436,7 @@ library UnitRecycler initializer UnitRecyclerInit uses Colors, ArcingTextTag
     private function ShowDamage takes nothing returns boolean
         /*This function is added with the AddDamageCondition() function in order to add a script that manages
         the damaged units, in this case, it will show the damage received, just in the attack impact...*/
+        // debug call Log((GOLD + I2S(R2I(GetEventDamage())) + "|r"))
         call ArcingTextTag.create((GOLD + I2S(R2I(GetEventDamage())) + "|r"), GetTriggerUnit())
         return false
     endfunction

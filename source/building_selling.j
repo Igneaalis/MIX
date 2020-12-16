@@ -11,7 +11,7 @@
 
 */
 
-scope UDBLib
+scope UnitDatabase
     globals
         UnitDB udb
         private UnitStruct array usarr[128]
@@ -92,7 +92,7 @@ function building_selling_actions takes nothing returns nothing
     call SetTextTagFadepoint(tt, 1.30)
     call SetTextTagVelocity(tt, 0, 0.03)
 
-    set tt = NewTextTagAtUnit(GREEN + "+" + I2S(lumber), u, 0.00, 11.00)
+    set tt = NewTextTagAtUnit(VIOLET + "+" + I2S(lumber), u, 0.00, 11.00)
     call SetTextTagVisibility(tt, false)
     if (GetLocalPlayer() == p) then
         call SetTextTagVisibility(tt, true)
