@@ -2059,103 +2059,102 @@ library Table  // made by Bribe, special thanks to Vexorian & Nestharus, version
 
 endlibrary
 library UnitRecycler initializer UnitRecyclerInit uses Colors, ArcingTextTag, Logs  // https://wc3modding.info/4529/system-unit-recycler-simple-damage-detection-system/
-    //******************************************************************************
-    //*
-    //* Unit Recycler
-    //* By moyack. 2017
-    //*
-    //* ============================================================================
-    //* Credits to Litany, DioD, Captain Griffen, Troll Brain and other nice guys  *
-    //* for their suggestions, comments and ideas.                                 *
-    //* ============================================================================
-    //*
-    //* This library allows to your map to reuse died units, which saves memory.
-    //* It's very useful in AoS or footies games, where the unit spawning is a
-    //* common task.
-    //*
-    //* How it works?
-    //* =============
-    //*
-    //* The script detects if a unit reach the dying point (defined by the MIN_LIFE
-    //* constant), and if the damage can kill the unit, then it is sent to the dump
-    //* for further recycling. For custom situations like summoning or when a unit
-    //* enters to the map, you just have to use the functions provided by this 
-    //* library.
-    //*
-    //* Functions
-    //* =========
-    //* 
-    //* in order to recycle a unit, you can use these function:
-    //*
-    //*  => RecycleUnit(<unit variable>) returns unit
-    //*     -----------------------------------------
-    //*     This function takes as argument a unit, and returns the unit recycled.
-    //*     if there's a unit of the same typeid in the dump, it will use this unit
-    //*     instead of the one from the function input, removing it immediately, 
-    //*     otherwise this script will return the same unit.
-    //* 
-    //*  => CreateUnitEx(player, unitid, x, y, angle) returns unit
-    //*     ------------------------------------------------------
-    //*     Like the native function but tries to recycle the unit if avaliable in the dump
-    //*
-    //*  => KillUnitEx(<unit variable>) returns nothing
-    //*     -------------------------------------------
-    //*     Like the native function but it recycles the unit before killing it.
-    //*
-    //*  => RemoveUnitEx(<unit variable>) returns nothing
-    //*     ---------------------------------------------
-    //*     Like the native function but it recycles the unit.
-    //*
-    //*  => IsUnitDead(<unit variable>) returns boolean
-    //*     -------------------------------------------
-    //*     This function returns a boolean argument that indicates if the unit is dead or not.
-    //*     Remember that a unit is dead if it's in the Heaven group.
-    //*
-    //*  => ReplaceDummy(<unit variable>) returns unit
-    //*     -------------------------------------------
-    //*     This function returns a replacement unit without killing the output unit.
-    //*
-    //*  => CreateDummy(player, unitid, x, y, angle) returns unit
-    //*     ------------------------------------------------------
-    //*     Like the CreateUnit function but the returned unit won't be affected by the damage
-    //*     detection nor will be recycled automatically
-    //*
-    //*  => TriggerRegisterAnyUnitRecycleEvent(trigger t) returns nothing
-    //*     -------------------------------------------------------------
-    //*     All the trigger registered in this way will activate when a unit is about to be recycled
-    //*     (in other words, it triggers before it dies). You can use this functions to retrieve the
-    //*     the units involved in this event:
-    //*
-    //*      # GetRecycledUnit() returns the units that is going to be recycled
-    //*      # GetRecycleDummyUnit() returns the dummy unit which will die instead of the recycled unit
-    //*      # GetRecycleAttacker() returns the unit that "kills" the recycled unit
-    //*
-    //*  => IsUnitDummy(unit u) returns boolean
-    //*     -----------------------------------
-    //*     Checks if a unit can be recycled or not. Dummy units are not recycled, they're used as 
-    //*     placeholder of the unit about to die...
-    //*
-    //*  => GetUnitsInHeaven() returns group 
-    //*     --------------------------------
-    //*     Returns the group which contains the units in the heaven. Useful to do checks and
-    //*     operations on them.
-    //*
-    //*
-    //* For Damage detection, you just need to use these functions:
-    //*
-    //*  => AddDamageCondition(<Boolexpr variable>) returns nothing
-    //*     -------------------------------------------------------
-    //*     Just add a condition function which manage the damaged unit and the script
-    //*     will use it with all the the units in the DD.D group.
-    //*
-    //*  => DoNonDetectableDamage(unit, widget, damage, boolean_attack, boolean_ranged, attacktype, damagetype, weapontype) returns boolean
-    //*     -------------------------------------------------------------------------------------------------------------------------------
-    //*     Like the UnitDamageTarget function, but it can be used inside condition functions.
-    //*     How to know if you need to use it? if you use UnitDamageTarget() inside a DD function and 
-    //*     it freezes the game until it kills the attacked unit(s), then you have to replace that
-    //*     function by this custom one.
-    //********************************************************************************
-    //* CONFIGURATION PART
+    //
+    // Unit Recycler
+    // By moyack. 2017
+    //
+    // ============================================================================
+    // Credits to Litany, DioD, Captain Griffen, Troll Brain and other nice guys  
+    // for their suggestions, comments and ideas.                                 
+    // ============================================================================
+    //
+    // This library allows to your map to reuse died units, which saves memory.
+    // It's very useful in AoS or footies games, where the unit spawning is a
+    // common task.
+    //
+    // How it works?
+    // =============
+    //
+    // The script detects if a unit reach the dying point (defined by the MIN_LIFE
+    // constant), and if the damage can kill the unit, then it is sent to the dump
+    // for further recycling. For custom situations like summoning or when a unit
+    // enters to the map, you just have to use the functions provided by this 
+    // library.
+    //
+    // Functions
+    // =========
+    // 
+    // in order to recycle a unit, you can use these function:
+    //
+    //  => RecycleUnit(<unit variable>) returns unit
+    //     -----------------------------------------
+    //     This function takes as argument a unit, and returns the unit recycled.
+    //     if there's a unit of the same typeid in the dump, it will use this unit
+    //     instead of the one from the function input, removing it immediately, 
+    //     otherwise this script will return the same unit.
+    // 
+    //  => CreateUnitEx(player, unitid, x, y, angle) returns unit
+    //     ------------------------------------------------------
+    //     Like the native function but tries to recycle the unit if avaliable in the dump
+    //
+    //  => KillUnitEx(<unit variable>) returns nothing
+    //     -------------------------------------------
+    //     Like the native function but it recycles the unit before killing it.
+    //
+    //  => RemoveUnitEx(<unit variable>) returns nothing
+    //     ---------------------------------------------
+    //     Like the native function but it recycles the unit.
+    //
+    //  => IsUnitDead(<unit variable>) returns boolean
+    //     -------------------------------------------
+    //     This function returns a boolean argument that indicates if the unit is dead or not.
+    //     Remember that a unit is dead if it's in the Heaven group.
+    //
+    //  => ReplaceDummy(<unit variable>) returns unit
+    //     -------------------------------------------
+    //     This function returns a replacement unit without killing the output unit.
+    //
+    //  => CreateDummy(player, unitid, x, y, angle) returns unit
+    //     ------------------------------------------------------
+    //     Like the CreateUnit function but the returned unit won't be affected by the damage
+    //     detection nor will be recycled automatically
+    //
+    //  => TriggerRegisterAnyUnitRecycleEvent(trigger t) returns nothing
+    //     -------------------------------------------------------------
+    //     All the trigger registered in this way will activate when a unit is about to be recycled
+    //     (in other words, it triggers before it dies). You can use this functions to retrieve the
+    //     the units involved in this event:
+    //
+    //      # GetRecycledUnit() returns the units that is going to be recycled
+    //      # GetRecycleDummyUnit() returns the dummy unit which will die instead of the recycled unit
+    //      # GetRecycleAttacker() returns the unit that "kills" the recycled unit
+    //
+    //  => IsUnitDummy(unit u) returns boolean
+    //     -----------------------------------
+    //     Checks if a unit can be recycled or not. Dummy units are not recycled, they're used as 
+    //     placeholder of the unit about to die...
+    //
+    //  => GetUnitsInHeaven() returns group 
+    //     --------------------------------
+    //     Returns the group which contains the units in the heaven. Useful to do checks and
+    //     operations on them.
+    //
+    //
+    // For Damage detection, you just need to use these functions:
+    //
+    //  => AddDamageCondition(<Boolexpr variable>) returns nothing
+    //     -------------------------------------------------------
+    //     Just add a condition function which manage the damaged unit and the script
+    //     will use it with all the the units in the DD.D group.
+    //
+    //  => DoNonDetectableDamage(unit, widget, damage, boolean_attack, boolean_ranged, attacktype, damagetype, weapontype) returns boolean
+    //     -------------------------------------------------------------------------------------------------------------------------------
+    //     Like the UnitDamageTarget function, but it can be used inside condition functions.
+    //     How to know if you need to use it? if you use UnitDamageTarget() inside a DD function and 
+    //     it freezes the game until it kills the attacked unit(s), then you have to replace that
+    //     function by this custom one.
+    //
+    // CONFIGURATION PART
     globals
         private constant real     MIN_LIFE = 0.405          // the experimental death value that will be used to activate
                                                             // the fake death of units. units that reach this value or less
@@ -2172,7 +2171,7 @@ library UnitRecycler initializer UnitRecyclerInit uses Colors, ArcingTextTag, Lo
 
         trigger DDS
     endglobals
-    //* END CONFIGURATION PART
+    // END CONFIGURATION PART
     
     globals
         private group Heaven // where worthy units go when they die...
@@ -2375,9 +2374,9 @@ library UnitRecycler initializer UnitRecyclerInit uses Colors, ArcingTextTag, Lo
         endmethod
     endstruct
     
-    //*====================
-    //* User functions... *
-    //*====================
+    //===================
+    // User functions... 
+    //===================
     function RecycleUnit takes unit u returns unit
         return UR.UseRecycled(u)
     endfunction
@@ -2494,8 +2493,8 @@ library UnitRecycler initializer UnitRecyclerInit uses Colors, ArcingTextTag, Lo
     endfunction
 
     private function ShowDamage takes nothing returns boolean
-        /*This function is added with the AddDamageCondition() function in order to add a script that manages
-        the damaged units, in this case, it will show the damage received, just in the attack impact...*/
+        // This function is added with the AddDamageCondition() function in order to add a script that manages
+        // the damaged units, in this case, it will show the damage received, just in the attack impact...
         // debug call Log((GOLD + I2S(R2I(GetEventDamage())) + "|r"))
         call ArcingTextTag.create((GOLD + I2S(R2I(GetEventDamage())) + "|r"), GetTriggerUnit())
         return false

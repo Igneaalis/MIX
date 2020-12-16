@@ -31,7 +31,7 @@
         {
             "label": "Build debug",
             "type": "shell",
-            "command": "${workspaceFolder}/tools/JassHelper/jasshelper.exe",
+            "command": "${workspaceFolder}/tools/JassHelper/clijasshelper.exe",
             "group": "build",
             "args": [
                 "--debug",
