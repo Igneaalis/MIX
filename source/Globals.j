@@ -21,7 +21,7 @@ globals
     constant string strDiscord = (LB + "! ! Nokladr|r" + GOLD + "#|r" + LB + "2205|r")          // Discord тэг
     constant string strBuild_Time = "13 December 2020"                                          // Время создания билда карты
 
-    debug constant real timeBeforeFirstWave = 10.00                                             // Время перед началом первой волны
+    debug constant real debugTimeBeforeFirstWave = 20.00                                        // Время перед началом первой волны
 
     leaderboard Leaderboard                                                                     // Таблица лидеров
 

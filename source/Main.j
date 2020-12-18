@@ -11,6 +11,9 @@
 
 */
 
+native GetUnitGoldCost takes integer unitid returns integer
+native GetUnitWoodCost takes integer unitid returns integer
+
 scope Main initializer MainInit
   
     function map_init takes nothing returns nothing

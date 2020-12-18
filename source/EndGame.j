@@ -11,9 +11,6 @@
 
 */
 
-function defeat_clear takes nothing returns nothing
-    call RemoveUnit(GetEnumUnit())
-endfunction
 
 function defeat_quit takes nothing returns nothing
     call EndGame(true)

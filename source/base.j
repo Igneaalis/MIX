@@ -1025,8 +1025,7 @@ endfunction
 //*  Custom Script Code
 //*
 //***************************************************************************
-native GetUnitGoldCost takes integer unitid returns integer
-native GetUnitWoodCost takes integer unitid returns integer
+
 //***************************************************************************
 //*
 //*  Triggers

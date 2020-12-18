@@ -68,6 +68,7 @@ function initialization_in_game takes nothing returns nothing
     set udg_const_point[0] = 3
     set udg_const_point[1] = 6
     set udg_gameset_time_first = 60.00 // Таймер начала до первой волны
+    debug set udg_gameset_time_first = debugTimeBeforeFirstWave
     
     // Что-то связанное с минииграми
     loop

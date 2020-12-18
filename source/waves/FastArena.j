@@ -1,5 +1,5 @@
 globals
-    constant integer FA_ArraySize = 28
+    constant integer FA_ArraySize = 8
     group array FA_unitGroup[FA_ArraySize]
     integer array FA_unitsInGroup[FA_ArraySize]
     real array FA_DamageByPlayer[FA_ArraySize]
@@ -153,6 +153,15 @@ function ForceFastArena takes nothing returns nothing
     local group g_tmp
     local timer t = CreateTimer()
 
+    // IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == true
+    // IsUnitType(GetFilterUnit(), UNIT_TYPE_SAPPER) == true
+    // call ForGroup(GetUnitsInRectMatching(gg_rct_all, Condition(function Trig_wave_end_timer_Func011Func001001002)), function C_RemoveEnumUnits)
+    // call DisableTrigger(gg_trg_wave_castle_destr)
+    // call DisableTrigger(gg_trg_inc_per_second)
+    
+    call FastArena_Flush()
+    call PanCameraToTimed(GetRectCenterX(gg_rct_fastarena), GetRectCenterY(gg_rct_fastarena), 0)
+
     set i = 1
     loop
         exitwhen i > 4
@@ -195,15 +204,6 @@ function ForceFastArena takes nothing returns nothing
         endif
         set i = i + 1
     endloop
-
-    // IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == true
-    // IsUnitType(GetFilterUnit(), UNIT_TYPE_SAPPER) == true
-    // call ForGroup(GetUnitsInRectMatching(gg_rct_all, Condition(function Trig_wave_end_timer_Func011Func001001002)), function C_RemoveEnumUnits)
-    // call DisableTrigger(gg_trg_wave_castle_destr)
-    // call DisableTrigger(gg_trg_inc_per_second)
-    
-    call PanCameraToTimed(GetRectCenterX(gg_rct_fastarena), GetRectCenterY(gg_rct_fastarena), 0)
-    call FastArena_Flush()
     
     set g_tmp = GetUnitsInRectMatching(gg_rct_all, Condition(function FastArena_Condition))
     call ForGroup(GetUnitsInRectMatching(gg_rct_all, Condition(function FastArena_Condition)),function FastArena_RemoveUnits)

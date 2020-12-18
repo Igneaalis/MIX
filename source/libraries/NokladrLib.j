@@ -107,7 +107,7 @@ library NokladrLib uses Colors, Logs, optional UnitRecycler  // Library by Nokla
 
     // Удаляет выделенных юнитов
     function C_RemoveEnumUnits takes nothing returns nothing
-        if LIBRARY_UnitRecycler then
+        static if LIBRARY_UnitRecycler then
             call RemoveUnitEx(GetEnumUnit())
         else
             call RemoveUnit(GetEnumUnit())

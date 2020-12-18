@@ -200,7 +200,6 @@ function faq_start_timer_actions takes nothing returns nothing
 endfunction
 
 function faq_start takes nothing returns nothing
-    debug set udg_gameset_time_first = timeBeforeFirstWave
     call TimerStart(udg_gameset_timer, udg_gameset_time_first, false, function faq_start_timer_actions) // After settings were set
 
     set faq_timerdialog = CreateTimerDialog(udg_gameset_timer) // Timer dialog in upper-left corner for commands and settings
@@ -1505,7 +1504,7 @@ library NokladrLib uses Colors, Logs, optional UnitRecycler  // Library by Nokla
 
     // Удаляет выделенных юнитов
     function C_RemoveEnumUnits takes nothing returns nothing
-        if LIBRARY_UnitRecycler then
+        static if LIBRARY_UnitRecycler then
             call RemoveUnitEx(GetEnumUnit())
         else
             call RemoveUnit(GetEnumUnit())
@@ -2633,7 +2632,7 @@ function ArenaInit takes nothing returns nothing
     set Arena_RectList[7] = gg_rct_start8
 endfunction
 globals
-    constant integer FA_ArraySize = 28
+    constant integer FA_ArraySize = 8
     group array FA_unitGroup[FA_ArraySize]
     integer array FA_unitsInGroup[FA_ArraySize]
     real array FA_DamageByPlayer[FA_ArraySize]
@@ -2787,6 +2786,15 @@ function ForceFastArena takes nothing returns nothing
     local group g_tmp
     local timer t = CreateTimer()
 
+    // IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == true
+    // IsUnitType(GetFilterUnit(), UNIT_TYPE_SAPPER) == true
+    // call ForGroup(GetUnitsInRectMatching(gg_rct_all, Condition(function Trig_wave_end_timer_Func011Func001001002)), function C_RemoveEnumUnits)
+    // call DisableTrigger(gg_trg_wave_castle_destr)
+    // call DisableTrigger(gg_trg_inc_per_second)
+    
+    call FastArena_Flush()
+    call PanCameraToTimed(GetRectCenterX(gg_rct_fastarena), GetRectCenterY(gg_rct_fastarena), 0)
+
     set i = 1
     loop
         exitwhen i > 4
@@ -2829,15 +2837,6 @@ function ForceFastArena takes nothing returns nothing
         endif
         set i = i + 1
     endloop
-
-    // IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == true
-    // IsUnitType(GetFilterUnit(), UNIT_TYPE_SAPPER) == true
-    // call ForGroup(GetUnitsInRectMatching(gg_rct_all, Condition(function Trig_wave_end_timer_Func011Func001001002)), function C_RemoveEnumUnits)
-    // call DisableTrigger(gg_trg_wave_castle_destr)
-    // call DisableTrigger(gg_trg_inc_per_second)
-    
-    call PanCameraToTimed(GetRectCenterX(gg_rct_fastarena), GetRectCenterY(gg_rct_fastarena), 0)
-    call FastArena_Flush()
     
     set g_tmp = GetUnitsInRectMatching(gg_rct_all, Condition(function FastArena_Condition))
     call ForGroup(GetUnitsInRectMatching(gg_rct_all, Condition(function FastArena_Condition)),function FastArena_RemoveUnits)
@@ -3295,9 +3294,6 @@ endfunction
 
 */
 
-function defeat_clear takes nothing returns nothing
-    call RemoveUnit(GetEnumUnit())
-endfunction
 
 function defeat_quit takes nothing returns nothing
     call EndGame(true)
@@ -3435,7 +3431,7 @@ globals
     constant string strDiscord = (LB + "! ! Nokladr|r" + GOLD + "#|r" + LB + "2205|r")          // Discord тэг
     constant string strBuild_Time = "13 December 2020"                                          // Время создания билда карты
 
-    debug constant real timeBeforeFirstWave = 10.00                                             // Время перед началом первой волны
+    debug constant real debugTimeBeforeFirstWave = 20.00                                        // Время перед началом первой волны
 
     leaderboard Leaderboard                                                                     // Таблица лидеров
 
@@ -3612,6 +3608,7 @@ function initialization_in_game takes nothing returns nothing
     set udg_const_point[0] = 3
     set udg_const_point[1] = 6
     set udg_gameset_time_first = 60.00 // Таймер начала до первой волны
+    debug set udg_gameset_time_first = debugTimeBeforeFirstWave
     
     // Что-то связанное с минииграми
     loop
@@ -3704,6 +3701,9 @@ endfunction
 Главный и входной интерфейс карты.
 
 */
+
+native GetUnitGoldCost takes integer unitid returns integer
+native GetUnitWoodCost takes integer unitid returns integer
 
 scope Main initializer MainInit
   
@@ -5017,8 +5017,7 @@ endfunction
 //*  Custom Script Code
 //*
 //***************************************************************************
-native GetUnitGoldCost takes integer unitid returns integer
-native GetUnitWoodCost takes integer unitid returns integer
+
 //***************************************************************************
 //*
 //*  Triggers
