@@ -1,7 +1,7 @@
 # MIX Warcraft 3 custom map
 
 - [MIX Warcraft 3 custom map](#mix-warcraft-3-custom-map)
-  - [Версия](#версия)
+  - [Скачать](#скачать)
   - [Discord](#discord)
   - [ТЗ](#тз)
     - [GitHub](#github)
@@ -16,9 +16,9 @@
     - [Ревьюеры](#ревьюеры)
     - [Менторы](#менторы)
 
-## Версия
+## Скачать
 
-- Текущая версия карты: 0.0.1 (Семантическое версионирование)
+[Скачать последнюю версию](https://github.com/Igneaalis/MIX/releases/latest)
 
 ## Discord
 
