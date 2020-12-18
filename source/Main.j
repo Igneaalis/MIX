@@ -180,9 +180,6 @@ scope Main initializer MainInit
 
     function post_map_init takes nothing returns nothing
 
-        // Сообщения в чате
-        call SetMessagesInit.execute()
-
         // initialization in game Trigger
         call initialization_in_game.execute()
 
