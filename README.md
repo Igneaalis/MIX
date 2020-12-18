@@ -18,7 +18,7 @@
 
 ## Скачать
 
-[Скачать последнюю версию](https://github.com/Igneaalis/MIX/releases/latest)
+- [Скачать последнюю версию](https://github.com/Igneaalis/MIX/releases/latest)
 
 ## Discord
 
