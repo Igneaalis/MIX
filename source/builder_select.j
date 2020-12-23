@@ -13,122 +13,129 @@ builder select Trigger
 
 */
 
-globals
-    integer array peonsId[12]
-endglobals
+scope BuilderSelect initializer builder_select
 
-function builder_select_IsDummy takes nothing returns boolean
-    return (GetUnitTypeId(GetFilterUnit()) == 'h001') or (GetUnitTypeId(GetFilterUnit()) == 'ntav')
-endfunction
+    globals
+        integer array peonsId[12]
+        debug constant integer debugGold = 12000
+        debug constant integer debugGems = 12000
+    endglobals
 
-function builder_select_actions takes nothing returns nothing
-    local unit peon
-    local player owner_of_peon
-    local group group_of_dummies
-    local real x
-    local real y
-    local integer peonId
+    function builder_select_IsDummy takes nothing returns boolean
+        return (GetUnitTypeId(GetFilterUnit()) == 'h001') or (GetUnitTypeId(GetFilterUnit()) == 'ntav')
+    endfunction
 
-    local integer column
-    local integer row
-    local multiboarditem mbitem
-    local string iconFileName
+    function builder_select_actions takes nothing returns nothing
+        local unit peon
+        local player owner_of_peon
+        local group group_of_dummies
+        local real x
+        local real y
+        local integer peonId
 
-    if not IsUnitType(GetSoldUnit(), UNIT_TYPE_PEON) then
+        local integer column
+        local integer row
+        local multiboarditem mbitem
+        local string iconFileName
+
+        if not IsUnitType(GetSoldUnit(), UNIT_TYPE_PEON) then
+            set peon = null
+            set owner_of_peon = null
+            set group_of_dummies = null
+            set mbitem = null
+            set iconFileName = null
+            return
+        endif
+
+        set peon = GetSoldUnit()
+        set owner_of_peon = GetTriggerPlayer()
+        set group_of_dummies = GetUnitsOfPlayerMatching(owner_of_peon, Condition(function builder_select_IsDummy))
+        set x = GetPlayerStartLocationX(owner_of_peon)
+        set y = GetPlayerStartLocationY(owner_of_peon)
+        set peonId = GetUnitTypeId(peon)
+
+        set column = 0
+        set row = GetPlayerId(owner_of_peon) + 1
+        set mbitem = MultiboardGetItem(udg_scoreboard, row, column)
+
+        call SelectUnitForPlayerSingle(peon, owner_of_peon) // Selects peon for player
+        call ForGroup(group_of_dummies, function C_RemoveEnumUnits) // Remove dummies
+
+        call CreateUnit(owner_of_peon, 'hbla', x, y, bj_UNIT_FACING) // Юнит "Замок"
+        call CreateUnit(owner_of_peon, 'hwtw', x-450, y+640, bj_UNIT_FACING) // Юнит "Улучшения"
+        call SetUnitPosition(peon, x, y-250) // Peon's position
+        call SetUnitFacing(peon, bj_UNIT_FACING) // Peon's facing
+        call PanCameraToForPlayer(owner_of_peon, x, y)
+
+        if (peonId == peonsId[0]) then
+            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNPeasant.blp"
+            call SetPlayerTechResearched(owner_of_peon, 'R02G', 1) // Улучшение "Играть за людей"
+        elseif (peonId == peonsId[1]) then
+            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNAcolyte.blp"
+        elseif (peonId == peonsId[2]) then
+            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNWisp.blp"
+            call SetPlayerTechResearched(owner_of_peon, 'R00H', 2) // Улучшение "Драгоценные камни"
+            call SetPlayerTechResearched(owner_of_peon, 'R02F', 1) // Улучшение "Играть за эльфов"
+            set udg_scoreboard_upg[row] = 2
+        elseif (peonId == peonsId[3]) then
+            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNPeon.blp"
+            call AddGoldToPlayer(150, owner_of_peon)
+            call SetPlayerTechResearched(owner_of_peon, 'R00H', 1) // Улучшение "Играть за орду"
+        elseif (peonId == peonsId[4]) then
+            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNMurgalSlave.blp"
+        elseif (peonId == peonsId[5]) then
+            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNMedivh.blp"
+            set udg_mediv = owner_of_peon
+            call TriggerExecute(gg_trg_mediv_select)
+        endif
+
+        call MultiboardSetItemIcon(mbitem, iconFileName)
+        call MultiboardReleaseItem(mbitem)
+
+        static if DEBUG_MODE then
+            call AddGoldToPlayer(debugGold, owner_of_peon)
+            call AddLumberToPlayer(debugGems, owner_of_peon)
+            call SetPlayerTechResearched(owner_of_peon, 'R018', 1) // Улучшение "12 исследований"
+            call SetPlayerTechResearched(owner_of_peon, 'R019', 1) // Улучшение "20 исследований"
+            else
+            call AddGoldToPlayer(base_gold, owner_of_peon) // Check Globals.j
+            call AddLumberToPlayer(base_gems, owner_of_peon) // Check Globals.j
+        endif
+
         set peon = null
         set owner_of_peon = null
+        call DestroyGroup(group_of_dummies)
         set group_of_dummies = null
         set mbitem = null
         set iconFileName = null
-        return
-    endif
+    endfunction
 
-    set peon = GetSoldUnit()
-    set owner_of_peon = GetTriggerPlayer()
-    set group_of_dummies = GetUnitsOfPlayerMatching(owner_of_peon, Condition(function builder_select_IsDummy))
-    set x = GetPlayerStartLocationX(owner_of_peon)
-    set y = GetPlayerStartLocationY(owner_of_peon)
-    set peonId = GetUnitTypeId(peon)
+    //===========================================================================
+    function builder_select takes nothing returns nothing
+        local trigger t = CreateTrigger()
 
-    set column = 0
-    set row = GetPlayerId(owner_of_peon) + 1
-    set mbitem = MultiboardGetItem(udg_scoreboard, row, column)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerAddAction(t, function builder_select_actions)
 
-    call SelectUnitForPlayerSingle(peon, owner_of_peon) // Selects peon for player
-    call ForGroup(group_of_dummies, function C_RemoveEnumUnits) // Remove dummies
-    static if DEBUG_MODE then
-        call AddGoldToPlayer(100000, owner_of_peon)
-        call AddLumberToPlayer(100000, owner_of_peon)
-        call SetPlayerTechResearched(owner_of_peon, 'R018', 1) // Улучшение "12 исследований"
-        call SetPlayerTechResearched(owner_of_peon, 'R019', 1) // Улучшение "20 исследований"
-        else
-        call AddGoldToPlayer(base_gold, owner_of_peon) // Check Globals.j
-        call AddLumberToPlayer(base_gems, owner_of_peon) // Check Globals.j
-    endif
-    call CreateUnit(owner_of_peon, 'hbla', x, y, bj_UNIT_FACING) // Юнит "Замок"
-    call CreateUnit(owner_of_peon, 'hwtw', x-450, y+640, bj_UNIT_FACING) // Юнит "Улучшения"
-    call SetUnitPosition(peon, x, y-250) // Peon's position
-    call SetUnitFacing(peon, bj_UNIT_FACING) // Peon's facing
-    call PanCameraToForPlayer(owner_of_peon, x, y)
+        set peonsId[0] = 'h02I' // Работник
+        set peonsId[1] = 'h015' // Послушник
+        set peonsId[2] = 'h01G' // Светлячок
+        set peonsId[3] = 'h01U' // Раб
+        set peonsId[4] = 'h025' // Маргол-раб
+        set peonsId[5] = 'h02H' // Медив
 
-    if (peonId == peonsId[0]) then
-        set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNPeasant.blp"
-        call SetPlayerTechResearched(owner_of_peon, 'R02G', 1) // Улучшение "Играть за людей"
-    elseif (peonId == peonsId[1]) then
-        set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNAcolyte.blp"
-    elseif (peonId == peonsId[2]) then
-        set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNWisp.blp"
-        call SetPlayerTechResearched(owner_of_peon, 'R00H', 2) // Улучшение "Драгоценные камни"
-        call SetPlayerTechResearched(owner_of_peon, 'R02F', 1) // Улучшение "Играть за эльфов"
-        set udg_scoreboard_upg[row] = 2
-    elseif (peonId == peonsId[3]) then
-        set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNPeon.blp"
-        call AddGoldToPlayer(150, owner_of_peon)
-        call SetPlayerTechResearched(owner_of_peon, 'R00H', 1) // Улучшение "Играть за орду"
-    elseif (peonId == peonsId[4]) then
-        set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNMurgalSlave.blp"
-    elseif (peonId == peonsId[5]) then
-        set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNMedivh.blp"
-        set udg_mediv = owner_of_peon
-        call TriggerExecute(gg_trg_mediv_select)
-    endif
+        set t = null
+    endfunction
 
-    call MultiboardSetItemIcon(mbitem, iconFileName)
-    call MultiboardReleaseItem(mbitem)
-
-    set peon = null
-    set owner_of_peon = null
-    call DestroyGroup(group_of_dummies)
-    set group_of_dummies = null
-    set mbitem = null
-    set iconFileName = null
-endfunction
-
-//===========================================================================
-function builder_select takes nothing returns nothing
-    local trigger t = CreateTrigger()
-
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerAddAction(t, function builder_select_actions)
-
-    set peonsId[0] = 'h02I' // Работник
-    set peonsId[1] = 'h015' // Послушник
-    set peonsId[2] = 'h01G' // Светлячок
-    set peonsId[3] = 'h01U' // Раб
-    set peonsId[4] = 'h025' // Маргол-раб
-    set peonsId[5] = 'h02H' // Медив
-
-    set t = null
-endfunction
-
+endscope

@@ -67,43 +67,46 @@ Voting for viewing faq guide.
 
 */
 
-function faq_active_condition takes nothing returns boolean
-    // Disables faq_counter() and faq_active() if false
-    return IsFaqActive
-endfunction
+scope FaqActive initializer faq_active_init
 
-function faq_active takes nothing returns nothing
-    if (GetClickedButton() == faq_buttons[0]) then // Кнопка "Да"
-        set faq_vote_yes = faq_vote_yes + 1 // Голосов "За"
-        call SetTextTagText(faq_tts[2], I2S(faq_vote_yes), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "За"
-        if (faq_vote_yes >= (CountPlayersInForceBJ(udg_players_group) / 2)) then // Если голосов "За" 1/1, 1/2, 1/3, 2/4, 2/5, 3/6, 3/7, 4/8 
-            set IsFaqActive = false // Disables faq_counter() and faq_active()
-            call faq_flush.execute() // Destroys all texttags, hides faq_dialog, reveals map
-            call TriggerExecute(gg_trg_faq) // Enables faq guide
-            call TriggerSleepAction(51.8) // Duration of faq guide
-            call ForForce(udg_players_group, function faq_get_castle) // Focuses camera at castle you own
-            call faq_start.execute() // Commands and settings
+    function faq_active_condition takes nothing returns boolean
+        // Disables faq_counter() and faq_active() if false
+        return IsFaqActive
+    endfunction
+
+    function faq_active takes nothing returns nothing
+        if (GetClickedButton() == faq_buttons[0]) then // Кнопка "Да"
+            set faq_vote_yes = faq_vote_yes + 1 // Голосов "За"
+            call SetTextTagText(faq_tts[2], I2S(faq_vote_yes), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "За"
+            if (faq_vote_yes >= (CountPlayersInForceBJ(udg_players_group) / 2)) then // Если голосов "За" 1/1, 1/2, 1/3, 2/4, 2/5, 3/6, 3/7, 4/8 
+                set IsFaqActive = false // Disables faq_counter() and faq_active()
+                call faq_flush.execute() // Destroys all texttags, hides faq_dialog, reveals map
+                call TriggerExecute(gg_trg_faq) // Enables faq guide
+                call TriggerSleepAction(51.8) // Duration of faq guide
+                call ForForce(udg_players_group, function faq_get_castle) // Focuses camera at castle you own
+                call faq_start.execute() // Commands and settings
+            endif
+        else // Кнопка "Нет"
+            set faq_vote_no = faq_vote_no + 1 // Голосов "Против"
+            call SetTextTagText(faq_tts[3], I2S(faq_vote_no), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "Против"
+            if (faq_vote_no > (CountPlayersInForceBJ(udg_players_group) / 2)) then  // Если голосов "За" 1/1, 2/2, 2/3, 3/4, 3/5, 4/6, 4/7, 5/8 
+                call faq_stop.execute() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
+            endif
         endif
-    else // Кнопка "Нет"
-        set faq_vote_no = faq_vote_no + 1 // Голосов "Против"
-        call SetTextTagText(faq_tts[3], I2S(faq_vote_no), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "Против"
-        if (faq_vote_no > (CountPlayersInForceBJ(udg_players_group) / 2)) then  // Если голосов "За" 1/1, 2/2, 2/3, 3/4, 3/5, 4/6, 4/7, 5/8 
-            call faq_stop.execute() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
-        endif
-    endif
-endfunction
+    endfunction
 
-function faq_active_init takes nothing returns nothing
-    local trigger t = CreateTrigger()
+    function faq_active_init takes nothing returns nothing
+        local trigger t = CreateTrigger()
 
-    // Triggers if faq_dialog's buttons were clicked
-    call TriggerRegisterDialogEvent(t, faq_dialog)
-    call TriggerAddAction(t, function faq_active)
-    call TriggerAddCondition(t, Condition(function faq_active_condition))
+        // Triggers if faq_dialog's buttons were clicked
+        call TriggerRegisterDialogEvent(t, faq_dialog)
+        call TriggerAddAction(t, function faq_active)
+        call TriggerAddCondition(t, Condition(function faq_active_condition))
 
-    set t = null
-endfunction
+        set t = null
+    endfunction
 
+endscope
 /*
 
 =============================================
@@ -234,6 +237,88 @@ endfunction
 /*
 
 =============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     13.12.2020 16:21       =
+=============================================
+
+inc_colour Trigger
+
+Income Objective OnDestroy()
+
+*/
+
+scope IncomeObjectsColor initializer inc_colour
+
+    function inc_colour_actions takes nothing returns nothing
+        local unit IncomeObjectiveUnit = GetDyingUnit() // IncomeObject
+        local player IncomeObjectReceiever = GetOwningPlayer(GetKillingUnit()) // Who gets IncomeObject
+        local unit IncomeObjectiveNewUnit // Replace IncomeObject
+        local player IncomeObjectOwner = GetOwningPlayer(IncomeObjectiveUnit) // Who loses IncomeObject
+        local boolean IsHugeGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == 'n003')
+        local boolean IsSmallGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == 'n004')
+        local boolean IsFlag = (GetUnitTypeId(IncomeObjectiveUnit) == 'n005')
+        local boolean IsOwnerTheReceiver = (IncomeObjectOwner == IncomeObjectReceiever)
+        local real IncomeObjectiveUnitX = GetUnitX(IncomeObjectiveUnit)
+        local real IncomeObjectiveUnitY = GetUnitY(IncomeObjectiveUnit)
+        local Color playerColor = Color.create(IncomeObjectReceiever) // Color Struct from NokladrLib.j
+
+        if not (IsHugeGoldMine or IsSmallGoldMine or IsFlag) then
+            return // No actions
+        endif
+
+        call RemoveUnit(IncomeObjectiveUnit) // Remove old IncomeObject to replace it with a new one
+        set IncomeObjectiveNewUnit = CreateUnit(IncomeObjectReceiever, GetUnitTypeId(IncomeObjectiveUnit), IncomeObjectiveUnitX, IncomeObjectiveUnitY, bj_UNIT_FACING)
+        call SetUnitVertexColor(IncomeObjectiveNewUnit, playerColor.red, playerColor.green, playerColor.blue, 255) // Adjusts color to match receiver's one
+
+        set IncomeObjectiveUnit = null
+        set IncomeObjectReceiever = null
+        set IncomeObjectiveNewUnit = null
+        set IncomeObjectOwner = null
+        call playerColor.destroy()
+    endfunction
+
+    function inc_colour takes nothing returns nothing
+        local trigger t = CreateTrigger()
+
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0C), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0D), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0E), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0F), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x10), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x11), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x12), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x13), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x14), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x15), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x16), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x17), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x18), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x19), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x1A), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x1B), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerAddAction(t, function inc_colour_actions)
+
+        set t = null
+    endfunction
+
+endscope
+/*
+
+=============================================
 = Файл создал:       Glady                  =
 = Discord:           ! ! Gladiator#3635     =
 = E-Mail:            glady007rus@gmail.com  =
@@ -244,389 +329,394 @@ endfunction
 !!! - важная информация
 
 */
-function Trig_income_upg_Conditions takes nothing returns boolean
-    local integer i = 1
-    local integer research_rc = GetResearched()
-    loop
-        exitwhen i == incSpellrc_count
-        if research_rc == incSpellrc[i] then
-            return true
-        endif
-        set i = i + 1
-    endloop
-    return false
-endfunction
 
-// Действие улучшения Развитие ради развития
-function Trig_income_upg_actions_evforev takes player p returns nothing
-    local real r
-    local integer bonus_gold
-    local integer bonus_lumber
+scope IncomeUpgrade initializer Init_income_upg
 
-    set r = evforev_bonus_res_mod * I2R(GetPlayerTechCount(p, evforev_rc, true)) + evforev_bonus_res
-    set bonus_gold = R2I(r * I2R(GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)))
-    set bonus_lumber = R2I(r * I2R(GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER)))
+    function Trig_income_upg_Conditions takes nothing returns boolean
+        local integer i = 1
+        local integer research_rc = GetResearched()
+        loop
+            exitwhen i == incSpellrc_count
+            if research_rc == incSpellrc[i] then
+                return true
+            endif
+            set i = i + 1
+        endloop
+        return false
+    endfunction
 
-    call AddGoldToPlayer(bonus_gold, p)
-    call AddLumberToPlayer(bonus_lumber, p)
-    
-endfunction
+    // Действие улучшения Развитие ради развития
+    function Trig_income_upg_actions_evforev takes player p returns nothing
+        local real r
+        local integer bonus_gold
+        local integer bonus_lumber
 
-function Aggrgame_conditions takes nothing returns boolean
-    return IsUnitType(GetFilterUnit(), UNIT_TYPE_PEON)
-endfunction
+        set r = evforev_bonus_res_mod * I2R(GetPlayerTechCount(p, evforev_rc, true)) + evforev_bonus_res
+        set bonus_gold = R2I(r * I2R(GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD)))
+        set bonus_lumber = R2I(r * I2R(GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER)))
 
-function Aggrgame_group takes nothing returns nothing
-    local unit u = GetEnumUnit()
-    if GetUnitAbilityLevel(u, aggrgame_aura_rc) == 0 then
-        call UnitAddAbility(u, aggrgame_aura_rc)
-    else
-        call IncUnitAbilityLevel(u, aggrgame_aura_rc)
-    endif
-    set u = null
-endfunction
-
-// Действие улучшения Агрессивной игры
-function Trig_income_upg_actions_aggrgame takes player p returns nothing
-    local group gr
-    
-    set gr = CreateGroup()
-    call GroupEnumUnitsOfPlayer(gr, p, Condition(function Aggrgame_conditions)) 
-    call ForGroup(gr, function Aggrgame_group)
-    
-    call DestroyGroup(gr)
-    set gr = null
-endfunction
-
-// Добавить в группу игроков всех играющих игроков
-function AllPlayingPlayers takes force gr_p returns nothing
-    local integer i = 1
-    local player p
-
-    loop
-        exitwhen i > max_players
-        set p = Player(i)
-        if (GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING) and (GetPlayerController(p) == MAP_CONTROL_USER) then
-            call ForceAddPlayer(gr_p, p)
-        endif
-        set i = i + 1
-    endloop
-
-    set p = null
-endfunction
-
-// Работа таймера Вклад в игрока
-function Timer_contr_to_pl_actions takes nothing returns nothing
-    local timer t = GetExpiredTimer()
-    local player p = hash[StringHash("income")].player[GetHandleId(t)]
-    local integer count_research = GetPlayerTechCount(p, contr_to_pl_rc, true)
-    local integer gold = contr_to_pl_gold + (contr_to_pl_gold_mod * (count_research - 1))
-    local integer lumber = contr_to_pl_lumber + (contr_to_pl_lumber_mod * (count_research - 1))
-    local string s1
-    local string s2
-
-    set gold = R2I(contr_to_pl_multy * I2R(gold))
-    set lumber = R2I(contr_to_pl_multy * I2R(lumber))
-
-    call AddGoldToPlayer(gold, p)
-    call AddLumberToPlayer(lumber, p)
-
-    set s1 = "Доход с вложения в игрока: |cFFFFCD00" + I2S(gold)
-    set s2 = "Доход с вложения в игрока: |cFFB23AEE" + I2S(lumber)
-    
-    call DisplayTextToPlayer(p, 0, 0, s1)
-    call DisplayTextToPlayer(p, 0, 0, s2)
-    // !!! Найти причину, зачем увеличивается лвл улучшения Подождите 5 минут
-    call SetPlayerTechResearched(p, wait_five_minutes_rc, count_research)
-    // ----------------------------------------------------------------------
-
-    call PauseTimer(t)
-    call DestroyTimer(t)
-    set p = null
-    set t = null
-    set s1 = null
-    set s2 = null
-endfunction
-
-// Действие улучшения Вклад в игрока
-function Trig_income_upg_actions_contr_to_pl takes player p, integer count_research returns nothing
-    local force gr_p
-    local player rand_p
-    local integer bonus_gold
-    local integer bonus_lumber
-    local string mes
-    local timer t
-
-    set gr_p = CreateForce()
-    call AllPlayingPlayers(gr_p)
-    call ForceRemovePlayer(gr_p, p)
-    set rand_p = ForcePickRandomPlayer(gr_p)
-
-    set bonus_gold = contr_to_pl_gold + (contr_to_pl_gold_mod * (count_research - 1))
-    set bonus_lumber = contr_to_pl_lumber + (contr_to_pl_lumber_mod * (count_research - 1))
-
-    call AddGoldToPlayer(bonus_gold, rand_p)
-    call AddLumberToPlayer(bonus_lumber, rand_p)
-
-    set mes = "В вас вложились: |cFFFFCD00" + I2S(bonus_gold)
-    call DisplayTimedTextToPlayer(rand_p, 0, 0, 10.00, mes)
-    set mes = "В вас вложились: |cFFB23AEE" + I2S(bonus_lumber)
-    call DisplayTimedTextToPlayer(rand_p, 0, 0, 10.00, mes)
-
-    set t = CreateTimer()
-    set hash[StringHash("income")].player[GetHandleId(t)] = rand_p
-    call TimerStart(t, contr_to_pl_time, false, function Timer_contr_to_pl_actions)
-
-    call DestroyForce(gr_p)
-    set gr_p = null
-    set rand_p = null
-    set mes = null
-    set t = null
-endfunction
-
-function Trig_income_upg_actions_goldmining takes player p, integer number_p, integer research_rc returns nothing
-    local integer lvl_research = GetPlayerTechCount(p, research_rc, true)
-
-    set udg_income_gold[number_p] = udg_income_gold[number_p] + goldmining_income[lvl_research]
-    set udg_income_goldmine_c[number_p] = udg_income_goldmine_c[number_p] + goldmining_main_mine[lvl_research]
-    set udg_income_goldmine_l[number_p] = udg_income_goldmine_l[number_p] + goldmining_extra_mine[lvl_research]
-
-endfunction
-
-// Смещает все элементы массива на один вверх, последний пропадает, на первый слот ставится игрок p
-function Trig_income_upg_actions_ticket takes player p returns nothing
-    local integer i = max_ticket_list - 1
-    loop
-        exitwhen i < 1
-        set ticket_list[i] = ticket_list[i - 1]
-        set i = i - 1
-    endloop
-    set  ticket_list[0] = p
-endfunction
-
-// Действие улучшения Драгоценные камни
-function Trig_income_upg_actions_jewelry takes integer number_p returns nothing
-    set udg_income_wood[number_p] = udg_income_wood[number_p] + jewelry_lumber_for_lvl
-endfunction
-
-// Действие улучшения Вклад
-function Trig_income_upg_actions_contr takes player p, integer count_research returns nothing
-    local string s1
-    local string s2 
-    local integer gold = contr_gold + ((count_research - 1) * contr_gold_mod)
-    local integer lumber = contr_lumber + ((count_research - 1) * contr_lumber_mod)
-
-    set gold = gold * contr_percent / 100
-    set lumber = lumber * contr_percent / 100
-    set s1 = "Доход с вклада: |cFFFFCD00" + I2S(gold)
-    set s2 = "Доход за вклад: |cFFB23AEE" + I2S(lumber)
-    
-    call AddGoldToPlayer(gold, p)
-    call AddLumberToPlayer(lumber, p)
-    call DisplayTextToPlayer(p, 0, 0, s1)
-    call DisplayTextToPlayer(p, 0, 0, s2)
-
-    set s1 = null
-    set s2 = null
-endfunction
-
-// Поиск номера таймера
-function find_number_timer takes timer t returns integer
-    local integer number_timer = 0
-    local integer i = 1 
-
-    loop
-        exitwhen i > max_players
-        if (t == stab_timer_gold[i]) or (t == stab_timer_lumber[i]) then
-            set number_timer = i
-        endif
-        set i = i + 1
-    endloop
-
-    return number_timer
-endfunction
-
-// Работа таймера stab_timer_gold
-function stab_timer_gold_actions takes nothing returns nothing
-    local player p
-    local integer number_p
-    local integer count_research
-    local timer t = GetExpiredTimer()
-
-    set number_p = find_number_timer(t)
-    set p = Player(number_p - 1)
-    set count_research = GetPlayerTechCount(p, stab_rc, true)
-
-    call AddGoldToPlayer(stab_gold[count_research], p)
-
-    set p = null
-    set t = null
-endfunction
-
-// Работа таймера stab_timer_lumber
-function stab_timer_lumber_actions takes nothing returns nothing
-    local player p
-    local integer number_p
-    local integer count_research
-    local timer t = GetExpiredTimer()
-
-    set number_p = find_number_timer(t)
-    set p = Player(number_p - 1)
-    set count_research = GetPlayerTechCount(p, stab_rc, true)
-
-    call AddLumberToPlayer(stab_lumber[count_research], p)
-
-    set p = null
-    set t = null
-endfunction
-
-// Действие улучшения Стабильность
-function Trig_income_upg_actions_stab takes integer number_p, integer count_research returns nothing
-    if count_research == 1 then
-        set stab_timer_gold[number_p] = CreateTimer()
-        set stab_timer_lumber[number_p] = CreateTimer()
-    endif
-
-    call TimerStart(stab_timer_gold[number_p], stab_time_gold[count_research], true, function stab_timer_gold_actions)
-    call TimerStart(stab_timer_lumber[number_p], stab_time_lumber[count_research], true, function stab_timer_lumber_actions)
-endfunction
-
-// Условие улучшения Лидерство, удалить юнитов Больше всех убийств за прошедший раунд и Или лидерство по очкам арены за пошедший раунд
-function Trig_income_upg_actions_leadership_group takes nothing returns nothing
-    local unit u = GetEnumUnit()
-    local integer u_rc = GetUnitTypeId(u)
-
-    if (u_rc == most_point_kill_last_round) or (u_rc == or_leadership_arena_last_round) then
-        call RemoveUnit(u)
-    endif
-
-    set u = null
-endfunction
-
-// Действие улучшения Лидерство
-function Trig_income_upg_actions_leadership takes player p, integer number_p returns nothing
-    local group gr = CreateGroup()
-
-    set udg_leader_kf[number_p] = udg_leader_kf[number_p] + leadership_bonus
-    call GroupEnumUnitsOfPlayer(gr, p, null)
-
-    // !!! Муторная система с группой, разобраться
-    call ForGroup(gr, function Trig_income_upg_actions_leadership_group)
-    //----------------------------------------------
-
-    call DestroyGroup(gr)
-    set gr = null
-endfunction
-
-// Основное тело
-function Trig_income_upg_Actions takes nothing returns nothing
-    local unit u = GetTriggerUnit()
-    local player p = GetOwningPlayer(u)
-    local integer number_p = GetConvertedPlayerId(p)
-    local integer count_upg = udg_scoreboard_upg[number_p]
-    local integer research_rc = GetResearched()
-    local integer bonus_gold
-    local integer bonus_lumber
-    local integer count_research = GetPlayerTechCount(p, research_rc, true)
-    local real r
-
-    set count_upg = count_upg + 1
-    set udg_scoreboard_upg[number_p] = count_upg
-
-    // Обновление значений кол-ва исследований в таблице
-    call MultiboardSetItemValueBJ(udg_scoreboard, 5, (number_p + 1), I2S(count_upg))
-
-    // Кол-во исследований(улучшений)
-    if count_upg == count_research_for_t1 then 
-        call SetPlayerTechResearched(p, t1_research_rc, 1)
-    elseif count_upg == count_research_for_t2 then
-        call SetPlayerTechResearched(p, t2_research_rc, 1)
-    endif
-
-    // Грабёж
-    if research_rc == robbery_rc then 
-        if GetPlayerTechCount(p, robbery_rc, true) == 3 then
-            call SetPlayerTechResearched(p, robbery_lvl3_rc, 1)
-        elseif GetPlayerTechCount(p, robbery_rc, true) == 5 then
-            call SetPlayerTechResearched(p, robbery_lvl5_rc, 1)
-        endif
-    endif
-    
-    // Развитие ради развития
-    if GetPlayerTechCount(p, evforev_rc, true) > 0 then
-        call Trig_income_upg_actions_evforev(p)
-    endif
-
-    // Агрессивная игра
-    // Выделяем всех наших юнитов типа рабочий
-    // и даём им ауру на скорость атаки и скорость бега, если
-    // её нет, повышаем её уровень
-    // !!!стоит переделать, если всего 1 рабочий, проще его в переменные забить и давать способность ему напрямую
-    if research_rc == aggrgame_rc then 
-        call Trig_income_upg_actions_aggrgame(p)
-    endif
+        call AddGoldToPlayer(bonus_gold, p)
+        call AddLumberToPlayer(bonus_lumber, p)
         
-    // Вклад в игрока
-    // !!!добавить удаление улучшения, если игрок один на карте
-    if research_rc == contr_to_pl_rc then
-        call Trig_income_upg_actions_contr_to_pl(p, count_research)
-    endif
+    endfunction
 
-    // Золотодобыча
-    if research_rc == goldmining_rc then
-        call Trig_income_upg_actions_goldmining(p, number_p, research_rc)
-    endif
+    function Aggrgame_conditions takes nothing returns boolean
+        return IsUnitType(GetFilterUnit(), UNIT_TYPE_PEON)
+    endfunction
 
-    // Билет
-    if research_rc == ticket_rc then
-        call Trig_income_upg_actions_ticket(p)
-    endif
+    function Aggrgame_group takes nothing returns nothing
+        local unit u = GetEnumUnit()
+        if GetUnitAbilityLevel(u, aggrgame_aura_rc) == 0 then
+            call UnitAddAbility(u, aggrgame_aura_rc)
+        else
+            call IncUnitAbilityLevel(u, aggrgame_aura_rc)
+        endif
+        set u = null
+    endfunction
 
-    // Драгоценные камни
-    if research_rc == jewelry_rc then
-        call Trig_income_upg_actions_jewelry(number_p)
-    endif
+    // Действие улучшения Агрессивной игры
+    function Trig_income_upg_actions_aggrgame takes player p returns nothing
+        local group gr
+        
+        set gr = CreateGroup()
+        call GroupEnumUnitsOfPlayer(gr, p, Condition(function Aggrgame_conditions)) 
+        call ForGroup(gr, function Aggrgame_group)
+        
+        call DestroyGroup(gr)
+        set gr = null
+    endfunction
 
-    // Вклад
-    if research_rc == contr_rc then
-        call Trig_income_upg_actions_contr(p, count_research)
-    endif
+    // Добавить в группу игроков всех играющих игроков
+    function AllPlayingPlayers takes force gr_p returns nothing
+        local integer i = 1
+        local player p
 
-    // Стабильность
-    if research_rc == stab_rc then
-        call Trig_income_upg_actions_stab(number_p, count_research)
-    endif
+        loop
+            exitwhen i > max_players
+            set p = Player(i)
+            if (GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING) and (GetPlayerController(p) == MAP_CONTROL_USER) then
+                call ForceAddPlayer(gr_p, p)
+            endif
+            set i = i + 1
+        endloop
 
-    // Лидерство
-    if research_rc == leadership_rc then
-        call Trig_income_upg_actions_leadership(p, number_p)
-    endif
+        set p = null
+    endfunction
 
-    set p = null
-    set u = null
-endfunction
+    // Работа таймера Вклад в игрока
+    function Timer_contr_to_pl_actions takes nothing returns nothing
+        local timer t = GetExpiredTimer()
+        local player p = hash[StringHash("income")].player[GetHandleId(t)]
+        local integer count_research = GetPlayerTechCount(p, contr_to_pl_rc, true)
+        local integer gold = contr_to_pl_gold + (contr_to_pl_gold_mod * (count_research - 1))
+        local integer lumber = contr_to_pl_lumber + (contr_to_pl_lumber_mod * (count_research - 1))
+        local string s1
+        local string s2
 
-//===========================================================================
-function InitTrig_income_upg takes nothing returns nothing
-    local trigger t = CreateTrigger()
+        set gold = R2I(contr_to_pl_multy * I2R(gold))
+        set lumber = R2I(contr_to_pl_multy * I2R(lumber))
 
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-    call TriggerAddCondition(t, Condition(function Trig_income_upg_Conditions))
-    call TriggerAddAction(t, function Trig_income_upg_Actions)
-    
-    set t = null
-endfunction
+        call AddGoldToPlayer(gold, p)
+        call AddLumberToPlayer(lumber, p)
+
+        set s1 = "Доход с вложения в игрока: |cFFFFCD00" + I2S(gold)
+        set s2 = "Доход с вложения в игрока: |cFFB23AEE" + I2S(lumber)
+        
+        call DisplayTextToPlayer(p, 0, 0, s1)
+        call DisplayTextToPlayer(p, 0, 0, s2)
+        // !!! Найти причину, зачем увеличивается лвл улучшения Подождите 5 минут
+        call SetPlayerTechResearched(p, wait_five_minutes_rc, count_research)
+        // ----------------------------------------------------------------------
+
+        call PauseTimer(t)
+        call DestroyTimer(t)
+        set p = null
+        set t = null
+        set s1 = null
+        set s2 = null
+    endfunction
+
+    // Действие улучшения Вклад в игрока
+    function Trig_income_upg_actions_contr_to_pl takes player p, integer count_research returns nothing
+        local force gr_p
+        local player rand_p
+        local integer bonus_gold
+        local integer bonus_lumber
+        local string mes
+        local timer t
+
+        set gr_p = CreateForce()
+        call AllPlayingPlayers(gr_p)
+        call ForceRemovePlayer(gr_p, p)
+        set rand_p = ForcePickRandomPlayer(gr_p)
+
+        set bonus_gold = contr_to_pl_gold + (contr_to_pl_gold_mod * (count_research - 1))
+        set bonus_lumber = contr_to_pl_lumber + (contr_to_pl_lumber_mod * (count_research - 1))
+
+        call AddGoldToPlayer(bonus_gold, rand_p)
+        call AddLumberToPlayer(bonus_lumber, rand_p)
+
+        set mes = "В вас вложились: |cFFFFCD00" + I2S(bonus_gold)
+        call DisplayTimedTextToPlayer(rand_p, 0, 0, 10.00, mes)
+        set mes = "В вас вложились: |cFFB23AEE" + I2S(bonus_lumber)
+        call DisplayTimedTextToPlayer(rand_p, 0, 0, 10.00, mes)
+
+        set t = CreateTimer()
+        set hash[StringHash("income")].player[GetHandleId(t)] = rand_p
+        call TimerStart(t, contr_to_pl_time, false, function Timer_contr_to_pl_actions)
+
+        call DestroyForce(gr_p)
+        set gr_p = null
+        set rand_p = null
+        set mes = null
+        set t = null
+    endfunction
+
+    function Trig_income_upg_actions_goldmining takes player p, integer number_p, integer research_rc returns nothing
+        local integer lvl_research = GetPlayerTechCount(p, research_rc, true)
+
+        set udg_income_gold[number_p] = udg_income_gold[number_p] + goldmining_income[lvl_research]
+        set udg_income_goldmine_c[number_p] = udg_income_goldmine_c[number_p] + goldmining_main_mine[lvl_research]
+        set udg_income_goldmine_l[number_p] = udg_income_goldmine_l[number_p] + goldmining_extra_mine[lvl_research]
+
+    endfunction
+
+    // Смещает все элементы массива на один вверх, последний пропадает, на первый слот ставится игрок p
+    function Trig_income_upg_actions_ticket takes player p returns nothing
+        local integer i = max_ticket_list - 1
+        loop
+            exitwhen i < 1
+            set ticket_list[i] = ticket_list[i - 1]
+            set i = i - 1
+        endloop
+        set  ticket_list[0] = p
+    endfunction
+
+    // Действие улучшения Драгоценные камни
+    function Trig_income_upg_actions_jewelry takes integer number_p returns nothing
+        set udg_income_wood[number_p] = udg_income_wood[number_p] + jewelry_lumber_for_lvl
+    endfunction
+
+    // Действие улучшения Вклад
+    function Trig_income_upg_actions_contr takes player p, integer count_research returns nothing
+        local string s1
+        local string s2 
+        local integer gold = contr_gold + ((count_research - 1) * contr_gold_mod)
+        local integer lumber = contr_lumber + ((count_research - 1) * contr_lumber_mod)
+
+        set gold = gold * contr_percent / 100
+        set lumber = lumber * contr_percent / 100
+        set s1 = "Доход с вклада: |cFFFFCD00" + I2S(gold)
+        set s2 = "Доход за вклад: |cFFB23AEE" + I2S(lumber)
+        
+        call AddGoldToPlayer(gold, p)
+        call AddLumberToPlayer(lumber, p)
+        call DisplayTextToPlayer(p, 0, 0, s1)
+        call DisplayTextToPlayer(p, 0, 0, s2)
+
+        set s1 = null
+        set s2 = null
+    endfunction
+
+    // Поиск номера таймера
+    function find_number_timer takes timer t returns integer
+        local integer number_timer = 0
+        local integer i = 1 
+
+        loop
+            exitwhen i > max_players
+            if (t == stab_timer_gold[i]) or (t == stab_timer_lumber[i]) then
+                set number_timer = i
+            endif
+            set i = i + 1
+        endloop
+
+        return number_timer
+    endfunction
+
+    // Работа таймера stab_timer_gold
+    function stab_timer_gold_actions takes nothing returns nothing
+        local player p
+        local integer number_p
+        local integer count_research
+        local timer t = GetExpiredTimer()
+
+        set number_p = find_number_timer(t)
+        set p = Player(number_p - 1)
+        set count_research = GetPlayerTechCount(p, stab_rc, true)
+
+        call AddGoldToPlayer(stab_gold[count_research], p)
+
+        set p = null
+        set t = null
+    endfunction
+
+    // Работа таймера stab_timer_lumber
+    function stab_timer_lumber_actions takes nothing returns nothing
+        local player p
+        local integer number_p
+        local integer count_research
+        local timer t = GetExpiredTimer()
+
+        set number_p = find_number_timer(t)
+        set p = Player(number_p - 1)
+        set count_research = GetPlayerTechCount(p, stab_rc, true)
+
+        call AddLumberToPlayer(stab_lumber[count_research], p)
+
+        set p = null
+        set t = null
+    endfunction
+
+    // Действие улучшения Стабильность
+    function Trig_income_upg_actions_stab takes integer number_p, integer count_research returns nothing
+        if count_research == 1 then
+            set stab_timer_gold[number_p] = CreateTimer()
+            set stab_timer_lumber[number_p] = CreateTimer()
+        endif
+
+        call TimerStart(stab_timer_gold[number_p], stab_time_gold[count_research], true, function stab_timer_gold_actions)
+        call TimerStart(stab_timer_lumber[number_p], stab_time_lumber[count_research], true, function stab_timer_lumber_actions)
+    endfunction
+
+    // Условие улучшения Лидерство, удалить юнитов Больше всех убийств за прошедший раунд и Или лидерство по очкам арены за пошедший раунд
+    function Trig_income_upg_actions_leadership_group takes nothing returns nothing
+        local unit u = GetEnumUnit()
+        local integer u_rc = GetUnitTypeId(u)
+
+        if (u_rc == most_point_kill_last_round) or (u_rc == or_leadership_arena_last_round) then
+            call RemoveUnit(u)
+        endif
+
+        set u = null
+    endfunction
+
+    // Действие улучшения Лидерство
+    function Trig_income_upg_actions_leadership takes player p, integer number_p returns nothing
+        local group gr = CreateGroup()
+
+        set udg_leader_kf[number_p] = udg_leader_kf[number_p] + leadership_bonus
+        call GroupEnumUnitsOfPlayer(gr, p, null)
+
+        // !!! Муторная система с группой, разобраться
+        call ForGroup(gr, function Trig_income_upg_actions_leadership_group)
+        //----------------------------------------------
+
+        call DestroyGroup(gr)
+        set gr = null
+    endfunction
+
+    // Основное тело
+    function Trig_income_upg_Actions takes nothing returns nothing
+        local unit u = GetTriggerUnit()
+        local player p = GetOwningPlayer(u)
+        local integer number_p = GetConvertedPlayerId(p)
+        local integer count_upg = udg_scoreboard_upg[number_p]
+        local integer research_rc = GetResearched()
+        local integer bonus_gold
+        local integer bonus_lumber
+        local integer count_research = GetPlayerTechCount(p, research_rc, true)
+        local real r
+
+        set count_upg = count_upg + 1
+        set udg_scoreboard_upg[number_p] = count_upg
+
+        // Обновление значений кол-ва исследований в таблице
+        call MultiboardSetItemValueBJ(udg_scoreboard, 5, (number_p + 1), I2S(count_upg))
+
+        // Кол-во исследований(улучшений)
+        if count_upg == count_research_for_t1 then 
+            call SetPlayerTechResearched(p, t1_research_rc, 1)
+        elseif count_upg == count_research_for_t2 then
+            call SetPlayerTechResearched(p, t2_research_rc, 1)
+        endif
+
+        // Грабёж
+        if research_rc == robbery_rc then 
+            if GetPlayerTechCount(p, robbery_rc, true) == 3 then
+                call SetPlayerTechResearched(p, robbery_lvl3_rc, 1)
+            elseif GetPlayerTechCount(p, robbery_rc, true) == 5 then
+                call SetPlayerTechResearched(p, robbery_lvl5_rc, 1)
+            endif
+        endif
+        
+        // Развитие ради развития
+        if GetPlayerTechCount(p, evforev_rc, true) > 0 then
+            call Trig_income_upg_actions_evforev(p)
+        endif
+
+        // Агрессивная игра
+        // Выделяем всех наших юнитов типа рабочий
+        // и даём им ауру на скорость атаки и скорость бега, если
+        // её нет, повышаем её уровень
+        // !!!стоит переделать, если всего 1 рабочий, проще его в переменные забить и давать способность ему напрямую
+        if research_rc == aggrgame_rc then 
+            call Trig_income_upg_actions_aggrgame(p)
+        endif
+            
+        // Вклад в игрока
+        // !!!добавить удаление улучшения, если игрок один на карте
+        if research_rc == contr_to_pl_rc then
+            call Trig_income_upg_actions_contr_to_pl(p, count_research)
+        endif
+
+        // Золотодобыча
+        if research_rc == goldmining_rc then
+            call Trig_income_upg_actions_goldmining(p, number_p, research_rc)
+        endif
+
+        // Билет
+        if research_rc == ticket_rc then
+            call Trig_income_upg_actions_ticket(p)
+        endif
+
+        // Драгоценные камни
+        if research_rc == jewelry_rc then
+            call Trig_income_upg_actions_jewelry(number_p)
+        endif
+
+        // Вклад
+        if research_rc == contr_rc then
+            call Trig_income_upg_actions_contr(p, count_research)
+        endif
+
+        // Стабильность
+        if research_rc == stab_rc then
+            call Trig_income_upg_actions_stab(number_p, count_research)
+        endif
+
+        // Лидерство
+        if research_rc == leadership_rc then
+            call Trig_income_upg_actions_leadership(p, number_p)
+        endif
+
+        set p = null
+        set u = null
+    endfunction
+
+    //===========================================================================
+    function Init_income_upg takes nothing returns nothing
+        local trigger t = CreateTrigger()
+
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerAddCondition(t, Condition(function Trig_income_upg_Conditions))
+        call TriggerAddAction(t, function Trig_income_upg_Actions)
+        
+        set t = null
+    endfunction
+
+endscope
 /*
 
 =============================================
@@ -641,94 +731,98 @@ endfunction
 
 */
 
-function Trig_income_upgA_Conditions takes nothing returns boolean
-    local boolean b1
-    local boolean b2
-    local boolean b3
-    local boolean b4
-    local unit killer = GetKillingUnit()
-    local unit victim = GetDyingUnit()
-    local player p_k = GetOwningPlayer(killer)
-    local player p_v = GetOwningPlayer(victim)
-    
-    set b1 = GetPlayerTechCountSimple(robbery_rc, p_k) > 0
-    set b2 = IsUnitInGroup(killer, udg_wave_units)
-    set b3 = IsPlayerEnemy(p_v, p_k)
-    set b4 = GetUnitTypeId(GetDyingUnit()) == castle_rc
-    
-    set p_k = null
-    set p_v = null
-    set killer = null
-    set victim = null
-    
-    return b1 and b2 and b3 and b4
+scope IncomeUpgradeA initializer Init_income_upgA
 
-endfunction
+    function Trig_income_upgA_Conditions takes nothing returns boolean
+        local boolean b1
+        local boolean b2
+        local boolean b3
+        local boolean b4
+        local unit killer = GetKillingUnit()
+        local unit victim = GetDyingUnit()
+        local player p_k = GetOwningPlayer(killer)
+        local player p_v = GetOwningPlayer(victim)
+        
+        set b1 = GetPlayerTechCountSimple(robbery_rc, p_k) > 0
+        set b2 = IsUnitInGroup(killer, udg_wave_units)
+        set b3 = IsPlayerEnemy(p_v, p_k)
+        set b4 = GetUnitTypeId(GetDyingUnit()) == castle_rc
+        
+        set p_k = null
+        set p_v = null
+        set killer = null
+        set victim = null
+        
+        return b1 and b2 and b3 and b4
 
-function Trig_income_upgA_Actions takes nothing returns nothing
-    local unit killer = GetKillingUnit()
-    local unit victim = GetDyingUnit()
-    local player p_k = GetOwningPlayer(killer)
-    local player p_v = GetOwningPlayer(victim) 
-    local integer gold = GetPlayerState(p_v, PLAYER_STATE_RESOURCE_GOLD)
-    local integer lumber = GetPlayerState(p_v, PLAYER_STATE_RESOURCE_LUMBER)
-    local integer lvl_research = GetPlayerTechCountSimple(robbery_rc, p_k)
-    local integer p_k_n = GetConvertedPlayerId(p_k)
-    local integer p_v_n = GetConvertedPlayerId(p_v)
-    local real multy = robbery_pr_f[lvl_research] * 0.01
-    local string killer_mes
-    local string victim_mes
-    local string color_k = udg_players_colour[p_k_n]
-    local string color_v = udg_players_colour[p_v_n]
-    local string name_k = udg_players_name[p_k_n]
-    local string name_v = udg_players_name[p_v_n]
+    endfunction
 
-    set gold = R2I(I2R(gold) * multy)
-    set lumber = R2I(I2R(lumber) * multy)
-    
-    call AddGoldToPlayer(gold, p_k)
-    call AddGoldToPlayer(-gold, p_v)
-    call AddLumberToPlayer(lumber, p_k)
-    call AddLumberToPlayer(-lumber, p_v)
+    function Trig_income_upgA_Actions takes nothing returns nothing
+        local unit killer = GetKillingUnit()
+        local unit victim = GetDyingUnit()
+        local player p_k = GetOwningPlayer(killer)
+        local player p_v = GetOwningPlayer(victim) 
+        local integer gold = GetPlayerState(p_v, PLAYER_STATE_RESOURCE_GOLD)
+        local integer lumber = GetPlayerState(p_v, PLAYER_STATE_RESOURCE_LUMBER)
+        local integer lvl_research = GetPlayerTechCountSimple(robbery_rc, p_k)
+        local integer p_k_n = GetConvertedPlayerId(p_k)
+        local integer p_v_n = GetConvertedPlayerId(p_v)
+        local real multy = robbery_pr_f[lvl_research] * 0.01
+        local string killer_mes
+        local string victim_mes
+        local string color_k = udg_players_colour[p_k_n]
+        local string color_v = udg_players_colour[p_v_n]
+        local string name_k = udg_players_name[p_k_n]
+        local string name_v = udg_players_name[p_v_n]
 
-    set killer_mes = "Вы украли |cFFFFCD00" + I2S(gold) + "|r ед. золота и |cFFB23AEE" + I2S(lumber) + "|r ед. самоцветов у игрока " + color_v + name_v
-    set victim_mes = "Вас ограбил игрок " + color_k + name_k
-    call DisplayTextToPlayer(p_k, 0, 0, killer_mes)
-    call DisplayTextToPlayer(p_v, 0, 0, victim_mes)
+        set gold = R2I(I2R(gold) * multy)
+        set lumber = R2I(I2R(lumber) * multy)
+        
+        call AddGoldToPlayer(gold, p_k)
+        call AddGoldToPlayer(-gold, p_v)
+        call AddLumberToPlayer(lumber, p_k)
+        call AddLumberToPlayer(-lumber, p_v)
 
-    set p_k = null
-    set p_v = null
-    set killer = null
-    set victim = null
-    set killer_mes = null
-    set victim_mes = null
-    set color_k = null
-    set color_v = null
-    set name_k = null
-    set name_v = null
-endfunction
+        set killer_mes = "Вы украли |cFFFFCD00" + I2S(gold) + "|r ед. золота и |cFFB23AEE" + I2S(lumber) + "|r ед. самоцветов у игрока " + color_v + name_v
+        set victim_mes = "Вас ограбил игрок " + color_k + name_k
+        call DisplayTextToPlayer(p_k, 0, 0, killer_mes)
+        call DisplayTextToPlayer(p_v, 0, 0, victim_mes)
 
-//===========================================================================
-function InitTrig_income_upgA takes nothing returns nothing
-    local trigger t = CreateTrigger()
+        set p_k = null
+        set p_v = null
+        set killer = null
+        set victim = null
+        set killer_mes = null
+        set victim_mes = null
+        set color_k = null
+        set color_v = null
+        set name_k = null
+        set name_v = null
+    endfunction
 
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerAddCondition(t, Condition( function Trig_income_upgA_Conditions))
-    call TriggerAddAction(t, function Trig_income_upgA_Actions)
-    
-    set t = null
-endfunction
+    //===========================================================================
+    function Init_income_upgA takes nothing returns nothing
+        local trigger t = CreateTrigger()
+
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerAddCondition(t, Condition( function Trig_income_upgA_Conditions))
+        call TriggerAddAction(t, function Trig_income_upgA_Actions)
+        
+        set t = null
+    endfunction
+
+endscope
 /*
 
 =============================================
@@ -743,63 +837,66 @@ endfunction
 
 */
 
-function Trig_income_upgR_Conditions takes nothing returns boolean
-    local boolean b1
-    local boolean b2
-    local boolean b3
-    local unit killer = GetKillingUnit()
-    local unit victim = GetDyingUnit()
-    local player p_k = GetOwningPlayer(killer)
-    local player p_v = GetOwningPlayer(victim)
-    
-    set b1 = GetPlayerTechCountSimple(deadmoney_rc, p_k) > 0
-    set b2 = IsUnitInGroup(killer, udg_wave_units)
-    set b3 = IsPlayerEnemy(p_v, p_k)
-    
-    set p_k = null
-    set p_v = null
-    set killer = null
-    set victim = null
-    
-    return b1 and b2 and b3
+scope IncomeUpgradeR initializer Init_income_upgR
 
-endfunction
+    function Trig_income_upgR_Conditions takes nothing returns boolean
+        local boolean b1
+        local boolean b2
+        local boolean b3
+        local unit killer = GetKillingUnit()
+        local unit victim = GetDyingUnit()
+        local player p_k = GetOwningPlayer(killer)
+        local player p_v = GetOwningPlayer(victim)
+        
+        set b1 = GetPlayerTechCountSimple(deadmoney_rc, p_k) > 0
+        set b2 = IsUnitInGroup(killer, udg_wave_units)
+        set b3 = IsPlayerEnemy(p_v, p_k)
+        
+        set p_k = null
+        set p_v = null
+        set killer = null
+        set victim = null
+        
+        return b1 and b2 and b3
 
-function Trig_income_upgR_Actions takes nothing returns nothing
-    local unit killer = GetKillingUnit()
-    local player p_k = GetOwningPlayer(killer)
-    local integer n = deadmoney_money_for_lvl
-    local integer sum
+    endfunction
 
-    set sum = n * GetPlayerTechCountSimple(deadmoney_rc, p_k)
-    call AddGoldToPlayer(sum, p_k)
+    function Trig_income_upgR_Actions takes nothing returns nothing
+        local unit killer = GetKillingUnit()
+        local player p_k = GetOwningPlayer(killer)
+        local integer n = deadmoney_money_for_lvl
+        local integer sum
 
-    set killer = null
-    set p_k = null
-endfunction
+        set sum = n * GetPlayerTechCountSimple(deadmoney_rc, p_k)
+        call AddGoldToPlayer(sum, p_k)
 
-//===========================================================================
-function InitTrig_income_upgR takes nothing returns nothing
-    local trigger t = CreateTrigger()
+        set killer = null
+        set p_k = null
+    endfunction
 
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerAddCondition(t, Condition( function Trig_income_upgR_Conditions))
-    call TriggerAddAction(t, function Trig_income_upgR_Actions)
-    
-    set t = null
-endfunction
+    //===========================================================================
+    function Init_income_upgR takes nothing returns nothing
+        local trigger t = CreateTrigger()
 
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerAddCondition(t, Condition( function Trig_income_upgR_Conditions))
+        call TriggerAddAction(t, function Trig_income_upgR_Actions)
+        
+        set t = null
+    endfunction
+
+endscope
 /*
 
 =============================================
@@ -814,223 +911,149 @@ endfunction
 
 */
 
-function Trig_income_upgTQ_Conditions takes nothing returns boolean
-    local boolean IsIncomeObjective = false
-    local boolean DoesVictimHasUpgrade = false
-    local boolean DoesVictimsUpgradeGreaterThanKillers = false
-    local unit killer = GetKillingUnit()        // unit who has killed victim
-    local unit victim = GetDyingUnit()          // unit who was killed by killer
-    local integer v_rc = GetUnitTypeId(victim)  // raw code of victim unit
-    local integer k_rc = GetUnitTypeId(killer)  // raw code of killer unit
-    local player playerVictim = GetOwningPlayer(victim)  // owner of victim unit
-    local player playerKiller = GetOwningPlayer(killer)  // owner of killer unit
+scope IncomeUpgradeTQ initializer Init_income_upgTQ
 
-    // n003 - Gold Mine большой
-    // n004 - Gold Mine маленький
-    // n005 - Флаг
-    set IsIncomeObjective = ((v_rc == 'n003') or (v_rc == 'n004') or (v_rc == 'n005'))
+    function Trig_income_upgTQ_Conditions takes nothing returns boolean
+        local boolean IsIncomeObjective = false
+        local boolean DoesVictimHasUpgrade = false
+        local boolean DoesVictimsUpgradeGreaterThanKillers = false
+        local unit killer = GetKillingUnit()        // unit who has killed victim
+        local unit victim = GetDyingUnit()          // unit who was killed by killer
+        local integer v_rc = GetUnitTypeId(victim)  // raw code of victim unit
+        local integer k_rc = GetUnitTypeId(killer)  // raw code of killer unit
+        local player playerVictim = GetOwningPlayer(victim)  // owner of victim unit
+        local player playerKiller = GetOwningPlayer(killer)  // owner of killer unit
 
-    // Не действует на игроков с уровнем улучшения "Проклятый рудник" ниже вашего на 1 и выше.
-    set DoesVictimHasUpgrade = GetPlayerTechCount(playerVictim, cursed_mine_rc, true) > 0
-    set DoesVictimsUpgradeGreaterThanKillers = GetPlayerTechCount(playerVictim, cursed_mine_rc, true) > GetPlayerTechCount(playerKiller, cursed_mine_rc, true)
+        // n003 - Gold Mine большой
+        // n004 - Gold Mine маленький
+        // n005 - Флаг
+        set IsIncomeObjective = ((v_rc == 'n003') or (v_rc == 'n004') or (v_rc == 'n005'))
 
-    set killer = null
-    set victim = null
-    set playerVictim = null
-    set playerKiller = null
-    return IsIncomeObjective and DoesVictimHasUpgrade and DoesVictimsUpgradeGreaterThanKillers
-endfunction
+        // Не действует на игроков с уровнем улучшения "Проклятый рудник" ниже вашего на 1 и выше.
+        set DoesVictimHasUpgrade = GetPlayerTechCount(playerVictim, cursed_mine_rc, true) > 0
+        set DoesVictimsUpgradeGreaterThanKillers = GetPlayerTechCount(playerVictim, cursed_mine_rc, true) > GetPlayerTechCount(playerKiller, cursed_mine_rc, true)
 
-// !!! Урон юнитам наносит сам рудник, но после смерти он передаётся убийце, проверить, что урон наносится до передачи
-// Функция вызывается к каждому юниту около погибшего рудника
-// Если юнит принадлежит убившему и юнит находится в группе udg_wave_units(!!! понять, что за группа), ему наносится урон от рудника типа chaos
-function Trig_income_upgTQ_Actions_group takes nothing returns nothing
-    local unit u = GetEnumUnit() // сам юнит
-    local boolean b1
-    local boolean b2
-    local player p = GetOwningPlayer(u) // владелец юнита
-    local player p_k = hash[StringHash("income")].player[StringHash("player_killer")] // владелец убийцы
-    local player p_v = hash[StringHash("income")].player[StringHash("player_victim")] // владелец рудника(жертвы)
-    local unit damage_u = hash[StringHash("income")].unit[StringHash("victim")]       // рудник
-    local real damage
+        set killer = null
+        set victim = null
+        set playerVictim = null
+        set playerKiller = null
+        return IsIncomeObjective and DoesVictimHasUpgrade and DoesVictimsUpgradeGreaterThanKillers
+    endfunction
 
-    set b1 = IsUnitInGroup(u, udg_wave_units)
-    set b2 = (p == p_k)
-    if b1 and b2 then
-        set damage = cursed_mine_damage_for_lvl * GetPlayerTechCount(p_v, cursed_mine_rc, true) // формула расчёта урона: урон = cursed_mine_damage_for_lvl * уровень улучшения
-        // !!!
-        call UnitDamageTargetBJ(damage_u, u, damage, ATTACK_TYPE_CHAOS, DAMAGE_TYPE_NORMAL) // DAMAGE_TYPE_UNIVERSAL - чистый урон без armor reduction
-        // -----
-    endif
+    // !!! Урон юнитам наносит сам рудник, но после смерти он передаётся убийце, проверить, что урон наносится до передачи
+    // Функция вызывается к каждому юниту около погибшего рудника
+    // Если юнит принадлежит убившему и юнит находится в группе udg_wave_units(!!! понять, что за группа), ему наносится урон от рудника типа chaos
+    function Trig_income_upgTQ_Actions_group takes nothing returns nothing
+        local unit u = GetEnumUnit() // сам юнит
+        local boolean b1
+        local boolean b2
+        local player p = GetOwningPlayer(u) // владелец юнита
+        local player p_k = hash[StringHash("income")].player[StringHash("player_killer")] // владелец убийцы
+        local player p_v = hash[StringHash("income")].player[StringHash("player_victim")] // владелец рудника(жертвы)
+        local unit damage_u = hash[StringHash("income")].unit[StringHash("victim")]       // рудник
+        local real damage
 
-    set p = null
-    set p_k = null
-    set p_v = null
-    set u = null
-endfunction
+        set b1 = IsUnitInGroup(u, udg_wave_units)
+        set b2 = (p == p_k)
+        if b1 and b2 then
+            set damage = cursed_mine_damage_for_lvl * GetPlayerTechCount(p_v, cursed_mine_rc, true) // формула расчёта урона: урон = cursed_mine_damage_for_lvl * уровень улучшения
+            // !!!
+            call UnitDamageTargetBJ(damage_u, u, damage, ATTACK_TYPE_CHAOS, DAMAGE_TYPE_NORMAL) // DAMAGE_TYPE_UNIVERSAL - чистый урон без armor reduction
+            // -----
+        endif
 
-function Trig_income_upgTQ_Actions takes nothing returns nothing
-    local unit killer = GetKillingUnit()
-    local unit victim = GetDyingUnit()
-    local integer v_rc = GetUnitTypeId(victim)
-    local integer k_rc = GetUnitTypeId(killer)
-    local integer i = 1
-    local player p_v = GetOwningPlayer(victim)
-    local player p_k = GetOwningPlayer(killer)
-    local integer n_p_v = GetConvertedPlayerId(p_v)
-    local integer n_p_k = GetConvertedPlayerId(p_k)
-    local string name_ef = "Objects\\Spawnmodels\\Undead\\UndeadDissipate\\UndeadDissipate.mdl"
-    local real x = GetUnitX(victim)
-    local real y = GetUnitY(victim)
-    local real x_ef
-    local real y_ef
-    local real range = cursed_mine_cast_range
-    local real angle = 360.00 / cursed_mine_count_wave
-    local group gr = CreateGroup()
-    local integer gold
-    local integer lumber
-    local string s1
-    local string s2
-    
-    loop
-        exitwhen i > cursed_mine_count_wave
-        set x_ef = x + range * Cos(angle * i * bj_DEGTORAD)
-        set y_ef = y + range * Sin(angle * i * bj_DEGTORAD)
-        call DestroyEffect(AddSpecialEffect(name_ef, x_ef, y_ef))
-        set i = i + 1
-    endloop
+        set p = null
+        set p_k = null
+        set p_v = null
+        set u = null
+    endfunction
 
-    call GroupEnumUnitsInRange(gr, x, y, cursed_mine_range_damage, null)
+    function Trig_income_upgTQ_Actions takes nothing returns nothing
+        local unit killer = GetKillingUnit()
+        local unit victim = GetDyingUnit()
+        local integer v_rc = GetUnitTypeId(victim)
+        local integer k_rc = GetUnitTypeId(killer)
+        local integer i = 1
+        local player p_v = GetOwningPlayer(victim)
+        local player p_k = GetOwningPlayer(killer)
+        local integer n_p_v = GetConvertedPlayerId(p_v)
+        local integer n_p_k = GetConvertedPlayerId(p_k)
+        local string name_ef = "Objects\\Spawnmodels\\Undead\\UndeadDissipate\\UndeadDissipate.mdl"
+        local real x = GetUnitX(victim)
+        local real y = GetUnitY(victim)
+        local real x_ef
+        local real y_ef
+        local real range = cursed_mine_cast_range
+        local real angle = 360.00 / cursed_mine_count_wave
+        local group gr = CreateGroup()
+        local integer gold
+        local integer lumber
+        local string s1
+        local string s2
+        
+        loop
+            exitwhen i > cursed_mine_count_wave
+            set x_ef = x + range * Cos(angle * i * bj_DEGTORAD)
+            set y_ef = y + range * Sin(angle * i * bj_DEGTORAD)
+            call DestroyEffect(AddSpecialEffect(name_ef, x_ef, y_ef))
+            set i = i + 1
+        endloop
 
-    set hash[StringHash("income")].player[StringHash("player_killer")] = p_k
-    set hash[StringHash("income")].player[StringHash("player_victim")] = p_v
-    set hash[StringHash("income")].unit[StringHash("victim")] = victim
+        call GroupEnumUnitsInRange(gr, x, y, cursed_mine_range_damage, null)
 
-    call ForGroup(gr, function Trig_income_upgTQ_Actions_group)
+        set hash[StringHash("income")].player[StringHash("player_killer")] = p_k
+        set hash[StringHash("income")].player[StringHash("player_victim")] = p_v
+        set hash[StringHash("income")].unit[StringHash("victim")] = victim
 
-    set gold = GetPlayerState(p_k, PLAYER_STATE_RESOURCE_GOLD) * cursed_mine_percent / 100
-    set lumber = GetPlayerState(p_k, PLAYER_STATE_RESOURCE_LUMBER) * cursed_mine_percent / 100
+        call ForGroup(gr, function Trig_income_upgTQ_Actions_group)
 
-    call AddGoldToPlayer(gold, p_v)
-    call AddGoldToPlayer(-gold, p_k)
-    call AddLumberToPlayer(lumber, p_v)
-    call AddLumberToPlayer(-lumber, p_k)
+        set gold = GetPlayerState(p_k, PLAYER_STATE_RESOURCE_GOLD) * cursed_mine_percent / 100
+        set lumber = GetPlayerState(p_k, PLAYER_STATE_RESOURCE_LUMBER) * cursed_mine_percent / 100
 
-    set s1 = "Вы украли |cFFFFCD00" + I2S(gold) + "|r ед. золота и |cFFB23AEE" + I2S(lumber) + "|r ед. самоцветов у игрока " + udg_players_colour[n_p_k] + udg_players_name[n_p_k]
-    set s2 = "Вас ограбил игрок " + udg_players_colour[n_p_v] + udg_players_name[n_p_v]
-    call DisplayTextToPlayer(p_v, 0, 0, s1)
-    call DisplayTextToPlayer(p_k, 0, 0, s2)
+        call AddGoldToPlayer(gold, p_v)
+        call AddGoldToPlayer(-gold, p_k)
+        call AddLumberToPlayer(lumber, p_v)
+        call AddLumberToPlayer(-lumber, p_k)
 
-    set killer = null
-    set victim = null
-    call DestroyGroup(gr)
-    set name_ef = null
-    set gr = null
-    set p_v = null
-    set p_k = null
-    set s1 = null
-    set s2 = null
-endfunction
+        set s1 = "Вы украли |cFFFFCD00" + I2S(gold) + "|r ед. золота и |cFFB23AEE" + I2S(lumber) + "|r ед. самоцветов у игрока " + udg_players_colour[n_p_k] + udg_players_name[n_p_k]
+        set s2 = "Вас ограбил игрок " + udg_players_colour[n_p_v] + udg_players_name[n_p_v]
+        call DisplayTextToPlayer(p_v, 0, 0, s1)
+        call DisplayTextToPlayer(p_k, 0, 0, s2)
 
-//===========================================================================
-function InitTrig_income_upgTQ takes nothing returns nothing
-    local trigger t = CreateTrigger()
+        set killer = null
+        set victim = null
+        call DestroyGroup(gr)
+        set name_ef = null
+        set gr = null
+        set p_v = null
+        set p_k = null
+        set s1 = null
+        set s2 = null
+    endfunction
 
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerAddCondition(t, Condition(function Trig_income_upgTQ_Conditions))
-    call TriggerAddAction(t, function Trig_income_upgTQ_Actions)
+    //===========================================================================
+    function Init_income_upgTQ takes nothing returns nothing
+        local trigger t = CreateTrigger()
 
-    set t = null
-endfunction
-/*
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerAddCondition(t, Condition(function Trig_income_upgTQ_Conditions))
+        call TriggerAddAction(t, function Trig_income_upgTQ_Actions)
 
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     13.12.2020 16:21       =
-=============================================
+        set t = null
+    endfunction
 
-inc_colour Trigger
-
-Income Objective OnDestroy()
-
-*/
-
-function inc_colour_actions takes nothing returns nothing
-    local unit IncomeObjectiveUnit = GetDyingUnit() // IncomeObject
-    local player IncomeObjectReceiever = GetOwningPlayer(GetKillingUnit()) // Who gets IncomeObject
-    local unit IncomeObjectiveNewUnit // Replace IncomeObject
-    local player IncomeObjectOwner = GetOwningPlayer(IncomeObjectiveUnit) // Who loses IncomeObject
-    local boolean IsHugeGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == 'n003')
-    local boolean IsSmallGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == 'n004')
-    local boolean IsFlag = (GetUnitTypeId(IncomeObjectiveUnit) == 'n005')
-    local boolean IsOwnerTheReceiver = (IncomeObjectOwner == IncomeObjectReceiever)
-    local real IncomeObjectiveUnitX = GetUnitX(IncomeObjectiveUnit)
-    local real IncomeObjectiveUnitY = GetUnitY(IncomeObjectiveUnit)
-    local Color playerColor = Color.create(IncomeObjectReceiever) // Color Struct from NokladrLib.j
-
-    if not (IsHugeGoldMine or IsSmallGoldMine or IsFlag) then
-        return // No actions
-    endif
-
-    call RemoveUnit(IncomeObjectiveUnit) // Remove old IncomeObject to replace it with a new one
-    set IncomeObjectiveNewUnit = CreateUnit(IncomeObjectReceiever, GetUnitTypeId(IncomeObjectiveUnit), IncomeObjectiveUnitX, IncomeObjectiveUnitY, bj_UNIT_FACING)
-    call SetUnitVertexColor(IncomeObjectiveNewUnit, playerColor.red, playerColor.green, playerColor.blue, 255) // Adjusts color to match receiver's one
-
-    set IncomeObjectiveUnit = null
-    set IncomeObjectReceiever = null
-    set IncomeObjectiveNewUnit = null
-    set IncomeObjectOwner = null
-    call playerColor.destroy()
-endfunction
-
-function inc_colour takes nothing returns nothing
-    local trigger t = CreateTrigger()
-
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0C), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0D), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0E), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0F), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x10), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x11), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x12), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x13), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x14), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x15), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x16), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x17), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x18), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x19), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x1A), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x1B), EVENT_PLAYER_UNIT_DEATH, null)
-    call TriggerAddAction(t, function inc_colour_actions)
-
-    set t = null
-endfunction
+endscope
 
 library ArcingTextTag  // Arcing Text Tag v1.0.0.3 by Maker https://www.hiveworkshop.com/threads/228710/
     globals
@@ -2505,413 +2528,425 @@ library UnitRecycler initializer UnitRecyclerInit uses Colors, ArcingTextTag, Lo
     endfunction
     
 endlibrary
-globals
-    constant integer Arena_ArraySize = 8
-    rect array Arena_StartRectForPlayer[Arena_ArraySize]
-    constant integer Arena_RectListSize = 8
-    rect array Arena_RectList[Arena_RectListSize]
-    real Arena_Time = 120.00
-    constant real Arena_DebugTime = 10.00
-    timerdialog Arena_TimerDialog
-    constant integer Array_UnitTypeIdOffset = 49 * 256 * 256 // https://xgm.guru/p/wc3/rawcode-to-string
-endglobals
+scope Arena initializer ArenaInit
 
-function ForceArena_Conditions takes nothing returns boolean
-    return IsUnitInGroup(GetFilterUnit(), udg_buildings)
-endfunction
+    globals
+        constant integer Arena_ArraySize = 8
+        rect array Arena_StartRectForPlayer[Arena_ArraySize]
+        constant integer Arena_RectListSize = 8
+        rect array Arena_RectList[Arena_RectListSize]
+        real Arena_Time = 120.00
+        constant real Arena_DebugTime = 10.00
+        timerdialog Arena_TimerDialog
+        constant integer Array_UnitTypeIdOffset = 49 * 256 * 256 // https://xgm.guru/p/wc3/rawcode-to-string
+    endglobals
 
-function ForceArena_ForPlayerUnits takes nothing returns nothing
-    local player p = GetEnumPlayer()
-    local unit u = GetEnumUnit()
-    local real x = GetRectCenterX(Arena_StartRectForPlayer[GetPlayerId(p)])
-    local real y = GetRectCenterY(Arena_StartRectForPlayer[GetPlayerId(p)])
-    // debug call Log(I2S('h008') + " / " + I2S('ha08') + " / " + I2S('ha08' - 'h008') + " / " + I2S(offset))
-    call GroupAddUnit(udg_wave_units, CreateUnitEx(p, (GetUnitTypeId(u) + Array_UnitTypeIdOffset), x, y, 270))
-    // debug call Log("ForceArena_ForPlayerUnits: unit = " + GetUnitName(u))
+    function ForceArena_Conditions takes nothing returns boolean
+        return IsUnitInGroup(GetFilterUnit(), udg_buildings)
+    endfunction
 
-    set p = null
-    set u = null
-endfunction
+    function ForceArena_ForPlayerUnits takes nothing returns nothing
+        local player p = GetEnumPlayer()
+        local unit u = GetEnumUnit()
+        local real x = GetRectCenterX(Arena_StartRectForPlayer[GetPlayerId(p)])
+        local real y = GetRectCenterY(Arena_StartRectForPlayer[GetPlayerId(p)])
+        // debug call Log(I2S('h008') + " / " + I2S('ha08') + " / " + I2S('ha08' - 'h008') + " / " + I2S(offset))
+        call GroupAddUnit(udg_wave_units, CreateUnitEx(p, (GetUnitTypeId(u) + Array_UnitTypeIdOffset), x, y, 270))
+        // debug call Log("ForceArena_ForPlayerUnits: unit = " + GetUnitName(u))
 
-function ForceArena_ForPlayer takes nothing returns nothing
-    local player p = GetEnumPlayer()
-    local group g
-    local real x = GetRectCenterX(Arena_StartRectForPlayer[GetPlayerId(p)])
-    local real y = GetRectCenterY(Arena_StartRectForPlayer[GetPlayerId(p)])
+        set p = null
+        set u = null
+    endfunction
 
-    // debug call Log("ForceArena_ForPlayer: player = " + GetPlayerName(p))
+    function ForceArena_ForPlayer takes nothing returns nothing
+        local player p = GetEnumPlayer()
+        local group g
+        local real x = GetRectCenterX(Arena_StartRectForPlayer[GetPlayerId(p)])
+        local real y = GetRectCenterY(Arena_StartRectForPlayer[GetPlayerId(p)])
 
-    call GroupAddUnit(udg_castle_unit, CreateUnitEx(p, castle_rc, x, y, 270))
+        // debug call Log("ForceArena_ForPlayer: player = " + GetPlayerName(p))
 
-    set g = GetUnitsOfPlayerMatching(p, Condition(function ForceArena_Conditions))
-    call ForGroup(g, function ForceArena_ForPlayerUnits)
+        call GroupAddUnit(udg_castle_unit, CreateUnitEx(p, castle_rc, x, y, 270))
 
-    call PanCameraToTimedForPlayer(p, x, y, 0)
-    call CinematicFadeBJ(bj_CINEFADETYPE_FADEOUTIN, 2, "ReplaceableTextures\\CameraMasks\\White_mask.blp", 0, 0, 0, 0)
-    
-    set p = null
-    call DestroyGroup(g)
-    set g = null
-endfunction
+        set g = GetUnitsOfPlayerMatching(p, Condition(function ForceArena_Conditions))
+        call ForGroup(g, function ForceArena_ForPlayerUnits)
 
-function ArenaFlush takes nothing returns nothing
-    local integer i
+        call PanCameraToTimedForPlayer(p, x, y, 0)
+        call CinematicFadeBJ(bj_CINEFADETYPE_FADEOUTIN, 2, "ReplaceableTextures\\CameraMasks\\White_mask.blp", 0, 0, 0, 0)
+        
+        set p = null
+        call DestroyGroup(g)
+        set g = null
+    endfunction
 
-    set i = 0
-    loop
-        exitwhen i >= Arena_ArraySize
-        set Arena_StartRectForPlayer[i] = null
-        set i = i + 1
-    endloop
-endfunction
+    function ArenaFlush takes nothing returns nothing
+        local integer i
 
-function Arena_Timer_OnExpire takes nothing returns nothing
-    local timer t = GetExpiredTimer()
-    
-    call DestroyTimerDialog(Arena_TimerDialog)
-    call PauseTimer(t)
-    call DestroyTimer(t)
-    call ForceFastArena.execute()
+        set i = 0
+        loop
+            exitwhen i >= Arena_ArraySize
+            set Arena_StartRectForPlayer[i] = null
+            set i = i + 1
+        endloop
+    endfunction
 
-    set t = null
-endfunction
-
-function ForceArena takes nothing returns nothing
-    local integer i
-    local integer j
-    local integer random
-    local timer t = CreateTimer()
-
-    call ArenaFlush()
-
-    set i = 0
-    loop
-        exitwhen i >= Arena_ArraySize
-
-        if GetPlayerSlotState(Player(i)) == PLAYER_SLOT_STATE_PLAYING then
-            set random = GetRandomInt(0, Arena_RectListSize - 1)
-            set Arena_StartRectForPlayer[i] = Arena_RectList[random]
-
-            set j = 0
-            loop
-                exitwhen j >= i
-
-                if Arena_StartRectForPlayer[j] == Arena_RectList[random] then
-                    set random = GetRandomInt(0, Arena_RectListSize - 1)
-                    set Arena_StartRectForPlayer[i] = Arena_RectList[random]
-                    set j = 0
-                else
-                    set j = j + 1
-                endif
-            endloop
-
-            // debug call Log("ForceArena: Rect = " + I2S(random) + " of player = " + GetPlayerName(Player(i)))
-        endif
-
-        set i = i + 1
-    endloop
-
-    call ForForce(udg_players_group, function ForceArena_ForPlayer)
-    call TimerStart(t, Arena_Time, false, function Arena_Timer_OnExpire)
-    set Arena_TimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
-    call TimerDialogSetTitle(Arena_TimerDialog, "Арена") // Title of timer dialog
-    call TimerDialogDisplay(Arena_TimerDialog, true) // Shows timer dialog
-
-    set t = null
-endfunction
-
-function ArenaInit takes nothing returns nothing
-    debug set Arena_Time = Arena_DebugTime
-    set Arena_RectList[0] = gg_rct_start1
-    set Arena_RectList[1] = gg_rct_start2
-    set Arena_RectList[2] = gg_rct_start3
-    set Arena_RectList[3] = gg_rct_start4
-    set Arena_RectList[4] = gg_rct_start5
-    set Arena_RectList[5] = gg_rct_start6
-    set Arena_RectList[6] = gg_rct_start7
-    set Arena_RectList[7] = gg_rct_start8
-endfunction
-globals
-    constant integer FA_ArraySize = 8
-    group array FA_unitGroup[FA_ArraySize]
-    integer array FA_unitsInGroup[FA_ArraySize]
-    real array FA_DamageByPlayer[FA_ArraySize]
-    integer FA_WinPlayerId
-    rect FA_curRect
-    real FA_Time = 60.00
-    real FA_DebugTime = 10.00
-    real FA_TimerTime
-    timerdialog FA_TimerDialog
-endglobals
-
-function FastArena_Condition takes nothing returns boolean
-    return (IsUnitAliveBJ(GetFilterUnit()) == true) and (IsUnitInGroup(GetFilterUnit(), udg_wave_units) == true)
-endfunction
-
-function FastArena_AddUnitInGroup takes nothing returns nothing
-    call GroupAddUnit(FA_unitGroup[GetPlayerId(GetOwningPlayer(GetEnumUnit()))], GetEnumUnit())
-    set FA_unitsInGroup[GetPlayerId(GetOwningPlayer(GetEnumUnit()))] = FA_unitsInGroup[GetPlayerId(GetOwningPlayer(GetEnumUnit()))] + 1
-    // debug call Log(I2S(FA_unitsInGroup[GetPlayerId(GetOwningPlayer(GetEnumUnit()))]) + " " + GetPlayerName(GetOwningPlayer(GetEnumUnit())) + " " + GetUnitName(GetEnumUnit()))
-endfunction
-
-function FastArena_MoveUnitsToArena takes nothing returns nothing
-    local real x = GetRectCenterX(FA_curRect)
-    local real y = GetRectCenterY(FA_curRect)
-    call SetUnitPosition(GetEnumUnit(), x, y)
-    set x = GetRectCenterX(gg_rct_fastarena)
-    set y = GetRectCenterY(gg_rct_fastarena)
-    call IssuePointOrder(GetEnumUnit(), "attack", x, y)
-endfunction
-
-function FastArena_OnDamage takes nothing returns boolean
-    local player sourcePlayer = GetOwningPlayer(GetEventDamageSource())
-    local integer sourcePlayerId = GetPlayerId(sourcePlayer)
-    local player targetPlayer = GetOwningPlayer(BlzGetEventDamageTarget())
-
-    if (sourcePlayer != targetPlayer) then
-        set FA_DamageByPlayer[sourcePlayerId] = FA_DamageByPlayer[sourcePlayerId] + GetEventDamage()
-    else
-        debug set FA_DamageByPlayer[sourcePlayerId] = FA_DamageByPlayer[sourcePlayerId] + GetEventDamage()
-    endif
-
-    set sourcePlayer = null
-    set targetPlayer = null
-    return false
-endfunction
-
-function FastArena_RemoveUnits takes nothing returns nothing
-    call GroupRemoveUnit(udg_wave_units, GetEnumUnit())
-    call RemoveUnit(GetEnumUnit())
-endfunction
-
-function FastArena_FirePit takes nothing returns nothing
-    if (GetUnitLifePercent(GetEnumUnit()) > 4.00) then
-        call SetUnitLifePercentBJ(GetEnumUnit(),(GetUnitLifePercent(GetEnumUnit()) - 4.00))
-    endif
-endfunction
-
-function FastArena_SetWinPlayer takes nothing returns nothing
-    local integer i = 1
-    local integer curPlayerId = 0
-    loop
-        exitwhen i >= FA_ArraySize
-        if FA_DamageByPlayer[i] > FA_DamageByPlayer[curPlayerId] then
-            set curPlayerId = i
-        endif
-        set i = i + 1
-    endloop
-    set FA_WinPlayerId = curPlayerId
-endfunction
-
-function FastArena_Flush takes nothing returns nothing
-    local integer i = 0
-    loop
-        exitwhen i >= FA_ArraySize
-        call GroupClear(FA_unitGroup[i])
-        set FA_unitsInGroup[i] = 0
-        set FA_DamageByPlayer[i] = 0
-        set FA_TimerTime = FA_Time
-        call SetPlayerState(Player(i), PLAYER_STATE_GIVES_BOUNTY, 0)
-        set i = i + 1
-    endloop
-    set FA_TimerTime = FA_Time
-endfunction
-
-function FinishFastArena takes nothing returns nothing
-    local integer i
-
-    call DisableTrigger(DDS)
-    call FastArena_SetWinPlayer()
-
-    set i = 0
-    loop
-        exitwhen i > 8
-        if (udg_info[i+1] == true) then
-            call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, ("Нанеся " + GOLD + I2S(R2I(FA_DamageByPlayer[FA_WinPlayerId])) + "|r ед. урона на арене, победил игрок " + C_IntToColor(FA_WinPlayerId) + GetPlayerName(Player(FA_WinPlayerId)) + "|r"))
-        endif
-        set i = i + 1
-    endloop
-    
-    // set udg_scoreboard_win[FA_WinPlayerId] = (udg_scoreboard_win[FA_WinPlayerId] + 50) // Test
-    // call MultiboardSetItemValueBJ(udg_scoreboard, 7, FA_WinPlayerId, I2S(udg_scoreboard_win[FA_WinPlayerId])) // Test
-    
-    set i = 0
-    loop
-        exitwhen i >= FA_ArraySize
-        call SetPlayerState(Player(i), PLAYER_STATE_GIVES_BOUNTY, 1)
-        set i = i + 1
-    endloop
-
-    call ForceNextWave.execute()
-endfunction
-
-function FastArena_TimerTick takes nothing returns nothing
-    local timer t = GetExpiredTimer()
-    local group g_tmp
-
-    set FA_TimerTime = FA_TimerTime - 1
-
-    set g_tmp = GetUnitsInRectAll(gg_rct_fastarenaFIRE)
-    call ForGroup(g_tmp, function FastArena_FirePit)
-    call DestroyGroup(g_tmp)
-
-    if (FA_TimerTime <= 5 and FA_TimerTime > 0) then
-        call StartSound(gg_snd_BattleNetTick)
-    endif
-
-    if (FA_TimerTime <= 0) then
+    function Arena_Timer_OnExpire takes nothing returns nothing
+        local timer t = GetExpiredTimer()
+        
+        call DestroyTimerDialog(Arena_TimerDialog)
         call PauseTimer(t)
         call DestroyTimer(t)
-        call FinishFastArena()
-    endif
+        call ForceFastArena.execute()
 
-    set t = null
-    set g_tmp = null
-endfunction
+        set t = null
+    endfunction
 
-function FastArena_Timer_OnExpire takes nothing returns nothing
-    local timer t = GetExpiredTimer()
+    function ForceArena takes nothing returns nothing
+        local integer i
+        local integer j
+        local integer random
+        local timer t = CreateTimer()
 
-    call DestroyTimerDialog(FA_TimerDialog)
-    call PauseTimer(t)
-    call DestroyTimer(t)
+        call ArenaFlush()
 
-    set t = null
-endfunction
+        set i = 0
+        loop
+            exitwhen i >= Arena_ArraySize
 
-function ForceFastArena takes nothing returns nothing
-    local integer i
-    local integer j
-    local integer curPlayerId
-    local group g_tmp
-    local timer t = CreateTimer()
+            if GetPlayerSlotState(Player(i)) == PLAYER_SLOT_STATE_PLAYING then
+                set random = GetRandomInt(0, Arena_RectListSize - 1)
+                set Arena_StartRectForPlayer[i] = Arena_RectList[random]
 
-    // IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == true
-    // IsUnitType(GetFilterUnit(), UNIT_TYPE_SAPPER) == true
-    // call ForGroup(GetUnitsInRectMatching(gg_rct_all, Condition(function Trig_wave_end_timer_Func011Func001001002)), function C_RemoveEnumUnits)
-    // call DisableTrigger(gg_trg_wave_castle_destr)
-    // call DisableTrigger(gg_trg_inc_per_second)
-    
-    call FastArena_Flush()
-    call PanCameraToTimed(GetRectCenterX(gg_rct_fastarena), GetRectCenterY(gg_rct_fastarena), 0)
+                set j = 0
+                loop
+                    exitwhen j >= i
 
-    set i = 1
-    loop
-        exitwhen i > 4
-        if (i == 1) then
-            set FA_curRect = gg_rct_fastarenaSPAWN1
-        elseif (i == 2) then
-            set FA_curRect = gg_rct_fastarenaSPAWN2
-        elseif (i == 3) then
-            set FA_curRect = gg_rct_fastarenaSPAWN3
-        elseif (i == 4) then
-            set FA_curRect = gg_rct_fastarenaSPAWN4
+                    if Arena_StartRectForPlayer[j] == Arena_RectList[random] then
+                        set random = GetRandomInt(0, Arena_RectListSize - 1)
+                        set Arena_StartRectForPlayer[i] = Arena_RectList[random]
+                        set j = 0
+                    else
+                        set j = j + 1
+                    endif
+                endloop
+
+                // debug call Log("ForceArena: Rect = " + I2S(random) + " of player = " + GetPlayerName(Player(i)))
+            endif
+
+            set i = i + 1
+        endloop
+
+        call ForForce(udg_players_group, function ForceArena_ForPlayer)
+        call TimerStart(t, Arena_Time, false, function Arena_Timer_OnExpire)
+        set Arena_TimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
+        call TimerDialogSetTitle(Arena_TimerDialog, "Арена") // Title of timer dialog
+        call TimerDialogDisplay(Arena_TimerDialog, true) // Shows timer dialog
+
+        set t = null
+    endfunction
+
+    function ArenaInit takes nothing returns nothing
+        debug set Arena_Time = Arena_DebugTime
+        set Arena_RectList[0] = gg_rct_start1
+        set Arena_RectList[1] = gg_rct_start2
+        set Arena_RectList[2] = gg_rct_start3
+        set Arena_RectList[3] = gg_rct_start4
+        set Arena_RectList[4] = gg_rct_start5
+        set Arena_RectList[5] = gg_rct_start6
+        set Arena_RectList[6] = gg_rct_start7
+        set Arena_RectList[7] = gg_rct_start8
+    endfunction
+
+endscope
+scope FastArena initializer FastArenaInit
+
+    globals
+        constant integer FA_ArraySize = 8
+        group array FA_unitGroup[FA_ArraySize]
+        integer array FA_unitsInGroup[FA_ArraySize]
+        real array FA_DamageByPlayer[FA_ArraySize]
+        integer FA_WinPlayerId
+        rect FA_curRect
+        real FA_Time = 60.00
+        real FA_DebugTime = 10.00
+        real FA_TimerTime
+        timerdialog FA_TimerDialog
+    endglobals
+
+    function FastArena_Condition takes nothing returns boolean
+        return (IsUnitAliveBJ(GetFilterUnit()) == true) and (IsUnitInGroup(GetFilterUnit(), udg_wave_units) == true)
+    endfunction
+
+    function FastArena_AddUnitInGroup takes nothing returns nothing
+        call GroupAddUnit(FA_unitGroup[GetPlayerId(GetOwningPlayer(GetEnumUnit()))], GetEnumUnit())
+        set FA_unitsInGroup[GetPlayerId(GetOwningPlayer(GetEnumUnit()))] = FA_unitsInGroup[GetPlayerId(GetOwningPlayer(GetEnumUnit()))] + 1
+        // debug call Log(I2S(FA_unitsInGroup[GetPlayerId(GetOwningPlayer(GetEnumUnit()))]) + " " + GetPlayerName(GetOwningPlayer(GetEnumUnit())) + " " + GetUnitName(GetEnumUnit()))
+    endfunction
+
+    function FastArena_MoveUnitsToArena takes nothing returns nothing
+        local real x = GetRectCenterX(FA_curRect)
+        local real y = GetRectCenterY(FA_curRect)
+        call SetUnitPosition(GetEnumUnit(), x, y)
+        set x = GetRectCenterX(gg_rct_fastarena)
+        set y = GetRectCenterY(gg_rct_fastarena)
+        call IssuePointOrder(GetEnumUnit(), "attack", x, y)
+    endfunction
+
+    function FastArena_OnDamage takes nothing returns boolean
+        local player sourcePlayer = GetOwningPlayer(GetEventDamageSource())
+        local integer sourcePlayerId = GetPlayerId(sourcePlayer)
+        local player targetPlayer = GetOwningPlayer(BlzGetEventDamageTarget())
+
+        if (sourcePlayer != targetPlayer) then
+            set FA_DamageByPlayer[sourcePlayerId] = FA_DamageByPlayer[sourcePlayerId] + GetEventDamage()
+        else
+            debug set FA_DamageByPlayer[sourcePlayerId] = FA_DamageByPlayer[sourcePlayerId] + GetEventDamage()
         endif
 
-        set g_tmp = GetUnitsInRectMatching(gg_rct_all, Condition(function FastArena_Condition))
-        call ForGroup(g_tmp, function FastArena_AddUnitInGroup)
+        set sourcePlayer = null
+        set targetPlayer = null
+        return false
+    endfunction
+
+    function FastArena_RemoveUnits takes nothing returns nothing
+        call GroupRemoveUnit(udg_wave_units, GetEnumUnit())
+        call RemoveUnit(GetEnumUnit())
+    endfunction
+
+    function FastArena_FirePit takes nothing returns nothing
+        if (GetUnitLifePercent(GetEnumUnit()) > 4.00) then
+            call SetUnitLifePercentBJ(GetEnumUnit(),(GetUnitLifePercent(GetEnumUnit()) - 4.00))
+        endif
+    endfunction
+
+    function FastArena_SetWinPlayer takes nothing returns nothing
+        local integer i = 1
+        local integer curPlayerId = 0
+        loop
+            exitwhen i >= FA_ArraySize
+            if FA_DamageByPlayer[i] > FA_DamageByPlayer[curPlayerId] then
+                set curPlayerId = i
+            endif
+            set i = i + 1
+        endloop
+        set FA_WinPlayerId = curPlayerId
+    endfunction
+
+    function FastArena_Flush takes nothing returns nothing
+        local integer i = 0
+        loop
+            exitwhen i >= FA_ArraySize
+            call GroupClear(FA_unitGroup[i])
+            set FA_unitsInGroup[i] = 0
+            set FA_DamageByPlayer[i] = 0
+            set FA_TimerTime = FA_Time
+            call SetPlayerState(Player(i), PLAYER_STATE_GIVES_BOUNTY, 0)
+            set i = i + 1
+        endloop
+        set FA_TimerTime = FA_Time
+    endfunction
+
+    function FinishFastArena takes nothing returns nothing
+        local integer i
+
+        call DisableTrigger(DDS)
+        call FastArena_SetWinPlayer()
+
+        set i = 0
+        loop
+            exitwhen i > 8
+            if (udg_info[i+1] == true) then
+                call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, ("Нанеся " + GOLD + I2S(R2I(FA_DamageByPlayer[FA_WinPlayerId])) + "|r ед. урона на арене, победил игрок " + C_IntToColor(FA_WinPlayerId) + GetPlayerName(Player(FA_WinPlayerId)) + "|r"))
+            endif
+            set i = i + 1
+        endloop
+        
+        // set udg_scoreboard_win[FA_WinPlayerId] = (udg_scoreboard_win[FA_WinPlayerId] + 50) // Test
+        // call MultiboardSetItemValueBJ(udg_scoreboard, 7, FA_WinPlayerId, I2S(udg_scoreboard_win[FA_WinPlayerId])) // Test
+        
+        set i = 0
+        loop
+            exitwhen i >= FA_ArraySize
+            call SetPlayerState(Player(i), PLAYER_STATE_GIVES_BOUNTY, 1)
+            set i = i + 1
+        endloop
+
+        call ForceNextWave.execute()
+    endfunction
+
+    function FastArena_TimerTick takes nothing returns nothing
+        local timer t = GetExpiredTimer()
+        local group g_tmp
+
+        set FA_TimerTime = FA_TimerTime - 1
+
+        set g_tmp = GetUnitsInRectAll(gg_rct_fastarenaFIRE)
+        call ForGroup(g_tmp, function FastArena_FirePit)
         call DestroyGroup(g_tmp)
 
-        set j = 1
-        set curPlayerId = 0
-        loop
-            exitwhen j >= FA_ArraySize
-            if FA_unitsInGroup[j] > FA_unitsInGroup[curPlayerId] then
-                set curPlayerId = j
-            endif
-            set j = j + 1
-        endloop
-        call ForGroup(FA_unitGroup[curPlayerId], function FastArena_MoveUnitsToArena)
-        call PanCameraToTimedForPlayer(Player(curPlayerId), GetRectCenterX(FA_curRect), GetRectCenterY(FA_curRect), 0)
-        set FA_unitsInGroup[curPlayerId] = -1
-        set i = i + 1
-    endloop
-
-    set i = 0
-    loop
-        exitwhen i > 8
-        if (udg_info[i+1] == true) then
-            call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "У вас есть " + GOLD + I2S(R2I(FA_Time)) + "|r сек.")
-            call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "Были отобраны первые четверо игроков с наибольшим количеством живых юнитов.")
-            call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "По истечении времени игрок, нанёсший наибольшее количество урона, получит бонусные очки арены.")
+        if (FA_TimerTime <= 5 and FA_TimerTime > 0) then
+            call StartSound(gg_snd_BattleNetTick)
         endif
-        set i = i + 1
-    endloop
-    
-    set g_tmp = GetUnitsInRectMatching(gg_rct_all, Condition(function FastArena_Condition))
-    call ForGroup(GetUnitsInRectMatching(gg_rct_all, Condition(function FastArena_Condition)),function FastArena_RemoveUnits)
-    call DestroyGroup(g_tmp)
-    
-    call TimerStart(t, FA_Time, false, function FastArena_Timer_OnExpire)
-    set FA_TimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
-    call TimerDialogSetTitle(FA_TimerDialog, "Быстрая битва") // Title of timer dialog
-    call TimerDialogDisplay(FA_TimerDialog, true) // Shows timer dialog
-    
-    call TimerStart(CreateTimer(), 1, true, function FastArena_TimerTick)
-    
-    call EnableTrigger(DDS)
 
-    set g_tmp = null
-    set t = null
-endfunction
+        if (FA_TimerTime <= 0) then
+            call PauseTimer(t)
+            call DestroyTimer(t)
+            call FinishFastArena()
+        endif
 
-function FastArenaInit takes nothing returns nothing
-    local integer i = 0
-    debug set FA_Time = FA_DebugTime
-    loop
-        exitwhen i >= FA_ArraySize
-        set FA_unitGroup[i] = CreateGroup()
-        set i = i + 1
-    endloop
-    call AddDamageCondition(Condition(function FastArena_OnDamage))
-endfunction
-globals
-    constant real relaxWaveTime = 5.00
-    timerdialog relaxWaveTimerDialog
-endglobals
+        set t = null
+        set g_tmp = null
+    endfunction
 
-function NextWave_ForPlayer takes nothing returns nothing
-    local player p = GetEnumPlayer()
+    function FastArena_Timer_OnExpire takes nothing returns nothing
+        local timer t = GetExpiredTimer()
 
-    call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, p, 0)
-    call PanCameraToTimedLocForPlayer(p, GetPlayerStartLocationLoc(p), 0) // Focuses camera at castle you own
+        call DestroyTimerDialog(FA_TimerDialog)
+        call PauseTimer(t)
+        call DestroyTimer(t)
 
-    call AddGoldToPlayer(pdb[p].income_gold, p)
-    call AddLumberToPlayer(pdb[p].income_gems, p)
+        set t = null
+    endfunction
 
-    call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль золота: " + GOLD + I2S(pdb[p].income_gold) + "|r")
-    call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль самоцветов: " + VIOLET + I2S(pdb[p].income_gems) + "|r")
+    function ForceFastArena takes nothing returns nothing
+        local integer i
+        local integer j
+        local integer curPlayerId
+        local group g_tmp
+        local timer t = CreateTimer()
 
-    set p = null
-endfunction
+        // IsUnitType(GetFilterUnit(), UNIT_TYPE_STRUCTURE) == true
+        // IsUnitType(GetFilterUnit(), UNIT_TYPE_SAPPER) == true
+        // call ForGroup(GetUnitsInRectMatching(gg_rct_all, Condition(function Trig_wave_end_timer_Func011Func001001002)), function C_RemoveEnumUnits)
+        // call DisableTrigger(gg_trg_wave_castle_destr)
+        // call DisableTrigger(gg_trg_inc_per_second)
+        
+        call FastArena_Flush()
+        call PanCameraToTimed(GetRectCenterX(gg_rct_fastarena), GetRectCenterY(gg_rct_fastarena), 0)
 
-function NextWave_Timer_OnExprie takes nothing returns nothing
-    local timer t = GetExpiredTimer()
+        set i = 1
+        loop
+            exitwhen i > 4
+            if (i == 1) then
+                set FA_curRect = gg_rct_fastarenaSPAWN1
+            elseif (i == 2) then
+                set FA_curRect = gg_rct_fastarenaSPAWN2
+            elseif (i == 3) then
+                set FA_curRect = gg_rct_fastarenaSPAWN3
+            elseif (i == 4) then
+                set FA_curRect = gg_rct_fastarenaSPAWN4
+            endif
 
-    call DestroyTimerDialog(relaxWaveTimerDialog)
-    call PauseTimer(t)
-    call DestroyTimer(t)
-    call ForceArena.execute()
+            set g_tmp = GetUnitsInRectMatching(gg_rct_all, Condition(function FastArena_Condition))
+            call ForGroup(g_tmp, function FastArena_AddUnitInGroup)
+            call DestroyGroup(g_tmp)
 
-    set t = null
-endfunction
+            set j = 1
+            set curPlayerId = 0
+            loop
+                exitwhen j >= FA_ArraySize
+                if FA_unitsInGroup[j] > FA_unitsInGroup[curPlayerId] then
+                    set curPlayerId = j
+                endif
+                set j = j + 1
+            endloop
+            call ForGroup(FA_unitGroup[curPlayerId], function FastArena_MoveUnitsToArena)
+            call PanCameraToTimedForPlayer(Player(curPlayerId), GetRectCenterX(FA_curRect), GetRectCenterY(FA_curRect), 0)
+            set FA_unitsInGroup[curPlayerId] = -1
+            set i = i + 1
+        endloop
 
-function ForceNextWave takes nothing returns nothing
-    local timer t = CreateTimer()
-    call ForGroup(udg_wave_units, function C_RemoveEnumUnits)
-    call GroupClear(udg_wave_units)
-    call ForGroup(udg_castle_unit, function C_RemoveEnumUnits)
-    call GroupClear(udg_castle_unit)
+        set i = 0
+        loop
+            exitwhen i > 8
+            if (udg_info[i+1] == true) then
+                call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "У вас есть " + GOLD + I2S(R2I(FA_Time)) + "|r сек.")
+                call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "Были отобраны первые четверо игроков с наибольшим количеством живых юнитов.")
+                call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "По истечении времени игрок, нанёсший наибольшее количество урона, получит бонусные очки арены.")
+            endif
+            set i = i + 1
+        endloop
+        
+        set g_tmp = GetUnitsInRectMatching(gg_rct_all, Condition(function FastArena_Condition))
+        call ForGroup(GetUnitsInRectMatching(gg_rct_all, Condition(function FastArena_Condition)),function FastArena_RemoveUnits)
+        call DestroyGroup(g_tmp)
+        
+        call TimerStart(t, FA_Time, false, function FastArena_Timer_OnExpire)
+        set FA_TimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
+        call TimerDialogSetTitle(FA_TimerDialog, "Быстрая битва") // Title of timer dialog
+        call TimerDialogDisplay(FA_TimerDialog, true) // Shows timer dialog
+        
+        call TimerStart(CreateTimer(), 1, true, function FastArena_TimerTick)
+        
+        call EnableTrigger(DDS)
 
-    call ForForce(udg_players_group, function NextWave_ForPlayer)
+        set g_tmp = null
+        set t = null
+    endfunction
 
-    call TimerStart(t, relaxWaveTime, false, function NextWave_Timer_OnExprie)
-    set relaxWaveTimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
-    call TimerDialogSetTitle(relaxWaveTimerDialog, "Следующая волна") // Title of timer dialog
-    call TimerDialogDisplay(relaxWaveTimerDialog, true) // Shows timer dialog
-    
-    set t = null
-endfunction
+    function FastArenaInit takes nothing returns nothing
+        local integer i = 0
+        debug set FA_Time = FA_DebugTime
+        loop
+            exitwhen i >= FA_ArraySize
+            set FA_unitGroup[i] = CreateGroup()
+            set i = i + 1
+        endloop
+        call AddDamageCondition(Condition(function FastArena_OnDamage))
+    endfunction
+
+endscope
+scope NextWave
+
+    globals
+        constant real relaxWaveTime = 5.00
+        timerdialog relaxWaveTimerDialog
+    endglobals
+
+    function NextWave_ForPlayer takes nothing returns nothing
+        local player p = GetEnumPlayer()
+
+        call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, p, 0)
+        call PanCameraToTimedLocForPlayer(p, GetPlayerStartLocationLoc(p), 0) // Focuses camera at castle you own
+
+        call AddGoldToPlayer(pdb[p].income_gold, p)
+        call AddLumberToPlayer(pdb[p].income_gems, p)
+
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль золота: " + GOLD + I2S(pdb[p].income_gold) + "|r")
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль самоцветов: " + VIOLET + I2S(pdb[p].income_gems) + "|r")
+
+        set p = null
+    endfunction
+
+    function NextWave_Timer_OnExprie takes nothing returns nothing
+        local timer t = GetExpiredTimer()
+
+        call DestroyTimerDialog(relaxWaveTimerDialog)
+        call PauseTimer(t)
+        call DestroyTimer(t)
+        call ForceArena.execute()
+
+        set t = null
+    endfunction
+
+    function ForceNextWave takes nothing returns nothing
+        local timer t = CreateTimer()
+        call ForGroup(udg_wave_units, function C_RemoveEnumUnits)
+        call GroupClear(udg_wave_units)
+        call ForGroup(udg_castle_unit, function C_RemoveEnumUnits)
+        call GroupClear(udg_castle_unit)
+
+        call ForForce(udg_players_group, function NextWave_ForPlayer)
+
+        call TimerStart(t, relaxWaveTime, false, function NextWave_Timer_OnExprie)
+        set relaxWaveTimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
+        call TimerDialogSetTitle(relaxWaveTimerDialog, "Следующая волна") // Title of timer dialog
+        call TimerDialogDisplay(relaxWaveTimerDialog, true) // Shows timer dialog
+        
+        set t = null
+    endfunction
+
+endscope
 /*
 
 =============================================
@@ -2927,125 +2962,132 @@ builder select Trigger
 
 */
 
-globals
-    integer array peonsId[12]
-endglobals
+scope BuilderSelect initializer builder_select
 
-function builder_select_IsDummy takes nothing returns boolean
-    return (GetUnitTypeId(GetFilterUnit()) == 'h001') or (GetUnitTypeId(GetFilterUnit()) == 'ntav')
-endfunction
+    globals
+        integer array peonsId[12]
+        debug constant integer debugGold = 12000
+        debug constant integer debugGems = 12000
+    endglobals
 
-function builder_select_actions takes nothing returns nothing
-    local unit peon
-    local player owner_of_peon
-    local group group_of_dummies
-    local real x
-    local real y
-    local integer peonId
+    function builder_select_IsDummy takes nothing returns boolean
+        return (GetUnitTypeId(GetFilterUnit()) == 'h001') or (GetUnitTypeId(GetFilterUnit()) == 'ntav')
+    endfunction
 
-    local integer column
-    local integer row
-    local multiboarditem mbitem
-    local string iconFileName
+    function builder_select_actions takes nothing returns nothing
+        local unit peon
+        local player owner_of_peon
+        local group group_of_dummies
+        local real x
+        local real y
+        local integer peonId
 
-    if not IsUnitType(GetSoldUnit(), UNIT_TYPE_PEON) then
+        local integer column
+        local integer row
+        local multiboarditem mbitem
+        local string iconFileName
+
+        if not IsUnitType(GetSoldUnit(), UNIT_TYPE_PEON) then
+            set peon = null
+            set owner_of_peon = null
+            set group_of_dummies = null
+            set mbitem = null
+            set iconFileName = null
+            return
+        endif
+
+        set peon = GetSoldUnit()
+        set owner_of_peon = GetTriggerPlayer()
+        set group_of_dummies = GetUnitsOfPlayerMatching(owner_of_peon, Condition(function builder_select_IsDummy))
+        set x = GetPlayerStartLocationX(owner_of_peon)
+        set y = GetPlayerStartLocationY(owner_of_peon)
+        set peonId = GetUnitTypeId(peon)
+
+        set column = 0
+        set row = GetPlayerId(owner_of_peon) + 1
+        set mbitem = MultiboardGetItem(udg_scoreboard, row, column)
+
+        call SelectUnitForPlayerSingle(peon, owner_of_peon) // Selects peon for player
+        call ForGroup(group_of_dummies, function C_RemoveEnumUnits) // Remove dummies
+
+        call CreateUnit(owner_of_peon, 'hbla', x, y, bj_UNIT_FACING) // Юнит "Замок"
+        call CreateUnit(owner_of_peon, 'hwtw', x-450, y+640, bj_UNIT_FACING) // Юнит "Улучшения"
+        call SetUnitPosition(peon, x, y-250) // Peon's position
+        call SetUnitFacing(peon, bj_UNIT_FACING) // Peon's facing
+        call PanCameraToForPlayer(owner_of_peon, x, y)
+
+        if (peonId == peonsId[0]) then
+            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNPeasant.blp"
+            call SetPlayerTechResearched(owner_of_peon, 'R02G', 1) // Улучшение "Играть за людей"
+        elseif (peonId == peonsId[1]) then
+            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNAcolyte.blp"
+        elseif (peonId == peonsId[2]) then
+            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNWisp.blp"
+            call SetPlayerTechResearched(owner_of_peon, 'R00H', 2) // Улучшение "Драгоценные камни"
+            call SetPlayerTechResearched(owner_of_peon, 'R02F', 1) // Улучшение "Играть за эльфов"
+            set udg_scoreboard_upg[row] = 2
+        elseif (peonId == peonsId[3]) then
+            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNPeon.blp"
+            call AddGoldToPlayer(150, owner_of_peon)
+            call SetPlayerTechResearched(owner_of_peon, 'R00H', 1) // Улучшение "Играть за орду"
+        elseif (peonId == peonsId[4]) then
+            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNMurgalSlave.blp"
+        elseif (peonId == peonsId[5]) then
+            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNMedivh.blp"
+            set udg_mediv = owner_of_peon
+            call TriggerExecute(gg_trg_mediv_select)
+        endif
+
+        call MultiboardSetItemIcon(mbitem, iconFileName)
+        call MultiboardReleaseItem(mbitem)
+
+        static if DEBUG_MODE then
+            call AddGoldToPlayer(debugGold, owner_of_peon)
+            call AddLumberToPlayer(debugGems, owner_of_peon)
+            call SetPlayerTechResearched(owner_of_peon, 'R018', 1) // Улучшение "12 исследований"
+            call SetPlayerTechResearched(owner_of_peon, 'R019', 1) // Улучшение "20 исследований"
+            else
+            call AddGoldToPlayer(base_gold, owner_of_peon) // Check Globals.j
+            call AddLumberToPlayer(base_gems, owner_of_peon) // Check Globals.j
+        endif
+
         set peon = null
         set owner_of_peon = null
+        call DestroyGroup(group_of_dummies)
         set group_of_dummies = null
         set mbitem = null
         set iconFileName = null
-        return
-    endif
+    endfunction
 
-    set peon = GetSoldUnit()
-    set owner_of_peon = GetTriggerPlayer()
-    set group_of_dummies = GetUnitsOfPlayerMatching(owner_of_peon, Condition(function builder_select_IsDummy))
-    set x = GetPlayerStartLocationX(owner_of_peon)
-    set y = GetPlayerStartLocationY(owner_of_peon)
-    set peonId = GetUnitTypeId(peon)
+    //===========================================================================
+    function builder_select takes nothing returns nothing
+        local trigger t = CreateTrigger()
 
-    set column = 0
-    set row = GetPlayerId(owner_of_peon) + 1
-    set mbitem = MultiboardGetItem(udg_scoreboard, row, column)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerAddAction(t, function builder_select_actions)
 
-    call SelectUnitForPlayerSingle(peon, owner_of_peon) // Selects peon for player
-    call ForGroup(group_of_dummies, function C_RemoveEnumUnits) // Remove dummies
-    static if DEBUG_MODE then
-        call AddGoldToPlayer(100000, owner_of_peon)
-        call AddLumberToPlayer(100000, owner_of_peon)
-        call SetPlayerTechResearched(owner_of_peon, 'R018', 1) // Улучшение "12 исследований"
-        call SetPlayerTechResearched(owner_of_peon, 'R019', 1) // Улучшение "20 исследований"
-        else
-        call AddGoldToPlayer(base_gold, owner_of_peon) // Check Globals.j
-        call AddLumberToPlayer(base_gems, owner_of_peon) // Check Globals.j
-    endif
-    call CreateUnit(owner_of_peon, 'hbla', x, y, bj_UNIT_FACING) // Юнит "Замок"
-    call CreateUnit(owner_of_peon, 'hwtw', x-450, y+640, bj_UNIT_FACING) // Юнит "Улучшения"
-    call SetUnitPosition(peon, x, y-250) // Peon's position
-    call SetUnitFacing(peon, bj_UNIT_FACING) // Peon's facing
-    call PanCameraToForPlayer(owner_of_peon, x, y)
+        set peonsId[0] = 'h02I' // Работник
+        set peonsId[1] = 'h015' // Послушник
+        set peonsId[2] = 'h01G' // Светлячок
+        set peonsId[3] = 'h01U' // Раб
+        set peonsId[4] = 'h025' // Маргол-раб
+        set peonsId[5] = 'h02H' // Медив
 
-    if (peonId == peonsId[0]) then
-        set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNPeasant.blp"
-        call SetPlayerTechResearched(owner_of_peon, 'R02G', 1) // Улучшение "Играть за людей"
-    elseif (peonId == peonsId[1]) then
-        set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNAcolyte.blp"
-    elseif (peonId == peonsId[2]) then
-        set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNWisp.blp"
-        call SetPlayerTechResearched(owner_of_peon, 'R00H', 2) // Улучшение "Драгоценные камни"
-        call SetPlayerTechResearched(owner_of_peon, 'R02F', 1) // Улучшение "Играть за эльфов"
-        set udg_scoreboard_upg[row] = 2
-    elseif (peonId == peonsId[3]) then
-        set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNPeon.blp"
-        call AddGoldToPlayer(150, owner_of_peon)
-        call SetPlayerTechResearched(owner_of_peon, 'R00H', 1) // Улучшение "Играть за орду"
-    elseif (peonId == peonsId[4]) then
-        set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNMurgalSlave.blp"
-    elseif (peonId == peonsId[5]) then
-        set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNMedivh.blp"
-        set udg_mediv = owner_of_peon
-        call TriggerExecute(gg_trg_mediv_select)
-    endif
+        set t = null
+    endfunction
 
-    call MultiboardSetItemIcon(mbitem, iconFileName)
-    call MultiboardReleaseItem(mbitem)
-
-    set peon = null
-    set owner_of_peon = null
-    call DestroyGroup(group_of_dummies)
-    set group_of_dummies = null
-    set mbitem = null
-    set iconFileName = null
-endfunction
-
-//===========================================================================
-function builder_select takes nothing returns nothing
-    local trigger t = CreateTrigger()
-
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_SELL, null)
-    call TriggerAddAction(t, function builder_select_actions)
-
-    set peonsId[0] = 'h02I' // Работник
-    set peonsId[1] = 'h015' // Послушник
-    set peonsId[2] = 'h01G' // Светлячок
-    set peonsId[3] = 'h01U' // Раб
-    set peonsId[4] = 'h025' // Маргол-раб
-    set peonsId[5] = 'h02H' // Медив
-
-    set t = null
-endfunction
-
+endscope
 /*
 
 =============================================
@@ -3115,172 +3157,182 @@ scope UnitDatabase
 
 endscope
 
-function building_selling_conditions takes nothing returns boolean
-    return (GetSpellAbilityId() == 'A002') // Способность "Продать"
-endfunction
+scope BuildingSelling initializer building_selling
 
-function building_selling_actions takes nothing returns nothing
-    local unit u = GetSpellAbilityUnit()
-    local player p = GetTriggerPlayer()
-    local integer gold = udb[u].GetGold()
-    local integer lumber = udb[u].GetLumber()
-    local texttag tt
-    call GroupRemoveUnit(udg_buildings, u)
+    function building_selling_conditions takes nothing returns boolean
+        return (GetSpellAbilityId() == 'A002') // Способность "Продать"
+    endfunction
 
-    call AddGoldToPlayer(gold, p)
-    call AddLumberToPlayer(lumber, p)
+    function building_selling_actions takes nothing returns nothing
+        local unit u = GetSpellAbilityUnit()
+        local player p = GetTriggerPlayer()
+        local integer gold = udb[u].GetGold()
+        local integer lumber = udb[u].GetLumber()
+        local texttag tt
+        call GroupRemoveUnit(udg_buildings, u)
 
-    set tt = NewTextTagAtUnit(GOLD + "+" + I2S(gold), u, 70.00, 11.00)
-    call SetTextTagVisibility(tt, false)
-    if (GetLocalPlayer() == p) then
-        call SetTextTagVisibility(tt, true)
-    endif
-    call SetTextTagPermanent(tt, false)
-    call SetTextTagLifespan(tt, 2.00)
-    call SetTextTagFadepoint(tt, 1.30)
-    call SetTextTagVelocity(tt, 0, 0.03)
+        call AddGoldToPlayer(gold, p)
+        call AddLumberToPlayer(lumber, p)
 
-    set tt = NewTextTagAtUnit(VIOLET + "+" + I2S(lumber), u, 0.00, 11.00)
-    call SetTextTagVisibility(tt, false)
-    if (GetLocalPlayer() == p) then
-        call SetTextTagVisibility(tt, true)
-    endif
-    call SetTextTagPermanent(tt, false)
-    call SetTextTagLifespan(tt, 2.00)
-    call SetTextTagFadepoint(tt, 1.30)
-    call SetTextTagVelocity(tt, 0, 0.03)
+        set tt = NewTextTagAtUnit(GOLD + "+" + I2S(gold), u, 70.00, 11.00)
+        call SetTextTagVisibility(tt, false)
+        if (GetLocalPlayer() == p) then
+            call SetTextTagVisibility(tt, true)
+        endif
+        call SetTextTagPermanent(tt, false)
+        call SetTextTagLifespan(tt, 2.00)
+        call SetTextTagFadepoint(tt, 1.30)
+        call SetTextTagVelocity(tt, 0, 0.03)
 
-    call RemoveUnit(u)
-    call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl", GetUnitX(u), GetUnitY(u)))
+        set tt = NewTextTagAtUnit(VIOLET + "+" + I2S(lumber), u, 0.00, 11.00)
+        call SetTextTagVisibility(tt, false)
+        if (GetLocalPlayer() == p) then
+            call SetTextTagVisibility(tt, true)
+        endif
+        call SetTextTagPermanent(tt, false)
+        call SetTextTagLifespan(tt, 2.00)
+        call SetTextTagFadepoint(tt, 1.30)
+        call SetTextTagVelocity(tt, 0, 0.03)
 
-    set u = null
-    set p = null
-    set tt = null
-endfunction
+        call RemoveUnit(u)
+        call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl", GetUnitX(u), GetUnitY(u)))
 
-//===========================================================================
-function building_selling takes nothing returns nothing
-    local trigger t = CreateTrigger()
+        set u = null
+        set p = null
+        set tt = null
+    endfunction
 
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-    call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-    call TriggerAddCondition(t, Condition(function building_selling_conditions))
-    call TriggerAddAction(t, function building_selling_actions)
+    //===========================================================================
+    function building_selling takes nothing returns nothing
+        local trigger t = CreateTrigger()
 
-    set udb = UnitDB.create()
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerAddCondition(t, Condition(function building_selling_conditions))
+        call TriggerAddAction(t, function building_selling_actions)
 
-    // ---------------------------------Альянс---------------------------------
-    call UnitStruct.create('h002', 0)       // Пехотинец
-    call UnitStruct.create('h004', 'h002')  // Мечник
-    call UnitStruct.create('h005', 'h004')  // Гвардеец
+        set udb = UnitDB.create()
 
-    call UnitStruct.create('h003', 0)       // Стрелок
-    call UnitStruct.create('h007', 'h003')  // Снайпер
-    call UnitStruct.create('h008', 'h007')  // Элитная лучница
+        // ---------------------------------Альянс---------------------------------
+        call UnitStruct.create('h002', 0)       // Пехотинец
+        call UnitStruct.create('h004', 'h002')  // Мечник
+        call UnitStruct.create('h005', 'h004')  // Гвардеец
 
-    call UnitStruct.create('h009', 0)       // Ученик
-    call UnitStruct.create('h00A', 'h009')  // Целитель
-    call UnitStruct.create('h00B', 'h00A')  // Высший целитель
+        call UnitStruct.create('h003', 0)       // Стрелок
+        call UnitStruct.create('h007', 'h003')  // Снайпер
+        call UnitStruct.create('h008', 'h007')  // Элитная лучница
 
-    call UnitStruct.create('h00C', 0)       // Рыцарь
-    call UnitStruct.create('h00E', 'h00C')  // Элитный рыцарь
-    call UnitStruct.create('h00F', 'h00E')  // Генерал
+        call UnitStruct.create('h009', 0)       // Ученик
+        call UnitStruct.create('h00A', 'h009')  // Целитель
+        call UnitStruct.create('h00B', 'h00A')  // Высший целитель
 
-    call UnitStruct.create('h00J', 0)       // Волшебница
-    call UnitStruct.create('h00L', 'h00J')  // Магистр магии
-    call UnitStruct.create('h00N', 'h00L')  // Архимаг
+        call UnitStruct.create('h00C', 0)       // Рыцарь
+        call UnitStruct.create('h00E', 'h00C')  // Элитный рыцарь
+        call UnitStruct.create('h00F', 'h00E')  // Генерал
 
-    call UnitStruct.create('h00P', 0)       // Наёмник
-    call UnitStruct.create('h00Q', 'h00P')  // Убийца
-    call UnitStruct.create('h00R', 'h00Q')  // Ассасин
+        call UnitStruct.create('h00J', 0)       // Волшебница
+        call UnitStruct.create('h00L', 'h00J')  // Магистр магии
+        call UnitStruct.create('h00N', 'h00L')  // Архимаг
 
-    call UnitStruct.create('h00U', 0)       // Вертолёт
-    call UnitStruct.create('h00V', 'h00U')  // Укреплённый вертолёт
-    call UnitStruct.create('h00W', 'h00V')  // Штурмовой вертолёт
+        call UnitStruct.create('h00P', 0)       // Наёмник
+        call UnitStruct.create('h00Q', 'h00P')  // Убийца
+        call UnitStruct.create('h00R', 'h00Q')  // Ассасин
 
-    call UnitStruct.create('h012', 0)       // Паровая машина
-    call UnitStruct.create('h013', 'h012')  // Мортира
-    call UnitStruct.create('h014', 'h013')  // Паровой танк
+        call UnitStruct.create('h00U', 0)       // Вертолёт
+        call UnitStruct.create('h00V', 'h00U')  // Укреплённый вертолёт
+        call UnitStruct.create('h00W', 'h00V')  // Штурмовой вертолёт
 
-    // ---------------------------------Нежить---------------------------------
+        call UnitStruct.create('h012', 0)       // Паровая машина
+        call UnitStruct.create('h013', 'h012')  // Мортира
+        call UnitStruct.create('h014', 'h013')  // Паровой танк
 
-    call UnitStruct.create('h016', 0)  // Скелет
-    call UnitStruct.create('h017', 0)  // Скелет-лучник
-    call UnitStruct.create('h018', 0)  // Чумной зомби
-    call UnitStruct.create('h019', 0)  // Некромант
-    call UnitStruct.create('h01A', 0)  // Вурдалак
-    call UnitStruct.create('h01B', 0)  // Слуга неруба
-    call UnitStruct.create('h01C', 0)  // Мясник
-    call UnitStruct.create('h01D', 0)  // Банши
-    call UnitStruct.create('h01E', 0)  // Рыцарь смерти
-    call UnitStruct.create('h01F', 0)  // Ледяной змей
+        // ---------------------------------Нежить---------------------------------
 
-    // ------------------------------Ночные эльфы------------------------------
+        call UnitStruct.create('h016', 0)  // Скелет
+        call UnitStruct.create('h017', 0)  // Скелет-лучник
+        call UnitStruct.create('h018', 0)  // Чумной зомби
+        call UnitStruct.create('h019', 0)  // Некромант
+        call UnitStruct.create('h01A', 0)  // Вурдалак
+        call UnitStruct.create('h01B', 0)  // Слуга неруба
+        call UnitStruct.create('h01C', 0)  // Мясник
+        call UnitStruct.create('h01D', 0)  // Банши
+        call UnitStruct.create('h01E', 0)  // Рыцарь смерти
+        call UnitStruct.create('h01F', 0)  // Ледяной змей
 
-    call UnitStruct.create('h01H', 0)  // Охотница
-    call UnitStruct.create('h01I', 0)  // Лучница
-    call UnitStruct.create('h01J', 0)  // Дух
-    call UnitStruct.create('h01K', 0)  // Друид-ворон
-    call UnitStruct.create('h01L', 0)  // Дриада
-    call UnitStruct.create('h01M', 0)  // Лесной дракончик
-    call UnitStruct.create('h01N', 0)  // Друид-медведь
-    call UnitStruct.create('h01P', 0)  // Баллиста
-    call UnitStruct.create('h01Q', 0)  // Горный великан
-    call UnitStruct.create('h01R', 0)  // Химера
+        // ------------------------------Ночные эльфы------------------------------
 
-    // ----------------------------------Орда----------------------------------
+        call UnitStruct.create('h01H', 0)  // Охотница
+        call UnitStruct.create('h01I', 0)  // Лучница
+        call UnitStruct.create('h01J', 0)  // Дух
+        call UnitStruct.create('h01K', 0)  // Друид-ворон
+        call UnitStruct.create('h01L', 0)  // Дриада
+        call UnitStruct.create('h01M', 0)  // Лесной дракончик
+        call UnitStruct.create('h01N', 0)  // Друид-медведь
+        call UnitStruct.create('h01P', 0)  // Баллиста
+        call UnitStruct.create('h01Q', 0)  // Горный великан
+        call UnitStruct.create('h01R', 0)  // Химера
 
-    call UnitStruct.create('h01S', 0)  // Бугай
-    call UnitStruct.create('h01T', 0)  // Охотник за головами
-    call UnitStruct.create('h01V', 0)  // Кодой
-    call UnitStruct.create('h01W', 0)  // Колдун
-    call UnitStruct.create('h01X', 0)  // Рейдер
-    call UnitStruct.create('h01Y', 0)  // Берсерк
-    call UnitStruct.create('h01Z', 0)  // Виверна
-    call UnitStruct.create('h020', 0)  // Шаман
-    call UnitStruct.create('h021', 0)  // Минотавр
-    call UnitStruct.create('h022', 0)  // Чёрный дракон
+        // ----------------------------------Орда----------------------------------
 
-    // ----------------------------------Наги----------------------------------
+        call UnitStruct.create('h01S', 0)  // Бугай
+        call UnitStruct.create('h01T', 0)  // Охотник за головами
+        call UnitStruct.create('h01V', 0)  // Кодой
+        call UnitStruct.create('h01W', 0)  // Колдун
+        call UnitStruct.create('h01X', 0)  // Рейдер
+        call UnitStruct.create('h01Y', 0)  // Берсерк
+        call UnitStruct.create('h01Z', 0)  // Виверна
+        call UnitStruct.create('h020', 0)  // Шаман
+        call UnitStruct.create('h021', 0)  // Минотавр
+        call UnitStruct.create('h022', 0)  // Чёрный дракон
 
-    call UnitStruct.create('h026', 0)  // Нага воин
-    call UnitStruct.create('h027', 0)  // Морской дракон
-    call UnitStruct.create('h028', 0)  // Дух моря
-    call UnitStruct.create('h02A', 0)  // Нага-сирена
-    call UnitStruct.create('h02B', 0)  // Нага-гвардеец
-    call UnitStruct.create('h02C', 0)  // Великая черепаха
-    call UnitStruct.create('h02D', 0)  // Коатль
-    call UnitStruct.create('h02E', 0)  // Заклинательница
-    call UnitStruct.create('h02F', 0)  // Морское чудовище
-    call UnitStruct.create('h02G', 0)  // Высшая гидра
+        // ----------------------------------Наги----------------------------------
 
-    set t = null
-endfunction
-function DebugInit takes nothing returns nothing
-    debug local trigger t = CreateTrigger()
-    static if DEBUG_MODE then
-        // call Log("Hello world!")
+        call UnitStruct.create('h026', 0)  // Нага воин
+        call UnitStruct.create('h027', 0)  // Морской дракон
+        call UnitStruct.create('h028', 0)  // Дух моря
+        call UnitStruct.create('h02A', 0)  // Нага-сирена
+        call UnitStruct.create('h02B', 0)  // Нага-гвардеец
+        call UnitStruct.create('h02C', 0)  // Великая черепаха
+        call UnitStruct.create('h02D', 0)  // Коатль
+        call UnitStruct.create('h02E', 0)  // Заклинательница
+        call UnitStruct.create('h02F', 0)  // Морское чудовище
+        call UnitStruct.create('h02G', 0)  // Высшая гидра
+
+        set t = null
+    endfunction
+
+endscope
+scope Debug initializer DebugInit
+
+    function DebugInit takes nothing returns nothing
+        debug local trigger t = CreateTrigger()
+
+        static if DEBUG_MODE then
+            // call Log("Hello world!")
+            
+            // call Log(I2S(PLAYER_NEUTRAL_AGGRESSIVE)) - 24
+            // call Log(I2S(bj_PLAYER_NEUTRAL_VICTIM)) - 25
+            // call Log(I2S(bj_PLAYER_NEUTRAL_EXTRA)) - 26
+            // call Log(I2S(PLAYER_NEUTRAL_PASSIVE)) - 27
+
+            // call Log(I2S(bj_MAX_PLAYERS)) - 24
+            // call Log(I2S(bj_MAX_PLAYER_SLOTS)) - 28
+        endif
         
-        // call Log(I2S(PLAYER_NEUTRAL_AGGRESSIVE)) - 24
-        // call Log(I2S(bj_PLAYER_NEUTRAL_VICTIM)) - 25
-        // call Log(I2S(bj_PLAYER_NEUTRAL_EXTRA)) - 26
-        // call Log(I2S(PLAYER_NEUTRAL_PASSIVE)) - 27
+        debug set t = null
+    endfunction
 
-        // call Log(I2S(bj_MAX_PLAYERS)) - 24
-        // call Log(I2S(bj_MAX_PLAYER_SLOTS)) - 28
-    endif
-    debug set t = null
-endfunction
+endscope
 /*
 
 =============================================
@@ -3553,121 +3605,125 @@ Sets mini games' waves, players' constants and units.
 
 */
 
-function initialization_in_game_wave_mini_condition takes nothing returns boolean
-    local integer i = 0
-    if (udg_random_log == true) then
-        return false
-    endif
-    loop
-        exitwhen i > 8
-        if (udg_wave_mini[i] == (udg_r * 2)) then
+scope InitInGame
+
+    function initialization_in_game_wave_mini_condition takes nothing returns boolean
+        local integer i = 0
+        if (udg_random_log == true) then
             return false
         endif
-        set i = i + 1
-    endloop
-    return true
-endfunction
-
-function initialization_in_game_players takes nothing returns nothing
-    local player p = GetEnumPlayer()
-    local real x = GetPlayerStartLocationX(p)
-    local real y = GetPlayerStartLocationY(p)
-    
-    call CameraSetupApplyForPlayer(true, gg_cam_logic, p, 0)
-    if (GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING and GetPlayerController(p) == MAP_CONTROL_USER) then
-        call SetPlayerState(p, PLAYER_STATE_GIVES_BOUNTY, 1)
-        call ForceAddPlayer(udg_players_group, p)
-        set udg_players_name[GetConvertedPlayerId(p)] = GetPlayerName(p)
-        set udg_info[GetConvertedPlayerId(p)] = true
-        set udg_income_gold[GetConvertedPlayerId(p)] = 240
-        set udg_income_wood[GetConvertedPlayerId(p)] = 8
-        set udg_leader_kf[GetConvertedPlayerId(p)] = 1.00
-        set udg_leader_wins[GetConvertedPlayerId(p)] = 0
-        set udg_changeSet[GetConvertedPlayerId(p)] = 3
-        call CreateUnitEx(p, 'ntav', x, y, bj_UNIT_FACING) // Таверна с расами на выбор
-        call CreateUnitEx(p, 'h001', x, y, bj_UNIT_FACING) // Юнит "Выбор героя"
-        call CreateUnitEx(p, 'h029', x, y, bj_UNIT_FACING) // Юнит "Не более 1 погодного эффекта в раунде"
-        call AddGoldToPlayer(100, p) // Золото на выбор расы в таверне
-        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_all, true, false)) // Поле битвы
-        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_minersregion, true, false)) // Миниигра "Минёры"
-        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_fastarena, true, false)) // Миниарена
-        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_horseregion, true, false)) // Миниигра "Конные бега"
-        call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_roulette, true, false)) // Миниигра "Казино"
-    endif
-
-    set p = null
-endfunction
-
-function initialization_in_game takes nothing returns nothing
-    local integer i = 0
-    local integer j = 0
-    local unit lastCreatedUnit = null
-    set udg_gg = 15 // Финальная волна
-    set udg_mini_game_max = 8 // Максимальное кол-во миниигр за игру
-    set udg_wave_mini[1] = 4 // Волна с боссом
-    set udg_const_point[0] = 3
-    set udg_const_point[1] = 6
-    set udg_gameset_time_first = 60.00 // Таймер начала до первой волны
-    debug set udg_gameset_time_first = debugTimeBeforeFirstWave
-    
-    // Что-то связанное с минииграми
-    loop
-        exitwhen i > udg_mini_game_max
-        if (i != 1) then
-            // Если не миниигра с боссом, то
-            set udg_random_log = false
-            loop // Заполняем wave_mini[] рандомными, неповторяющимися числами (2, 4, 6, ..., 18) - волны, когда будут миниигры. mode = 1 (стандартный режим)
-                exitwhen udg_random_log
-                set udg_r = GetRandomInt(1, (udg_mini_game_max + 1)) // От 1 до 9 (кол-во миниигр)
-                if (initialization_in_game_wave_mini_condition()) then
-                    set udg_random_log = true
-                    set udg_wave_mini[i] = udg_r * 2
-                endif
-            endloop
-        endif
-        set i = i + 1
-    endloop
-    
-    call ForForce(bj_FORCE_ALL_PLAYERS, function initialization_in_game_players)
-    
-    call faq_ini() // Starts voting for faq guide
-
-    // Миниигра казино
-    set udg_r = 0
-    set i = 1
-    loop
-        exitwhen i > 3
-        set j = 1
         loop
-            exitwhen j > 5
-            set udg_r = udg_r + 1
-            // Opt. begin
-            // 'n001' - Circle of Power
-            set lastCreatedUnit = CreateUnitAtLoc(Player(PLAYER_NEUTRAL_PASSIVE), 'n001', PolarProjectionBJ(PolarProjectionBJ(GetRectCenter(gg_rct_circle), (-256.00 + (256.00 * I2R(i))), 270.00), (-256.00 + (256.00 * I2R(j))), 0), bj_UNIT_FACING)
-            call SetUnitUserData(lastCreatedUnit, udg_r)
-            if (ModuloInteger(udg_r, 2) == 1) then
-                // Z offset = 0
-                // Font size = 11
-                // Red =    100%
-                // Green =  10%
-                // Blue =   10%
-                // Transparency = 0%
-                call CreateTextTagUnitBJ(I2S(udg_r), lastCreatedUnit, 0, 11.00, 100, 10.00, 10.00, 0)
-                call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), udg_players_group)
-                call SetUnitColor(lastCreatedUnit, PLAYER_COLOR_RED)
-            else
-                call CreateTextTagUnitBJ(I2S(udg_r), lastCreatedUnit, 0, 11.00, 10.00, 10.00, 10.00, 0)
-                call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), udg_players_group)
-                call SetUnitColor(lastCreatedUnit, PLAYER_COLOR_MAROON)
+            exitwhen i > 8
+            if (udg_wave_mini[i] == (udg_r * 2)) then
+                return false
             endif
-            // Opt. end
-            set j = j + 1
+            set i = i + 1
         endloop
-        set i = i + 1
-    endloop
+        return true
+    endfunction
 
-    set lastCreatedUnit = null
-endfunction
+    function initialization_in_game_players takes nothing returns nothing
+        local player p = GetEnumPlayer()
+        local real x = GetPlayerStartLocationX(p)
+        local real y = GetPlayerStartLocationY(p)
+        
+        call CameraSetupApplyForPlayer(true, gg_cam_logic, p, 0)
+        if (GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING and GetPlayerController(p) == MAP_CONTROL_USER) then
+            call SetPlayerState(p, PLAYER_STATE_GIVES_BOUNTY, 1)
+            call ForceAddPlayer(udg_players_group, p)
+            set udg_players_name[GetConvertedPlayerId(p)] = GetPlayerName(p)
+            set udg_info[GetConvertedPlayerId(p)] = true
+            set udg_income_gold[GetConvertedPlayerId(p)] = 240
+            set udg_income_wood[GetConvertedPlayerId(p)] = 8
+            set udg_leader_kf[GetConvertedPlayerId(p)] = 1.00
+            set udg_leader_wins[GetConvertedPlayerId(p)] = 0
+            set udg_changeSet[GetConvertedPlayerId(p)] = 3
+            call CreateUnitEx(p, 'ntav', x, y, bj_UNIT_FACING) // Таверна с расами на выбор
+            call CreateUnitEx(p, 'h001', x, y, bj_UNIT_FACING) // Юнит "Выбор героя"
+            call CreateUnitEx(p, 'h029', x, y, bj_UNIT_FACING) // Юнит "Не более 1 погодного эффекта в раунде"
+            call AddGoldToPlayer(100, p) // Золото на выбор расы в таверне
+            call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_all, true, false)) // Поле битвы
+            call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_minersregion, true, false)) // Миниигра "Минёры"
+            call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_fastarena, true, false)) // Миниарена
+            call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_horseregion, true, false)) // Миниигра "Конные бега"
+            call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_roulette, true, false)) // Миниигра "Казино"
+        endif
+
+        set p = null
+    endfunction
+
+    function initialization_in_game takes nothing returns nothing
+        local integer i = 0
+        local integer j = 0
+        local unit lastCreatedUnit = null
+        set udg_gg = 15 // Финальная волна
+        set udg_mini_game_max = 8 // Максимальное кол-во миниигр за игру
+        set udg_wave_mini[1] = 4 // Волна с боссом
+        set udg_const_point[0] = 3
+        set udg_const_point[1] = 6
+        set udg_gameset_time_first = 60.00 // Таймер начала до первой волны
+        debug set udg_gameset_time_first = debugTimeBeforeFirstWave
+        
+        // Что-то связанное с минииграми
+        loop
+            exitwhen i > udg_mini_game_max
+            if (i != 1) then
+                // Если не миниигра с боссом, то
+                set udg_random_log = false
+                loop // Заполняем wave_mini[] рандомными, неповторяющимися числами (2, 4, 6, ..., 18) - волны, когда будут миниигры. mode = 1 (стандартный режим)
+                    exitwhen udg_random_log
+                    set udg_r = GetRandomInt(1, (udg_mini_game_max + 1)) // От 1 до 9 (кол-во миниигр)
+                    if (initialization_in_game_wave_mini_condition()) then
+                        set udg_random_log = true
+                        set udg_wave_mini[i] = udg_r * 2
+                    endif
+                endloop
+            endif
+            set i = i + 1
+        endloop
+        
+        call ForForce(bj_FORCE_ALL_PLAYERS, function initialization_in_game_players)
+        
+        call faq_ini() // Starts voting for faq guide
+
+        // Миниигра казино
+        set udg_r = 0
+        set i = 1
+        loop
+            exitwhen i > 3
+            set j = 1
+            loop
+                exitwhen j > 5
+                set udg_r = udg_r + 1
+                // Opt. begin
+                // 'n001' - Circle of Power
+                set lastCreatedUnit = CreateUnitAtLoc(Player(PLAYER_NEUTRAL_PASSIVE), 'n001', PolarProjectionBJ(PolarProjectionBJ(GetRectCenter(gg_rct_circle), (-256.00 + (256.00 * I2R(i))), 270.00), (-256.00 + (256.00 * I2R(j))), 0), bj_UNIT_FACING)
+                call SetUnitUserData(lastCreatedUnit, udg_r)
+                if (ModuloInteger(udg_r, 2) == 1) then
+                    // Z offset = 0
+                    // Font size = 11
+                    // Red =    100%
+                    // Green =  10%
+                    // Blue =   10%
+                    // Transparency = 0%
+                    call CreateTextTagUnitBJ(I2S(udg_r), lastCreatedUnit, 0, 11.00, 100, 10.00, 10.00, 0)
+                    call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), udg_players_group)
+                    call SetUnitColor(lastCreatedUnit, PLAYER_COLOR_RED)
+                else
+                    call CreateTextTagUnitBJ(I2S(udg_r), lastCreatedUnit, 0, 11.00, 10.00, 10.00, 10.00, 0)
+                    call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), udg_players_group)
+                    call SetUnitColor(lastCreatedUnit, PLAYER_COLOR_MAROON)
+                endif
+                // Opt. end
+                set j = j + 1
+            endloop
+            set i = i + 1
+        endloop
+
+        set lastCreatedUnit = null
+    endfunction
+
+endscope
 /*
 
 =============================================
@@ -3871,37 +3927,9 @@ scope Main initializer MainInit
 
     function post_map_init takes nothing returns nothing
 
-        // initialization in game Trigger
         call initialization_in_game.execute()
 
-        // income upg Trigger
-        call InitTrig_income_upg.execute()
-        call InitTrig_income_upgR.execute()
-        call InitTrig_income_upgA.execute()
-        call InitTrig_income_upgTQ.execute()
-
-        // faq active Trigger
-        call faq_active_init.execute()
-
-        // builder select Trigger
-        call builder_select.execute()
-
-        // building selling Trigger
-        call building_selling.execute()
-        
-        // inc colour Trigger
-        call inc_colour.execute()
-
-        // Fast Arena Init
-        call FastArenaInit.execute()
-
-        // Arena Init
-        call ArenaInit.execute()
-
-        // For debug purposes
-        call DebugInit.execute()
-
-        // Disable Damage Detection System until fast arena begins
+        // Disable Damage Detection System until Fast Arena begins
         call DisableTrigger(DDS)
 
         call Log("post_map_init finished!")
@@ -3914,7 +3942,7 @@ scope Main initializer MainInit
         local trigger t = CreateTrigger()
 
         call map_init()
-        call TriggerRegisterTimerEventSingle(t, 0.01)
+        call TriggerRegisterTimerEventSingle(t, 0)
         call TriggerAddAction(t, function post_map_init)
         call C_SetComputers()
         call StartInitTimer()

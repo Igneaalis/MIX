@@ -180,37 +180,9 @@ scope Main initializer MainInit
 
     function post_map_init takes nothing returns nothing
 
-        // initialization in game Trigger
         call initialization_in_game.execute()
 
-        // income upg Trigger
-        call InitTrig_income_upg.execute()
-        call InitTrig_income_upgR.execute()
-        call InitTrig_income_upgA.execute()
-        call InitTrig_income_upgTQ.execute()
-
-        // faq active Trigger
-        call faq_active_init.execute()
-
-        // builder select Trigger
-        call builder_select.execute()
-
-        // building selling Trigger
-        call building_selling.execute()
-        
-        // inc colour Trigger
-        call inc_colour.execute()
-
-        // Fast Arena Init
-        call FastArenaInit.execute()
-
-        // Arena Init
-        call ArenaInit.execute()
-
-        // For debug purposes
-        call DebugInit.execute()
-
-        // Disable Damage Detection System until fast arena begins
+        // Disable Damage Detection System until Fast Arena begins
         call DisableTrigger(DDS)
 
         call Log("post_map_init finished!")
@@ -223,7 +195,7 @@ scope Main initializer MainInit
         local trigger t = CreateTrigger()
 
         call map_init()
-        call TriggerRegisterTimerEventSingle(t, 0.01)
+        call TriggerRegisterTimerEventSingle(t, 0)
         call TriggerAddAction(t, function post_map_init)
         call C_SetComputers()
         call StartInitTimer()

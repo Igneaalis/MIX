@@ -1,47 +1,51 @@
-globals
-    constant real relaxWaveTime = 5.00
-    timerdialog relaxWaveTimerDialog
-endglobals
+scope NextWave
 
-function NextWave_ForPlayer takes nothing returns nothing
-    local player p = GetEnumPlayer()
+    globals
+        constant real relaxWaveTime = 5.00
+        timerdialog relaxWaveTimerDialog
+    endglobals
 
-    call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, p, 0)
-    call PanCameraToTimedLocForPlayer(p, GetPlayerStartLocationLoc(p), 0) // Focuses camera at castle you own
+    function NextWave_ForPlayer takes nothing returns nothing
+        local player p = GetEnumPlayer()
 
-    call AddGoldToPlayer(pdb[p].income_gold, p)
-    call AddLumberToPlayer(pdb[p].income_gems, p)
+        call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, p, 0)
+        call PanCameraToTimedLocForPlayer(p, GetPlayerStartLocationLoc(p), 0) // Focuses camera at castle you own
 
-    call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль золота: " + GOLD + I2S(pdb[p].income_gold) + "|r")
-    call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль самоцветов: " + VIOLET + I2S(pdb[p].income_gems) + "|r")
+        call AddGoldToPlayer(pdb[p].income_gold, p)
+        call AddLumberToPlayer(pdb[p].income_gems, p)
 
-    set p = null
-endfunction
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль золота: " + GOLD + I2S(pdb[p].income_gold) + "|r")
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль самоцветов: " + VIOLET + I2S(pdb[p].income_gems) + "|r")
 
-function NextWave_Timer_OnExprie takes nothing returns nothing
-    local timer t = GetExpiredTimer()
+        set p = null
+    endfunction
 
-    call DestroyTimerDialog(relaxWaveTimerDialog)
-    call PauseTimer(t)
-    call DestroyTimer(t)
-    call ForceArena.execute()
+    function NextWave_Timer_OnExprie takes nothing returns nothing
+        local timer t = GetExpiredTimer()
 
-    set t = null
-endfunction
+        call DestroyTimerDialog(relaxWaveTimerDialog)
+        call PauseTimer(t)
+        call DestroyTimer(t)
+        call ForceArena.execute()
 
-function ForceNextWave takes nothing returns nothing
-    local timer t = CreateTimer()
-    call ForGroup(udg_wave_units, function C_RemoveEnumUnits)
-    call GroupClear(udg_wave_units)
-    call ForGroup(udg_castle_unit, function C_RemoveEnumUnits)
-    call GroupClear(udg_castle_unit)
+        set t = null
+    endfunction
 
-    call ForForce(udg_players_group, function NextWave_ForPlayer)
+    function ForceNextWave takes nothing returns nothing
+        local timer t = CreateTimer()
+        call ForGroup(udg_wave_units, function C_RemoveEnumUnits)
+        call GroupClear(udg_wave_units)
+        call ForGroup(udg_castle_unit, function C_RemoveEnumUnits)
+        call GroupClear(udg_castle_unit)
 
-    call TimerStart(t, relaxWaveTime, false, function NextWave_Timer_OnExprie)
-    set relaxWaveTimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
-    call TimerDialogSetTitle(relaxWaveTimerDialog, "Следующая волна") // Title of timer dialog
-    call TimerDialogDisplay(relaxWaveTimerDialog, true) // Shows timer dialog
-    
-    set t = null
-endfunction
+        call ForForce(udg_players_group, function NextWave_ForPlayer)
+
+        call TimerStart(t, relaxWaveTime, false, function NextWave_Timer_OnExprie)
+        set relaxWaveTimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
+        call TimerDialogSetTitle(relaxWaveTimerDialog, "Следующая волна") // Title of timer dialog
+        call TimerDialogDisplay(relaxWaveTimerDialog, true) // Shows timer dialog
+        
+        set t = null
+    endfunction
+
+endscope
