@@ -1,7 +1,8 @@
-scope Debug initializer DebugInit
+scope Debug initializer Init
 
-    function DebugInit takes nothing returns nothing
+    private function Init takes nothing returns nothing
         debug local trigger t = CreateTrigger()
+        debug local integer i
 
         static if DEBUG_MODE then
             // call Log("Hello world!")

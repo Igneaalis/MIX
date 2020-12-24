@@ -5,7 +5,7 @@ scope NextWave
         timerdialog relaxWaveTimerDialog
     endglobals
 
-    function NextWave_ForPlayer takes nothing returns nothing
+    private function ForPlayer takes nothing returns nothing
         local player p = GetEnumPlayer()
 
         call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, p, 0)
@@ -20,27 +20,37 @@ scope NextWave
         set p = null
     endfunction
 
-    function NextWave_Timer_OnExprie takes nothing returns nothing
+    private function Timer_OnExprie takes nothing returns nothing
         local timer t = GetExpiredTimer()
 
         call DestroyTimerDialog(relaxWaveTimerDialog)
         call PauseTimer(t)
         call DestroyTimer(t)
-        call ForceArena.execute()
+        call Arena_Force.execute()
 
         set t = null
     endfunction
 
-    function ForceNextWave takes nothing returns nothing
+    public function Force takes nothing returns nothing
         local timer t = CreateTimer()
+        local integer i
         call ForGroup(udg_wave_units, function C_RemoveEnumUnits)
         call GroupClear(udg_wave_units)
         call ForGroup(udg_castle_unit, function C_RemoveEnumUnits)
         call GroupClear(udg_castle_unit)
+        call ForGroup(IncomeObjects_group, function C_RemoveEnumUnits)
+        call GroupClear(IncomeObjects_group)
 
-        call ForForce(udg_players_group, function NextWave_ForPlayer)
+        for i = 1 to IncomeObjects_EndAmount
+            if IncomeObjects_minimapicons[i] != null then
+                call DestroyMinimapIcon(IncomeObjects_minimapicons[i])
+                set IncomeObjects_minimapicons[i] = null
+            endif
+        endfor
 
-        call TimerStart(t, relaxWaveTime, false, function NextWave_Timer_OnExprie)
+        call ForForce(udg_players_group, function ForPlayer)
+
+        call TimerStart(t, relaxWaveTime, false, function Timer_OnExprie)
         set relaxWaveTimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
         call TimerDialogSetTitle(relaxWaveTimerDialog, "Следующая волна") // Title of timer dialog
         call TimerDialogDisplay(relaxWaveTimerDialog, true) // Shows timer dialog

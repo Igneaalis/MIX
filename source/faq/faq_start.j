@@ -22,7 +22,7 @@ function faq_start_timer_actions takes nothing returns nothing
     call DisableTrigger(gg_trg_cmd_mode)
     call DisableTrigger(gg_trg_cmd_point)
     call DisableTrigger(gg_trg_cmd_arena)
-    call ForceArena.execute()
+    call Arena_Force.execute()
     // call TriggerExecute( gg_trg_set_wave_start_main )
     // call TriggerExecute( gg_trg_set_wave_timer )
     // call TriggerExecute( gg_trg_set_wave_region_rotate )

@@ -67,7 +67,7 @@ scope UnitDatabase
 
 endscope
 
-scope BuildingSelling initializer building_selling
+scope BuildingSelling
 
     function building_selling_conditions takes nothing returns boolean
         return (GetSpellAbilityId() == 'A002') // Способность "Продать"

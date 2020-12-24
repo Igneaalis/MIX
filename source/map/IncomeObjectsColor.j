@@ -20,20 +20,22 @@ scope IncomeObjectsColor initializer inc_colour
         local player IncomeObjectReceiever = GetOwningPlayer(GetKillingUnit()) // Who gets IncomeObject
         local unit IncomeObjectiveNewUnit // Replace IncomeObject
         local player IncomeObjectOwner = GetOwningPlayer(IncomeObjectiveUnit) // Who loses IncomeObject
-        local boolean IsHugeGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == 'n003')
-        local boolean IsSmallGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == 'n004')
-        local boolean IsFlag = (GetUnitTypeId(IncomeObjectiveUnit) == 'n005')
+        local boolean IsBigGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == bigMineRC)
+        local boolean IsSmallGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == smallMineRC)
+        local boolean IsFlag = (GetUnitTypeId(IncomeObjectiveUnit) == flagRC)
         local boolean IsOwnerTheReceiver = (IncomeObjectOwner == IncomeObjectReceiever)
         local real IncomeObjectiveUnitX = GetUnitX(IncomeObjectiveUnit)
         local real IncomeObjectiveUnitY = GetUnitY(IncomeObjectiveUnit)
         local Color playerColor = Color.create(IncomeObjectReceiever) // Color Struct from NokladrLib.j
 
-        if not (IsHugeGoldMine or IsSmallGoldMine or IsFlag) then
+        if not (IsBigGoldMine or IsSmallGoldMine or IsFlag) then
             return // No actions
         endif
 
         call RemoveUnit(IncomeObjectiveUnit) // Remove old IncomeObject to replace it with a new one
+        call GroupRemoveUnit(IncomeObjects_group, IncomeObjectiveUnit)
         set IncomeObjectiveNewUnit = CreateUnit(IncomeObjectReceiever, GetUnitTypeId(IncomeObjectiveUnit), IncomeObjectiveUnitX, IncomeObjectiveUnitY, bj_UNIT_FACING)
+        call GroupAddUnit(IncomeObjects_group, IncomeObjectiveNewUnit)
         call SetUnitVertexColor(IncomeObjectiveNewUnit, playerColor.red, playerColor.green, playerColor.blue, 255) // Adjusts color to match receiver's one
 
         set IncomeObjectiveUnit = null

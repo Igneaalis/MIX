@@ -21,10 +21,11 @@ globals
     constant string strDiscord = (LB + "! ! Nokladr|r" + GOLD + "#|r" + LB + "2205|r")          // Discord тэг
     constant string strBuild_Time = "13 December 2020"                                          // Время создания билда карты
 
-    debug constant real debugTimeBeforeFirstWave = 20.00                                        // Время перед началом первой волны
+    debug constant real debugTimeBeforeFirstWave = 10.00                                        // Время перед началом первой волны
 
     leaderboard Leaderboard                                                                     // Таблица лидеров
 
+    constant integer numberOfPlayers = 8
     constant integer finalWave = 15
     constant integer numberOfMinigames = 8
     
@@ -64,8 +65,11 @@ globals
     constant integer most_point_kill_last_round = 'h023'
     constant integer or_leadership_arena_last_round = 'h024'
     constant integer big_mine_rc = 'n003'
+    constant integer bigMineRC = 'n003'
     constant integer small_mine_rc = 'n004'
+    constant integer smallMineRC = 'n004'
     constant integer flag_rc = 'n005'
+    constant integer flagRC = 'n005'
 
     // Настройки улучшения Вклад в игрока
     constant integer contr_to_pl_gold = 300

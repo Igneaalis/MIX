@@ -4,6 +4,393 @@
 = Файл создал:       Nokladr                =
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     11.12.2020 15:00       =
+=============================================
+
+builder select Trigger
+
+Реализация выбора расы
+
+*/
+
+scope BuilderSelect initializer builder_select
+
+    globals
+        integer array peonsId[12]
+        debug constant integer debugGold = 12000
+        debug constant integer debugGems = 12000
+    endglobals
+
+    function builder_select_IsDummy takes nothing returns boolean
+        return (GetUnitTypeId(GetFilterUnit()) == 'h001') or (GetUnitTypeId(GetFilterUnit()) == 'ntav')
+    endfunction
+
+    function builder_select_actions takes nothing returns nothing
+        local unit peon
+        local player owner_of_peon
+        local group group_of_dummies
+        local real x
+        local real y
+        local integer peonId
+
+        local integer column
+        local integer row
+        local multiboarditem mbitem
+        local string iconFileName
+
+        if not IsUnitType(GetSoldUnit(), UNIT_TYPE_PEON) then
+            set peon = null
+            set owner_of_peon = null
+            set group_of_dummies = null
+            set mbitem = null
+            set iconFileName = null
+            return
+        endif
+
+        set peon = GetSoldUnit()
+        set owner_of_peon = GetTriggerPlayer()
+        set group_of_dummies = GetUnitsOfPlayerMatching(owner_of_peon, Condition(function builder_select_IsDummy))
+        set x = GetPlayerStartLocationX(owner_of_peon)
+        set y = GetPlayerStartLocationY(owner_of_peon)
+        set peonId = GetUnitTypeId(peon)
+
+        set column = 0
+        set row = GetPlayerId(owner_of_peon) + 1
+        set mbitem = MultiboardGetItem(udg_scoreboard, row, column)
+
+        call SelectUnitForPlayerSingle(peon, owner_of_peon) // Selects peon for player
+        call ForGroup(group_of_dummies, function C_RemoveEnumUnits) // Remove dummies
+
+        call CreateUnit(owner_of_peon, 'hbla', x, y, bj_UNIT_FACING) // Юнит "Замок"
+        call CreateUnit(owner_of_peon, 'hwtw', x-450, y+640, bj_UNIT_FACING) // Юнит "Улучшения"
+        call SetUnitPosition(peon, x, y-250) // Peon's position
+        call SetUnitFacing(peon, bj_UNIT_FACING) // Peon's facing
+        call PanCameraToForPlayer(owner_of_peon, x, y)
+
+        if (peonId == peonsId[0]) then
+            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNPeasant.blp"
+            call SetPlayerTechResearched(owner_of_peon, 'R02G', 1) // Улучшение "Играть за людей"
+        elseif (peonId == peonsId[1]) then
+            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNAcolyte.blp"
+        elseif (peonId == peonsId[2]) then
+            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNWisp.blp"
+            call SetPlayerTechResearched(owner_of_peon, 'R00H', 2) // Улучшение "Драгоценные камни"
+            call SetPlayerTechResearched(owner_of_peon, 'R02F', 1) // Улучшение "Играть за эльфов"
+            set udg_scoreboard_upg[row] = 2
+        elseif (peonId == peonsId[3]) then
+            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNPeon.blp"
+            call AddGoldToPlayer(150, owner_of_peon)
+            call SetPlayerTechResearched(owner_of_peon, 'R00H', 1) // Улучшение "Играть за орду"
+        elseif (peonId == peonsId[4]) then
+            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNMurgalSlave.blp"
+        elseif (peonId == peonsId[5]) then
+            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNMedivh.blp"
+            set udg_mediv = owner_of_peon
+            call TriggerExecute(gg_trg_mediv_select)
+        endif
+
+        call MultiboardSetItemIcon(mbitem, iconFileName)
+        call MultiboardReleaseItem(mbitem)
+
+        static if DEBUG_MODE then
+            call AddGoldToPlayer(debugGold, owner_of_peon)
+            call AddLumberToPlayer(debugGems, owner_of_peon)
+            call SetPlayerTechResearched(owner_of_peon, 'R018', 1) // Улучшение "12 исследований"
+            call SetPlayerTechResearched(owner_of_peon, 'R019', 1) // Улучшение "20 исследований"
+            else
+            call AddGoldToPlayer(base_gold, owner_of_peon) // Check Globals.j
+            call AddLumberToPlayer(base_gems, owner_of_peon) // Check Globals.j
+        endif
+
+        set peon = null
+        set owner_of_peon = null
+        call DestroyGroup(group_of_dummies)
+        set group_of_dummies = null
+        set mbitem = null
+        set iconFileName = null
+    endfunction
+
+    //===========================================================================
+    function builder_select takes nothing returns nothing
+        local trigger t = CreateTrigger()
+
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_SELL, null)
+        call TriggerAddAction(t, function builder_select_actions)
+
+        set peonsId[0] = 'h02I' // Работник
+        set peonsId[1] = 'h015' // Послушник
+        set peonsId[2] = 'h01G' // Светлячок
+        set peonsId[3] = 'h01U' // Раб
+        set peonsId[4] = 'h025' // Маргол-раб
+        set peonsId[5] = 'h02H' // Медив
+
+        set t = null
+    endfunction
+
+endscope
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     11.12.2020 18:21       =
+=============================================
+
+Продажа зданий.
+
+*/
+
+scope UnitDatabase
+    globals
+        UnitDB udb
+        private UnitStruct array usarr[128]
+        private integer usarrcounter = 1
+    endglobals
+
+    struct UnitStruct
+        private integer gold
+        private integer lumber
+        private real gold_raw
+        private real lumber_raw
+
+        static method create takes integer unitTypeId, integer parentUnitTypeId returns UnitStruct
+            local UnitStruct us = UnitStruct.allocate()
+            set us.gold_raw = GetUnitGoldCost(unitTypeId) * 0.8
+            set us.lumber_raw = GetUnitWoodCost(unitTypeId) * 0.8
+            if (usarr[table[parentUnitTypeId]] != null) then
+                set us.gold = R2I(us.gold_raw + usarr[table[parentUnitTypeId]].GetGoldRaw())
+                set us.lumber = R2I(us.lumber_raw + usarr[table[parentUnitTypeId]].GetLumberRaw())
+            else
+                set us.gold = IMaxBJ(R2I(GetUnitGoldCost(unitTypeId) * 0.8), 1)
+                set us.lumber = IMaxBJ(R2I(GetUnitWoodCost(unitTypeId) * 0.8), 1)
+            endif
+            set table[unitTypeId] = usarrcounter
+            set usarr[usarrcounter] = us
+            set usarrcounter = usarrcounter + 1
+            return us
+        endmethod
+
+        method GetGold takes nothing returns integer
+            return gold
+        endmethod
+        
+        method GetLumber takes nothing returns integer
+            return lumber
+        endmethod
+
+        method GetGoldRaw takes nothing returns real
+            return gold_raw
+        endmethod
+
+        method GetLumberRaw takes nothing returns real
+            return lumber_raw
+        endmethod
+
+    endstruct
+
+    struct UnitDB
+        method operator [] takes unit u returns UnitStruct
+            return usarr[table[GetUnitTypeId(u)]]
+        endmethod
+    endstruct
+
+endscope
+
+scope BuildingSelling
+
+    function building_selling_conditions takes nothing returns boolean
+        return (GetSpellAbilityId() == 'A002') // Способность "Продать"
+    endfunction
+
+    function building_selling_actions takes nothing returns nothing
+        local unit u = GetSpellAbilityUnit()
+        local player p = GetTriggerPlayer()
+        local integer gold = udb[u].GetGold()
+        local integer lumber = udb[u].GetLumber()
+        local texttag tt
+        call GroupRemoveUnit(udg_buildings, u)
+
+        call AddGoldToPlayer(gold, p)
+        call AddLumberToPlayer(lumber, p)
+
+        set tt = NewTextTagAtUnit(GOLD + "+" + I2S(gold), u, 70.00, 11.00)
+        call SetTextTagVisibility(tt, false)
+        if (GetLocalPlayer() == p) then
+            call SetTextTagVisibility(tt, true)
+        endif
+        call SetTextTagPermanent(tt, false)
+        call SetTextTagLifespan(tt, 2.00)
+        call SetTextTagFadepoint(tt, 1.30)
+        call SetTextTagVelocity(tt, 0, 0.03)
+
+        set tt = NewTextTagAtUnit(VIOLET + "+" + I2S(lumber), u, 0.00, 11.00)
+        call SetTextTagVisibility(tt, false)
+        if (GetLocalPlayer() == p) then
+            call SetTextTagVisibility(tt, true)
+        endif
+        call SetTextTagPermanent(tt, false)
+        call SetTextTagLifespan(tt, 2.00)
+        call SetTextTagFadepoint(tt, 1.30)
+        call SetTextTagVelocity(tt, 0, 0.03)
+
+        call RemoveUnit(u)
+        call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl", GetUnitX(u), GetUnitY(u)))
+
+        set u = null
+        set p = null
+        set tt = null
+    endfunction
+
+    //===========================================================================
+    function building_selling takes nothing returns nothing
+        local trigger t = CreateTrigger()
+
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_SPELL_CAST, null)
+        call TriggerAddCondition(t, Condition(function building_selling_conditions))
+        call TriggerAddAction(t, function building_selling_actions)
+
+        set udb = UnitDB.create()
+
+        // ---------------------------------Альянс---------------------------------
+        call UnitStruct.create('h002', 0)       // Пехотинец
+        call UnitStruct.create('h004', 'h002')  // Мечник
+        call UnitStruct.create('h005', 'h004')  // Гвардеец
+
+        call UnitStruct.create('h003', 0)       // Стрелок
+        call UnitStruct.create('h007', 'h003')  // Снайпер
+        call UnitStruct.create('h008', 'h007')  // Элитная лучница
+
+        call UnitStruct.create('h009', 0)       // Ученик
+        call UnitStruct.create('h00A', 'h009')  // Целитель
+        call UnitStruct.create('h00B', 'h00A')  // Высший целитель
+
+        call UnitStruct.create('h00C', 0)       // Рыцарь
+        call UnitStruct.create('h00E', 'h00C')  // Элитный рыцарь
+        call UnitStruct.create('h00F', 'h00E')  // Генерал
+
+        call UnitStruct.create('h00J', 0)       // Волшебница
+        call UnitStruct.create('h00L', 'h00J')  // Магистр магии
+        call UnitStruct.create('h00N', 'h00L')  // Архимаг
+
+        call UnitStruct.create('h00P', 0)       // Наёмник
+        call UnitStruct.create('h00Q', 'h00P')  // Убийца
+        call UnitStruct.create('h00R', 'h00Q')  // Ассасин
+
+        call UnitStruct.create('h00U', 0)       // Вертолёт
+        call UnitStruct.create('h00V', 'h00U')  // Укреплённый вертолёт
+        call UnitStruct.create('h00W', 'h00V')  // Штурмовой вертолёт
+
+        call UnitStruct.create('h012', 0)       // Паровая машина
+        call UnitStruct.create('h013', 'h012')  // Мортира
+        call UnitStruct.create('h014', 'h013')  // Паровой танк
+
+        // ---------------------------------Нежить---------------------------------
+
+        call UnitStruct.create('h016', 0)  // Скелет
+        call UnitStruct.create('h017', 0)  // Скелет-лучник
+        call UnitStruct.create('h018', 0)  // Чумной зомби
+        call UnitStruct.create('h019', 0)  // Некромант
+        call UnitStruct.create('h01A', 0)  // Вурдалак
+        call UnitStruct.create('h01B', 0)  // Слуга неруба
+        call UnitStruct.create('h01C', 0)  // Мясник
+        call UnitStruct.create('h01D', 0)  // Банши
+        call UnitStruct.create('h01E', 0)  // Рыцарь смерти
+        call UnitStruct.create('h01F', 0)  // Ледяной змей
+
+        // ------------------------------Ночные эльфы------------------------------
+
+        call UnitStruct.create('h01H', 0)  // Охотница
+        call UnitStruct.create('h01I', 0)  // Лучница
+        call UnitStruct.create('h01J', 0)  // Дух
+        call UnitStruct.create('h01K', 0)  // Друид-ворон
+        call UnitStruct.create('h01L', 0)  // Дриада
+        call UnitStruct.create('h01M', 0)  // Лесной дракончик
+        call UnitStruct.create('h01N', 0)  // Друид-медведь
+        call UnitStruct.create('h01P', 0)  // Баллиста
+        call UnitStruct.create('h01Q', 0)  // Горный великан
+        call UnitStruct.create('h01R', 0)  // Химера
+
+        // ----------------------------------Орда----------------------------------
+
+        call UnitStruct.create('h01S', 0)  // Бугай
+        call UnitStruct.create('h01T', 0)  // Охотник за головами
+        call UnitStruct.create('h01V', 0)  // Кодой
+        call UnitStruct.create('h01W', 0)  // Колдун
+        call UnitStruct.create('h01X', 0)  // Рейдер
+        call UnitStruct.create('h01Y', 0)  // Берсерк
+        call UnitStruct.create('h01Z', 0)  // Виверна
+        call UnitStruct.create('h020', 0)  // Шаман
+        call UnitStruct.create('h021', 0)  // Минотавр
+        call UnitStruct.create('h022', 0)  // Чёрный дракон
+
+        // ----------------------------------Наги----------------------------------
+
+        call UnitStruct.create('h026', 0)  // Нага воин
+        call UnitStruct.create('h027', 0)  // Морской дракон
+        call UnitStruct.create('h028', 0)  // Дух моря
+        call UnitStruct.create('h02A', 0)  // Нага-сирена
+        call UnitStruct.create('h02B', 0)  // Нага-гвардеец
+        call UnitStruct.create('h02C', 0)  // Великая черепаха
+        call UnitStruct.create('h02D', 0)  // Коатль
+        call UnitStruct.create('h02E', 0)  // Заклинательница
+        call UnitStruct.create('h02F', 0)  // Морское чудовище
+        call UnitStruct.create('h02G', 0)  // Высшая гидра
+
+        set t = null
+    endfunction
+
+endscope
+scope Debug initializer Init
+
+    private function Init takes nothing returns nothing
+        debug local trigger t = CreateTrigger()
+        debug local integer i
+
+        static if DEBUG_MODE then
+            // call Log("Hello world!")
+            
+            // call Log(I2S(PLAYER_NEUTRAL_AGGRESSIVE)) - 24
+            // call Log(I2S(bj_PLAYER_NEUTRAL_VICTIM)) - 25
+            // call Log(I2S(bj_PLAYER_NEUTRAL_EXTRA)) - 26
+            // call Log(I2S(PLAYER_NEUTRAL_PASSIVE)) - 27
+
+            // call Log(I2S(bj_MAX_PLAYERS)) - 24
+            // call Log(I2S(bj_MAX_PLAYER_SLOTS)) - 28
+        endif
+        
+        debug set t = null
+    endfunction
+
+endscope
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     20.11.2020 22:46       =
 =============================================
 
@@ -195,7 +582,7 @@ function faq_start_timer_actions takes nothing returns nothing
     call DisableTrigger(gg_trg_cmd_mode)
     call DisableTrigger(gg_trg_cmd_point)
     call DisableTrigger(gg_trg_cmd_arena)
-    call ForceArena.execute()
+    call Arena_Force.execute()
     // call TriggerExecute( gg_trg_set_wave_start_main )
     // call TriggerExecute( gg_trg_set_wave_timer )
     // call TriggerExecute( gg_trg_set_wave_region_rotate )
@@ -240,82 +627,59 @@ endfunction
 = Файл создал:       Nokladr                =
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     13.12.2020 16:21       =
+= Дата создания:     20.11.2020 21:07       =
 =============================================
 
-inc_colour Trigger
+gameset owner Trigger
 
-Income Objective OnDestroy()
+Sets owner of game.
+Shows all available commands and settings
+Owner can modify game settings.
 
 */
 
-scope IncomeObjectsColor initializer inc_colour
-
-    function inc_colour_actions takes nothing returns nothing
-        local unit IncomeObjectiveUnit = GetDyingUnit() // IncomeObject
-        local player IncomeObjectReceiever = GetOwningPlayer(GetKillingUnit()) // Who gets IncomeObject
-        local unit IncomeObjectiveNewUnit // Replace IncomeObject
-        local player IncomeObjectOwner = GetOwningPlayer(IncomeObjectiveUnit) // Who loses IncomeObject
-        local boolean IsHugeGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == 'n003')
-        local boolean IsSmallGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == 'n004')
-        local boolean IsFlag = (GetUnitTypeId(IncomeObjectiveUnit) == 'n005')
-        local boolean IsOwnerTheReceiver = (IncomeObjectOwner == IncomeObjectReceiever)
-        local real IncomeObjectiveUnitX = GetUnitX(IncomeObjectiveUnit)
-        local real IncomeObjectiveUnitY = GetUnitY(IncomeObjectiveUnit)
-        local Color playerColor = Color.create(IncomeObjectReceiever) // Color Struct from NokladrLib.j
-
-        if not (IsHugeGoldMine or IsSmallGoldMine or IsFlag) then
-            return // No actions
+//===========================================================================
+function gameset_owner takes nothing returns nothing
+    local integer i = 0
+    set udg_game_owner = null // Game owner
+    loop // Sets game owner to a first available player
+        if (GetPlayerSlotState(Player(i)) == PLAYER_SLOT_STATE_PLAYING) then // Must be playing player
+            set udg_game_owner = Player(0)
         endif
+        exitwhen (udg_game_owner != null or i > 7) // TODO: test
+        set i = i + 1
+    endloop
 
-        call RemoveUnit(IncomeObjectiveUnit) // Remove old IncomeObject to replace it with a new one
-        set IncomeObjectiveNewUnit = CreateUnit(IncomeObjectReceiever, GetUnitTypeId(IncomeObjectiveUnit), IncomeObjectiveUnitX, IncomeObjectiveUnitY, bj_UNIT_FACING)
-        call SetUnitVertexColor(IncomeObjectiveNewUnit, playerColor.red, playerColor.green, playerColor.blue, 255) // Adjusts color to match receiver's one
+    static if (not DEBUG_MODE) then
+        // Notification for game owner
+        call DisplayTimedTextToPlayer(udg_game_owner, 0., 0., 10., "Вы получили права " + GREEN + "владельца игры|r.")
+    endif
 
-        set IncomeObjectiveUnit = null
-        set IncomeObjectReceiever = null
-        set IncomeObjectiveNewUnit = null
-        set IncomeObjectOwner = null
-        call playerColor.destroy()
-    endfunction
+    // Opt. begin
+    if  (GetTimeInSeconds() < R2I(udg_gameset_time_first)) then // Shows commands and settings only at game start
+        if (udg_info[GetConvertedPlayerId(udg_game_owner)] == true) then // Checks Info flag of game owner
+            static if (not DEBUG_MODE) then
+                // Shows all available commands and settings
+                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "Настройка карты (доступно первые " + ( I2S(R2I(udg_gameset_time_first)) + " сек.)" ) ) )
+                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_gameset_time) ) + " ) " ) + "|cFFFF0000-time xxx|r, где xxx - время перед началом нового раунда (от 20 до 60 сек.)" ) )
+                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_wave_time) ) + " ) " ) + "|cFFFF0000-arena xxx|r. Где xxx - начальное время раунда на арене (от 60 сек. до 150 сек.)" ) )
+                if (udg_building_status == true) then
+                    call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( 1 ) " + "|cFFFF0000-build x|r, при x=0 - во время раунда можно строить/улучшать юнитов при x=1 - нельзя" ) )
+                else
+                    call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( 0 ) " + "|cFFFF0000-build x|r, при x=0 - во время раунда можно строить/улучшать юнитов при x=1 - нельзя" ) )
+                endif
+                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( " + ( I2S(udg_const_point[0]) + ( "-" + ( I2S(udg_const_point[1]) + " ) |cFFFF0000-point ##|r." ) ) ) ) )
+                call DisplayTextToForce( GetForceOfPlayer(udg_game_owner), "Первый # - минимальное число контрольных точек, появляющихся на арене. Второй # - максимальное число контрольных точек, оно не может превышать первый номер, а также число 9." )
+                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_mode) ) + " ) " ) + "|cFFFF0000-mode #. |r" ) )
+                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, "Если # = 1, то мини-игры будут чередоваться каждую вторую волну.\nЕсли # = 2, то мини-игр не будет совсем.\nЕсли # = 3, то мини-игры буду каждые 3 волны." )
+                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( ( "( " + I2S(udg_gg) ) + " ) " ) + "|cFFFF0000-gg ##|r. Где ## - волна, после которой закончится игра (от 9 до " ) + ( I2S(( ( udg_mini_game_max * 2 ) + 3 )) + " )." ) ) )
+            endif
 
-    function inc_colour takes nothing returns nothing
-        local trigger t = CreateTrigger()
+        endif
+    endif
+    // Opt. end
+endfunction
 
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x0C), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x0D), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x0E), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x0F), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x10), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x11), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x12), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x13), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x14), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x15), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x16), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x17), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x18), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x19), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x1A), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x1B), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerAddAction(t, function inc_colour_actions)
-
-        set t = null
-    endfunction
-
-endscope
 /*
 
 =============================================
@@ -2528,48 +2892,216 @@ library UnitRecycler initializer UnitRecyclerInit uses Colors, ArcingTextTag, Lo
     endfunction
     
 endlibrary
-scope Arena initializer ArenaInit
+// function Trig_inc_rotate_Copy_Func012Func002Func002Func001Func013A takes nothing returns nothing
+    //     call ShowUnitShow(GetEnumUnit())
+// endfunction
+
+scope IncomeObjects initializer Init
 
     globals
-        constant integer Arena_ArraySize = 8
-        rect array Arena_StartRectForPlayer[Arena_ArraySize]
-        constant integer Arena_RectListSize = 8
-        rect array Arena_RectList[Arena_RectListSize]
-        real Arena_Time = 120.00
-        constant real Arena_DebugTime = 10.00
-        timerdialog Arena_TimerDialog
-        constant integer Array_UnitTypeIdOffset = 49 * 256 * 256 // https://xgm.guru/p/wc3/rawcode-to-string
+        private rect array rectList
+        private integer rectListSize = 9
+        private rect array filledRectList
+        group IncomeObjects_group = CreateGroup()
+        minimapicon array IncomeObjects_minimapicons
+        integer IncomeObjects_StartAmount = 3
+        integer IncomeObjects_EndAmount = 6
     endglobals
 
-    function ForceArena_Conditions takes nothing returns boolean
+    public function Shuffle takes nothing returns nothing
+        local integer i
+        local integer j
+        local real x
+        local real y
+        local integer numberOfObjects
+        local integer random
+        local rect curRect
+        local unit u
+
+        set numberOfObjects = GetRandomInt(IncomeObjects_StartAmount, IncomeObjects_EndAmount)
+        // debug set numberOfObjects = IncomeObjects_EndAmount
+
+        for i = 1 to numberOfObjects
+            set random = GetRandomInt(1, rectListSize)
+
+            set j = i - 1
+            while j > 0
+                if (filledRectList[j] == rectList[random]) then
+                    set random = GetRandomInt(1, rectListSize)
+                    set j = i - 1
+                else
+                    set j = j - 1
+                endif
+            endwhile
+
+            set filledRectList[i] = rectList[random]
+            set curRect = filledRectList[i]
+            set x = GetRectCenterX(curRect)
+            set y = GetRectCenterY(curRect)
+
+            if curRect == rectList[1] then
+                set u = CreateUnitEx(Player(27), bigMineRC, x, y, 270)
+                set IncomeObjects_minimapicons[i] = CreateMinimapIcon(x, y, 0xff, 0xff, 0xff, "UI\\Minimap\\MiniMap-Goldmine.mdl", FOG_OF_WAR_VISIBLE)
+                // call UnitSetUsesAltIcon(u, true)
+            else
+                if ModuloInteger(random, 2) == 1 then
+                    set u = CreateUnitEx(Player(27), smallMineRC, x, y, 270)
+                    set IncomeObjects_minimapicons[i] = CreateMinimapIcon(x, y, 0xcc, 0x00, 0xff, "UI\\Minimap\\MiniMap-Hero.mdl", FOG_OF_WAR_VISIBLE)
+                else
+                    set u = CreateUnitEx(Player(27), flagRC, x, y, 270)
+                    set IncomeObjects_minimapicons[i] = CreateMinimapIcon(x, y, 0xff, 0x00, 0x00, "UI\\Minimap\\MiniMap-Goldmine.mdl", FOG_OF_WAR_VISIBLE)
+                endif
+            endif
+
+            call GroupAddUnit(IncomeObjects_group, u)
+
+        endfor
+
+        // call ForGroupBJ(udg_light[( udg_cycle_i - 1 )],function Trig_inc_rotate_Copy_Func012Func002Func002Func001Func013A)
+    endfunction
+
+    private function Init takes nothing returns nothing
+        set rectList[1] = gg_rct_centreCENTRE
+        // Clockwise
+        set rectList[2] = gg_rct_upmid
+        set rectList[3] = gg_rct_upright
+        set rectList[4] = gg_rct_rightmid
+        set rectList[5] = gg_rct_downright
+        set rectList[6] = gg_rct_downmid
+        set rectList[7] = gg_rct_downleft
+        set rectList[8] = gg_rct_leftmid
+        set rectList[9] = gg_rct_upleft
+
+        // call SetAltMinimapIcon("UI\\Minimap\\minimap-gold.blp")
+    endfunction
+
+endscope
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     13.12.2020 16:21       =
+=============================================
+
+inc_colour Trigger
+
+Income Objective OnDestroy()
+
+*/
+
+scope IncomeObjectsColor initializer inc_colour
+
+    function inc_colour_actions takes nothing returns nothing
+        local unit IncomeObjectiveUnit = GetDyingUnit() // IncomeObject
+        local player IncomeObjectReceiever = GetOwningPlayer(GetKillingUnit()) // Who gets IncomeObject
+        local unit IncomeObjectiveNewUnit // Replace IncomeObject
+        local player IncomeObjectOwner = GetOwningPlayer(IncomeObjectiveUnit) // Who loses IncomeObject
+        local boolean IsBigGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == bigMineRC)
+        local boolean IsSmallGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == smallMineRC)
+        local boolean IsFlag = (GetUnitTypeId(IncomeObjectiveUnit) == flagRC)
+        local boolean IsOwnerTheReceiver = (IncomeObjectOwner == IncomeObjectReceiever)
+        local real IncomeObjectiveUnitX = GetUnitX(IncomeObjectiveUnit)
+        local real IncomeObjectiveUnitY = GetUnitY(IncomeObjectiveUnit)
+        local Color playerColor = Color.create(IncomeObjectReceiever) // Color Struct from NokladrLib.j
+
+        if not (IsBigGoldMine or IsSmallGoldMine or IsFlag) then
+            return // No actions
+        endif
+
+        call RemoveUnit(IncomeObjectiveUnit) // Remove old IncomeObject to replace it with a new one
+        call GroupRemoveUnit(IncomeObjects_group, IncomeObjectiveUnit)
+        set IncomeObjectiveNewUnit = CreateUnit(IncomeObjectReceiever, GetUnitTypeId(IncomeObjectiveUnit), IncomeObjectiveUnitX, IncomeObjectiveUnitY, bj_UNIT_FACING)
+        call GroupAddUnit(IncomeObjects_group, IncomeObjectiveNewUnit)
+        call SetUnitVertexColor(IncomeObjectiveNewUnit, playerColor.red, playerColor.green, playerColor.blue, 255) // Adjusts color to match receiver's one
+
+        set IncomeObjectiveUnit = null
+        set IncomeObjectReceiever = null
+        set IncomeObjectiveNewUnit = null
+        set IncomeObjectOwner = null
+        call playerColor.destroy()
+    endfunction
+
+    function inc_colour takes nothing returns nothing
+        local trigger t = CreateTrigger()
+
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0C), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0D), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0E), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0F), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x10), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x11), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x12), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x13), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x14), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x15), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x16), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x17), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x18), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x19), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x1A), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x1B), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerAddAction(t, function inc_colour_actions)
+
+        set t = null
+    endfunction
+
+endscope
+scope Arena initializer Init
+
+    globals
+        private constant integer rectListSize = 8
+        private constant integer unitTypeIdOffset = 49 * 256 * 256 // https://xgm.guru/p/wc3/rawcode-to-string
+        private constant real debugTime = 30.00
+        private rect array startRectForPlayer
+        private rect array rectList
+
+        real Arena_Time = 120.00
+        timerdialog Arena_TimerDialog
+    endglobals
+
+    private function Conditions takes nothing returns boolean
         return IsUnitInGroup(GetFilterUnit(), udg_buildings)
     endfunction
 
-    function ForceArena_ForPlayerUnits takes nothing returns nothing
+    private function ForPlayerUnits takes nothing returns nothing
         local player p = GetEnumPlayer()
         local unit u = GetEnumUnit()
-        local real x = GetRectCenterX(Arena_StartRectForPlayer[GetPlayerId(p)])
-        local real y = GetRectCenterY(Arena_StartRectForPlayer[GetPlayerId(p)])
+        local real x = GetRectCenterX(startRectForPlayer[GetPlayerId(p)])
+        local real y = GetRectCenterY(startRectForPlayer[GetPlayerId(p)])
         // debug call Log(I2S('h008') + " / " + I2S('ha08') + " / " + I2S('ha08' - 'h008') + " / " + I2S(offset))
-        call GroupAddUnit(udg_wave_units, CreateUnitEx(p, (GetUnitTypeId(u) + Array_UnitTypeIdOffset), x, y, 270))
+        call GroupAddUnit(udg_wave_units, CreateUnitEx(p, (GetUnitTypeId(u) + unitTypeIdOffset), x, y, 270))
         // debug call Log("ForceArena_ForPlayerUnits: unit = " + GetUnitName(u))
 
         set p = null
         set u = null
     endfunction
 
-    function ForceArena_ForPlayer takes nothing returns nothing
+    private function ForPlayer takes nothing returns nothing
         local player p = GetEnumPlayer()
         local group g
-        local real x = GetRectCenterX(Arena_StartRectForPlayer[GetPlayerId(p)])
-        local real y = GetRectCenterY(Arena_StartRectForPlayer[GetPlayerId(p)])
+        local real x = GetRectCenterX(startRectForPlayer[GetPlayerId(p)])
+        local real y = GetRectCenterY(startRectForPlayer[GetPlayerId(p)])
 
         // debug call Log("ForceArena_ForPlayer: player = " + GetPlayerName(p))
 
         call GroupAddUnit(udg_castle_unit, CreateUnitEx(p, castle_rc, x, y, 270))
 
-        set g = GetUnitsOfPlayerMatching(p, Condition(function ForceArena_Conditions))
-        call ForGroup(g, function ForceArena_ForPlayerUnits)
+        set g = GetUnitsOfPlayerMatching(p, Condition(function Conditions))
+        call ForGroup(g, function ForPlayerUnits)
 
         call PanCameraToTimedForPlayer(p, x, y, 0)
         call CinematicFadeBJ(bj_CINEFADETYPE_FADEOUTIN, 2, "ReplaceableTextures\\CameraMasks\\White_mask.blp", 0, 0, 0, 0)
@@ -2579,51 +3111,52 @@ scope Arena initializer ArenaInit
         set g = null
     endfunction
 
-    function ArenaFlush takes nothing returns nothing
+    private function Flush takes nothing returns nothing
         local integer i
 
         set i = 0
         loop
-            exitwhen i >= Arena_ArraySize
-            set Arena_StartRectForPlayer[i] = null
+            exitwhen i >= numberOfPlayers
+            set startRectForPlayer[i] = null
             set i = i + 1
         endloop
     endfunction
 
-    function Arena_Timer_OnExpire takes nothing returns nothing
+    private function Timer_OnExpire takes nothing returns nothing
         local timer t = GetExpiredTimer()
         
         call DestroyTimerDialog(Arena_TimerDialog)
         call PauseTimer(t)
         call DestroyTimer(t)
-        call ForceFastArena.execute()
+        call FastArena_Force.execute()
 
         set t = null
     endfunction
 
-    function ForceArena takes nothing returns nothing
+    public function Force takes nothing returns nothing
         local integer i
         local integer j
         local integer random
         local timer t = CreateTimer()
 
-        call ArenaFlush()
+        call Flush.execute()
+        call IncomeObjects_Shuffle.execute()
 
         set i = 0
         loop
-            exitwhen i >= Arena_ArraySize
+            exitwhen i >= numberOfPlayers
 
             if GetPlayerSlotState(Player(i)) == PLAYER_SLOT_STATE_PLAYING then
-                set random = GetRandomInt(0, Arena_RectListSize - 1)
-                set Arena_StartRectForPlayer[i] = Arena_RectList[random]
+                set random = GetRandomInt(0, rectListSize - 1)
+                set startRectForPlayer[i] = rectList[random]
 
                 set j = 0
                 loop
                     exitwhen j >= i
 
-                    if Arena_StartRectForPlayer[j] == Arena_RectList[random] then
-                        set random = GetRandomInt(0, Arena_RectListSize - 1)
-                        set Arena_StartRectForPlayer[i] = Arena_RectList[random]
+                    if startRectForPlayer[j] == rectList[random] then
+                        set random = GetRandomInt(0, rectListSize - 1)
+                        set startRectForPlayer[i] = rectList[random]
                         set j = 0
                     else
                         set j = j + 1
@@ -2636,8 +3169,8 @@ scope Arena initializer ArenaInit
             set i = i + 1
         endloop
 
-        call ForForce(udg_players_group, function ForceArena_ForPlayer)
-        call TimerStart(t, Arena_Time, false, function Arena_Timer_OnExpire)
+        call ForForce(udg_players_group, function ForPlayer)
+        call TimerStart(t, Arena_Time, false, function Timer_OnExpire)
         set Arena_TimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
         call TimerDialogSetTitle(Arena_TimerDialog, "Арена") // Title of timer dialog
         call TimerDialogDisplay(Arena_TimerDialog, true) // Shows timer dialog
@@ -2645,62 +3178,62 @@ scope Arena initializer ArenaInit
         set t = null
     endfunction
 
-    function ArenaInit takes nothing returns nothing
-        debug set Arena_Time = Arena_DebugTime
-        set Arena_RectList[0] = gg_rct_start1
-        set Arena_RectList[1] = gg_rct_start2
-        set Arena_RectList[2] = gg_rct_start3
-        set Arena_RectList[3] = gg_rct_start4
-        set Arena_RectList[4] = gg_rct_start5
-        set Arena_RectList[5] = gg_rct_start6
-        set Arena_RectList[6] = gg_rct_start7
-        set Arena_RectList[7] = gg_rct_start8
+    private function Init takes nothing returns nothing
+        debug set Arena_Time = debugTime
+        set rectList[0] = gg_rct_start1
+        set rectList[1] = gg_rct_start2
+        set rectList[2] = gg_rct_start3
+        set rectList[3] = gg_rct_start4
+        set rectList[4] = gg_rct_start5
+        set rectList[5] = gg_rct_start6
+        set rectList[6] = gg_rct_start7
+        set rectList[7] = gg_rct_start8
     endfunction
 
 endscope
-scope FastArena initializer FastArenaInit
+scope FastArena initializer Init
 
     globals
-        constant integer FA_ArraySize = 8
-        group array FA_unitGroup[FA_ArraySize]
-        integer array FA_unitsInGroup[FA_ArraySize]
-        real array FA_DamageByPlayer[FA_ArraySize]
-        integer FA_WinPlayerId
-        rect FA_curRect
+        private group array unitGroup
+        private integer array unitsInGroup
+        private integer winPlayerId
+        private real array damageByPlayer
+        private real timerTime
+        private rect curRect
+        
         real FA_Time = 60.00
         real FA_DebugTime = 10.00
-        real FA_TimerTime
         timerdialog FA_TimerDialog
     endglobals
 
-    function FastArena_Condition takes nothing returns boolean
+    private function Conditions takes nothing returns boolean
         return (IsUnitAliveBJ(GetFilterUnit()) == true) and (IsUnitInGroup(GetFilterUnit(), udg_wave_units) == true)
     endfunction
 
-    function FastArena_AddUnitInGroup takes nothing returns nothing
-        call GroupAddUnit(FA_unitGroup[GetPlayerId(GetOwningPlayer(GetEnumUnit()))], GetEnumUnit())
-        set FA_unitsInGroup[GetPlayerId(GetOwningPlayer(GetEnumUnit()))] = FA_unitsInGroup[GetPlayerId(GetOwningPlayer(GetEnumUnit()))] + 1
-        // debug call Log(I2S(FA_unitsInGroup[GetPlayerId(GetOwningPlayer(GetEnumUnit()))]) + " " + GetPlayerName(GetOwningPlayer(GetEnumUnit())) + " " + GetUnitName(GetEnumUnit()))
+    private function AddUnitInGroup takes nothing returns nothing
+        call GroupAddUnit(unitGroup[GetPlayerId(GetOwningPlayer(GetEnumUnit()))], GetEnumUnit())
+        set unitsInGroup[GetPlayerId(GetOwningPlayer(GetEnumUnit()))] = unitsInGroup[GetPlayerId(GetOwningPlayer(GetEnumUnit()))] + 1
+        // debug call Log(I2S(unitsInGroup[GetPlayerId(GetOwningPlayer(GetEnumUnit()))]) + " " + GetPlayerName(GetOwningPlayer(GetEnumUnit())) + " " + GetUnitName(GetEnumUnit()))
     endfunction
 
-    function FastArena_MoveUnitsToArena takes nothing returns nothing
-        local real x = GetRectCenterX(FA_curRect)
-        local real y = GetRectCenterY(FA_curRect)
+    private function MoveUnitsToArena takes nothing returns nothing
+        local real x = GetRectCenterX(curRect)
+        local real y = GetRectCenterY(curRect)
         call SetUnitPosition(GetEnumUnit(), x, y)
         set x = GetRectCenterX(gg_rct_fastarena)
         set y = GetRectCenterY(gg_rct_fastarena)
         call IssuePointOrder(GetEnumUnit(), "attack", x, y)
     endfunction
 
-    function FastArena_OnDamage takes nothing returns boolean
+    private function OnDamage takes nothing returns boolean
         local player sourcePlayer = GetOwningPlayer(GetEventDamageSource())
         local integer sourcePlayerId = GetPlayerId(sourcePlayer)
         local player targetPlayer = GetOwningPlayer(BlzGetEventDamageTarget())
 
         if (sourcePlayer != targetPlayer) then
-            set FA_DamageByPlayer[sourcePlayerId] = FA_DamageByPlayer[sourcePlayerId] + GetEventDamage()
+            set damageByPlayer[sourcePlayerId] = damageByPlayer[sourcePlayerId] + GetEventDamage()
         else
-            debug set FA_DamageByPlayer[sourcePlayerId] = FA_DamageByPlayer[sourcePlayerId] + GetEventDamage()
+            debug set damageByPlayer[sourcePlayerId] = damageByPlayer[sourcePlayerId] + GetEventDamage()
         endif
 
         set sourcePlayer = null
@@ -2708,97 +3241,69 @@ scope FastArena initializer FastArenaInit
         return false
     endfunction
 
-    function FastArena_RemoveUnits takes nothing returns nothing
+    private function RemoveUnits takes nothing returns nothing
         call GroupRemoveUnit(udg_wave_units, GetEnumUnit())
-        call RemoveUnit(GetEnumUnit())
+        call C_RemoveEnumUnits()
     endfunction
 
-    function FastArena_FirePit takes nothing returns nothing
+    private function FirePitDoDamage takes nothing returns nothing
         if (GetUnitLifePercent(GetEnumUnit()) > 4.00) then
             call SetUnitLifePercentBJ(GetEnumUnit(),(GetUnitLifePercent(GetEnumUnit()) - 4.00))
         endif
     endfunction
 
-    function FastArena_SetWinPlayer takes nothing returns nothing
+    private function SetWinPlayer takes nothing returns nothing
         local integer i = 1
         local integer curPlayerId = 0
         loop
-            exitwhen i >= FA_ArraySize
-            if FA_DamageByPlayer[i] > FA_DamageByPlayer[curPlayerId] then
+            exitwhen i >= numberOfPlayers
+            if damageByPlayer[i] > damageByPlayer[curPlayerId] then
                 set curPlayerId = i
             endif
             set i = i + 1
         endloop
-        set FA_WinPlayerId = curPlayerId
+        set winPlayerId = curPlayerId
     endfunction
 
-    function FastArena_Flush takes nothing returns nothing
+    private function Flush takes nothing returns nothing
         local integer i = 0
         loop
-            exitwhen i >= FA_ArraySize
-            call GroupClear(FA_unitGroup[i])
-            set FA_unitsInGroup[i] = 0
-            set FA_DamageByPlayer[i] = 0
-            set FA_TimerTime = FA_Time
+            exitwhen i >= numberOfPlayers
+            call GroupClear(unitGroup[i])
+            set unitsInGroup[i] = 0
+            set damageByPlayer[i] = 0
+            set timerTime = FA_Time
             call SetPlayerState(Player(i), PLAYER_STATE_GIVES_BOUNTY, 0)
             set i = i + 1
         endloop
-        set FA_TimerTime = FA_Time
+        set timerTime = FA_Time
     endfunction
 
-    function FinishFastArena takes nothing returns nothing
-        local integer i
-
-        call DisableTrigger(DDS)
-        call FastArena_SetWinPlayer()
-
-        set i = 0
-        loop
-            exitwhen i > 8
-            if (udg_info[i+1] == true) then
-                call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, ("Нанеся " + GOLD + I2S(R2I(FA_DamageByPlayer[FA_WinPlayerId])) + "|r ед. урона на арене, победил игрок " + C_IntToColor(FA_WinPlayerId) + GetPlayerName(Player(FA_WinPlayerId)) + "|r"))
-            endif
-            set i = i + 1
-        endloop
-        
-        // set udg_scoreboard_win[FA_WinPlayerId] = (udg_scoreboard_win[FA_WinPlayerId] + 50) // Test
-        // call MultiboardSetItemValueBJ(udg_scoreboard, 7, FA_WinPlayerId, I2S(udg_scoreboard_win[FA_WinPlayerId])) // Test
-        
-        set i = 0
-        loop
-            exitwhen i >= FA_ArraySize
-            call SetPlayerState(Player(i), PLAYER_STATE_GIVES_BOUNTY, 1)
-            set i = i + 1
-        endloop
-
-        call ForceNextWave.execute()
-    endfunction
-
-    function FastArena_TimerTick takes nothing returns nothing
+    private function Timer_OnTick takes nothing returns nothing
         local timer t = GetExpiredTimer()
         local group g_tmp
 
-        set FA_TimerTime = FA_TimerTime - 1
+        set timerTime = timerTime - 1
 
         set g_tmp = GetUnitsInRectAll(gg_rct_fastarenaFIRE)
-        call ForGroup(g_tmp, function FastArena_FirePit)
+        call ForGroup(g_tmp, function FirePitDoDamage)
         call DestroyGroup(g_tmp)
 
-        if (FA_TimerTime <= 5 and FA_TimerTime > 0) then
+        if (timerTime <= 5 and timerTime > 0) then
             call StartSound(gg_snd_BattleNetTick)
         endif
 
-        if (FA_TimerTime <= 0) then
+        if (timerTime <= 0) then
             call PauseTimer(t)
             call DestroyTimer(t)
-            call FinishFastArena()
+            call FastArena_Finish.execute()
         endif
 
         set t = null
         set g_tmp = null
     endfunction
 
-    function FastArena_Timer_OnExpire takes nothing returns nothing
+    private function Timer_OnExpire takes nothing returns nothing
         local timer t = GetExpiredTimer()
 
         call DestroyTimerDialog(FA_TimerDialog)
@@ -2808,7 +3313,7 @@ scope FastArena initializer FastArenaInit
         set t = null
     endfunction
 
-    function ForceFastArena takes nothing returns nothing
+    public function Force takes nothing returns nothing
         local integer i
         local integer j
         local integer curPlayerId
@@ -2821,38 +3326,38 @@ scope FastArena initializer FastArenaInit
         // call DisableTrigger(gg_trg_wave_castle_destr)
         // call DisableTrigger(gg_trg_inc_per_second)
         
-        call FastArena_Flush()
+        call Flush.execute()
         call PanCameraToTimed(GetRectCenterX(gg_rct_fastarena), GetRectCenterY(gg_rct_fastarena), 0)
 
         set i = 1
         loop
             exitwhen i > 4
             if (i == 1) then
-                set FA_curRect = gg_rct_fastarenaSPAWN1
+                set curRect = gg_rct_fastarenaSPAWN1
             elseif (i == 2) then
-                set FA_curRect = gg_rct_fastarenaSPAWN2
+                set curRect = gg_rct_fastarenaSPAWN2
             elseif (i == 3) then
-                set FA_curRect = gg_rct_fastarenaSPAWN3
+                set curRect = gg_rct_fastarenaSPAWN3
             elseif (i == 4) then
-                set FA_curRect = gg_rct_fastarenaSPAWN4
+                set curRect = gg_rct_fastarenaSPAWN4
             endif
 
-            set g_tmp = GetUnitsInRectMatching(gg_rct_all, Condition(function FastArena_Condition))
-            call ForGroup(g_tmp, function FastArena_AddUnitInGroup)
+            set g_tmp = GetUnitsInRectMatching(gg_rct_all, Condition(function Conditions))
+            call ForGroup(g_tmp, function AddUnitInGroup)
             call DestroyGroup(g_tmp)
 
             set j = 1
             set curPlayerId = 0
             loop
-                exitwhen j >= FA_ArraySize
-                if FA_unitsInGroup[j] > FA_unitsInGroup[curPlayerId] then
+                exitwhen j >= numberOfPlayers
+                if unitsInGroup[j] > unitsInGroup[curPlayerId] then
                     set curPlayerId = j
                 endif
                 set j = j + 1
             endloop
-            call ForGroup(FA_unitGroup[curPlayerId], function FastArena_MoveUnitsToArena)
-            call PanCameraToTimedForPlayer(Player(curPlayerId), GetRectCenterX(FA_curRect), GetRectCenterY(FA_curRect), 0)
-            set FA_unitsInGroup[curPlayerId] = -1
+            call ForGroup(unitGroup[curPlayerId], function MoveUnitsToArena)
+            call PanCameraToTimedForPlayer(Player(curPlayerId), GetRectCenterX(curRect), GetRectCenterY(curRect), 0)
+            set unitsInGroup[curPlayerId] = -1
             set i = i + 1
         endloop
 
@@ -2867,16 +3372,16 @@ scope FastArena initializer FastArenaInit
             set i = i + 1
         endloop
         
-        set g_tmp = GetUnitsInRectMatching(gg_rct_all, Condition(function FastArena_Condition))
-        call ForGroup(GetUnitsInRectMatching(gg_rct_all, Condition(function FastArena_Condition)),function FastArena_RemoveUnits)
+        set g_tmp = GetUnitsInRectMatching(gg_rct_all, Condition(function Conditions))
+        call ForGroup(GetUnitsInRectMatching(gg_rct_all, Condition(function Conditions)),function RemoveUnits)
         call DestroyGroup(g_tmp)
         
-        call TimerStart(t, FA_Time, false, function FastArena_Timer_OnExpire)
+        call TimerStart(t, FA_Time, false, function Timer_OnExpire)
         set FA_TimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
         call TimerDialogSetTitle(FA_TimerDialog, "Быстрая битва") // Title of timer dialog
         call TimerDialogDisplay(FA_TimerDialog, true) // Shows timer dialog
         
-        call TimerStart(CreateTimer(), 1, true, function FastArena_TimerTick)
+        call TimerStart(CreateTimer(), 1, true, function Timer_OnTick)
         
         call EnableTrigger(DDS)
 
@@ -2884,15 +3389,46 @@ scope FastArena initializer FastArenaInit
         set t = null
     endfunction
 
-    function FastArenaInit takes nothing returns nothing
-        local integer i = 0
-        debug set FA_Time = FA_DebugTime
+    public function Finish takes nothing returns nothing
+        local integer i
+
+        call DisableTrigger(DDS)
+        call SetWinPlayer.execute()
+
+        set i = 0
         loop
-            exitwhen i >= FA_ArraySize
-            set FA_unitGroup[i] = CreateGroup()
+            exitwhen i > 8
+            if (udg_info[i+1] == true) then
+                call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, ("Нанеся " + GOLD + I2S(R2I(damageByPlayer[winPlayerId])) + "|r ед. урона на арене, победил игрок " + C_IntToColor(winPlayerId) + GetPlayerName(Player(winPlayerId)) + "|r"))
+            endif
             set i = i + 1
         endloop
-        call AddDamageCondition(Condition(function FastArena_OnDamage))
+        
+        // set udg_scoreboard_win[winPlayerId] = (udg_scoreboard_win[winPlayerId] + 50) // Test
+        // call MultiboardSetItemValueBJ(udg_scoreboard, 7, winPlayerId, I2S(udg_scoreboard_win[winPlayerId])) // Test
+        
+        set i = 0
+        loop
+            exitwhen i >= numberOfPlayers
+            call SetPlayerState(Player(i), PLAYER_STATE_GIVES_BOUNTY, 1)
+            set i = i + 1
+        endloop
+
+        call NextWave_Force.execute()
+    endfunction
+
+    private function Init takes nothing returns nothing
+        local integer i
+
+        debug set FA_Time = FA_DebugTime
+
+        set i = 0
+        loop
+            exitwhen i >= numberOfPlayers
+            set unitGroup[i] = CreateGroup()
+            set i = i + 1
+        endloop
+        call AddDamageCondition(Condition(function OnDamage))
     endfunction
 
 endscope
@@ -2903,7 +3439,7 @@ scope NextWave
         timerdialog relaxWaveTimerDialog
     endglobals
 
-    function NextWave_ForPlayer takes nothing returns nothing
+    private function ForPlayer takes nothing returns nothing
         local player p = GetEnumPlayer()
 
         call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, p, 0)
@@ -2918,418 +3454,42 @@ scope NextWave
         set p = null
     endfunction
 
-    function NextWave_Timer_OnExprie takes nothing returns nothing
+    private function Timer_OnExprie takes nothing returns nothing
         local timer t = GetExpiredTimer()
 
         call DestroyTimerDialog(relaxWaveTimerDialog)
         call PauseTimer(t)
         call DestroyTimer(t)
-        call ForceArena.execute()
+        call Arena_Force.execute()
 
         set t = null
     endfunction
 
-    function ForceNextWave takes nothing returns nothing
+    public function Force takes nothing returns nothing
         local timer t = CreateTimer()
+        local integer i
         call ForGroup(udg_wave_units, function C_RemoveEnumUnits)
         call GroupClear(udg_wave_units)
         call ForGroup(udg_castle_unit, function C_RemoveEnumUnits)
         call GroupClear(udg_castle_unit)
+        call ForGroup(IncomeObjects_group, function C_RemoveEnumUnits)
+        call GroupClear(IncomeObjects_group)
 
-        call ForForce(udg_players_group, function NextWave_ForPlayer)
+        for i = 1 to IncomeObjects_EndAmount
+            if IncomeObjects_minimapicons[i] != null then
+                call DestroyMinimapIcon(IncomeObjects_minimapicons[i])
+                set IncomeObjects_minimapicons[i] = null
+            endif
+        endfor
 
-        call TimerStart(t, relaxWaveTime, false, function NextWave_Timer_OnExprie)
+        call ForForce(udg_players_group, function ForPlayer)
+
+        call TimerStart(t, relaxWaveTime, false, function Timer_OnExprie)
         set relaxWaveTimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
         call TimerDialogSetTitle(relaxWaveTimerDialog, "Следующая волна") // Title of timer dialog
         call TimerDialogDisplay(relaxWaveTimerDialog, true) // Shows timer dialog
         
         set t = null
-    endfunction
-
-endscope
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     11.12.2020 15:00       =
-=============================================
-
-builder select Trigger
-
-Реализация выбора расы
-
-*/
-
-scope BuilderSelect initializer builder_select
-
-    globals
-        integer array peonsId[12]
-        debug constant integer debugGold = 12000
-        debug constant integer debugGems = 12000
-    endglobals
-
-    function builder_select_IsDummy takes nothing returns boolean
-        return (GetUnitTypeId(GetFilterUnit()) == 'h001') or (GetUnitTypeId(GetFilterUnit()) == 'ntav')
-    endfunction
-
-    function builder_select_actions takes nothing returns nothing
-        local unit peon
-        local player owner_of_peon
-        local group group_of_dummies
-        local real x
-        local real y
-        local integer peonId
-
-        local integer column
-        local integer row
-        local multiboarditem mbitem
-        local string iconFileName
-
-        if not IsUnitType(GetSoldUnit(), UNIT_TYPE_PEON) then
-            set peon = null
-            set owner_of_peon = null
-            set group_of_dummies = null
-            set mbitem = null
-            set iconFileName = null
-            return
-        endif
-
-        set peon = GetSoldUnit()
-        set owner_of_peon = GetTriggerPlayer()
-        set group_of_dummies = GetUnitsOfPlayerMatching(owner_of_peon, Condition(function builder_select_IsDummy))
-        set x = GetPlayerStartLocationX(owner_of_peon)
-        set y = GetPlayerStartLocationY(owner_of_peon)
-        set peonId = GetUnitTypeId(peon)
-
-        set column = 0
-        set row = GetPlayerId(owner_of_peon) + 1
-        set mbitem = MultiboardGetItem(udg_scoreboard, row, column)
-
-        call SelectUnitForPlayerSingle(peon, owner_of_peon) // Selects peon for player
-        call ForGroup(group_of_dummies, function C_RemoveEnumUnits) // Remove dummies
-
-        call CreateUnit(owner_of_peon, 'hbla', x, y, bj_UNIT_FACING) // Юнит "Замок"
-        call CreateUnit(owner_of_peon, 'hwtw', x-450, y+640, bj_UNIT_FACING) // Юнит "Улучшения"
-        call SetUnitPosition(peon, x, y-250) // Peon's position
-        call SetUnitFacing(peon, bj_UNIT_FACING) // Peon's facing
-        call PanCameraToForPlayer(owner_of_peon, x, y)
-
-        if (peonId == peonsId[0]) then
-            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNPeasant.blp"
-            call SetPlayerTechResearched(owner_of_peon, 'R02G', 1) // Улучшение "Играть за людей"
-        elseif (peonId == peonsId[1]) then
-            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNAcolyte.blp"
-        elseif (peonId == peonsId[2]) then
-            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNWisp.blp"
-            call SetPlayerTechResearched(owner_of_peon, 'R00H', 2) // Улучшение "Драгоценные камни"
-            call SetPlayerTechResearched(owner_of_peon, 'R02F', 1) // Улучшение "Играть за эльфов"
-            set udg_scoreboard_upg[row] = 2
-        elseif (peonId == peonsId[3]) then
-            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNPeon.blp"
-            call AddGoldToPlayer(150, owner_of_peon)
-            call SetPlayerTechResearched(owner_of_peon, 'R00H', 1) // Улучшение "Играть за орду"
-        elseif (peonId == peonsId[4]) then
-            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNMurgalSlave.blp"
-        elseif (peonId == peonsId[5]) then
-            set iconFileName = "ReplaceableTextures\\CommandButtons\\BTNMedivh.blp"
-            set udg_mediv = owner_of_peon
-            call TriggerExecute(gg_trg_mediv_select)
-        endif
-
-        call MultiboardSetItemIcon(mbitem, iconFileName)
-        call MultiboardReleaseItem(mbitem)
-
-        static if DEBUG_MODE then
-            call AddGoldToPlayer(debugGold, owner_of_peon)
-            call AddLumberToPlayer(debugGems, owner_of_peon)
-            call SetPlayerTechResearched(owner_of_peon, 'R018', 1) // Улучшение "12 исследований"
-            call SetPlayerTechResearched(owner_of_peon, 'R019', 1) // Улучшение "20 исследований"
-            else
-            call AddGoldToPlayer(base_gold, owner_of_peon) // Check Globals.j
-            call AddLumberToPlayer(base_gems, owner_of_peon) // Check Globals.j
-        endif
-
-        set peon = null
-        set owner_of_peon = null
-        call DestroyGroup(group_of_dummies)
-        set group_of_dummies = null
-        set mbitem = null
-        set iconFileName = null
-    endfunction
-
-    //===========================================================================
-    function builder_select takes nothing returns nothing
-        local trigger t = CreateTrigger()
-
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_SELL, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_SELL, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_SELL, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_SELL, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_SELL, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_SELL, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_SELL, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_SELL, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_SELL, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_SELL, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_SELL, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_SELL, null)
-        call TriggerAddAction(t, function builder_select_actions)
-
-        set peonsId[0] = 'h02I' // Работник
-        set peonsId[1] = 'h015' // Послушник
-        set peonsId[2] = 'h01G' // Светлячок
-        set peonsId[3] = 'h01U' // Раб
-        set peonsId[4] = 'h025' // Маргол-раб
-        set peonsId[5] = 'h02H' // Медив
-
-        set t = null
-    endfunction
-
-endscope
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     11.12.2020 18:21       =
-=============================================
-
-Продажа зданий.
-
-*/
-
-scope UnitDatabase
-    globals
-        UnitDB udb
-        private UnitStruct array usarr[128]
-        private integer usarrcounter = 1
-    endglobals
-
-    struct UnitStruct
-        private integer gold
-        private integer lumber
-        private real gold_raw
-        private real lumber_raw
-
-        static method create takes integer unitTypeId, integer parentUnitTypeId returns UnitStruct
-            local UnitStruct us = UnitStruct.allocate()
-            set us.gold_raw = GetUnitGoldCost(unitTypeId) * 0.8
-            set us.lumber_raw = GetUnitWoodCost(unitTypeId) * 0.8
-            if (usarr[table[parentUnitTypeId]] != null) then
-                set us.gold = R2I(us.gold_raw + usarr[table[parentUnitTypeId]].GetGoldRaw())
-                set us.lumber = R2I(us.lumber_raw + usarr[table[parentUnitTypeId]].GetLumberRaw())
-            else
-                set us.gold = IMaxBJ(R2I(GetUnitGoldCost(unitTypeId) * 0.8), 1)
-                set us.lumber = IMaxBJ(R2I(GetUnitWoodCost(unitTypeId) * 0.8), 1)
-            endif
-            set table[unitTypeId] = usarrcounter
-            set usarr[usarrcounter] = us
-            set usarrcounter = usarrcounter + 1
-            return us
-        endmethod
-
-        method GetGold takes nothing returns integer
-            return gold
-        endmethod
-        
-        method GetLumber takes nothing returns integer
-            return lumber
-        endmethod
-
-        method GetGoldRaw takes nothing returns real
-            return gold_raw
-        endmethod
-
-        method GetLumberRaw takes nothing returns real
-            return lumber_raw
-        endmethod
-
-    endstruct
-
-    struct UnitDB
-        method operator [] takes unit u returns UnitStruct
-            return usarr[table[GetUnitTypeId(u)]]
-        endmethod
-    endstruct
-
-endscope
-
-scope BuildingSelling initializer building_selling
-
-    function building_selling_conditions takes nothing returns boolean
-        return (GetSpellAbilityId() == 'A002') // Способность "Продать"
-    endfunction
-
-    function building_selling_actions takes nothing returns nothing
-        local unit u = GetSpellAbilityUnit()
-        local player p = GetTriggerPlayer()
-        local integer gold = udb[u].GetGold()
-        local integer lumber = udb[u].GetLumber()
-        local texttag tt
-        call GroupRemoveUnit(udg_buildings, u)
-
-        call AddGoldToPlayer(gold, p)
-        call AddLumberToPlayer(lumber, p)
-
-        set tt = NewTextTagAtUnit(GOLD + "+" + I2S(gold), u, 70.00, 11.00)
-        call SetTextTagVisibility(tt, false)
-        if (GetLocalPlayer() == p) then
-            call SetTextTagVisibility(tt, true)
-        endif
-        call SetTextTagPermanent(tt, false)
-        call SetTextTagLifespan(tt, 2.00)
-        call SetTextTagFadepoint(tt, 1.30)
-        call SetTextTagVelocity(tt, 0, 0.03)
-
-        set tt = NewTextTagAtUnit(VIOLET + "+" + I2S(lumber), u, 0.00, 11.00)
-        call SetTextTagVisibility(tt, false)
-        if (GetLocalPlayer() == p) then
-            call SetTextTagVisibility(tt, true)
-        endif
-        call SetTextTagPermanent(tt, false)
-        call SetTextTagLifespan(tt, 2.00)
-        call SetTextTagFadepoint(tt, 1.30)
-        call SetTextTagVelocity(tt, 0, 0.03)
-
-        call RemoveUnit(u)
-        call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl", GetUnitX(u), GetUnitY(u)))
-
-        set u = null
-        set p = null
-        set tt = null
-    endfunction
-
-    //===========================================================================
-    function building_selling takes nothing returns nothing
-        local trigger t = CreateTrigger()
-
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_SPELL_CAST, null)
-        call TriggerAddCondition(t, Condition(function building_selling_conditions))
-        call TriggerAddAction(t, function building_selling_actions)
-
-        set udb = UnitDB.create()
-
-        // ---------------------------------Альянс---------------------------------
-        call UnitStruct.create('h002', 0)       // Пехотинец
-        call UnitStruct.create('h004', 'h002')  // Мечник
-        call UnitStruct.create('h005', 'h004')  // Гвардеец
-
-        call UnitStruct.create('h003', 0)       // Стрелок
-        call UnitStruct.create('h007', 'h003')  // Снайпер
-        call UnitStruct.create('h008', 'h007')  // Элитная лучница
-
-        call UnitStruct.create('h009', 0)       // Ученик
-        call UnitStruct.create('h00A', 'h009')  // Целитель
-        call UnitStruct.create('h00B', 'h00A')  // Высший целитель
-
-        call UnitStruct.create('h00C', 0)       // Рыцарь
-        call UnitStruct.create('h00E', 'h00C')  // Элитный рыцарь
-        call UnitStruct.create('h00F', 'h00E')  // Генерал
-
-        call UnitStruct.create('h00J', 0)       // Волшебница
-        call UnitStruct.create('h00L', 'h00J')  // Магистр магии
-        call UnitStruct.create('h00N', 'h00L')  // Архимаг
-
-        call UnitStruct.create('h00P', 0)       // Наёмник
-        call UnitStruct.create('h00Q', 'h00P')  // Убийца
-        call UnitStruct.create('h00R', 'h00Q')  // Ассасин
-
-        call UnitStruct.create('h00U', 0)       // Вертолёт
-        call UnitStruct.create('h00V', 'h00U')  // Укреплённый вертолёт
-        call UnitStruct.create('h00W', 'h00V')  // Штурмовой вертолёт
-
-        call UnitStruct.create('h012', 0)       // Паровая машина
-        call UnitStruct.create('h013', 'h012')  // Мортира
-        call UnitStruct.create('h014', 'h013')  // Паровой танк
-
-        // ---------------------------------Нежить---------------------------------
-
-        call UnitStruct.create('h016', 0)  // Скелет
-        call UnitStruct.create('h017', 0)  // Скелет-лучник
-        call UnitStruct.create('h018', 0)  // Чумной зомби
-        call UnitStruct.create('h019', 0)  // Некромант
-        call UnitStruct.create('h01A', 0)  // Вурдалак
-        call UnitStruct.create('h01B', 0)  // Слуга неруба
-        call UnitStruct.create('h01C', 0)  // Мясник
-        call UnitStruct.create('h01D', 0)  // Банши
-        call UnitStruct.create('h01E', 0)  // Рыцарь смерти
-        call UnitStruct.create('h01F', 0)  // Ледяной змей
-
-        // ------------------------------Ночные эльфы------------------------------
-
-        call UnitStruct.create('h01H', 0)  // Охотница
-        call UnitStruct.create('h01I', 0)  // Лучница
-        call UnitStruct.create('h01J', 0)  // Дух
-        call UnitStruct.create('h01K', 0)  // Друид-ворон
-        call UnitStruct.create('h01L', 0)  // Дриада
-        call UnitStruct.create('h01M', 0)  // Лесной дракончик
-        call UnitStruct.create('h01N', 0)  // Друид-медведь
-        call UnitStruct.create('h01P', 0)  // Баллиста
-        call UnitStruct.create('h01Q', 0)  // Горный великан
-        call UnitStruct.create('h01R', 0)  // Химера
-
-        // ----------------------------------Орда----------------------------------
-
-        call UnitStruct.create('h01S', 0)  // Бугай
-        call UnitStruct.create('h01T', 0)  // Охотник за головами
-        call UnitStruct.create('h01V', 0)  // Кодой
-        call UnitStruct.create('h01W', 0)  // Колдун
-        call UnitStruct.create('h01X', 0)  // Рейдер
-        call UnitStruct.create('h01Y', 0)  // Берсерк
-        call UnitStruct.create('h01Z', 0)  // Виверна
-        call UnitStruct.create('h020', 0)  // Шаман
-        call UnitStruct.create('h021', 0)  // Минотавр
-        call UnitStruct.create('h022', 0)  // Чёрный дракон
-
-        // ----------------------------------Наги----------------------------------
-
-        call UnitStruct.create('h026', 0)  // Нага воин
-        call UnitStruct.create('h027', 0)  // Морской дракон
-        call UnitStruct.create('h028', 0)  // Дух моря
-        call UnitStruct.create('h02A', 0)  // Нага-сирена
-        call UnitStruct.create('h02B', 0)  // Нага-гвардеец
-        call UnitStruct.create('h02C', 0)  // Великая черепаха
-        call UnitStruct.create('h02D', 0)  // Коатль
-        call UnitStruct.create('h02E', 0)  // Заклинательница
-        call UnitStruct.create('h02F', 0)  // Морское чудовище
-        call UnitStruct.create('h02G', 0)  // Высшая гидра
-
-        set t = null
-    endfunction
-
-endscope
-scope Debug initializer DebugInit
-
-    function DebugInit takes nothing returns nothing
-        debug local trigger t = CreateTrigger()
-
-        static if DEBUG_MODE then
-            // call Log("Hello world!")
-            
-            // call Log(I2S(PLAYER_NEUTRAL_AGGRESSIVE)) - 24
-            // call Log(I2S(bj_PLAYER_NEUTRAL_VICTIM)) - 25
-            // call Log(I2S(bj_PLAYER_NEUTRAL_EXTRA)) - 26
-            // call Log(I2S(PLAYER_NEUTRAL_PASSIVE)) - 27
-
-            // call Log(I2S(bj_MAX_PLAYERS)) - 24
-            // call Log(I2S(bj_MAX_PLAYER_SLOTS)) - 28
-        endif
-        
-        debug set t = null
     endfunction
 
 endscope
@@ -3407,65 +3567,6 @@ endfunction
 = Файл создал:       Nokladr                =
 = Discord:           ! ! Nokladr#2205       =
 = E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     20.11.2020 21:07       =
-=============================================
-
-gameset owner Trigger
-
-Sets owner of game.
-Shows all available commands and settings
-Owner can modify game settings.
-
-*/
-
-//===========================================================================
-function gameset_owner takes nothing returns nothing
-    local integer i = 0
-    set udg_game_owner = null // Game owner
-    loop // Sets game owner to a first available player
-        if (GetPlayerSlotState(Player(i)) == PLAYER_SLOT_STATE_PLAYING) then // Must be playing player
-            set udg_game_owner = Player(0)
-        endif
-        exitwhen (udg_game_owner != null or i > 7) // TODO: test
-        set i = i + 1
-    endloop
-
-    static if (not DEBUG_MODE) then
-        // Notification for game owner
-        call DisplayTimedTextToPlayer(udg_game_owner, 0., 0., 10., "Вы получили права " + GREEN + "владельца игры|r.")
-    endif
-
-    // Opt. begin
-    if  (GetTimeInSeconds() < R2I(udg_gameset_time_first)) then // Shows commands and settings only at game start
-        if (udg_info[GetConvertedPlayerId(udg_game_owner)] == true) then // Checks Info flag of game owner
-            static if (not DEBUG_MODE) then
-                // Shows all available commands and settings
-                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "Настройка карты (доступно первые " + ( I2S(R2I(udg_gameset_time_first)) + " сек.)" ) ) )
-                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_gameset_time) ) + " ) " ) + "|cFFFF0000-time xxx|r, где xxx - время перед началом нового раунда (от 20 до 60 сек.)" ) )
-                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_wave_time) ) + " ) " ) + "|cFFFF0000-arena xxx|r. Где xxx - начальное время раунда на арене (от 60 сек. до 150 сек.)" ) )
-                if (udg_building_status == true) then
-                    call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( 1 ) " + "|cFFFF0000-build x|r, при x=0 - во время раунда можно строить/улучшать юнитов при x=1 - нельзя" ) )
-                else
-                    call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( 0 ) " + "|cFFFF0000-build x|r, при x=0 - во время раунда можно строить/улучшать юнитов при x=1 - нельзя" ) )
-                endif
-                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( "( " + ( I2S(udg_const_point[0]) + ( "-" + ( I2S(udg_const_point[1]) + " ) |cFFFF0000-point ##|r." ) ) ) ) )
-                call DisplayTextToForce( GetForceOfPlayer(udg_game_owner), "Первый # - минимальное число контрольных точек, появляющихся на арене. Второй # - максимальное число контрольных точек, оно не может превышать первый номер, а также число 9." )
-                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( "( " + I2S(udg_mode) ) + " ) " ) + "|cFFFF0000-mode #. |r" ) )
-                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, "Если # = 1, то мини-игры будут чередоваться каждую вторую волну.\nЕсли # = 2, то мини-игр не будет совсем.\nЕсли # = 3, то мини-игры буду каждые 3 волны." )
-                call DisplayTimedTextToForce( GetForceOfPlayer(udg_game_owner), udg_gameset_time_first, ( ( ( ( "( " + I2S(udg_gg) ) + " ) " ) + "|cFFFF0000-gg ##|r. Где ## - волна, после которой закончится игра (от 9 до " ) + ( I2S(( ( udg_mini_game_max * 2 ) + 3 )) + " )." ) ) )
-            endif
-
-        endif
-    endif
-    // Opt. end
-endfunction
-
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
 = Дата создания:     01.11.2020 18:41       =
 =============================================
 
@@ -3483,10 +3584,11 @@ globals
     constant string strDiscord = (LB + "! ! Nokladr|r" + GOLD + "#|r" + LB + "2205|r")          // Discord тэг
     constant string strBuild_Time = "13 December 2020"                                          // Время создания билда карты
 
-    debug constant real debugTimeBeforeFirstWave = 20.00                                        // Время перед началом первой волны
+    debug constant real debugTimeBeforeFirstWave = 10.00                                        // Время перед началом первой волны
 
     leaderboard Leaderboard                                                                     // Таблица лидеров
 
+    constant integer numberOfPlayers = 8
     constant integer finalWave = 15
     constant integer numberOfMinigames = 8
     
@@ -3526,8 +3628,11 @@ globals
     constant integer most_point_kill_last_round = 'h023'
     constant integer or_leadership_arena_last_round = 'h024'
     constant integer big_mine_rc = 'n003'
+    constant integer bigMineRC = 'n003'
     constant integer small_mine_rc = 'n004'
+    constant integer smallMineRC = 'n004'
     constant integer flag_rc = 'n005'
+    constant integer flagRC = 'n005'
 
     // Настройки улучшения Вклад в игрока
     constant integer contr_to_pl_gold = 300
@@ -3928,6 +4033,7 @@ scope Main initializer MainInit
     function post_map_init takes nothing returns nothing
 
         call initialization_in_game.execute()
+        call building_selling.execute()
 
         // Disable Damage Detection System until Fast Arena begins
         call DisableTrigger(DDS)
@@ -4261,6 +4367,7 @@ globals
     sound                   gg_snd_BloodElfMagePissed1 = null
     sound                   gg_snd_BattleNetTick01     = null
     sound                   gg_snd_ClanInvitation      = null
+    trigger                 gg_trg_Untitled_Trigger_001 = null
     trigger                 gg_trg_initialization      = null
     trigger                 gg_trg_ini_id              = null
     trigger                 gg_trg_game_end            = null
@@ -4301,6 +4408,7 @@ globals
     trigger                 gg_trg_wave_leader_owner   = null
     trigger                 gg_trg_inc_ini             = null
     trigger                 gg_trg_inc_rotate          = null
+    trigger                 gg_trg_inc_rotate_Copy     = null
     trigger                 gg_trg_inc_per_second      = null
     trigger                 gg_trg_inc_upg             = null
     trigger                 gg_trg_income_upg          = null
@@ -5043,857 +5151,9 @@ endfunction
 
 //***************************************************************************
 //*
-//*  Custom Script Code
-//*
-//***************************************************************************
-
-//***************************************************************************
-//*
 //*  Triggers
 //*
 //***************************************************************************
-
-//===========================================================================
-// Trigger: initialization
-//
-// Устанавливаем переменные
-//===========================================================================
-function Trig_initialization_Actions takes nothing returns nothing
-    set udg_leader_player[0] = Player(PLAYER_NEUTRAL_PASSIVE)
-    set udg_leader_player[1] = Player(PLAYER_NEUTRAL_PASSIVE)
-    set udg_ticket_players[1] = Player(PLAYER_NEUTRAL_PASSIVE)
-    set udg_ticket_players[2] = Player(PLAYER_NEUTRAL_PASSIVE)
-    set udg_ticket_players[3] = Player(PLAYER_NEUTRAL_PASSIVE)
-    set udg_ticket_players[4] = Player(PLAYER_NEUTRAL_PASSIVE)
-    set udg_ticket_players[5] = Player(PLAYER_NEUTRAL_PASSIVE)
-    set udg_ticket_players[6] = Player(PLAYER_NEUTRAL_PASSIVE)
-    set udg_ticket_players[7] = Player(PLAYER_NEUTRAL_PASSIVE)
-    set udg_ticket_players[8] = Player(PLAYER_NEUTRAL_PASSIVE)
-    set udg_gameset_time = 30
-    set udg_wave_time = 120
-    set udg_players_name[16] = "Нейтрал"
-    set udg_building_status = false
-    call CreateNUnitsAtLoc( 1, 'h000', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_centreUP), bj_UNIT_FACING )
-    call GroupAddUnitSimple( GetLastCreatedUnit(), udg_light[0] )
-    call CreateNUnitsAtLoc( 1, 'h000', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_centreDOWN), bj_UNIT_FACING )
-    call GroupAddUnitSimple( GetLastCreatedUnit(), udg_light[0] )
-    call CreateNUnitsAtLoc( 1, 'h000', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_centreRIGHT), bj_UNIT_FACING )
-    call GroupAddUnitSimple( GetLastCreatedUnit(), udg_light[0] )
-    call CreateNUnitsAtLoc( 1, 'h000', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_centreLEFT), bj_UNIT_FACING )
-    call GroupAddUnitSimple( GetLastCreatedUnit(), udg_light[0] )
-    call CreateNUnitsAtLoc( 1, 'h000', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_centreCENTRE), bj_UNIT_FACING )
-    call GroupAddUnitSimple( GetLastCreatedUnit(), udg_light[0] )
-    call CreateNUnitsAtLoc( 1, 'h000', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_upright), bj_UNIT_FACING )
-    call GroupAddUnitSimple( GetLastCreatedUnit(), udg_light[1] )
-    call CreateNUnitsAtLoc( 1, 'h000', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_downright), bj_UNIT_FACING )
-    call GroupAddUnitSimple( GetLastCreatedUnit(), udg_light[2] )
-    call CreateNUnitsAtLoc( 1, 'h000', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_downleft), bj_UNIT_FACING )
-    call GroupAddUnitSimple( GetLastCreatedUnit(), udg_light[3] )
-    call CreateNUnitsAtLoc( 1, 'h000', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_upleft), bj_UNIT_FACING )
-    call GroupAddUnitSimple( GetLastCreatedUnit(), udg_light[4] )
-    call CreateNUnitsAtLoc( 1, 'h000', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_upmid), bj_UNIT_FACING )
-    call GroupAddUnitSimple( GetLastCreatedUnit(), udg_light[5] )
-    call CreateNUnitsAtLoc( 1, 'h000', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_rightmid), bj_UNIT_FACING )
-    call GroupAddUnitSimple( GetLastCreatedUnit(), udg_light[6] )
-    call CreateNUnitsAtLoc( 1, 'h000', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_downmid), bj_UNIT_FACING )
-    call GroupAddUnitSimple( GetLastCreatedUnit(), udg_light[7] )
-    call CreateNUnitsAtLoc( 1, 'h000', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_leftmid), bj_UNIT_FACING )
-    call GroupAddUnitSimple( GetLastCreatedUnit(), udg_light[8] )
-    set udg_time[0] = 0
-    set udg_time[1] = 0
-    set udg_time[2] = 0
-    set udg_dmg_player_inflicted[1] = 1.00
-    set udg_dmg_player_taken[1] = 1.00
-    set udg_dmg_player_inflicted[2] = 1.00
-    set udg_dmg_player_taken[2] = 2.00
-    set udg_dmg_player_inflicted[3] = 2.00
-    set udg_dmg_player_taken[3] = 2.00
-    set udg_dmg_player_inflicted[4] = 3.00
-    set udg_dmg_player_taken[4] = 2.00
-    set udg_dmg_player_inflicted[5] = 3.00
-    set udg_dmg_player_taken[5] = 3.00
-    set udg_dmg_player_inflicted[6] = 4.00
-    set udg_dmg_player_taken[6] = 4.00
-    set udg_players_colour[1] = "|cffFF0202"
-    set udg_players_colour[2] = "|cff0041FF"
-    set udg_players_colour[3] = "|cff1BE6D8"
-    set udg_players_colour[4] = "|cff530080"
-    set udg_players_colour[5] = "|cffFFFC00"
-    set udg_players_colour[6] = "|cffFE890D"
-    set udg_players_colour[7] = "|cff1FBF00"
-    set udg_players_colour[8] = "|cffE55AAF"
-    set udg_players_colour[9] = "|cff949596"
-    set udg_players_colour[10] = "|cff7DBEF1"
-    set udg_players_colour[11] = "|cff0F6146"
-    set udg_players_colour[12] = "|cff4D2903"
-    set udg_players_colour[13] = "|cff272727"
-    set udg_players_colour[14] = "|cff272727"
-    set udg_players_colour[15] = "|cff272727"
-    set udg_players_colour[16] = "|cff272727"
-    set udg_id = 40
-endfunction
-
-//===========================================================================
-function InitTrig_initialization takes nothing returns nothing
-    set gg_trg_initialization = CreateTrigger(  )
-    call TriggerAddAction( gg_trg_initialization, function Trig_initialization_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: ini id
-//===========================================================================
-function Trig_ini_id_Func001C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) != 'h00G' ) ) then
-        return false
-    endif
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) != 'n001' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_ini_id_Conditions takes nothing returns boolean
-    if ( not Trig_ini_id_Func001C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_ini_id_Func002Func001C takes nothing returns boolean
-    if ( not ( IsUnitInGroup(GetEnteringUnit(), udg_id_group) == false ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_ini_id_Func002Func003C takes nothing returns boolean
-    if ( not ( IsUnitType(GetEnteringUnit(), UNIT_TYPE_MECHANICAL) == true ) ) then
-        return false
-    endif
-    if ( not ( IsUnitInGroup(GetEnteringUnit(), udg_buildings) == false ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_ini_id_Func002C takes nothing returns boolean
-    if ( not Trig_ini_id_Func002Func003C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_ini_id_Actions takes nothing returns nothing
-    if ( Trig_ini_id_Func002C() ) then
-        call DoNothing(  )
-    else
-        if ( Trig_ini_id_Func002Func001C() ) then
-            set udg_id = ( udg_id + 1 )
-            call SetUnitUserData( GetEnteringUnit(), udg_id )
-            call GroupAddUnitSimple( GetEnteringUnit(), udg_id_group )
-        else
-        endif
-    endif
-endfunction
-
-//===========================================================================
-function InitTrig_ini_id takes nothing returns nothing
-    set gg_trg_ini_id = CreateTrigger(  )
-    call TriggerRegisterEnterRectSimple( gg_trg_ini_id, GetEntireMapRect() )
-    call TriggerAddCondition( gg_trg_ini_id, Condition( function Trig_ini_id_Conditions ) )
-    call TriggerAddAction( gg_trg_ini_id, function Trig_ini_id_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: game end
-//===========================================================================
-function Trig_game_end_Func003A takes nothing returns nothing
-    call PanCameraToTimedLocForPlayer( GetOwningPlayer(GetEnumUnit()), GetPlayerStartLocationLoc(GetOwningPlayer(GetEnumUnit())), 0 )
-    call RemoveUnit( GetEnumUnit() )
-endfunction
-
-function Trig_game_end_Func004A takes nothing returns nothing
-    call RemoveUnit( GetEnumUnit() )
-endfunction
-
-function Trig_game_end_Func006Func001Func002001002 takes nothing returns boolean
-    return ( IsUnitInGroup(GetFilterUnit(), udg_buildings) == true )
-endfunction
-
-function Trig_game_end_Func006Func001Func002A takes nothing returns nothing
-    call IssueImmediateOrderBJ( GetEnumUnit(), "berserk" )
-endfunction
-
-function Trig_game_end_Func006Func001C takes nothing returns boolean
-    if ( not ( GetPlayerSlotState(ConvertedPlayer(udg_i)) == PLAYER_SLOT_STATE_PLAYING ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_game_end_Func009A takes nothing returns nothing
-    set udg_end_result[GetConvertedPlayerId(GetEnumPlayer())] = udg_scoreboard_result[GetConvertedPlayerId(GetEnumPlayer())]
-endfunction
-
-function Trig_game_end_Func010Func001Func001C takes nothing returns boolean
-    if ( not ( udg_scoreboard_result[GetForLoopIndexA()] < udg_scoreboard_result[GetForLoopIndexB()] ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_game_end_Func012Func001C takes nothing returns boolean
-    if ( not ( udg_end_result[GetConvertedPlayerId(GetEnumPlayer())] == udg_scoreboard_result[1] ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_game_end_Func012A takes nothing returns nothing
-    if ( Trig_game_end_Func012Func001C() ) then
-        call DisplayTimedTextToForce( GetPlayersAll(), 900.00, ( "Победил игрок " + ( udg_players_colour[GetConvertedPlayerId(GetEnumPlayer())] + ( udg_players_name[GetConvertedPlayerId(GetEnumPlayer())] + "|r !" ) ) ) )
-    else
-    endif
-endfunction
-
-function Trig_game_end_Actions takes nothing returns nothing
-    call ClearTextMessagesBJ( GetPlayersAll() )
-    call SetDayNightModels( "", "" )
-    call ForGroupBJ( GetUnitsOfTypeIdAll('hbla'), function Trig_game_end_Func003A )
-    call ForGroupBJ( GetUnitsOfTypeIdAll('hwtw'), function Trig_game_end_Func004A )
-    call DisplayTimedTextToForce( GetPlayersAll(), 900.00, "TRIGSTR_1138" )
-    set udg_i = 1
-    loop
-        exitwhen udg_i > udg_scoreboard_limit
-        if ( Trig_game_end_Func006Func001C() ) then
-            set udg_end_result[udg_i] = udg_scoreboard_result[udg_i]
-            call ForGroupBJ( GetUnitsOfPlayerMatching(ConvertedPlayer(udg_i), Condition(function Trig_game_end_Func006Func001Func002001002)), function Trig_game_end_Func006Func001Func002A )
-            call CreateDestructableLoc( 'B008', GetPlayerStartLocationLoc(ConvertedPlayer(udg_i)), GetRandomDirectionDeg(), 2.00, 0 )
-            set udg_k = 1
-            loop
-                exitwhen udg_k > 8
-                call CreateDestructableLoc( 'B008', PolarProjectionBJ(GetPlayerStartLocationLoc(ConvertedPlayer(udg_i)), 633.00, ( 45.00 * I2R(udg_k) )), GetRandomDirectionDeg(), 2.00, 0 )
-                set udg_k = udg_k + 1
-            endloop
-        else
-        endif
-        call TriggerSleepAction( 0.10 )
-        set udg_i = udg_i + 1
-    endloop
-    call TriggerSleepAction( 3.00 )
-    call ClearTextMessagesBJ( GetPlayersAll() )
-    call ForForce( udg_players_group, function Trig_game_end_Func009A )
-    set bj_forLoopAIndex = 1
-    set bj_forLoopAIndexEnd = 7
-    loop
-        exitwhen bj_forLoopAIndex > bj_forLoopAIndexEnd
-        set bj_forLoopBIndex = ( GetForLoopIndexA() + 1 )
-        set bj_forLoopBIndexEnd = 8
-        loop
-            exitwhen bj_forLoopBIndex > bj_forLoopBIndexEnd
-            if ( Trig_game_end_Func010Func001Func001C() ) then
-                set udg_scoreboard_result[GetForLoopIndexA()] = ( udg_scoreboard_result[GetForLoopIndexA()] + udg_scoreboard_result[GetForLoopIndexB()] )
-                set udg_scoreboard_result[GetForLoopIndexB()] = ( udg_scoreboard_result[GetForLoopIndexA()] - udg_scoreboard_result[GetForLoopIndexB()] )
-                set udg_scoreboard_result[GetForLoopIndexA()] = ( udg_scoreboard_result[GetForLoopIndexA()] - udg_scoreboard_result[GetForLoopIndexB()] )
-            else
-            endif
-            set bj_forLoopBIndex = bj_forLoopBIndex + 1
-        endloop
-        set bj_forLoopAIndex = bj_forLoopAIndex + 1
-    endloop
-    call PlaySoundBJ( gg_snd_ClanInvitation )
-    call ForForce( udg_players_group, function Trig_game_end_Func012A )
-    call DisplayTimedTextToForce( GetPlayersAll(), 900.00, "TRIGSTR_1148" )
-endfunction
-
-//===========================================================================
-function InitTrig_game_end takes nothing returns nothing
-    set gg_trg_game_end = CreateTrigger(  )
-    call TriggerAddAction( gg_trg_game_end, function Trig_game_end_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: cmd clear
-//===========================================================================
-function Trig_cmd_clear_Actions takes nothing returns nothing
-    call ClearTextMessagesBJ( GetForceOfPlayer(GetTriggerPlayer()) )
-endfunction
-
-//===========================================================================
-function InitTrig_cmd_clear takes nothing returns nothing
-    set gg_trg_cmd_clear = CreateTrigger(  )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(0), "-clear", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(0), "-c", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(0), "-с", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(1), "-clear", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(1), "-c", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(1), "-с", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(2), "-clear", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(2), "-c", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(2), "-с", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(3), "-clear", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(3), "-c", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(3), "-с", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(4), "-clear", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(4), "-c", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(4), "-с", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(5), "-clear", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(5), "-c", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(5), "-с", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(6), "-c", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(6), "-clear", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(6), "-с", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(7), "-c", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(7), "-clear", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_clear, Player(7), "-с", true )
-    call TriggerAddAction( gg_trg_cmd_clear, function Trig_cmd_clear_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: cmd build
-//===========================================================================
-function Trig_cmd_build_Conditions takes nothing returns boolean
-    if ( not ( GetTriggerPlayer() == udg_game_owner ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_build_Func002C takes nothing returns boolean
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 8, 8)) == 1 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_build_Actions takes nothing returns nothing
-    if ( Trig_cmd_build_Func002C() ) then
-        call DisplayTimedTextToForce( GetPlayersAll(), 10.00, "TRIGSTR_413" )
-        set udg_building_status = true
-    else
-        call DisplayTimedTextToForce( GetPlayersAll(), 10.00, "TRIGSTR_414" )
-        set udg_building_status = false
-    endif
-endfunction
-
-//===========================================================================
-function InitTrig_cmd_build takes nothing returns nothing
-    set gg_trg_cmd_build = CreateTrigger(  )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_build, Player(0), "-build ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_build, Player(1), "-build ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_build, Player(2), "-build ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_build, Player(3), "-build ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_build, Player(4), "-build ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_build, Player(5), "-build ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_build, Player(6), "-build ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_build, Player(7), "-build ", false )
-    call TriggerAddCondition( gg_trg_cmd_build, Condition( function Trig_cmd_build_Conditions ) )
-    call TriggerAddAction( gg_trg_cmd_build, function Trig_cmd_build_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: cmd time
-//===========================================================================
-function Trig_cmd_time_Func003C takes nothing returns boolean
-    if ( not ( GetTriggerPlayer() == udg_game_owner ) ) then
-        return false
-    endif
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 7, 8)) >= 20 ) ) then
-        return false
-    endif
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 7, 8)) <= 60 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_time_Conditions takes nothing returns boolean
-    if ( not Trig_cmd_time_Func003C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_time_Actions takes nothing returns nothing
-    set udg_gameset_time = S2I(SubStringBJ(GetEventPlayerChatString(), 7, 8))
-    call DisplayTimedTextToForce( GetPlayersAll(), 10.00, ( "Время перед началом каждого раунда изменено на |cFF00FF00" + ( I2S(udg_gameset_time) + "|r сек." ) ) )
-endfunction
-
-//===========================================================================
-function InitTrig_cmd_time takes nothing returns nothing
-    set gg_trg_cmd_time = CreateTrigger(  )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_time, Player(0), "-time ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_time, Player(1), "-time ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_time, Player(2), "-time ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_time, Player(3), "-time ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_time, Player(4), "-time ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_time, Player(5), "-time ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_time, Player(6), "-time ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_time, Player(7), "-time ", false )
-    call TriggerAddCondition( gg_trg_cmd_time, Condition( function Trig_cmd_time_Conditions ) )
-    call TriggerAddAction( gg_trg_cmd_time, function Trig_cmd_time_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: cmd arena
-//===========================================================================
-function Trig_cmd_arena_Func011C takes nothing returns boolean
-    if ( not ( GetTriggerPlayer() == udg_game_owner ) ) then
-        return false
-    endif
-    if ( not ( SubStringBJ(GetEventPlayerChatString(), 1, 7) == "-arena " ) ) then
-        return false
-    endif
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 8, 10)) >= 60 ) ) then
-        return false
-    endif
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 8, 10)) <= 150 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_arena_Conditions takes nothing returns boolean
-    if ( not Trig_cmd_arena_Func011C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_arena_Actions takes nothing returns nothing
-    set udg_wave_time = S2I(SubStringBJ(GetEventPlayerChatString(), 8, 10))
-    call DisplayTimedTextToForce( GetPlayersAll(), 10.00, ( "Начальное время на арене изменено на |cFF00FF00" + ( I2S(udg_wave_time) + "|r сек." ) ) )
-endfunction
-
-//===========================================================================
-function InitTrig_cmd_arena takes nothing returns nothing
-    set gg_trg_cmd_arena = CreateTrigger(  )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_arena, Player(0), "-arena ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_arena, Player(1), "-arena ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_arena, Player(2), "-arena ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_arena, Player(3), "-arena ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_arena, Player(4), "-arena ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_arena, Player(5), "-arena ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_arena, Player(6), "-arena ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_arena, Player(7), "-arena ", false )
-    call TriggerAddCondition( gg_trg_cmd_arena, Condition( function Trig_cmd_arena_Conditions ) )
-    call TriggerAddAction( gg_trg_cmd_arena, function Trig_cmd_arena_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: cmd mode
-//
-// mode - 1. Стандартный режим. Каждую нечет. волну арена, каждую чёт. волну миниигра.
-// mode - 2. Режим без миниигр.
-// mode - 3. Режим с упором на сражения. Каждая третья волна миниигра. Босса нет.
-//===========================================================================
-function Trig_cmd_mode_Func003C takes nothing returns boolean
-    if ( not ( GetTriggerPlayer() == udg_game_owner ) ) then
-        return false
-    endif
-    if ( not ( SubStringBJ(GetEventPlayerChatString(), 1, 6) == "-mode " ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_mode_Conditions takes nothing returns boolean
-    if ( not Trig_cmd_mode_Func003C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_mode_Func001Func001Func001Func006Func001Func003Func002Func002C takes nothing returns boolean
-    if ( not ( udg_random_log == false ) ) then
-        return false
-    endif
-    if ( not ( udg_wave_mini[0] != ( udg_r * 3 ) ) ) then
-        return false
-    endif
-    if ( not ( udg_wave_mini[2] != ( udg_r * 3 ) ) ) then
-        return false
-    endif
-    if ( not ( udg_wave_mini[3] != ( udg_r * 3 ) ) ) then
-        return false
-    endif
-    if ( not ( udg_wave_mini[4] != ( udg_r * 3 ) ) ) then
-        return false
-    endif
-    if ( not ( udg_wave_mini[5] != ( udg_r * 3 ) ) ) then
-        return false
-    endif
-    if ( not ( udg_wave_mini[6] != ( udg_r * 3 ) ) ) then
-        return false
-    endif
-    if ( not ( udg_wave_mini[7] != ( udg_r * 3 ) ) ) then
-        return false
-    endif
-    if ( not ( udg_wave_mini[8] != ( udg_r * 3 ) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_mode_Func001Func001Func001Func006Func001Func003Func002C takes nothing returns boolean
-    if ( not Trig_cmd_mode_Func001Func001Func001Func006Func001Func003Func002Func002C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_mode_Func001Func001Func001Func006Func001C takes nothing returns boolean
-    if ( not ( GetForLoopIndexA() != 1 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_mode_Func001Func001Func001C takes nothing returns boolean
-    if ( not ( SubStringBJ(GetEventPlayerChatString(), 7, 7) == "3" ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_mode_Func001Func001Func006A takes nothing returns nothing
-    set udg_income_wood[GetConvertedPlayerId(GetEnumPlayer())] = 14
-endfunction
-
-function Trig_cmd_mode_Func001Func001C takes nothing returns boolean
-    if ( not ( SubStringBJ(GetEventPlayerChatString(), 7, 7) == "2" ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_mode_Func001Func006Func001Func003Func002Func002C takes nothing returns boolean
-    if ( not ( udg_random_log == false ) ) then
-        return false
-    endif
-    if ( not ( udg_wave_mini[0] != ( udg_r * 2 ) ) ) then
-        return false
-    endif
-    if ( not ( udg_wave_mini[1] != ( udg_r * 2 ) ) ) then
-        return false
-    endif
-    if ( not ( udg_wave_mini[2] != ( udg_r * 2 ) ) ) then
-        return false
-    endif
-    if ( not ( udg_wave_mini[3] != ( udg_r * 2 ) ) ) then
-        return false
-    endif
-    if ( not ( udg_wave_mini[4] != ( udg_r * 2 ) ) ) then
-        return false
-    endif
-    if ( not ( udg_wave_mini[5] != ( udg_r * 2 ) ) ) then
-        return false
-    endif
-    if ( not ( udg_wave_mini[6] != ( udg_r * 2 ) ) ) then
-        return false
-    endif
-    if ( not ( udg_wave_mini[7] != ( udg_r * 2 ) ) ) then
-        return false
-    endif
-    if ( not ( udg_wave_mini[8] != ( udg_r * 2 ) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_mode_Func001Func006Func001Func003Func002C takes nothing returns boolean
-    if ( not Trig_cmd_mode_Func001Func006Func001Func003Func002Func002C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_mode_Func001Func006Func001C takes nothing returns boolean
-    if ( not ( GetForLoopIndexA() != 1 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_mode_Func001C takes nothing returns boolean
-    if ( not ( SubStringBJ(GetEventPlayerChatString(), 7, 7) == "1" ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_mode_Actions takes nothing returns nothing
-    if ( Trig_cmd_mode_Func001C() ) then
-        call PlaySoundBJ( gg_snd_Warning )
-        call DisplayTimedTextToForce( GetPlayersAll(), 20.00, "TRIGSTR_2534" )
-        set udg_mode = 1
-        set udg_wave_mini[1] = 4
-        set bj_forLoopAIndex = 0
-        set bj_forLoopAIndexEnd = udg_mini_game_max
-        loop
-            exitwhen bj_forLoopAIndex > bj_forLoopAIndexEnd
-            if ( Trig_cmd_mode_Func001Func006Func001C() ) then
-                set udg_random_log = false
-                set bj_forLoopBIndex = 1
-                set bj_forLoopBIndexEnd = ( udg_mini_game_max * 7 )
-                loop
-                    exitwhen bj_forLoopBIndex > bj_forLoopBIndexEnd
-                    set udg_r = GetRandomInt(1, ( udg_mini_game_max + 1 ))
-                    if ( Trig_cmd_mode_Func001Func006Func001Func003Func002C() ) then
-                        set udg_random_log = true
-                        set udg_wave_mini[GetForLoopIndexA()] = ( udg_r * 2 )
-                    else
-                    endif
-                    set bj_forLoopBIndex = bj_forLoopBIndex + 1
-                endloop
-                set udg_r = 0
-            else
-            endif
-            set bj_forLoopAIndex = bj_forLoopAIndex + 1
-        endloop
-    else
-        if ( Trig_cmd_mode_Func001Func001C() ) then
-            call PlaySoundBJ( gg_snd_Warning )
-            call DisplayTimedTextToForce( GetPlayersAll(), 20.00, "TRIGSTR_2535" )
-            set udg_mode = 2
-            set bj_forLoopAIndex = 0
-            set bj_forLoopAIndexEnd = udg_mini_game_max
-            loop
-                exitwhen bj_forLoopAIndex > bj_forLoopAIndexEnd
-                set udg_wave_mini[GetForLoopIndexA()] = 99
-                set bj_forLoopAIndex = bj_forLoopAIndex + 1
-            endloop
-            call ForForce( udg_players_group, function Trig_cmd_mode_Func001Func001Func006A )
-        else
-            if ( Trig_cmd_mode_Func001Func001Func001C() ) then
-                call PlaySoundBJ( gg_snd_Warning )
-                call DisplayTimedTextToForce( GetPlayersAll(), 20.00, "TRIGSTR_2536" )
-                set udg_mode = 3
-                set udg_wave_mini[1] = 99
-                set bj_forLoopAIndex = 0
-                set bj_forLoopAIndexEnd = udg_mini_game_max
-                loop
-                    exitwhen bj_forLoopAIndex > bj_forLoopAIndexEnd
-                    if ( Trig_cmd_mode_Func001Func001Func001Func006Func001C() ) then
-                        set udg_random_log = false
-                        set bj_forLoopBIndex = 1
-                        set bj_forLoopBIndexEnd = ( udg_mini_game_max * 7 )
-                        loop
-                            exitwhen bj_forLoopBIndex > bj_forLoopBIndexEnd
-                            set udg_r = GetRandomInt(1, udg_mini_game_max)
-                            if ( Trig_cmd_mode_Func001Func001Func001Func006Func001Func003Func002C() ) then
-                                set udg_random_log = true
-                                set udg_wave_mini[GetForLoopIndexA()] = ( udg_r * 3 )
-                            else
-                            endif
-                            set bj_forLoopBIndex = bj_forLoopBIndex + 1
-                        endloop
-                    else
-                    endif
-                    set bj_forLoopAIndex = bj_forLoopAIndex + 1
-                endloop
-                set udg_r = 0
-            else
-                call DisplayTimedTextToForce( GetForceOfPlayer(GetTriggerPlayer()), 20.00, "TRIGSTR_2537" )
-            endif
-        endif
-    endif
-    call DisableTrigger( GetTriggeringTrigger() )
-endfunction
-
-//===========================================================================
-function InitTrig_cmd_mode takes nothing returns nothing
-    set gg_trg_cmd_mode = CreateTrigger(  )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_mode, Player(0), "-mode ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_mode, Player(1), "-mode ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_mode, Player(2), "-mode ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_mode, Player(3), "-mode ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_mode, Player(4), "-mode ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_mode, Player(5), "-mode ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_mode, Player(6), "-mode ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_mode, Player(7), "-mode ", false )
-    call TriggerAddCondition( gg_trg_cmd_mode, Condition( function Trig_cmd_mode_Conditions ) )
-    call TriggerAddAction( gg_trg_cmd_mode, function Trig_cmd_mode_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: cmd point
-//===========================================================================
-function Trig_cmd_point_Func010C takes nothing returns boolean
-    if ( not ( GetTriggerPlayer() == udg_game_owner ) ) then
-        return false
-    endif
-    if ( not ( SubStringBJ(GetEventPlayerChatString(), 1, 7) == "-point " ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_point_Conditions takes nothing returns boolean
-    if ( not Trig_cmd_point_Func010C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_point_Func001Func004C takes nothing returns boolean
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 8, 8)) >= 0 ) ) then
-        return false
-    endif
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 9, 9)) <= 9 ) ) then
-        return false
-    endif
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 9, 9)) >= S2I(SubStringBJ(GetEventPlayerChatString(), 8, 8)) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_point_Func001C takes nothing returns boolean
-    if ( not Trig_cmd_point_Func001Func004C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_point_Actions takes nothing returns nothing
-    if ( Trig_cmd_point_Func001C() ) then
-        set udg_const_point[0] = S2I(SubStringBJ(GetEventPlayerChatString(), 8, 8))
-        set udg_const_point[1] = S2I(SubStringBJ(GetEventPlayerChatString(), 9, 9))
-        call DisplayTextToForce( GetPlayersAll(), ( "Число контрольных точек будет варьироваться от |cFF00FF00" + ( I2S(udg_const_point[0]) + ( "|r до |cFF00FF00" + ( I2S(udg_const_point[1]) + "|r" ) ) ) ) )
-    else
-    endif
-endfunction
-
-//===========================================================================
-function InitTrig_cmd_point takes nothing returns nothing
-    set gg_trg_cmd_point = CreateTrigger(  )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_point, Player(0), "-point ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_point, Player(1), "-point ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_point, Player(2), "-point ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_point, Player(3), "-point ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_point, Player(4), "-point ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_point, Player(5), "-point ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_point, Player(6), "-point ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_point, Player(7), "-point ", false )
-    call TriggerAddCondition( gg_trg_cmd_point, Condition( function Trig_cmd_point_Conditions ) )
-    call TriggerAddAction( gg_trg_cmd_point, function Trig_cmd_point_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: cmd gg
-//===========================================================================
-function Trig_cmd_gg_Func010C takes nothing returns boolean
-    if ( not ( GetTriggerPlayer() == udg_game_owner ) ) then
-        return false
-    endif
-    if ( not ( SubStringBJ(GetEventPlayerChatString(), 1, 4) == "-gg " ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_gg_Conditions takes nothing returns boolean
-    if ( not Trig_cmd_gg_Func010C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_gg_Func001Func003C takes nothing returns boolean
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 5, 6)) >= 9 ) ) then
-        return false
-    endif
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 5, 6)) <= ( ( udg_mini_game_max * 2 ) + 3 ) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_gg_Func001C takes nothing returns boolean
-    if ( not Trig_cmd_gg_Func001Func003C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_gg_Actions takes nothing returns nothing
-    if ( Trig_cmd_gg_Func001C() ) then
-        set udg_gg = S2I(SubStringBJ(GetEventPlayerChatString(), 5, 6))
-        call DisplayTextToForce( GetPlayersAll(), ( "Игра закончится после |cFF00FF00" + ( I2S(udg_gg) + "|r волны." ) ) )
-    else
-    endif
-endfunction
-
-//===========================================================================
-function InitTrig_cmd_gg takes nothing returns nothing
-    set gg_trg_cmd_gg = CreateTrigger(  )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_gg, Player(0), "-gg ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_gg, Player(1), "-gg ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_gg, Player(2), "-gg ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_gg, Player(3), "-gg ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_gg, Player(4), "-gg ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_gg, Player(5), "-gg ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_gg, Player(6), "-gg ", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_gg, Player(7), "-gg ", false )
-    call TriggerAddCondition( gg_trg_cmd_gg, Condition( function Trig_cmd_gg_Conditions ) )
-    call TriggerAddAction( gg_trg_cmd_gg, function Trig_cmd_gg_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: cmd info
-//===========================================================================
-function Trig_cmd_info_Func001C takes nothing returns boolean
-    if ( not ( udg_info[GetConvertedPlayerId(GetTriggerPlayer())] == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_cmd_info_Actions takes nothing returns nothing
-    if ( Trig_cmd_info_Func001C() ) then
-        set udg_info[GetConvertedPlayerId(GetTriggerPlayer())] = false
-        call DisplayTextToForce( GetForceOfPlayer(GetTriggerPlayer()), "TRIGSTR_2651" )
-    else
-        set udg_info[GetConvertedPlayerId(GetTriggerPlayer())] = true
-        call DisplayTextToForce( GetForceOfPlayer(GetTriggerPlayer()), "TRIGSTR_2652" )
-    endif
-endfunction
-
-//===========================================================================
-function InitTrig_cmd_info takes nothing returns nothing
-    set gg_trg_cmd_info = CreateTrigger(  )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_info, Player(0), "-info", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_info, Player(1), "-info", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_info, Player(2), "-info", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_info, Player(3), "-info", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_info, Player(4), "-info", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_info, Player(5), "-info", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_info, Player(6), "-info", true )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_info, Player(7), "-info", true )
-    call TriggerAddAction( gg_trg_cmd_info, function Trig_cmd_info_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: cmd zoom
-//===========================================================================
-function Trig_cmd_zoom_Actions takes nothing returns nothing
-    call SetCameraFieldForPlayer( GetTriggerPlayer(), CAMERA_FIELD_TARGET_DISTANCE, ( 10.00 * S2R(SubStringBJ(GetEventPlayerChatString(), 7, 9)) ), 1.00 )
-endfunction
-
-//===========================================================================
-function InitTrig_cmd_zoom takes nothing returns nothing
-    set gg_trg_cmd_zoom = CreateTrigger(  )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_zoom, Player(0), "-zoom", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_zoom, Player(1), "-zoom", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_zoom, Player(2), "-zoom", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_zoom, Player(3), "-zoom", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_zoom, Player(4), "-zoom", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_zoom, Player(5), "-zoom", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_zoom, Player(6), "-zoom", false )
-    call TriggerRegisterPlayerChatEvent( gg_trg_cmd_zoom, Player(7), "-zoom", false )
-    call TriggerAddAction( gg_trg_cmd_zoom, function Trig_cmd_zoom_Actions )
-endfunction
 
 //===========================================================================
 // Trigger: scoreboard ini
@@ -6350,230 +5610,6 @@ function InitTrig_inc_ini takes nothing returns nothing
     set gg_trg_inc_ini = CreateTrigger(  )
     call TriggerRegisterTimerEventSingle( gg_trg_inc_ini, 1.00 )
     call TriggerAddAction( gg_trg_inc_ini, function Trig_inc_ini_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: inc rotate
-//===========================================================================
-function Trig_inc_rotate_Func012Func002Func002Func001Func002C takes nothing returns boolean
-    if ( not ( udg_inc_all[1] != udg_cycle_i ) ) then
-        return false
-    endif
-    if ( not ( udg_inc_all[2] != udg_cycle_i ) ) then
-        return false
-    endif
-    if ( not ( udg_inc_all[3] != udg_cycle_i ) ) then
-        return false
-    endif
-    if ( not ( udg_inc_all[4] != udg_cycle_i ) ) then
-        return false
-    endif
-    if ( not ( udg_inc_all[5] != udg_cycle_i ) ) then
-        return false
-    endif
-    if ( not ( udg_inc_all[6] != udg_cycle_i ) ) then
-        return false
-    endif
-    if ( not ( udg_inc_all[7] != udg_cycle_i ) ) then
-        return false
-    endif
-    if ( not ( udg_inc_all[8] != udg_cycle_i ) ) then
-        return false
-    endif
-    if ( not ( udg_inc_all[9] != udg_cycle_i ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_rotate_Func012Func002Func002Func001Func004C takes nothing returns boolean
-    if ( not ( udg_cycle_i == 1 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_rotate_Func012Func002Func002Func001Func005C takes nothing returns boolean
-    if ( not ( udg_cycle_i == 2 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_rotate_Func012Func002Func002Func001Func006C takes nothing returns boolean
-    if ( not ( udg_cycle_i == 3 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_rotate_Func012Func002Func002Func001Func007C takes nothing returns boolean
-    if ( not ( udg_cycle_i == 4 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_rotate_Func012Func002Func002Func001Func008C takes nothing returns boolean
-    if ( not ( udg_cycle_i == 5 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_rotate_Func012Func002Func002Func001Func009C takes nothing returns boolean
-    if ( not ( udg_cycle_i == 6 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_rotate_Func012Func002Func002Func001Func010C takes nothing returns boolean
-    if ( not ( udg_cycle_i == 7 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_rotate_Func012Func002Func002Func001Func011C takes nothing returns boolean
-    if ( not ( udg_cycle_i == 8 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_rotate_Func012Func002Func002Func001Func012C takes nothing returns boolean
-    if ( not ( udg_cycle_i == 9 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_rotate_Func012Func002Func002Func001Func013A takes nothing returns nothing
-    call ShowUnitShow( GetEnumUnit() )
-endfunction
-
-function Trig_inc_rotate_Func012Func002Func002Func001Func015C takes nothing returns boolean
-    if ( not ( udg_random == GetForLoopIndexA() ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_rotate_Func012Func002Func002Func001C takes nothing returns boolean
-    if ( not Trig_inc_rotate_Func012Func002Func002Func001Func002C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_rotate_Func012Func002Func002C takes nothing returns boolean
-    if ( not ( udg_inc_status == false ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_inc_rotate_Actions takes nothing returns nothing
-    set udg_inc_status = false
-    set udg_inc_all[1] = 0
-    set udg_inc_all[2] = 0
-    set udg_inc_all[3] = 0
-    set udg_inc_all[4] = 0
-    set udg_inc_all[5] = 0
-    set udg_inc_all[6] = 0
-    set udg_inc_all[7] = 0
-    set udg_inc_all[8] = 0
-    set udg_inc_all[9] = 0
-    set udg_random = GetRandomInt(udg_const_point[0], udg_const_point[1])
-    set bj_forLoopAIndex = 1
-    set bj_forLoopAIndexEnd = udg_random
-    loop
-        exitwhen bj_forLoopAIndex > bj_forLoopAIndexEnd
-        set udg_inc_status = false
-        set bj_forLoopBIndex = 1
-        set bj_forLoopBIndexEnd = ( udg_random * 7 )
-        loop
-            exitwhen bj_forLoopBIndex > bj_forLoopBIndexEnd
-            set udg_cycle_i = GetRandomInt(1, 9)
-            if ( Trig_inc_rotate_Func012Func002Func002C() ) then
-                if ( Trig_inc_rotate_Func012Func002Func002Func001C() ) then
-                    set udg_inc_status = true
-                    set udg_inc_all[GetForLoopIndexA()] = udg_cycle_i
-                    if ( Trig_inc_rotate_Func012Func002Func002Func001Func004C() ) then
-                        call CreateNUnitsAtLoc( 1, 'n003', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_centreCENTRE), bj_UNIT_FACING )
-                        call CreateNUnitsAtLoc( 1, 'n006', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_centreCENTRE), bj_UNIT_FACING )
-                    else
-                    endif
-                    if ( Trig_inc_rotate_Func012Func002Func002Func001Func005C() ) then
-                        call CreateNUnitsAtLoc( 1, 'n004', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_upright), bj_UNIT_FACING )
-                        call CreateNUnitsAtLoc( 1, 'n006', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_upright), bj_UNIT_FACING )
-                        call SetUnitScalePercent( GetLastCreatedUnit(), 225.00, 225.00, 225.00 )
-                    else
-                    endif
-                    if ( Trig_inc_rotate_Func012Func002Func002Func001Func006C() ) then
-                        call CreateNUnitsAtLoc( 1, 'n004', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_downright), bj_UNIT_FACING )
-                        call CreateNUnitsAtLoc( 1, 'n006', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_downright), bj_UNIT_FACING )
-                        call SetUnitScalePercent( GetLastCreatedUnit(), 225.00, 225.00, 225.00 )
-                    else
-                    endif
-                    if ( Trig_inc_rotate_Func012Func002Func002Func001Func007C() ) then
-                        call CreateNUnitsAtLoc( 1, 'n004', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_downleft), bj_UNIT_FACING )
-                        call CreateNUnitsAtLoc( 1, 'n006', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_downleft), bj_UNIT_FACING )
-                        call SetUnitScalePercent( GetLastCreatedUnit(), 225.00, 225.00, 225.00 )
-                    else
-                    endif
-                    if ( Trig_inc_rotate_Func012Func002Func002Func001Func008C() ) then
-                        call CreateNUnitsAtLoc( 1, 'n004', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_upleft), bj_UNIT_FACING )
-                        call CreateNUnitsAtLoc( 1, 'n006', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_upleft), bj_UNIT_FACING )
-                        call SetUnitScalePercent( GetLastCreatedUnit(), 225.00, 225.00, 225.00 )
-                    else
-                    endif
-                    if ( Trig_inc_rotate_Func012Func002Func002Func001Func009C() ) then
-                        call CreateNUnitsAtLoc( 1, 'n005', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_upmid), bj_UNIT_FACING )
-                        call CreateNUnitsAtLoc( 1, 'n006', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_upmid), bj_UNIT_FACING )
-                        call SetUnitScalePercent( GetLastCreatedUnit(), 150.00, 15.00, 150.00 )
-                    else
-                    endif
-                    if ( Trig_inc_rotate_Func012Func002Func002Func001Func010C() ) then
-                        call CreateNUnitsAtLoc( 1, 'n005', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_rightmid), bj_UNIT_FACING )
-                        call CreateNUnitsAtLoc( 1, 'n006', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_rightmid), bj_UNIT_FACING )
-                        call SetUnitScalePercent( GetLastCreatedUnit(), 150.00, 15.00, 150.00 )
-                    else
-                    endif
-                    if ( Trig_inc_rotate_Func012Func002Func002Func001Func011C() ) then
-                        call CreateNUnitsAtLoc( 1, 'n005', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_downmid), bj_UNIT_FACING )
-                        call CreateNUnitsAtLoc( 1, 'n006', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_downmid), bj_UNIT_FACING )
-                        call SetUnitScalePercent( GetLastCreatedUnit(), 150.00, 15.00, 150.00 )
-                    else
-                    endif
-                    if ( Trig_inc_rotate_Func012Func002Func002Func001Func012C() ) then
-                        call CreateNUnitsAtLoc( 1, 'n005', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_leftmid), bj_UNIT_FACING )
-                        call CreateNUnitsAtLoc( 1, 'n006', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_leftmid), bj_UNIT_FACING )
-                        call SetUnitScalePercent( GetLastCreatedUnit(), 150.00, 15.00, 150.00 )
-                    else
-                    endif
-                    call ForGroupBJ( udg_light[( udg_cycle_i - 1 )], function Trig_inc_rotate_Func012Func002Func002Func001Func013A )
-                    call PingMinimapLocForForceEx( GetPlayersAll(), GetUnitLoc(GetLastCreatedUnit()), 4.00, bj_MINIMAPPINGSTYLE_FLASHY, 0.00, 100.00, 0.00 )
-                    if ( Trig_inc_rotate_Func012Func002Func002Func001Func015C() ) then
-                        set udg_inc_status = true
-                    else
-                    endif
-                else
-                endif
-            else
-            endif
-            set bj_forLoopBIndex = bj_forLoopBIndex + 1
-        endloop
-        set bj_forLoopAIndex = bj_forLoopAIndex + 1
-    endloop
-    set udg_cycle_i = 0
-endfunction
-
-//===========================================================================
-function InitTrig_inc_rotate takes nothing returns nothing
-    set gg_trg_inc_rotate = CreateTrigger(  )
-    call TriggerAddAction( gg_trg_inc_rotate, function Trig_inc_rotate_Actions )
 endfunction
 
 //===========================================================================
@@ -7271,7 +6307,6 @@ function Trig_faq_Actions takes nothing returns nothing
     call ForGroupBJ( GetUnitsInRectAll(gg_rct________________075), function Trig_faq_Func020A )
     call TriggerSleepAction( 0.80 )
     call EnableTrigger( gg_trg_faq_death )
-    call CreateNUnitsAtLoc( 1, 'n006', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_centreCENTRE), bj_UNIT_FACING )
     call CreateNUnitsAtLoc( 1, 'n003', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_centreCENTRE), bj_UNIT_FACING )
     set udg_faq_unit[1] = GetLastCreatedUnit()
     call SetUnitLifePercentBJ( GetLastCreatedUnit(), 40.00 )
@@ -7287,7 +6322,6 @@ function Trig_faq_Actions takes nothing returns nothing
     call ForGroupBJ( GetUnitsOfTypeIdAll('ebal'), function Trig_faq_Func036A )
     call ForForce( udg_players_group, function Trig_faq_Func037A )
     call ForGroupBJ( udg_light[0], function Trig_faq_Func038A )
-    call CreateNUnitsAtLoc( 1, 'n006', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_downleft), bj_UNIT_FACING )
     call SetUnitScalePercent( GetLastCreatedUnit(), 230.00, 230.00, 230.00 )
     call CreateNUnitsAtLoc( 1, 'n004', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_downleft), bj_UNIT_FACING )
     call DisplayTimedTextToForce( GetPlayersAll(), 20.00, "TRIGSTR_2641" )
@@ -8248,9 +7282,6 @@ endfunction
 // Можно не трогать
 //===========================================================================
 function Trig_assassin_Func001C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) == 'h00O' ) ) then
-        return false
-    endif
     if ( not ( GetUnitAbilityLevelSwapped('A013', GetEnteringUnit()) == 0 ) ) then
         return false
     endif
@@ -11791,18 +10822,6 @@ endfunction
 
 //===========================================================================
 function InitCustomTriggers takes nothing returns nothing
-    call InitTrig_initialization(  )
-    call InitTrig_ini_id(  )
-    call InitTrig_game_end(  )
-    call InitTrig_cmd_clear(  )
-    call InitTrig_cmd_build(  )
-    call InitTrig_cmd_time(  )
-    call InitTrig_cmd_arena(  )
-    call InitTrig_cmd_mode(  )
-    call InitTrig_cmd_point(  )
-    call InitTrig_cmd_gg(  )
-    call InitTrig_cmd_info(  )
-    call InitTrig_cmd_zoom(  )
     call InitTrig_scoreboard_ini(  )
     call InitTrig_scoreboard_update(  )
     call InitTrig_units_death(  )
@@ -11811,7 +10830,6 @@ function InitCustomTriggers takes nothing returns nothing
     call InitTrig_unit_resources(  )
     call InitTrig_upgrade_def_and_dmg(  )
     call InitTrig_inc_ini(  )
-    call InitTrig_inc_rotate(  )
     call InitTrig_inc_per_second(  )
     call InitTrig_inc_upg(  )
     call InitTrig_income_effects(  )
@@ -11878,11 +10896,6 @@ function InitCustomTriggers takes nothing returns nothing
     call InitTrig_parodys_set_cast(  )
     call InitTrig_parodys_cast(  )
     call InitTrig_parody_dies(  )
-endfunction
-
-//===========================================================================
-function RunInitializationTriggers takes nothing returns nothing
-    call ConditionalTriggerExecute( gg_trg_initialization )
 endfunction
 
 //***************************************************************************
@@ -12038,7 +11051,6 @@ function main takes nothing returns nothing
     call InitBlizzard(  )
     call InitGlobals(  )
     call InitCustomTriggers(  )
-    call RunInitializationTriggers(  )
 
 endfunction
 

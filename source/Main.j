@@ -181,6 +181,7 @@ scope Main initializer MainInit
     function post_map_init takes nothing returns nothing
 
         call initialization_in_game.execute()
+        call building_selling.execute()
 
         // Disable Damage Detection System until Fast Arena begins
         call DisableTrigger(DDS)
