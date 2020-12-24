@@ -51,6 +51,7 @@ globals
 
     // Равкоды
     constant integer castle_rc = 'h01O'
+    constant integer castleRC = 'h01O'
     constant integer most_point_kill_last_round = 'h023'
     constant integer or_leadership_arena_last_round = 'h024'
     constant integer big_mine_rc = 'n003'

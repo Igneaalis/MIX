@@ -32,7 +32,7 @@ scope IncomeUpgradeA initializer Init
         local player p_v = GetOwningPlayer(victim)
         
         set b1 = GetPlayerTechCountSimple(robbery_rc, p_k) > 0
-        set b2 = IsUnitInGroup(killer, udg_wave_units)
+        set b2 = IsUnitInGroup(killer, waveUnits)
         set b3 = IsPlayerEnemy(p_v, p_k)
         set b4 = GetUnitTypeId(GetDyingUnit()) == castle_rc
         

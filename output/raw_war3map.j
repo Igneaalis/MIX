@@ -1,3 +1,36 @@
+scope Build initializer Init
+    
+    globals
+        group buildings = CreateGroup()
+    endglobals
+
+    private function OnBuildingStart takes nothing returns nothing
+        local unit u = GetEnteringUnit()
+        local integer uTypeId = GetUnitTypeId(u)
+        local player p = GetOwningPlayer(u)
+
+        if not IsPlayerInForce(p, players) or not IsUnitType(u, UNIT_TYPE_STRUCTURE) or IsUnitInGroup(u, IncomeObjects_group) or IsUnitInGroup(u, buildings) then
+            return
+        endif
+
+        call ShowUnit(u, false)
+        call GroupAddUnit(buildings, CreateUnitEx(p, uTypeId, GetUnitX(u), GetUnitY(u), GetUnitFacing(u)))
+        call RemoveUnitEx(u)
+
+        set u = null
+        set p = null
+    endfunction
+    
+    private function Init takes nothing returns nothing
+        local trigger t = CreateTrigger()
+        
+        call TriggerRegisterEnterRectSimple(t, bj_mapInitialPlayableArea)
+        call TriggerAddAction(t, function OnBuildingStart)
+        
+        set t = null
+    endfunction
+    
+endscope
 /*
 
 =============================================
@@ -219,7 +252,7 @@ scope BuildingSelling
         local integer gold = udb[u].GetGold()
         local integer lumber = udb[u].GetLumber()
         local texttag tt
-        call GroupRemoveUnit(udg_buildings, u)
+        call GroupRemoveUnit(buildings, u)
 
         call AddGoldToPlayer(gold, p)
         call AddLumberToPlayer(lumber, p)
@@ -244,7 +277,7 @@ scope BuildingSelling
         call SetTextTagFadepoint(tt, 1.30)
         call SetTextTagVelocity(tt, 0, 0.03)
 
-        call RemoveUnit(u)
+        call RemoveUnitEx(u)
         call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl", GetUnitX(u), GetUnitY(u)))
 
         set u = null
@@ -716,7 +749,7 @@ scope IncomeUpgrade initializer Init
         private integer array goldmining_income
     endglobals
 
-    private function Conditions takes nothing returns boolean
+    public function Conditions takes nothing returns boolean
         local integer i
         local integer researchRC = GetResearched()
 
@@ -969,7 +1002,7 @@ scope IncomeUpgrade initializer Init
         local integer u_rc = GetUnitTypeId(u)
 
         if (u_rc == most_point_kill_last_round) or (u_rc == or_leadership_arena_last_round) then
-            call RemoveUnit(u)
+            call RemoveUnitEx(u)
         endif
 
         set u = null
@@ -1161,7 +1194,7 @@ scope IncomeUpgrade initializer Init
         call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
         call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
         call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-        call TriggerAddCondition(t, Condition(function Conditions))
+        call TriggerAddCondition(t, Condition(function IncomeUpgrade_Conditions))
         call TriggerAddAction(t, function Trig_income_upg_Actions)
         
         set t = null
@@ -1202,7 +1235,7 @@ scope IncomeUpgradeA initializer Init
         local player p_v = GetOwningPlayer(victim)
         
         set b1 = GetPlayerTechCountSimple(robbery_rc, p_k) > 0
-        set b2 = IsUnitInGroup(killer, udg_wave_units)
+        set b2 = IsUnitInGroup(killer, waveUnits)
         set b3 = IsPlayerEnemy(p_v, p_k)
         set b4 = GetUnitTypeId(GetDyingUnit()) == castle_rc
         
@@ -1320,7 +1353,7 @@ scope IncomeUpgradeR initializer Init_income_upgR
         local player p_v = GetOwningPlayer(victim)
         
         set b1 = GetPlayerTechCountSimple(deadmoney_rc, p_k) > 0
-        set b2 = IsUnitInGroup(killer, udg_wave_units)
+        set b2 = IsUnitInGroup(killer, waveUnits)
         set b3 = IsPlayerEnemy(p_v, p_k)
         
         set p_k = null
@@ -1413,7 +1446,7 @@ scope IncomeUpgradeTQ initializer Init_income_upgTQ
 
     // !!! Урон юнитам наносит сам рудник, но после смерти он передаётся убийце, проверить, что урон наносится до передачи
     // Функция вызывается к каждому юниту около погибшего рудника
-    // Если юнит принадлежит убившему и юнит находится в группе udg_wave_units(!!! понять, что за группа), ему наносится урон от рудника типа chaos
+    // Если юнит принадлежит убившему и юнит находится в группе waveUnits(!!! понять, что за группа), ему наносится урон от рудника типа chaos
     function Trig_income_upgTQ_Actions_group takes nothing returns nothing
         local unit u = GetEnumUnit() // сам юнит
         local boolean b1
@@ -1424,7 +1457,7 @@ scope IncomeUpgradeTQ initializer Init_income_upgTQ
         local unit damage_u = hash[StringHash("income")].unit[StringHash("victim")]       // рудник
         local real damage
 
-        set b1 = IsUnitInGroup(u, udg_wave_units)
+        set b1 = IsUnitInGroup(u, waveUnits)
         set b2 = (p == p_k)
         if b1 and b2 then
             set damage = cursed_mine_damage_for_lvl * GetPlayerTechCount(p_v, cursed_mine_rc, true) // формула расчёта урона: урон = cursed_mine_damage_for_lvl * уровень улучшения
@@ -3507,6 +3540,7 @@ globals
 
     // Равкоды
     constant integer castle_rc = 'h01O'
+    constant integer castleRC = 'h01O'
     constant integer most_point_kill_last_round = 'h023'
     constant integer or_leadership_arena_last_round = 'h024'
     constant integer big_mine_rc = 'n003'
@@ -3749,9 +3783,10 @@ scope IncomeObjectsColor initializer inc_colour
             return // No actions
         endif
 
-        call RemoveUnit(IncomeObjectiveUnit) // Remove old IncomeObject to replace it with a new one
+        call ShowUnit(IncomeObjectiveUnit, false)
         call GroupRemoveUnit(IncomeObjects_group, IncomeObjectiveUnit)
-        set IncomeObjectiveNewUnit = CreateUnit(IncomeObjectReceiever, GetUnitTypeId(IncomeObjectiveUnit), IncomeObjectiveUnitX, IncomeObjectiveUnitY, bj_UNIT_FACING)
+        set IncomeObjectiveNewUnit = CreateUnitEx(IncomeObjectReceiever, GetUnitTypeId(IncomeObjectiveUnit), IncomeObjectiveUnitX, IncomeObjectiveUnitY, bj_UNIT_FACING)
+        call RemoveUnitEx(IncomeObjectiveUnit) // Remove old IncomeObject to replace it with a new one
         call GroupAddUnit(IncomeObjects_group, IncomeObjectiveNewUnit)
         call SetUnitVertexColor(IncomeObjectiveNewUnit, playerColor.red, playerColor.green, playerColor.blue, 255) // Adjusts color to match receiver's one
 
@@ -3799,6 +3834,80 @@ scope IncomeObjectsColor initializer inc_colour
     endfunction
 
 endscope
+scope Units initializer Init
+    
+    globals
+        group waveUnits = CreateGroup()
+    endglobals
+
+    private function OnDie takes nothing returns nothing
+        local unit dyingUnit = GetDyingUnit()
+        local unit killerUnit = GetKillingUnit()
+        local player ownerOfDyingUnit = GetOwningPlayer(dyingUnit)
+        local player ownerOfKillerUnit = GetOwningPlayer(killerUnit)
+        local integer dyingUnitTypeId = GetUnitTypeId(dyingUnit)
+
+        static if not DEBUG_MODE then
+            if ownerOfDyingUnit == ownerOfKillerUnit then
+                set dyingUnit = null
+                set killerUnit = null
+                set ownerOfDyingUnit = null
+                set ownerOfKillerUnit = null
+                return
+            endif
+        endif
+
+        if IsPlayerInForce(ownerOfDyingUnit, players) then
+            call GroupRemoveUnit(waveUnits, dyingUnit)
+            set pdb[ownerOfKillerUnit].kills = pdb[ownerOfKillerUnit].kills + 1
+            if dyingUnitTypeId == castleRC then
+                set pdb[ownerOfKillerUnit].castlesDestroyed = pdb[ownerOfKillerUnit].castlesDestroyed + 1
+            endif
+        endif
+
+        set dyingUnit = null
+        set killerUnit = null
+        set ownerOfDyingUnit = null
+        set ownerOfKillerUnit = null
+    endfunction
+    
+    private function Init takes nothing returns nothing
+        local trigger t = CreateTrigger()
+        
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x08), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0C), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0D), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0E), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x0F), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x10), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x11), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x12), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x13), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x14), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x15), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x16), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x17), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x18), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x19), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x1A), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x1B), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerAddAction(t, function OnDie)
+
+        set t = null
+    endfunction
+    
+endscope
 /*
 
 =============================================
@@ -3818,19 +3927,21 @@ scope Messages initializer Init
 
     private function ForUnits_OnLeave takes nothing returns nothing
         local unit u = GetEnumUnit()
+
         if (GetUnitTypeId(u) != 'hhdl' and GetUnitTypeId(u) != 'n001') then
             // Opt. begin
-            if (IsUnitInGroup(u, udg_wave_units) == true) then
-                call GroupRemoveUnitSimple(u, udg_wave_units)
+            if (IsUnitInGroup(u, waveUnits) == true) then
+                call GroupRemoveUnit(waveUnits, u)
             endif
-            if (IsUnitInGroup(u, udg_buildings) == true) then
-                call GroupRemoveUnitSimple(u, udg_buildings)
+            if (IsUnitInGroup(u, buildings) == true) then
+                call GroupRemoveUnit(buildings, u)
             endif
             // Opt. end
-            call RemoveUnit(u)
+            call RemoveUnitEx(u)
         else
             call SetUnitOwner(u, Player(PLAYER_NEUTRAL_PASSIVE), true)
         endif
+
         set u = null
     endfunction
 
@@ -4194,6 +4305,39 @@ scope Players
     endfunction
 
 endscope
+scope Upgrades initializer Init
+    
+    globals
+        
+    endglobals
+
+    private function OnResearchFinish takes nothing returns nothing
+        local player p = GetTriggerPlayer()
+
+        if (IncomeUpgrade_Conditions.evaluate()) then
+            set pdb[p].upgrades = pdb[p].upgrades + 1
+        endif
+
+        set p = null
+    endfunction
+    
+    private function Init takes nothing returns nothing
+        local trigger t = CreateTrigger()
+
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerAddAction(t, function OnResearchFinish)
+
+        set t = null
+    endfunction
+    
+endscope
 scope Arena initializer Init
 
     globals
@@ -4208,7 +4352,7 @@ scope Arena initializer Init
     endglobals
 
     private function Conditions takes nothing returns boolean
-        return IsUnitInGroup(GetFilterUnit(), udg_buildings)
+        return IsUnitInGroup(GetFilterUnit(), buildings)
     endfunction
 
     private function ForPlayerUnits takes nothing returns nothing
@@ -4217,7 +4361,7 @@ scope Arena initializer Init
         local real x = GetRectCenterX(startRectForPlayer[GetPlayerId(p)])
         local real y = GetRectCenterY(startRectForPlayer[GetPlayerId(p)])
         // debug call Log(I2S('h008') + " / " + I2S('ha08') + " / " + I2S('ha08' - 'h008') + " / " + I2S(offset))
-        call GroupAddUnit(udg_wave_units, CreateUnitEx(p, (GetUnitTypeId(u) + unitTypeIdOffset), x, y, 270))
+        call GroupAddUnit(waveUnits, CreateUnitEx(p, (GetUnitTypeId(u) + unitTypeIdOffset), x, y, 270))
         // debug call Log("ForceArena_ForPlayerUnits: unit = " + GetUnitName(u))
 
         set p = null
@@ -4342,7 +4486,7 @@ scope FastArena initializer Init
     endglobals
 
     private function Conditions takes nothing returns boolean
-        return (IsUnitAliveBJ(GetFilterUnit()) == true) and (IsUnitInGroup(GetFilterUnit(), udg_wave_units) == true)
+        return (IsUnitAliveBJ(GetFilterUnit()) == true) and (IsUnitInGroup(GetFilterUnit(), waveUnits) == true)
     endfunction
 
     private function AddUnitInGroup takes nothing returns nothing
@@ -4377,7 +4521,7 @@ scope FastArena initializer Init
     endfunction
 
     private function RemoveUnits takes nothing returns nothing
-        call GroupRemoveUnit(udg_wave_units, GetEnumUnit())
+        call GroupRemoveUnit(waveUnits, GetEnumUnit())
         call C_RemoveEnumUnits()
     endfunction
 
@@ -4606,8 +4750,8 @@ scope NextWave
 
         set curWave = curWave + 1
 
-        call ForGroup(udg_wave_units, function C_RemoveEnumUnits)
-        call GroupClear(udg_wave_units)
+        call ForGroup(waveUnits, function C_RemoveEnumUnits)
+        call GroupClear(waveUnits)
         call ForGroup(udg_castle_unit, function C_RemoveEnumUnits)
         call GroupClear(udg_castle_unit)
         call ForGroup(IncomeObjects_group, function C_RemoveEnumUnits)
@@ -4900,31 +5044,16 @@ globals
     trigger                 gg_trg_damage_system       = null
     trigger                 gg_trg_scoreboard_ini      = null
     trigger                 gg_trg_scoreboard_update   = null
-    trigger                 gg_trg_units_death         = null
-    trigger                 gg_trg_unit_dammi          = null
-    trigger                 gg_trg_units_leave         = null
     trigger                 gg_trg_unit_resources      = null
     trigger                 gg_trg_upgrade_def_and_dmg = null
     trigger                 gg_trg_set_wave_start_main = null
     trigger                 gg_trg_set_wave_timer      = null
-    trigger                 gg_trg_set_wave_region_rotate = null
-    trigger                 gg_trg_set_wave_unit_spawn = null
-    trigger                 gg_trg_wave_units          = null
-    trigger                 gg_trg_wave_waiting_timer  = null
     trigger                 gg_trg_wave_notification   = null
     trigger                 gg_trg_wave_end_timer      = null
-    trigger                 gg_trg_wave_rotation       = null
-    trigger                 gg_trg_wave_fast_arena_end = null
-    trigger                 gg_trg_wave_friends_on     = null
-    trigger                 gg_trg_wave_friends_off    = null
-    trigger                 gg_trg_wave_end_attack     = null
     trigger                 gg_trg_wave_end            = null
     trigger                 gg_trg_wave_result_rotation = null
     trigger                 gg_trg_wave_castle_destr   = null
-    trigger                 gg_trg_wave_leader_owner   = null
     trigger                 gg_trg_inc_ini             = null
-    trigger                 gg_trg_inc_rotate          = null
-    trigger                 gg_trg_inc_rotate_Copy     = null
     trigger                 gg_trg_inc_per_second      = null
     trigger                 gg_trg_inc_upg             = null
     trigger                 gg_trg_income_upg          = null
@@ -4953,7 +5082,6 @@ globals
     trigger                 gg_trg_Armageddon_effect_2 = null
     trigger                 gg_trg_faq                 = null
     trigger                 gg_trg_faq_death           = null
-    trigger                 gg_trg_building_ini        = null
     trigger                 gg_trg_building_inf        = null
     trigger                 gg_trg_builder_left        = null
     trigger                 gg_trg_mediv_select        = null
@@ -5670,116 +5798,6 @@ endfunction
 //*  Triggers
 //*
 //***************************************************************************
-
-//===========================================================================
-// Trigger: units death
-//===========================================================================
-function Trig_units_death_Func001Func001C takes nothing returns boolean
-    if ( not ( IsPlayerInForce(GetOwningPlayer(GetKillingUnitBJ()), udg_players_group) == true ) ) then
-        return false
-    endif
-    if ( not ( IsPlayerInForce(GetOwningPlayer(GetDyingUnit()), udg_players_group) == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_units_death_Func001C takes nothing returns boolean
-    if ( not Trig_units_death_Func001Func001C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_units_death_Func002C takes nothing returns boolean
-    if ( not ( IsUnitInGroup(GetDyingUnit(), udg_wave_units) == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_units_death_Actions takes nothing returns nothing
-    if ( Trig_units_death_Func001C() ) then
-        set udg_scoreboard_kills[GetConvertedPlayerId(GetOwningPlayer(GetKillingUnitBJ()))] = ( udg_scoreboard_kills[GetConvertedPlayerId(GetOwningPlayer(GetKillingUnitBJ()))] + 1 )
-        call MultiboardSetItemValueBJ( udg_scoreboard, 4, ( GetConvertedPlayerId(GetOwningPlayer(GetKillingUnitBJ())) + 1 ), I2S(udg_scoreboard_kills[GetConvertedPlayerId(GetOwningPlayer(GetKillingUnitBJ()))]) )
-    else
-    endif
-    if ( Trig_units_death_Func002C() ) then
-        call GroupRemoveUnitSimple( GetDyingUnit(), udg_wave_units )
-    else
-    endif
-    call TriggerSleepAction( 60.00 )
-    call RemoveUnit( GetDyingUnit() )
-endfunction
-
-//===========================================================================
-function InitTrig_units_death takes nothing returns nothing
-    set gg_trg_units_death = CreateTrigger(  )
-    call TriggerRegisterAnyUnitEventBJ( gg_trg_units_death, EVENT_PLAYER_UNIT_DEATH )
-    call TriggerAddAction( gg_trg_units_death, function Trig_units_death_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: unit dammi
-//===========================================================================
-function Trig_unit_dammi_Conditions takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) == 'h00G' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_unit_dammi_Func002C takes nothing returns boolean
-    if ( not ( IsUnitInGroup(GetEnteringUnit(), udg_castle_unit) == false ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_unit_dammi_Actions takes nothing returns nothing
-    call TriggerSleepAction( 60.00 )
-    if ( Trig_unit_dammi_Func002C() ) then
-        call RemoveUnit( GetEnteringUnit() )
-    else
-    endif
-endfunction
-
-//===========================================================================
-function InitTrig_unit_dammi takes nothing returns nothing
-    set gg_trg_unit_dammi = CreateTrigger(  )
-    call TriggerRegisterEnterRectSimple( gg_trg_unit_dammi, GetEntireMapRect() )
-    call TriggerAddCondition( gg_trg_unit_dammi, Condition( function Trig_unit_dammi_Conditions ) )
-    call TriggerAddAction( gg_trg_unit_dammi, function Trig_unit_dammi_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: units leave
-//===========================================================================
-function Trig_units_leave_Conditions takes nothing returns boolean
-    if ( not ( GetOwningPlayer(GetEnteringUnit()) == Player(11) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_units_leave_Actions takes nothing returns nothing
-    call SetUnitPositionLoc( GetEnteringUnit(), GetRectCenter(gg_rct_waveunitsCENTRE) )
-endfunction
-
-//===========================================================================
-function InitTrig_units_leave takes nothing returns nothing
-    set gg_trg_units_leave = CreateTrigger(  )
-    call TriggerRegisterEnterRectSimple( gg_trg_units_leave, gg_rct_player1 )
-    call TriggerRegisterEnterRectSimple( gg_trg_units_leave, gg_rct_player2 )
-    call TriggerRegisterEnterRectSimple( gg_trg_units_leave, gg_rct_player3 )
-    call TriggerRegisterEnterRectSimple( gg_trg_units_leave, gg_rct_player4 )
-    call TriggerRegisterEnterRectSimple( gg_trg_units_leave, gg_rct_player5 )
-    call TriggerRegisterEnterRectSimple( gg_trg_units_leave, gg_rct_player6 )
-    call TriggerRegisterEnterRectSimple( gg_trg_units_leave, gg_rct_player7 )
-    call TriggerRegisterEnterRectSimple( gg_trg_units_leave, gg_rct_player8 )
-    call TriggerAddCondition( gg_trg_units_leave, Condition( function Trig_units_leave_Conditions ) )
-    call TriggerAddAction( gg_trg_units_leave, function Trig_units_leave_Actions )
-endfunction
 
 //===========================================================================
 // Trigger: unit resources
@@ -6763,54 +6781,6 @@ function InitTrig_faq_death takes nothing returns nothing
     call TriggerRegisterAnyUnitEventBJ( gg_trg_faq_death, EVENT_PLAYER_UNIT_DEATH )
     call TriggerAddCondition( gg_trg_faq_death, Condition( function Trig_faq_death_Conditions ) )
     call TriggerAddAction( gg_trg_faq_death, function Trig_faq_death_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: building ini
-//===========================================================================
-function Trig_building_ini_Func003C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) != 'hbla' ) ) then
-        return false
-    endif
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) != 'hwtw' ) ) then
-        return false
-    endif
-    if ( not ( IsUnitType(GetEnteringUnit(), UNIT_TYPE_MECHANICAL) == true ) ) then
-        return false
-    endif
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) != 'hhou' ) ) then
-        return false
-    endif
-    if ( not ( IsUnitType(GetEnteringUnit(), UNIT_TYPE_STRUCTURE) == true ) ) then
-        return false
-    endif
-    if ( not ( IsUnitInGroup(GetEnteringUnit(), udg_buildings) == false ) ) then
-        return false
-    endif
-    if ( not ( IsPlayerInForce(GetOwningPlayer(GetEnteringUnit()), udg_players_group) == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_ini_Conditions takes nothing returns boolean
-    if ( not Trig_building_ini_Func003C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_ini_Actions takes nothing returns nothing
-    call ReplaceUnitBJ( GetEnteringUnit(), GetUnitTypeId(GetEnteringUnit()), bj_UNIT_STATE_METHOD_MAXIMUM )
-    call GroupAddUnitSimple( GetLastReplacedUnitBJ(), udg_buildings )
-endfunction
-
-//===========================================================================
-function InitTrig_building_ini takes nothing returns nothing
-    set gg_trg_building_ini = CreateTrigger(  )
-    call TriggerRegisterEnterRectSimple( gg_trg_building_ini, GetPlayableMapRect() )
-    call TriggerAddCondition( gg_trg_building_ini, Condition( function Trig_building_ini_Conditions ) )
-    call TriggerAddAction( gg_trg_building_ini, function Trig_building_ini_Actions )
 endfunction
 
 //===========================================================================
@@ -11130,9 +11100,6 @@ endfunction
 
 //===========================================================================
 function InitCustomTriggers takes nothing returns nothing
-    call InitTrig_units_death(  )
-    call InitTrig_unit_dammi(  )
-    call InitTrig_units_leave(  )
     call InitTrig_unit_resources(  )
     call InitTrig_upgrade_def_and_dmg(  )
     call InitTrig_inc_ini(  )
@@ -11148,7 +11115,6 @@ function InitCustomTriggers takes nothing returns nothing
     call InitTrig_Armageddon_effect_2(  )
     call InitTrig_faq(  )
     call InitTrig_faq_death(  )
-    call InitTrig_building_ini(  )
     call InitTrig_building_inf(  )
     call InitTrig_builder_left(  )
     call InitTrig_mediv_select(  )

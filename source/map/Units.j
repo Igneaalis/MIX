@@ -1,54 +1,43 @@
-/*
+scope Units initializer Init
+    
+    globals
+        group waveUnits = CreateGroup()
+    endglobals
 
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     13.12.2020 16:21       =
-=============================================
+    private function OnDie takes nothing returns nothing
+        local unit dyingUnit = GetDyingUnit()
+        local unit killerUnit = GetKillingUnit()
+        local player ownerOfDyingUnit = GetOwningPlayer(dyingUnit)
+        local player ownerOfKillerUnit = GetOwningPlayer(killerUnit)
+        local integer dyingUnitTypeId = GetUnitTypeId(dyingUnit)
 
-inc_colour Trigger
-
-Income Objective OnDestroy()
-
-*/
-
-scope IncomeObjectsColor initializer inc_colour
-
-    function inc_colour_actions takes nothing returns nothing
-        local unit IncomeObjectiveUnit = GetDyingUnit() // IncomeObject
-        local player IncomeObjectReceiever = GetOwningPlayer(GetKillingUnit()) // Who gets IncomeObject
-        local unit IncomeObjectiveNewUnit // Replace IncomeObject
-        local player IncomeObjectOwner = GetOwningPlayer(IncomeObjectiveUnit) // Who loses IncomeObject
-        local boolean IsBigGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == bigMineRC)
-        local boolean IsSmallGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == smallMineRC)
-        local boolean IsFlag = (GetUnitTypeId(IncomeObjectiveUnit) == flagRC)
-        local boolean IsOwnerTheReceiver = (IncomeObjectOwner == IncomeObjectReceiever)
-        local real IncomeObjectiveUnitX = GetUnitX(IncomeObjectiveUnit)
-        local real IncomeObjectiveUnitY = GetUnitY(IncomeObjectiveUnit)
-        local Color playerColor = Color.create(IncomeObjectReceiever) // Color Struct from NokladrLib.j
-
-        if not (IsBigGoldMine or IsSmallGoldMine or IsFlag) then
-            return // No actions
+        static if not DEBUG_MODE then
+            if ownerOfDyingUnit == ownerOfKillerUnit then
+                set dyingUnit = null
+                set killerUnit = null
+                set ownerOfDyingUnit = null
+                set ownerOfKillerUnit = null
+                return
+            endif
         endif
 
-        call ShowUnit(IncomeObjectiveUnit, false)
-        call GroupRemoveUnit(IncomeObjects_group, IncomeObjectiveUnit)
-        set IncomeObjectiveNewUnit = CreateUnitEx(IncomeObjectReceiever, GetUnitTypeId(IncomeObjectiveUnit), IncomeObjectiveUnitX, IncomeObjectiveUnitY, bj_UNIT_FACING)
-        call RemoveUnitEx(IncomeObjectiveUnit) // Remove old IncomeObject to replace it with a new one
-        call GroupAddUnit(IncomeObjects_group, IncomeObjectiveNewUnit)
-        call SetUnitVertexColor(IncomeObjectiveNewUnit, playerColor.red, playerColor.green, playerColor.blue, 255) // Adjusts color to match receiver's one
+        if IsPlayerInForce(ownerOfDyingUnit, players) then
+            call GroupRemoveUnit(waveUnits, dyingUnit)
+            set pdb[ownerOfKillerUnit].kills = pdb[ownerOfKillerUnit].kills + 1
+            if dyingUnitTypeId == castleRC then
+                set pdb[ownerOfKillerUnit].castlesDestroyed = pdb[ownerOfKillerUnit].castlesDestroyed + 1
+            endif
+        endif
 
-        set IncomeObjectiveUnit = null
-        set IncomeObjectReceiever = null
-        set IncomeObjectiveNewUnit = null
-        set IncomeObjectOwner = null
-        call playerColor.destroy()
+        set dyingUnit = null
+        set killerUnit = null
+        set ownerOfDyingUnit = null
+        set ownerOfKillerUnit = null
     endfunction
-
-    function inc_colour takes nothing returns nothing
+    
+    private function Init takes nothing returns nothing
         local trigger t = CreateTrigger()
-
+        
         call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
         call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
         call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
@@ -77,9 +66,9 @@ scope IncomeObjectsColor initializer inc_colour
         call TriggerRegisterPlayerUnitEvent(t, Player(0x19), EVENT_PLAYER_UNIT_DEATH, null)
         call TriggerRegisterPlayerUnitEvent(t, Player(0x1A), EVENT_PLAYER_UNIT_DEATH, null)
         call TriggerRegisterPlayerUnitEvent(t, Player(0x1B), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerAddAction(t, function inc_colour_actions)
+        call TriggerAddAction(t, function OnDie)
 
         set t = null
     endfunction
-
+    
 endscope

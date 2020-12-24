@@ -17,19 +17,21 @@ scope Messages initializer Init
 
     private function ForUnits_OnLeave takes nothing returns nothing
         local unit u = GetEnumUnit()
+
         if (GetUnitTypeId(u) != 'hhdl' and GetUnitTypeId(u) != 'n001') then
             // Opt. begin
-            if (IsUnitInGroup(u, udg_wave_units) == true) then
-                call GroupRemoveUnitSimple(u, udg_wave_units)
+            if (IsUnitInGroup(u, waveUnits) == true) then
+                call GroupRemoveUnit(waveUnits, u)
             endif
-            if (IsUnitInGroup(u, udg_buildings) == true) then
-                call GroupRemoveUnitSimple(u, udg_buildings)
+            if (IsUnitInGroup(u, buildings) == true) then
+                call GroupRemoveUnit(buildings, u)
             endif
             // Opt. end
-            call RemoveUnit(u)
+            call RemoveUnitEx(u)
         else
             call SetUnitOwner(u, Player(PLAYER_NEUTRAL_PASSIVE), true)
         endif
+
         set u = null
     endfunction
 

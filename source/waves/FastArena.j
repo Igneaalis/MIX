@@ -15,7 +15,7 @@ scope FastArena initializer Init
     endglobals
 
     private function Conditions takes nothing returns boolean
-        return (IsUnitAliveBJ(GetFilterUnit()) == true) and (IsUnitInGroup(GetFilterUnit(), udg_wave_units) == true)
+        return (IsUnitAliveBJ(GetFilterUnit()) == true) and (IsUnitInGroup(GetFilterUnit(), waveUnits) == true)
     endfunction
 
     private function AddUnitInGroup takes nothing returns nothing
@@ -50,7 +50,7 @@ scope FastArena initializer Init
     endfunction
 
     private function RemoveUnits takes nothing returns nothing
-        call GroupRemoveUnit(udg_wave_units, GetEnumUnit())
+        call GroupRemoveUnit(waveUnits, GetEnumUnit())
         call C_RemoveEnumUnits()
     endfunction
 

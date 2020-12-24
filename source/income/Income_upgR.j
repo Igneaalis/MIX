@@ -24,7 +24,7 @@ scope IncomeUpgradeR initializer Init_income_upgR
         local player p_v = GetOwningPlayer(victim)
         
         set b1 = GetPlayerTechCountSimple(deadmoney_rc, p_k) > 0
-        set b2 = IsUnitInGroup(killer, udg_wave_units)
+        set b2 = IsUnitInGroup(killer, waveUnits)
         set b3 = IsPlayerEnemy(p_v, p_k)
         
         set p_k = null

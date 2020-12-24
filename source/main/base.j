@@ -256,31 +256,16 @@ globals
     trigger                 gg_trg_damage_system       = null
     trigger                 gg_trg_scoreboard_ini      = null
     trigger                 gg_trg_scoreboard_update   = null
-    trigger                 gg_trg_units_death         = null
-    trigger                 gg_trg_unit_dammi          = null
-    trigger                 gg_trg_units_leave         = null
     trigger                 gg_trg_unit_resources      = null
     trigger                 gg_trg_upgrade_def_and_dmg = null
     trigger                 gg_trg_set_wave_start_main = null
     trigger                 gg_trg_set_wave_timer      = null
-    trigger                 gg_trg_set_wave_region_rotate = null
-    trigger                 gg_trg_set_wave_unit_spawn = null
-    trigger                 gg_trg_wave_units          = null
-    trigger                 gg_trg_wave_waiting_timer  = null
     trigger                 gg_trg_wave_notification   = null
     trigger                 gg_trg_wave_end_timer      = null
-    trigger                 gg_trg_wave_rotation       = null
-    trigger                 gg_trg_wave_fast_arena_end = null
-    trigger                 gg_trg_wave_friends_on     = null
-    trigger                 gg_trg_wave_friends_off    = null
-    trigger                 gg_trg_wave_end_attack     = null
     trigger                 gg_trg_wave_end            = null
     trigger                 gg_trg_wave_result_rotation = null
     trigger                 gg_trg_wave_castle_destr   = null
-    trigger                 gg_trg_wave_leader_owner   = null
     trigger                 gg_trg_inc_ini             = null
-    trigger                 gg_trg_inc_rotate          = null
-    trigger                 gg_trg_inc_rotate_Copy     = null
     trigger                 gg_trg_inc_per_second      = null
     trigger                 gg_trg_inc_upg             = null
     trigger                 gg_trg_income_upg          = null
@@ -309,7 +294,6 @@ globals
     trigger                 gg_trg_Armageddon_effect_2 = null
     trigger                 gg_trg_faq                 = null
     trigger                 gg_trg_faq_death           = null
-    trigger                 gg_trg_building_ini        = null
     trigger                 gg_trg_building_inf        = null
     trigger                 gg_trg_builder_left        = null
     trigger                 gg_trg_mediv_select        = null
@@ -1026,116 +1010,6 @@ endfunction
 //*  Triggers
 //*
 //***************************************************************************
-
-//===========================================================================
-// Trigger: units death
-//===========================================================================
-function Trig_units_death_Func001Func001C takes nothing returns boolean
-    if ( not ( IsPlayerInForce(GetOwningPlayer(GetKillingUnitBJ()), udg_players_group) == true ) ) then
-        return false
-    endif
-    if ( not ( IsPlayerInForce(GetOwningPlayer(GetDyingUnit()), udg_players_group) == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_units_death_Func001C takes nothing returns boolean
-    if ( not Trig_units_death_Func001Func001C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_units_death_Func002C takes nothing returns boolean
-    if ( not ( IsUnitInGroup(GetDyingUnit(), udg_wave_units) == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_units_death_Actions takes nothing returns nothing
-    if ( Trig_units_death_Func001C() ) then
-        set udg_scoreboard_kills[GetConvertedPlayerId(GetOwningPlayer(GetKillingUnitBJ()))] = ( udg_scoreboard_kills[GetConvertedPlayerId(GetOwningPlayer(GetKillingUnitBJ()))] + 1 )
-        call MultiboardSetItemValueBJ( udg_scoreboard, 4, ( GetConvertedPlayerId(GetOwningPlayer(GetKillingUnitBJ())) + 1 ), I2S(udg_scoreboard_kills[GetConvertedPlayerId(GetOwningPlayer(GetKillingUnitBJ()))]) )
-    else
-    endif
-    if ( Trig_units_death_Func002C() ) then
-        call GroupRemoveUnitSimple( GetDyingUnit(), udg_wave_units )
-    else
-    endif
-    call TriggerSleepAction( 60.00 )
-    call RemoveUnit( GetDyingUnit() )
-endfunction
-
-//===========================================================================
-function InitTrig_units_death takes nothing returns nothing
-    set gg_trg_units_death = CreateTrigger(  )
-    call TriggerRegisterAnyUnitEventBJ( gg_trg_units_death, EVENT_PLAYER_UNIT_DEATH )
-    call TriggerAddAction( gg_trg_units_death, function Trig_units_death_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: unit dammi
-//===========================================================================
-function Trig_unit_dammi_Conditions takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) == 'h00G' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_unit_dammi_Func002C takes nothing returns boolean
-    if ( not ( IsUnitInGroup(GetEnteringUnit(), udg_castle_unit) == false ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_unit_dammi_Actions takes nothing returns nothing
-    call TriggerSleepAction( 60.00 )
-    if ( Trig_unit_dammi_Func002C() ) then
-        call RemoveUnit( GetEnteringUnit() )
-    else
-    endif
-endfunction
-
-//===========================================================================
-function InitTrig_unit_dammi takes nothing returns nothing
-    set gg_trg_unit_dammi = CreateTrigger(  )
-    call TriggerRegisterEnterRectSimple( gg_trg_unit_dammi, GetEntireMapRect() )
-    call TriggerAddCondition( gg_trg_unit_dammi, Condition( function Trig_unit_dammi_Conditions ) )
-    call TriggerAddAction( gg_trg_unit_dammi, function Trig_unit_dammi_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: units leave
-//===========================================================================
-function Trig_units_leave_Conditions takes nothing returns boolean
-    if ( not ( GetOwningPlayer(GetEnteringUnit()) == Player(11) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_units_leave_Actions takes nothing returns nothing
-    call SetUnitPositionLoc( GetEnteringUnit(), GetRectCenter(gg_rct_waveunitsCENTRE) )
-endfunction
-
-//===========================================================================
-function InitTrig_units_leave takes nothing returns nothing
-    set gg_trg_units_leave = CreateTrigger(  )
-    call TriggerRegisterEnterRectSimple( gg_trg_units_leave, gg_rct_player1 )
-    call TriggerRegisterEnterRectSimple( gg_trg_units_leave, gg_rct_player2 )
-    call TriggerRegisterEnterRectSimple( gg_trg_units_leave, gg_rct_player3 )
-    call TriggerRegisterEnterRectSimple( gg_trg_units_leave, gg_rct_player4 )
-    call TriggerRegisterEnterRectSimple( gg_trg_units_leave, gg_rct_player5 )
-    call TriggerRegisterEnterRectSimple( gg_trg_units_leave, gg_rct_player6 )
-    call TriggerRegisterEnterRectSimple( gg_trg_units_leave, gg_rct_player7 )
-    call TriggerRegisterEnterRectSimple( gg_trg_units_leave, gg_rct_player8 )
-    call TriggerAddCondition( gg_trg_units_leave, Condition( function Trig_units_leave_Conditions ) )
-    call TriggerAddAction( gg_trg_units_leave, function Trig_units_leave_Actions )
-endfunction
 
 //===========================================================================
 // Trigger: unit resources
@@ -2119,54 +1993,6 @@ function InitTrig_faq_death takes nothing returns nothing
     call TriggerRegisterAnyUnitEventBJ( gg_trg_faq_death, EVENT_PLAYER_UNIT_DEATH )
     call TriggerAddCondition( gg_trg_faq_death, Condition( function Trig_faq_death_Conditions ) )
     call TriggerAddAction( gg_trg_faq_death, function Trig_faq_death_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: building ini
-//===========================================================================
-function Trig_building_ini_Func003C takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) != 'hbla' ) ) then
-        return false
-    endif
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) != 'hwtw' ) ) then
-        return false
-    endif
-    if ( not ( IsUnitType(GetEnteringUnit(), UNIT_TYPE_MECHANICAL) == true ) ) then
-        return false
-    endif
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) != 'hhou' ) ) then
-        return false
-    endif
-    if ( not ( IsUnitType(GetEnteringUnit(), UNIT_TYPE_STRUCTURE) == true ) ) then
-        return false
-    endif
-    if ( not ( IsUnitInGroup(GetEnteringUnit(), udg_buildings) == false ) ) then
-        return false
-    endif
-    if ( not ( IsPlayerInForce(GetOwningPlayer(GetEnteringUnit()), udg_players_group) == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_ini_Conditions takes nothing returns boolean
-    if ( not Trig_building_ini_Func003C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_building_ini_Actions takes nothing returns nothing
-    call ReplaceUnitBJ( GetEnteringUnit(), GetUnitTypeId(GetEnteringUnit()), bj_UNIT_STATE_METHOD_MAXIMUM )
-    call GroupAddUnitSimple( GetLastReplacedUnitBJ(), udg_buildings )
-endfunction
-
-//===========================================================================
-function InitTrig_building_ini takes nothing returns nothing
-    set gg_trg_building_ini = CreateTrigger(  )
-    call TriggerRegisterEnterRectSimple( gg_trg_building_ini, GetPlayableMapRect() )
-    call TriggerAddCondition( gg_trg_building_ini, Condition( function Trig_building_ini_Conditions ) )
-    call TriggerAddAction( gg_trg_building_ini, function Trig_building_ini_Actions )
 endfunction
 
 //===========================================================================
@@ -6486,9 +6312,6 @@ endfunction
 
 //===========================================================================
 function InitCustomTriggers takes nothing returns nothing
-    call InitTrig_units_death(  )
-    call InitTrig_unit_dammi(  )
-    call InitTrig_units_leave(  )
     call InitTrig_unit_resources(  )
     call InitTrig_upgrade_def_and_dmg(  )
     call InitTrig_inc_ini(  )
@@ -6504,7 +6327,6 @@ function InitCustomTriggers takes nothing returns nothing
     call InitTrig_Armageddon_effect_2(  )
     call InitTrig_faq(  )
     call InitTrig_faq_death(  )
-    call InitTrig_building_ini(  )
     call InitTrig_building_inf(  )
     call InitTrig_builder_left(  )
     call InitTrig_mediv_select(  )

@@ -12,7 +12,7 @@ scope Arena initializer Init
     endglobals
 
     private function Conditions takes nothing returns boolean
-        return IsUnitInGroup(GetFilterUnit(), udg_buildings)
+        return IsUnitInGroup(GetFilterUnit(), buildings)
     endfunction
 
     private function ForPlayerUnits takes nothing returns nothing
@@ -21,7 +21,7 @@ scope Arena initializer Init
         local real x = GetRectCenterX(startRectForPlayer[GetPlayerId(p)])
         local real y = GetRectCenterY(startRectForPlayer[GetPlayerId(p)])
         // debug call Log(I2S('h008') + " / " + I2S('ha08') + " / " + I2S('ha08' - 'h008') + " / " + I2S(offset))
-        call GroupAddUnit(udg_wave_units, CreateUnitEx(p, (GetUnitTypeId(u) + unitTypeIdOffset), x, y, 270))
+        call GroupAddUnit(waveUnits, CreateUnitEx(p, (GetUnitTypeId(u) + unitTypeIdOffset), x, y, 270))
         // debug call Log("ForceArena_ForPlayerUnits: unit = " + GetUnitName(u))
 
         set p = null

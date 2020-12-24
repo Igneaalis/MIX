@@ -43,7 +43,7 @@ scope IncomeUpgradeTQ initializer Init_income_upgTQ
 
     // !!! Урон юнитам наносит сам рудник, но после смерти он передаётся убийце, проверить, что урон наносится до передачи
     // Функция вызывается к каждому юниту около погибшего рудника
-    // Если юнит принадлежит убившему и юнит находится в группе udg_wave_units(!!! понять, что за группа), ему наносится урон от рудника типа chaos
+    // Если юнит принадлежит убившему и юнит находится в группе waveUnits(!!! понять, что за группа), ему наносится урон от рудника типа chaos
     function Trig_income_upgTQ_Actions_group takes nothing returns nothing
         local unit u = GetEnumUnit() // сам юнит
         local boolean b1
@@ -54,7 +54,7 @@ scope IncomeUpgradeTQ initializer Init_income_upgTQ
         local unit damage_u = hash[StringHash("income")].unit[StringHash("victim")]       // рудник
         local real damage
 
-        set b1 = IsUnitInGroup(u, udg_wave_units)
+        set b1 = IsUnitInGroup(u, waveUnits)
         set b2 = (p == p_k)
         if b1 and b2 then
             set damage = cursed_mine_damage_for_lvl * GetPlayerTechCount(p_v, cursed_mine_rc, true) // формула расчёта урона: урон = cursed_mine_damage_for_lvl * уровень улучшения

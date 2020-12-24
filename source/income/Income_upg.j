@@ -28,7 +28,7 @@ scope IncomeUpgrade initializer Init
         private integer array goldmining_income
     endglobals
 
-    private function Conditions takes nothing returns boolean
+    public function Conditions takes nothing returns boolean
         local integer i
         local integer researchRC = GetResearched()
 
@@ -281,7 +281,7 @@ scope IncomeUpgrade initializer Init
         local integer u_rc = GetUnitTypeId(u)
 
         if (u_rc == most_point_kill_last_round) or (u_rc == or_leadership_arena_last_round) then
-            call RemoveUnit(u)
+            call RemoveUnitEx(u)
         endif
 
         set u = null
@@ -473,7 +473,7 @@ scope IncomeUpgrade initializer Init
         call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
         call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
         call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-        call TriggerAddCondition(t, Condition(function Conditions))
+        call TriggerAddCondition(t, Condition(function IncomeUpgrade_Conditions))
         call TriggerAddAction(t, function Trig_income_upg_Actions)
         
         set t = null

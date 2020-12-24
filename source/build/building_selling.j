@@ -79,7 +79,7 @@ scope BuildingSelling
         local integer gold = udb[u].GetGold()
         local integer lumber = udb[u].GetLumber()
         local texttag tt
-        call GroupRemoveUnit(udg_buildings, u)
+        call GroupRemoveUnit(buildings, u)
 
         call AddGoldToPlayer(gold, p)
         call AddLumberToPlayer(lumber, p)
@@ -104,7 +104,7 @@ scope BuildingSelling
         call SetTextTagFadepoint(tt, 1.30)
         call SetTextTagVelocity(tt, 0, 0.03)
 
-        call RemoveUnit(u)
+        call RemoveUnitEx(u)
         call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl", GetUnitX(u), GetUnitY(u)))
 
         set u = null

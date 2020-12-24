@@ -37,8 +37,8 @@ scope NextWave
 
         set curWave = curWave + 1
 
-        call ForGroup(udg_wave_units, function C_RemoveEnumUnits)
-        call GroupClear(udg_wave_units)
+        call ForGroup(waveUnits, function C_RemoveEnumUnits)
+        call GroupClear(waveUnits)
         call ForGroup(udg_castle_unit, function C_RemoveEnumUnits)
         call GroupClear(udg_castle_unit)
         call ForGroup(IncomeObjects_group, function C_RemoveEnumUnits)
