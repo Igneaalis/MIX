@@ -64,6 +64,9 @@ scope IncomeObjects initializer Init
         endfor
 
         // call ForGroupBJ(udg_light[( udg_cycle_i - 1 )],function Trig_inc_rotate_Copy_Func012Func002Func002Func001Func013A)
+
+        set curRect = null
+        set u = null
     endfunction
 
     private function Init takes nothing returns nothing

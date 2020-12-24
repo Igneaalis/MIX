@@ -34,6 +34,9 @@ scope NextWave
     public function Force takes nothing returns nothing
         local timer t = CreateTimer()
         local integer i
+
+        set curWave = curWave + 1
+
         call ForGroup(udg_wave_units, function C_RemoveEnumUnits)
         call GroupClear(udg_wave_units)
         call ForGroup(udg_castle_unit, function C_RemoveEnumUnits)
@@ -48,7 +51,7 @@ scope NextWave
             endif
         endfor
 
-        call ForForce(udg_players_group, function ForPlayer)
+        call ForForce(players, function ForPlayer)
 
         call TimerStart(t, relaxWaveTime, false, function Timer_OnExprie)
         set relaxWaveTimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner

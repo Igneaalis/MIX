@@ -9,13 +9,17 @@
 
 */
 
-function Locale takes nothing returns string
-    local string s = GetLocalizedString("CHEATENABLED")
-    if (s == "Чит включен!") then
-        set s = "RU"
-    else
-        set s = "EN"
-    endif
-    return s
+library Locales
 
-endfunction
+    function Locale takes nothing returns string
+        local string s = GetLocalizedString("CHEATENABLED")
+        if (s == "Чит включен!") then
+            set s = "RU"
+        else
+            set s = "EN"
+        endif
+        return s
+
+    endfunction
+
+endlibrary

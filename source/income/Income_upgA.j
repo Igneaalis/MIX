@@ -10,11 +10,18 @@
 Улучшение инкома Грабёж.
 !!! - важная информация
 
+TODO: В конце волны, вы получаете 5-10% от ресурсов случайного игрока.
+
 */
 
-scope IncomeUpgradeA initializer Init_income_upgA
+scope IncomeUpgradeA initializer Init
 
-    function Trig_income_upgA_Conditions takes nothing returns boolean
+    globals
+        private real array robberyPercentCastle
+        private real array robberyPercentRandom
+    endglobals
+
+    private function Conditions takes nothing returns boolean
         local boolean b1
         local boolean b2
         local boolean b3
@@ -38,7 +45,7 @@ scope IncomeUpgradeA initializer Init_income_upgA
 
     endfunction
 
-    function Trig_income_upgA_Actions takes nothing returns nothing
+    private function Actions takes nothing returns nothing
         local unit killer = GetKillingUnit()
         local unit victim = GetDyingUnit()
         local player p_k = GetOwningPlayer(killer)
@@ -48,7 +55,6 @@ scope IncomeUpgradeA initializer Init_income_upgA
         local integer lvl_research = GetPlayerTechCountSimple(robbery_rc, p_k)
         local integer p_k_n = GetConvertedPlayerId(p_k)
         local integer p_v_n = GetConvertedPlayerId(p_v)
-        local real multy = robbery_pr_f[lvl_research] * 0.01
         local string killer_mes
         local string victim_mes
         local string color_k = udg_players_colour[p_k_n]
@@ -56,8 +62,8 @@ scope IncomeUpgradeA initializer Init_income_upgA
         local string name_k = udg_players_name[p_k_n]
         local string name_v = udg_players_name[p_v_n]
 
-        set gold = R2I(I2R(gold) * multy)
-        set lumber = R2I(I2R(lumber) * multy)
+        set gold = R2I(gold * robberyPercentCastle[lvl_research])
+        set lumber = R2I(lumber * robberyPercentCastle[lvl_research])
         
         call AddGoldToPlayer(gold, p_k)
         call AddGoldToPlayer(-gold, p_v)
@@ -82,8 +88,22 @@ scope IncomeUpgradeA initializer Init_income_upgA
     endfunction
 
     //===========================================================================
-    function Init_income_upgA takes nothing returns nothing
+    private function Init takes nothing returns nothing
         local trigger t = CreateTrigger()
+
+        set robberyPercentCastle[1] = 0.05
+        set robberyPercentCastle[2] = 0.10
+        set robberyPercentCastle[3] = 0.15
+        set robberyPercentCastle[4] = 0.20
+        set robberyPercentCastle[5] = 0.30
+        set robberyPercentCastle[6] = 0.40
+
+        set robberyPercentRandom[1] = 0.05
+        set robberyPercentRandom[2] = 0.06
+        set robberyPercentRandom[3] = 0.07
+        set robberyPercentRandom[4] = 0.08
+        set robberyPercentRandom[5] = 0.09
+        set robberyPercentRandom[6] = 0.10
 
         call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
         call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
@@ -97,8 +117,8 @@ scope IncomeUpgradeA initializer Init_income_upgA
         call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
         call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
         call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerAddCondition(t, Condition( function Trig_income_upgA_Conditions))
-        call TriggerAddAction(t, function Trig_income_upgA_Actions)
+        call TriggerAddCondition(t, Condition( function Conditions))
+        call TriggerAddAction(t, function Actions)
         
         set t = null
     endfunction

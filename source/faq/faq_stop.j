@@ -16,6 +16,6 @@ Stops voting for faq guide
 function faq_stop takes nothing returns nothing
     set IsFaqActive = false // Disables faq_counter() and faq_active()
     call faq_flush.execute() // Destroys all texttags, hides faq_dialog, reveals map
-    call ForForce(udg_players_group, function faq_get_castle) // Focuses camera at castle you own
+    call ForForce(players, function faq_get_castle) // Focuses camera at castle you own
     call faq_start.execute() // Commands and settings
 endfunction

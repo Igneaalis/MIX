@@ -61,8 +61,8 @@ scope BuilderSelect initializer builder_select
         call SelectUnitForPlayerSingle(peon, owner_of_peon) // Selects peon for player
         call ForGroup(group_of_dummies, function C_RemoveEnumUnits) // Remove dummies
 
-        call CreateUnit(owner_of_peon, 'hbla', x, y, bj_UNIT_FACING) // Юнит "Замок"
-        call CreateUnit(owner_of_peon, 'hwtw', x-450, y+640, bj_UNIT_FACING) // Юнит "Улучшения"
+        call CreateUnitEx(owner_of_peon, 'hbla', x, y, bj_UNIT_FACING) // Юнит "Замок"
+        call CreateUnitEx(owner_of_peon, 'hwtw', x-450, y+640, bj_UNIT_FACING) // Юнит "Улучшения"
         call SetUnitPosition(peon, x, y-250) // Peon's position
         call SetUnitFacing(peon, bj_UNIT_FACING) // Peon's facing
         call PanCameraToForPlayer(owner_of_peon, x, y)
@@ -89,8 +89,7 @@ scope BuilderSelect initializer builder_select
             call TriggerExecute(gg_trg_mediv_select)
         endif
 
-        call MultiboardSetItemIcon(mbitem, iconFileName)
-        call MultiboardReleaseItem(mbitem)
+        set mb[owner_of_peon].icon = iconFileName
 
         static if DEBUG_MODE then
             call AddGoldToPlayer(debugGold, owner_of_peon)
@@ -377,7 +376,7 @@ scope Debug initializer Init
             // call Log(I2S(bj_PLAYER_NEUTRAL_EXTRA)) - 26
             // call Log(I2S(PLAYER_NEUTRAL_PASSIVE)) - 27
 
-            // call Log(I2S(bj_MAX_PLAYERS)) - 24
+            // call Log(I2S(bj_maxNumberOfPlayers)) - 24
             // call Log(I2S(bj_MAX_PLAYER_SLOTS)) - 28
         endif
         
@@ -415,9 +414,11 @@ library FAQ uses NokladrLib
 
     function faq_get_castle takes nothing returns nothing
         local player p = GetEnumPlayer()
+
         call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, p, 0) // Resets camera angle
         call PanCameraToTimedLocForPlayer(p, GetPlayerStartLocationLoc(p), 0) // Focuses camera at castle you own
         call SelectUnitForPlayerSingle(GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(p, 'ntav')), p) // Selects tavern
+        
         set p = null
     endfunction
 
@@ -431,7 +432,7 @@ library FAQ uses NokladrLib
 
     function faq_flush takes nothing returns nothing
         call UnfadeMap() // Unfades map
-        call ForForce(udg_players_group, function faq_hide_dialog) // Hides voting dialog
+        call ForForce(players, function faq_hide_dialog) // Hides voting dialog
         call DestroyTextTag(faq_tts[0]) // Уничтожает плавающий текст с голосами "За"
         call DestroyTextTag(faq_tts[1]) // Уничтожает плавающий текст с голосами "За"
         call DestroyTextTag(faq_tts[2]) // Уничтожает плавающий текст с голосами "Против"
@@ -454,7 +455,7 @@ Voting for viewing faq guide.
 
 */
 
-scope FaqActive initializer faq_active_init
+scope FaqActive initializer Init
 
     function faq_active_condition takes nothing returns boolean
         // Disables faq_counter() and faq_active() if false
@@ -465,24 +466,24 @@ scope FaqActive initializer faq_active_init
         if (GetClickedButton() == faq_buttons[0]) then // Кнопка "Да"
             set faq_vote_yes = faq_vote_yes + 1 // Голосов "За"
             call SetTextTagText(faq_tts[2], I2S(faq_vote_yes), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "За"
-            if (faq_vote_yes >= (CountPlayersInForceBJ(udg_players_group) / 2)) then // Если голосов "За" 1/1, 1/2, 1/3, 2/4, 2/5, 3/6, 3/7, 4/8 
+            if (faq_vote_yes >= (CountPlayersInForceBJ(players) / 2)) then // Если голосов "За" 1/1, 1/2, 1/3, 2/4, 2/5, 3/6, 3/7, 4/8 
                 set IsFaqActive = false // Disables faq_counter() and faq_active()
                 call faq_flush.execute() // Destroys all texttags, hides faq_dialog, reveals map
                 call TriggerExecute(gg_trg_faq) // Enables faq guide
                 call TriggerSleepAction(51.8) // Duration of faq guide
-                call ForForce(udg_players_group, function faq_get_castle) // Focuses camera at castle you own
+                call ForForce(players, function faq_get_castle) // Focuses camera at castle you own
                 call faq_start.execute() // Commands and settings
             endif
         else // Кнопка "Нет"
             set faq_vote_no = faq_vote_no + 1 // Голосов "Против"
             call SetTextTagText(faq_tts[3], I2S(faq_vote_no), TextTagSize2Height(10.00)) // Плавающий текст с кол-вом голосов "Против"
-            if (faq_vote_no > (CountPlayersInForceBJ(udg_players_group) / 2)) then  // Если голосов "За" 1/1, 2/2, 2/3, 3/4, 3/5, 4/6, 4/7, 5/8 
+            if (faq_vote_no > (CountPlayersInForceBJ(players) / 2)) then  // Если голосов "За" 1/1, 2/2, 2/3, 3/4, 3/5, 4/6, 4/7, 5/8 
                 call faq_stop.execute() // Destroys all texttags, hides faq_dialog, reveals map. Focuses camera at castle you own. Commands and settings
             endif
         endif
     endfunction
 
-    function faq_active_init takes nothing returns nothing
+    private function Init takes nothing returns nothing
         local trigger t = CreateTrigger()
 
         // Triggers if faq_dialog's buttons were clicked
@@ -532,7 +533,7 @@ function faq_ini takes nothing returns nothing
 
     // ---За---
     // Плавающий текст с требуемым кол-вом голосов "За"
-    set faq_tts[0] = NewTextTag((GREEN + "\"ЗА\"|r нужно " + I2S(CountPlayersInForceBJ(udg_players_group) / 2)), gg_rct_guideyes, 14.00)
+    set faq_tts[0] = NewTextTag((GREEN + "\"ЗА\"|r нужно " + I2S(CountPlayersInForceBJ(players) / 2)), gg_rct_guideyes, 14.00)
     
     // Плавающий текст с кол-вом голосов "За"
     set faq_tts[2] = NewTextTag(I2S(faq_vote_yes), gg_rct_guideyesvote, 10.00)
@@ -542,7 +543,7 @@ function faq_ini takes nothing returns nothing
 
     // ---Против---
     // Плавающий текст с требуемым кол-вом голосов "Против"
-    set faq_tts[1] = NewTextTag((RED + "\"ПРОТИВ\"|r нужно более " + I2S(CountPlayersInForceBJ(udg_players_group) / 2)), gg_rct_guideno, 14.00)
+    set faq_tts[1] = NewTextTag((RED + "\"ПРОТИВ\"|r нужно более " + I2S(CountPlayersInForceBJ(players) / 2)), gg_rct_guideno, 14.00)
 
     // Плавающий текст с кол-вом голосов "Против"
     set faq_tts[3] = NewTextTag(I2S(faq_vote_no), gg_rct_guidenovote, 10.00)
@@ -555,7 +556,7 @@ function faq_ini takes nothing returns nothing
     else
         call TimerStart(CreateTimer(), 1.00, true, function faq_voting_timer_counter) // Makes duration of voting visible in faq dialog's title
         call faq_voting_timer_counter() // First tick of timer
-        call ForForce(udg_players_group, function faq_show_dialog) // Shows faq dialog to all players
+        call ForForce(players, function faq_show_dialog) // Shows faq dialog to all players
     endif
 endfunction
 /*
@@ -574,6 +575,8 @@ Shows all available commands and settings.
 */
 
 function faq_start_timer_actions takes nothing returns nothing
+    local timer t = GetExpiredTimer()
+
     call DestroyTimerDialog(faq_timerdialog) // Destroys timer dialog for commands and settings
     call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 15, "|cFFFF0000Команда |cFFFFFFFF-info|r |cFFFF0000отключит сообщения о штрафах и мини-арене.|r")
 
@@ -582,22 +585,25 @@ function faq_start_timer_actions takes nothing returns nothing
     call DisableTrigger(gg_trg_cmd_mode)
     call DisableTrigger(gg_trg_cmd_point)
     call DisableTrigger(gg_trg_cmd_arena)
+    
+    set curWave = curWave + 1
     call Arena_Force.execute()
-    // call TriggerExecute( gg_trg_set_wave_start_main )
-    // call TriggerExecute( gg_trg_set_wave_timer )
-    // call TriggerExecute( gg_trg_set_wave_region_rotate )
-    // call TriggerExecute( gg_trg_set_wave_unit_spawn )
+
+    set t = null
 endfunction
 
 function faq_start takes nothing returns nothing
-    call TimerStart(udg_gameset_timer, udg_gameset_time_first, false, function faq_start_timer_actions) // After settings were set
+    local timer t = CreateTimer()
+    
+    call TimerStart(t, timeBeforeFirstWave, false, function faq_start_timer_actions) // After settings were set
 
-    set faq_timerdialog = CreateTimerDialog(udg_gameset_timer) // Timer dialog in upper-left corner for commands and settings
+    set faq_timerdialog = CreateTimerDialog(t) // Timer dialog in upper-left corner for commands and settings
     call TimerDialogSetTitle(faq_timerdialog, "Настройка карты") // Title of timer dialog
     call TimerDialogDisplay(faq_timerdialog, true) // Shows timer dialog
 
     call gameset_owner.execute() // Sets owner of game
-    call TriggerExecute(gg_trg_scoreboard_ini) // Shows scoreboard
+
+    set t = null
 endfunction
 
 /*
@@ -618,7 +624,7 @@ Stops voting for faq guide
 function faq_stop takes nothing returns nothing
     set IsFaqActive = false // Disables faq_counter() and faq_active()
     call faq_flush.execute() // Destroys all texttags, hides faq_dialog, reveals map
-    call ForForce(udg_players_group, function faq_get_castle) // Focuses camera at castle you own
+    call ForForce(players, function faq_get_castle) // Focuses camera at castle you own
     call faq_start.execute() // Commands and settings
 endfunction
 /*
@@ -694,18 +700,32 @@ endfunction
 
 */
 
-scope IncomeUpgrade initializer Init_income_upg
+scope IncomeUpgrade initializer Init
 
-    function Trig_income_upg_Conditions takes nothing returns boolean
-        local integer i = 1
-        local integer research_rc = GetResearched()
-        loop
-            exitwhen i == incSpellrc_count
-            if research_rc == incSpellrc[i] then
+    globals
+        private integer array incSpellRC
+        private constant integer incSpellRCSize = 13
+        private real array stabilityTimeGold
+        private real array stabilityTimeGems
+        private integer array stabilityGold
+        private integer array stabilityGems
+        private timer array stabilityTimerGold
+        private timer array stabilityTimerGems
+        private integer array goldmining_main_mine
+        private integer array goldmining_extra_mine
+        private integer array goldmining_income
+    endglobals
+
+    private function Conditions takes nothing returns boolean
+        local integer i
+        local integer researchRC = GetResearched()
+
+        for i = 1 to incSpellRCSize
+            if researchRC == incSpellRC[i] then
                 return true
             endif
-            set i = i + 1
-        endloop
+        endfor
+
         return false
     endfunction
 
@@ -752,11 +772,11 @@ scope IncomeUpgrade initializer Init_income_upg
 
     // Добавить в группу игроков всех играющих игроков
     function AllPlayingPlayers takes force gr_p returns nothing
-        local integer i = 1
+        local integer i = 0
         local player p
 
         loop
-            exitwhen i > max_players
+            exitwhen i > maxNumberOfPlayers
             set p = Player(i)
             if (GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING) and (GetPlayerController(p) == MAP_CONTROL_USER) then
                 call ForceAddPlayer(gr_p, p)
@@ -888,8 +908,8 @@ scope IncomeUpgrade initializer Init_income_upg
         local integer i = 1 
 
         loop
-            exitwhen i > max_players
-            if (t == stab_timer_gold[i]) or (t == stab_timer_lumber[i]) then
+            exitwhen i > maxNumberOfPlayers
+            if (t == stabilityTimerGold[i]) or (t == stabilityTimerGems[i]) then
                 set number_timer = i
             endif
             set i = i + 1
@@ -898,8 +918,8 @@ scope IncomeUpgrade initializer Init_income_upg
         return number_timer
     endfunction
 
-    // Работа таймера stab_timer_gold
-    function stab_timer_gold_actions takes nothing returns nothing
+    // Работа таймера stabilityTimerGold
+    function stabilityTimerGold_actions takes nothing returns nothing
         local player p
         local integer number_p
         local integer count_research
@@ -909,14 +929,14 @@ scope IncomeUpgrade initializer Init_income_upg
         set p = Player(number_p - 1)
         set count_research = GetPlayerTechCount(p, stab_rc, true)
 
-        call AddGoldToPlayer(stab_gold[count_research], p)
+        call AddGoldToPlayer(stabilityGold[count_research], p)
 
         set p = null
         set t = null
     endfunction
 
-    // Работа таймера stab_timer_lumber
-    function stab_timer_lumber_actions takes nothing returns nothing
+    // Работа таймера stabilityTimerGems
+    function stabilityTimerGems_actions takes nothing returns nothing
         local player p
         local integer number_p
         local integer count_research
@@ -926,7 +946,7 @@ scope IncomeUpgrade initializer Init_income_upg
         set p = Player(number_p - 1)
         set count_research = GetPlayerTechCount(p, stab_rc, true)
 
-        call AddLumberToPlayer(stab_lumber[count_research], p)
+        call AddLumberToPlayer(stabilityGems[count_research], p)
 
         set p = null
         set t = null
@@ -935,12 +955,12 @@ scope IncomeUpgrade initializer Init_income_upg
     // Действие улучшения Стабильность
     function Trig_income_upg_actions_stab takes integer number_p, integer count_research returns nothing
         if count_research == 1 then
-            set stab_timer_gold[number_p] = CreateTimer()
-            set stab_timer_lumber[number_p] = CreateTimer()
+            set stabilityTimerGold[number_p] = CreateTimer()
+            set stabilityTimerGems[number_p] = CreateTimer()
         endif
 
-        call TimerStart(stab_timer_gold[number_p], stab_time_gold[count_research], true, function stab_timer_gold_actions)
-        call TimerStart(stab_timer_lumber[number_p], stab_time_lumber[count_research], true, function stab_timer_lumber_actions)
+        call TimerStart(stabilityTimerGold[number_p], stabilityTimeGold[count_research], true, function stabilityTimerGold_actions)
+        call TimerStart(stabilityTimerGems[number_p], stabilityTimeGems[count_research], true, function stabilityTimerGems_actions)
     endfunction
 
     // Условие улучшения Лидерство, удалить юнитов Больше всех убийств за прошедший раунд и Или лидерство по очкам арены за пошедший раунд
@@ -1059,8 +1079,75 @@ scope IncomeUpgrade initializer Init_income_upg
     endfunction
 
     //===========================================================================
-    function Init_income_upg takes nothing returns nothing
+    private function Init takes nothing returns nothing
         local trigger t = CreateTrigger()
+
+        // Заполнение массива incSpellrc равкодами инкам способностей
+        set incSpellRC[1] = 'R00F'
+        set incSpellRC[2] = 'R00G'
+        set incSpellRC[3] = 'R00H'
+        set incSpellRC[4] = 'R00I'
+        set incSpellRC[5] = 'R00J'
+        set incSpellRC[6] = 'R00Q'
+        set incSpellRC[7] = 'R00R'
+        set incSpellRC[8] = 'R00S'
+        set incSpellRC[9] = 'R027'
+        set incSpellRC[10] = 'R029'
+        set incSpellRC[11] = 'R02I'
+        set incSpellRC[12] = 'R02J'
+        set incSpellRC[13] = 'R02K'
+
+        // Заполнение массивов stabilityTimeGold и stabilityTimeGems периодом инкама
+        set stabilityTimeGold[1] = 3
+        set stabilityTimeGold[2] = 3
+        set stabilityTimeGold[3] = 3
+        set stabilityTimeGold[4] = 3
+        set stabilityTimeGold[5] = 3
+        set stabilityTimeGold[6] = 3
+
+        set stabilityTimeGems[1] = 40
+        set stabilityTimeGems[2] = 40
+        set stabilityTimeGems[3] = 30
+        set stabilityTimeGems[4] = 20
+        set stabilityTimeGems[5] = 15
+        set stabilityTimeGems[6] = 12
+
+        // Заполнение массивов stabilityGold и stabilityGems кол-вом инкама
+        set stabilityGold[1] = 1
+        set stabilityGold[2] = 1
+        set stabilityGold[3] = 2
+        set stabilityGold[4] = 2
+        set stabilityGold[5] = 3
+        set stabilityGold[6] = 4
+                
+        set stabilityGems[1] = 0
+        set stabilityGems[2] = 1
+        set stabilityGems[3] = 1
+        set stabilityGems[4] = 1
+        set stabilityGems[5] = 1
+        set stabilityGems[6] = 1
+
+        // Заполнение массивов goldmining_main_mine, goldmining_extra_mine, goldmining_income кол-вом увеличения инкама
+        set goldmining_main_mine[1] = 1
+        set goldmining_main_mine[2] = 1
+        set goldmining_main_mine[3] = 1
+        set goldmining_main_mine[4] = 1
+        set goldmining_main_mine[5] = 1
+        set goldmining_main_mine[6] = 1
+
+        set goldmining_extra_mine[1] = 0
+        set goldmining_extra_mine[2] = 0
+        set goldmining_extra_mine[3] = 1
+        set goldmining_extra_mine[4] = 0
+        set goldmining_extra_mine[5] = 1
+        set goldmining_extra_mine[6] = 1
+        
+        set goldmining_income[1] = 10
+        set goldmining_income[2] = 10
+        set goldmining_income[3] = 10
+        set goldmining_income[4] = 10
+        set goldmining_income[5] = 10
+        set goldmining_income[6] = 10
 
         call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
         call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
@@ -1074,7 +1161,7 @@ scope IncomeUpgrade initializer Init_income_upg
         call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
         call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
         call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-        call TriggerAddCondition(t, Condition(function Trig_income_upg_Conditions))
+        call TriggerAddCondition(t, Condition(function Conditions))
         call TriggerAddAction(t, function Trig_income_upg_Actions)
         
         set t = null
@@ -1093,11 +1180,18 @@ endscope
 Улучшение инкома Грабёж.
 !!! - важная информация
 
+TODO: В конце волны, вы получаете 5-10% от ресурсов случайного игрока.
+
 */
 
-scope IncomeUpgradeA initializer Init_income_upgA
+scope IncomeUpgradeA initializer Init
 
-    function Trig_income_upgA_Conditions takes nothing returns boolean
+    globals
+        private real array robberyPercentCastle
+        private real array robberyPercentRandom
+    endglobals
+
+    private function Conditions takes nothing returns boolean
         local boolean b1
         local boolean b2
         local boolean b3
@@ -1121,7 +1215,7 @@ scope IncomeUpgradeA initializer Init_income_upgA
 
     endfunction
 
-    function Trig_income_upgA_Actions takes nothing returns nothing
+    private function Actions takes nothing returns nothing
         local unit killer = GetKillingUnit()
         local unit victim = GetDyingUnit()
         local player p_k = GetOwningPlayer(killer)
@@ -1131,7 +1225,6 @@ scope IncomeUpgradeA initializer Init_income_upgA
         local integer lvl_research = GetPlayerTechCountSimple(robbery_rc, p_k)
         local integer p_k_n = GetConvertedPlayerId(p_k)
         local integer p_v_n = GetConvertedPlayerId(p_v)
-        local real multy = robbery_pr_f[lvl_research] * 0.01
         local string killer_mes
         local string victim_mes
         local string color_k = udg_players_colour[p_k_n]
@@ -1139,8 +1232,8 @@ scope IncomeUpgradeA initializer Init_income_upgA
         local string name_k = udg_players_name[p_k_n]
         local string name_v = udg_players_name[p_v_n]
 
-        set gold = R2I(I2R(gold) * multy)
-        set lumber = R2I(I2R(lumber) * multy)
+        set gold = R2I(gold * robberyPercentCastle[lvl_research])
+        set lumber = R2I(lumber * robberyPercentCastle[lvl_research])
         
         call AddGoldToPlayer(gold, p_k)
         call AddGoldToPlayer(-gold, p_v)
@@ -1165,8 +1258,22 @@ scope IncomeUpgradeA initializer Init_income_upgA
     endfunction
 
     //===========================================================================
-    function Init_income_upgA takes nothing returns nothing
+    private function Init takes nothing returns nothing
         local trigger t = CreateTrigger()
+
+        set robberyPercentCastle[1] = 0.05
+        set robberyPercentCastle[2] = 0.10
+        set robberyPercentCastle[3] = 0.15
+        set robberyPercentCastle[4] = 0.20
+        set robberyPercentCastle[5] = 0.30
+        set robberyPercentCastle[6] = 0.40
+
+        set robberyPercentRandom[1] = 0.05
+        set robberyPercentRandom[2] = 0.06
+        set robberyPercentRandom[3] = 0.07
+        set robberyPercentRandom[4] = 0.08
+        set robberyPercentRandom[5] = 0.09
+        set robberyPercentRandom[6] = 0.10
 
         call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
         call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
@@ -1180,8 +1287,8 @@ scope IncomeUpgradeA initializer Init_income_upgA
         call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_DEATH, null)
         call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_DEATH, null)
         call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerAddCondition(t, Condition( function Trig_income_upgA_Conditions))
-        call TriggerAddAction(t, function Trig_income_upgA_Actions)
+        call TriggerAddCondition(t, Condition( function Conditions))
+        call TriggerAddAction(t, function Actions)
         
         set t = null
     endfunction
@@ -1728,6 +1835,31 @@ library Colors
     endstruct
 
 endlibrary
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     01.11.2020 18:30       =
+=============================================
+
+*/
+
+library Locales
+
+    function Locale takes nothing returns string
+        local string s = GetLocalizedString("CHEATENABLED")
+        if (s == "Чит включен!") then
+            set s = "RU"
+        else
+            set s = "EN"
+        endif
+        return s
+
+    endfunction
+
+endlibrary
 library Logs uses Colors
 
     // Лог сообщений
@@ -1781,6 +1913,354 @@ library MIXLib initializer MIXLibInit requires NokladrLib  // Library by Nokladr
     private function MIXLibInit takes nothing returns nothing
         call fill_dbarr()
     endfunction
+endlibrary
+library Multiboard /* v2.0.0.1
+    *************************************************************************************
+    *
+    *   Multiboard Struct API that actually works and is actually easy to use.
+    *
+    *************************************************************************************
+    *
+    *   */uses/*
+    *
+    *       */ Table /*         hiveworkshop.com/forums/jass-functions-413/snippet-new-table-188084/
+    *
+    ************************************************************************************
+    *
+    *   struct Multiboard
+    *
+    *       string title
+    *       boolean display
+    *       boolean minimize
+    *       boolean suppress
+    *
+    *       real width=  (set only)
+    *       string icon= (set only)
+    *       string text= (set only)
+    *
+    *       readonly MultiboardRow row
+    *       readonly MultiboardColumn column
+    *
+    *       this[row][column] -> MultiboardItem
+    *
+    *       static method create takes integer rowCount, integer columnCount returns Multiboard
+    *       method destroy takes nothing returns nothing
+    *
+    *       method clear takes nothing returns nothing
+    *
+    *       method setTitleColor takes integer red, integer green, integer blue, integer alpha returns nothing
+    *       method setColor takes integer red, integer green, integer blue, integer alpha returns nothing
+    *       method setStyle takes boolean showValues, boolean showIcons returns nothing
+    *
+    ************************************************************************************
+    *
+    *   struct MultiboardRow extends array
+    *   struct MultiboardColumn extends array
+    *
+    *       integer count
+    *           -   row.count
+    *
+    *       string text
+    *       string icon=
+    *       real width=
+    *           -   row[0].width
+    *
+    *       method setColor takes integer red, integer green, integer blue, integer alpha returns nothing
+    *       method setStyle takes boolean showValue, boolean showIcon returns nothing
+    *           -   row[0].setStyle
+    *
+    ************************************************************************************
+    *
+    *   struct MultiboardItem extends array
+    *
+    *       string text= (set only)
+    *       string icon= (set only)
+    *       real width=  (set only)
+    *
+    *       method setColor takes integer red, integer green, integer blue, integer alpha returns nothing
+    *       method setStyle takes boolean showValue, boolean showIcon returns nothing
+    *
+    ************************************************************************************/
+    globals
+        private Table table
+        private Table table2
+        private integer array r
+        private integer ic = 0
+        private multiboard array boardp
+        private integer array rc
+        private integer array cc
+        private boolean array suppressed
+    endglobals
+    
+    private module Init
+
+        private static method onInit takes nothing returns nothing
+            set table = Table.create()
+            set table2 = Table.create()
+        endmethod
+
+    endmodule
+    
+    struct MultiboardItem extends array
+
+        method operator text= takes string value returns nothing
+            call MultiboardSetItemValue(table.multiboarditem[this], value)
+        endmethod
+        method setColor takes integer red, integer green, integer blue, integer alpha returns nothing
+            call MultiboardSetItemValueColor(table.multiboarditem[this], red, green, blue, alpha)
+        endmethod
+        method setStyle takes boolean showValue, boolean showIcon returns nothing
+            call MultiboardSetItemStyle(table.multiboarditem[this], showValue, showIcon)
+        endmethod
+        method operator icon= takes string str returns nothing
+            call MultiboardSetItemIcon(table.multiboarditem[this], str)
+        endmethod
+        method operator width= takes real percent returns nothing
+            call MultiboardSetItemWidth(table.multiboarditem[this], percent)
+        endmethod
+    
+        implement Init
+
+    endstruct
+    
+    //! textmacro MULTIBOARD_LOOPER takes ROW, TABLE, CODE
+        local multiboarditem mbi
+        loop
+            exitwhen 0 == $ROW$
+            set mbi = $TABLE$.multiboarditem[this]
+            call $CODE$
+            set this = this + 1
+            set $ROW$ = $ROW$ - 1
+        endloop
+        
+        set mbi = null
+    //! endtextmacro
+    
+    private keyword Multiboard2D
+    private keyword getItems
+    private keyword clearItems
+
+    struct Multiboard extends array
+
+        method getItems takes nothing returns nothing
+            local integer row = rc[this]
+            local integer column
+            local multiboarditem mbi
+            loop
+                set column = cc[this]
+                loop
+                    set mbi = MultiboardGetItem(boardp[this], row, column)
+                    set table.multiboarditem[(this*500+row)*500+column] = mbi
+                    set table2.multiboarditem[(this*500+column)*500+row] = mbi
+                    exitwhen 0 == column
+                    set column = column - 1
+                endloop
+                exitwhen 0 == row
+                set row = row - 1
+            endloop
+            set mbi = null
+        endmethod
+        method clearItems takes nothing returns nothing
+            local integer row = rc[this]
+            local integer column
+            loop
+                set column = cc[this]
+                loop
+                    call MultiboardReleaseItem(table.multiboarditem[(this*500+row)*500+column])
+                    call table.handle.remove((this*500+row)*500+column)
+                    call table2.handle.remove((this*500+column)*500+row)
+                    exitwhen 0 == column
+                    set column = column - 1
+                endloop
+                exitwhen 0 == row
+                set row = row - 1
+            endloop
+        endmethod
+        
+        static method create takes integer rowCount, integer columnCount returns thistype
+            local thistype this = r[0]
+            
+            if (0 == this) then
+                set this = ic + 1
+                set ic = this
+            else
+                set suppressed[this] = false
+                set r[0] = r[this]
+            endif
+            
+            set boardp[this] = CreateMultiboard()
+            call MultiboardSetColumnCount(boardp[this], columnCount)
+            call MultiboardSetRowCount(boardp[this], rowCount)
+            
+            set rc[this] = rowCount
+            set cc[this] = columnCount
+            
+            call getItems()
+            
+            return this
+        endmethod
+        
+        method destroy takes nothing returns nothing
+            set r[this] = r[0]
+            set r[0] = this
+            
+            call clearItems()
+            
+            call DestroyMultiboard(boardp[this])
+            set boardp[this] = null
+        endmethod
+        
+        method clear takes nothing returns nothing
+            call MultiboardClear(boardp[this])
+        endmethod
+        
+        method operator display takes nothing returns boolean
+            return IsMultiboardDisplayed(boardp[this])
+        endmethod
+        method operator display= takes boolean b returns nothing
+            call MultiboardDisplay(boardp[this], b)
+        endmethod
+        method operator minimize takes nothing returns boolean
+            return IsMultiboardMinimized(boardp[this])
+        endmethod
+        method operator minimize= takes boolean b returns nothing
+            call MultiboardMinimize(boardp[this], b)
+        endmethod
+        method operator title takes nothing returns string
+            return MultiboardGetTitleText(boardp[this])
+        endmethod
+        method operator title= takes string txt returns nothing
+            call MultiboardSetTitleText(boardp[this], txt)
+        endmethod
+        method setTitleColor takes integer red, integer green, integer blue, integer alpha returns nothing
+            call MultiboardSetTitleTextColor(boardp[this], red, green, blue, alpha)
+        endmethod
+        method operator suppress takes nothing returns boolean
+            return suppressed[this]
+        endmethod
+        method operator suppress= takes boolean b returns nothing
+            set suppressed[this] = b
+            call MultiboardSuppressDisplay(b)
+        endmethod
+        method operator width= takes real percent returns nothing
+            call MultiboardSetItemsWidth(boardp[this], percent)
+        endmethod
+        method operator row takes nothing returns MultiboardRow
+            return this
+        endmethod
+        method operator column takes nothing returns MultiboardColumn
+            return this
+        endmethod
+        method operator [] takes integer row returns Multiboard2D
+            return this*500+row
+        endmethod
+        method setColor takes integer red, integer green, integer blue, integer alpha returns nothing
+            call MultiboardSetItemsValueColor(boardp[this], red, green, blue, alpha)
+        endmethod
+        method setStyle takes boolean showValues, boolean showIcons returns nothing
+            call MultiboardSetItemsStyle(boardp[this], showValues, showIcons)
+        endmethod
+        method operator icon= takes string txt returns nothing
+            call MultiboardSetItemsIcon(boardp[this], txt)
+        endmethod
+        method operator text= takes string txt returns nothing
+            call MultiboardSetItemsValue(boardp[this], txt)
+        endmethod
+
+    endstruct
+    
+    private struct MultiboardSet extends array
+
+        method text takes string v, integer c, Table t returns nothing
+            //! runtextmacro MULTIBOARD_LOOPER("c", "t", "MultiboardSetItemValue(mbi, v)")
+        endmethod
+        method color takes integer red, integer green, integer blue, integer alpha, integer c, Table t returns nothing
+            //! runtextmacro MULTIBOARD_LOOPER("c", "t", "MultiboardSetItemValueColor(mbi, red, green, blue, alpha)")
+        endmethod
+        method style takes boolean v, boolean i, integer c, Table t returns nothing
+            //! runtextmacro MULTIBOARD_LOOPER("c", "t", "MultiboardSetItemStyle(mbi, v, i)")
+        endmethod
+        method icon takes string s, integer c, Table t returns nothing
+            //! runtextmacro MULTIBOARD_LOOPER("c", "t", "MultiboardSetItemIcon(mbi, s)")
+        endmethod
+        method width takes real p, integer c, Table t returns nothing
+            //! runtextmacro MULTIBOARD_LOOPER("c", "t", "MultiboardSetItemWidth(mbi, p)")
+        endmethod
+
+    endstruct
+
+    struct MultiboardColumn extends array
+
+        method operator count takes nothing returns integer
+            return MultiboardGetColumnCount(boardp[this])
+        endmethod
+        method operator count= takes integer columns returns nothing
+            call Multiboard(this).clearItems()
+            call MultiboardSetColumnCount(boardp[this], columns)
+            set cc[this] = columns
+            call Multiboard(this).getItems()
+        endmethod
+        method operator text= takes string value returns nothing
+            call MultiboardSet(this).text(value, rc[this/250000], table2)
+        endmethod
+        method setColor takes integer red, integer green, integer blue, integer alpha returns nothing
+            call MultiboardSet(this).color(red, green, blue, alpha, rc[this/250000], table2)
+        endmethod
+        method setStyle takes boolean showValue, boolean showIcon returns nothing
+            call MultiboardSet(this).style(showValue, showIcon, rc[this/250000], table2)
+        endmethod
+        method operator icon= takes string str returns nothing
+            call MultiboardSet(this).icon(str, rc[this/250000], table2)
+        endmethod
+        method operator width= takes real percent returns nothing
+            call MultiboardSet(this).width(percent, rc[this/250000], table2)
+        endmethod
+        method operator [] takes integer column returns thistype
+            return (this*500+column)*500
+        endmethod
+
+    endstruct
+
+    struct MultiboardRow extends array
+
+        method operator count takes nothing returns integer
+            return MultiboardGetRowCount(boardp[this])
+        endmethod
+        method operator count= takes integer rows returns nothing
+            call Multiboard(this).clearItems()
+            call MultiboardSetRowCount(boardp[this], rows)
+            set rc[this] = rows
+            call Multiboard(this).getItems()
+        endmethod
+        method operator text= takes string value returns nothing
+            call MultiboardSet(this).text(value, cc[this/250000], table)
+        endmethod
+        method setColor takes integer red, integer green, integer blue, integer alpha returns nothing
+            call MultiboardSet(this).color(red, green, blue, alpha, cc[this/250000], table)
+        endmethod
+        method setStyle takes boolean showValue, boolean showIcon returns nothing
+            call MultiboardSet(this).style(showValue, showIcon, cc[this/250000], table)
+        endmethod
+        method operator icon= takes string str returns nothing
+            call MultiboardSet(this).icon(str, cc[this/250000], table)
+        endmethod
+        method operator width= takes real percent returns nothing
+            call MultiboardSet(this).width(percent,cc[this/250000], table)
+        endmethod
+        method operator [] takes integer row returns thistype
+            return (this*500+row)*500
+        endmethod
+
+    endstruct
+
+    private struct Multiboard2D extends array
+
+        method operator [] takes integer column returns MultiboardItem
+            return this*500+column
+        endmethod
+
+    endstruct
+
 endlibrary
 library NokladrLib uses Colors, Logs, optional UnitRecycler  // Library by Nokladr https://github.com/Igneaalis/MIX
     globals
@@ -2892,6 +3372,247 @@ library UnitRecycler initializer UnitRecyclerInit uses Colors, ArcingTextTag, Lo
     endfunction
     
 endlibrary
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     01.11.2020 21:19       =
+=============================================
+
+Реализация окна победы/поражения.
+
+*/
+
+
+function defeat_quit takes nothing returns nothing
+    call EndGame(true)
+endfunction
+
+function win takes player p returns nothing
+    local trigger t = CreateTrigger()
+    local dialog  d = DialogCreate()
+    call RemovePlayer(p, PLAYER_GAME_RESULT_VICTORY)
+    if (GetPlayerController(p) == MAP_CONTROL_USER) then
+        call DialogSetMessage(d, GetLocalizedString("GAMEOVER_VICTORY_MSG"))
+        call TriggerRegisterDialogButtonEvent(t, DialogAddButton(d, GetLocalizedString("GAMEOVER_CONTINUE"), GetLocalizedHotkey("GAMEOVER_CONTINUE")))
+        call TriggerAddAction(t, function defeat_quit)
+        set t = CreateTrigger()
+        call TriggerRegisterDialogButtonEvent(t, DialogAddButton(d, GetLocalizedString("GAMEOVER_QUIT_MISSION"), GetLocalizedHotkey("GAMEOVER_QUIT_MISSION")))
+        call TriggerAddAction(t, function defeat_quit)
+        if (GetLocalPlayer() == p) then
+            call EnableUserControl(true)
+            call EnableUserUI(false)
+        endif
+        call DialogDisplay(p, d, true)
+        if (GetLocalPlayer() == p) then
+            call VolumeGroupSetVolume(SOUND_VOLUMEGROUP_UI, 1.)
+            call StartSound(bj_victoryDialogSound)
+        endif
+    endif
+    set t = null
+    set d = null
+endfunction
+
+function defeat takes player p returns nothing
+    local trigger t = CreateTrigger()
+    local dialog  d = DialogCreate()
+    call RemovePlayer(p, PLAYER_GAME_RESULT_DEFEAT)
+    if (GetPlayerController(p) == MAP_CONTROL_USER) then
+        if (Locale.evaluate() == "RU") then
+            call DialogSetMessage(d, "Вы проиграли!")
+        else
+            call DialogSetMessage(d, "You was defeated!")
+        endif
+        call TriggerRegisterDialogButtonEvent(t, DialogAddButton(d, GetLocalizedString("GAMEOVER_QUIT_MISSION"), GetLocalizedHotkey("GAMEOVER_QUIT_MISSION")))
+        call TriggerAddAction(t, function defeat_quit)
+        if (GetLocalPlayer() == p) then
+            call EnableUserControl(true)
+            call EnableUserUI(false)
+        endif
+        call DialogDisplay(p, d, true)
+        if (GetLocalPlayer() == p) then
+            call VolumeGroupSetVolume(SOUND_VOLUMEGROUP_UI, 1.)
+            call StartSound(bj_defeatDialogSound)
+        endif
+    endif
+    set t = null
+    set d = null
+endfunction
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     01.11.2020 18:41       =
+=============================================
+
+Объявление глобальных переменных
+
+*/
+
+globals
+    boolean IsDevInGame = false                                                                 // Условие: один из разработчиков в игре?
+    Table table                                                                                 // Инициализация таблицы
+    HashTable hash                                                                              // Инициализация хэш-таблицы
+    constant string strVersion = "0.0.2"                                                        // Версия карты, семантическое версионирование: (Major, Minor, Patch)
+    constant string Version = "Test"                                                            // Тип версии {Test, Release}
+    constant string strEmail = (LB + "Nostaleal.ru|r" + GOLD + "@|r" + LB + "yandex.ru|r")      // E-Mail адрес
+    constant string strDiscord = (LB + "! ! Nokladr|r" + GOLD + "#|r" + LB + "2205|r")          // Discord тэг
+    constant string strBuild_Time = "13 December 2020"                                          // Время создания билда карты
+
+    constant integer maxNumberOfPlayers = 8
+
+    constant integer count_research_for_t1 = 12                                                 // Кол-во улучшений для доступа к т1
+    constant integer count_research_for_t2 = 20                                                 // Кол-во улучшений для доступа к т2      
+
+    player array ticket_list[max_ticket_list]
+
+    // Равкоды инкам улучшений и связанных с ними способностей
+    constant integer t1_research_rc = 'R018'                                                    // 12 исследований (т2 юниты Медива)
+    constant integer t2_research_rc = 'R019'                                                    // 20 исследований (т3 юниты Медива)
+    constant integer robbery_lvl3_rc = 'R023'                                                   // Грабёж(3 уровень)
+    constant integer robbery_lvl5_rc = 'R024'                                                   // Грабёж(5 уровень)
+    constant integer robbery_rc = 'R00J'                                                        // Грабёж
+    constant integer evforev_rc = 'R00R'                                                        // Развитие ради развития
+    constant integer aggrgame_rc = 'R02K'                                                       // Агрессивная игра
+    constant integer aggrgame_aura_rc = 'S000'                                                  // Аура Агрессивной игры
+    constant integer contr_to_pl_rc = 'R027'                                                    // Вклад в игрока
+    constant integer goldmining_rc = 'R00F'                                                     // Золотодобыча
+    constant integer ticket_rc = 'R00G'                                                         // Билет
+    constant integer jewelry_rc = 'R00H'                                                        // Драгоценные камни
+    constant integer deadmoney_rc = 'R00I'                                                      // Мёртвые деньги
+    constant integer contr_rc = 'R00Q'                                                          // Вклад
+    constant integer stab_rc = 'R00S'                                                           // Стабильность
+    constant integer wait_five_minutes_rc = 'R028'                                              // Подождите 5 минут, дополнительное улучшение для Вклада в игрока
+    constant integer leadership_rc = 'R029'                                                     // Лидерство
+    constant integer cursed_mine_rc = 'R02I'                                                    // Проклятый рудник
+
+    // Равкоды
+    constant integer castle_rc = 'h01O'
+    constant integer most_point_kill_last_round = 'h023'
+    constant integer or_leadership_arena_last_round = 'h024'
+    constant integer big_mine_rc = 'n003'
+    constant integer bigMineRC = 'n003'
+    constant integer small_mine_rc = 'n004'
+    constant integer smallMineRC = 'n004'
+    constant integer flag_rc = 'n005'
+    constant integer flagRC = 'n005'
+
+    // Настройки улучшения Вклад в игрока
+    constant integer contr_to_pl_gold = 300
+    constant integer contr_to_pl_gold_mod = 100
+    constant integer contr_to_pl_lumber = 10
+    constant integer contr_to_pl_lumber_mod = 5
+    constant real contr_to_pl_time = 300 // в секундах
+    constant real contr_to_pl_multy = 2
+    
+    // Настройки улучшения Вклад
+    constant integer contr_gold = 200
+    constant integer contr_gold_mod = 100
+    constant integer contr_lumber = 8
+    constant integer contr_lumber_mod = 6
+    constant integer contr_percent = 150 // процент
+
+    // Настройки улучшения Лидерство
+    constant real leadership_bonus = 0.2
+
+    // Настройки улучшения Проклятый рудник
+    constant integer cursed_mine_percent = 3
+    constant real cursed_mine_range_damage = 700
+    constant integer cursed_mine_count_wave = 8
+    constant real cursed_mine_cast_range = 468
+    constant real cursed_mine_damage_for_lvl = 100
+
+    // Настройки улучшения Мёртвые деньги
+    constant integer deadmoney_money_for_lvl = 8
+
+    // Настройки улучшения Драгоценные камни
+    constant integer jewelry_lumber_for_lvl = 1
+
+    // Настройки улучшения Билет
+    constant integer max_ticket_list = 5
+
+    // Настройки улучшения Развитие ради развития
+    constant real evforev_bonus_res = 0.01
+    constant real evforev_bonus_res_mod = 0.01
+
+    // Настройки улучшения Агрессивная игра
+    // Аура - aggrgame_aura_rc, внутри неё менять скорость боя и перемещения
+endglobals
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     01.11.2020 18:28       =
+=============================================
+
+Главный и входной интерфейс карты.
+
+*/
+
+native GetUnitGoldCost takes integer unitid returns integer
+native GetUnitWoodCost takes integer unitid returns integer
+
+scope Main initializer Init
+
+    private function PostInit takes nothing returns nothing
+
+        // NokladrLib.j
+        call C_SetComputers.execute()
+        call StartInitTimer.execute()
+
+        call building_selling.execute()
+        
+        // Disable Damage Detection System until Fast Arena begins
+        call DisableTrigger(DDS)
+        
+        call Players_Init.execute()
+        call MIXMultiboard_Init.execute()
+        call faq_ini.execute() // Starts voting for faq guide
+
+        debug call Log("Post initialization complete!")
+        
+    endfunction
+
+    //-------------------------The very first function-------------------------
+    // Starts map initialization
+    private function Init takes nothing returns nothing
+        local trigger t = CreateTrigger()
+
+        // Инициализируем хэш-таблицу
+        set hash = HashTable.create()
+        set table = Table.create()
+
+        call TriggerRegisterTimerEventSingle(t, 0)
+        call TriggerAddAction(t, function PostInit)
+
+        set t = null
+    endfunction
+
+endscope
+scope Settings initializer Init
+
+    globals
+        integer finalWave = 15
+        integer numberOfMinigames = 8
+        
+        constant integer base_gold = 755  // Кол-во золота в начале игры
+        constant integer base_gems = 22   // Кол-во гемов в начале игры
+
+        real timeBeforeFirstWave = 60.00
+        debug constant real debugTimeBeforeFirstWave = 10.00
+    endglobals
+
+    private function Init takes nothing returns nothing
+        debug set timeBeforeFirstWave = debugTimeBeforeFirstWave
+    endfunction
+
+endscope
 // function Trig_inc_rotate_Copy_Func012Func002Func002Func001Func013A takes nothing returns nothing
     //     call ShowUnitShow(GetEnumUnit())
 // endfunction
@@ -2958,6 +3679,9 @@ scope IncomeObjects initializer Init
         endfor
 
         // call ForGroupBJ(udg_light[( udg_cycle_i - 1 )],function Trig_inc_rotate_Copy_Func012Func002Func002Func001Func013A)
+
+        set curRect = null
+        set u = null
     endfunction
 
     private function Init takes nothing returns nothing
@@ -3060,6 +3784,385 @@ scope IncomeObjectsColor initializer inc_colour
     endfunction
 
 endscope
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     01.11.2020 18:30       =
+=============================================
+
+Интерфейс внутриигровых сообщений
+
+TODO: Multiboard
+
+*/
+
+scope Messages initializer Init
+
+    private function ForUnits_OnLeave takes nothing returns nothing
+        local unit u = GetEnumUnit()
+        if (GetUnitTypeId(u) != 'hhdl' and GetUnitTypeId(u) != 'n001') then
+            // Opt. begin
+            if (IsUnitInGroup(u, udg_wave_units) == true) then
+                call GroupRemoveUnitSimple(u, udg_wave_units)
+            endif
+            if (IsUnitInGroup(u, udg_buildings) == true) then
+                call GroupRemoveUnitSimple(u, udg_buildings)
+            endif
+            // Opt. end
+            call RemoveUnit(u)
+        else
+            call SetUnitOwner(u, Player(PLAYER_NEUTRAL_PASSIVE), true)
+        endif
+        set u = null
+    endfunction
+
+    private function OnLeave takes nothing returns nothing
+        local player p = GetTriggerPlayer()
+
+        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 10, (C_IntToColor(GetPlayerId(p)) + GetPlayerName(p) + "|r " + GOLD + "покидает игру!|r"))
+        call SetPlayerTechResearchedSwap('R00J', 0, p)
+        set pdb[p].scoreboard_result = 0
+        // Opt. begin
+        call ForGroup(GetUnitsOfPlayerMatching(p, null), function ForUnits_OnLeave)
+        call ForceRemovePlayer(players, p)
+        if (p == udg_game_owner) then
+            call gameset_owner.execute()
+        endif
+        // call MultiboardSetItemValueBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetTriggerPlayer()) ), ( "|cFF9B9B9B" + udg_players_name[GetConvertedPlayerId(GetTriggerPlayer())] ) )
+        // call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetTriggerPlayer()) ), "ReplaceableTextures\\CommandButtonsDisabled\\DISBTNReplay-Loop.blp" )
+        // Opt. end
+        call defeat.execute(p)
+
+        set p = null
+    endfunction
+
+    private function OnInit takes nothing returns nothing
+        local string strTestWarning_RU  // Предупреждение к тестовому типу карты
+        local string strWarning_RU      // Предупреждение к тестовому типу карты
+        local string strVar_RU          // Итоговое сообщение о типе карты
+        local string Feedback_RU        // Сообщение об обратной связи с создателями карты
+
+        // Аналогично, но только по-английски.
+        local string strTestWarning_EN
+        local string strWarning_EN
+        local string strVar_EN
+        local string Feedback_EN
+
+        local integer i
+
+
+        static if (not DEBUG_MODE) then
+            // Отображает strVar_** в зависимости от типа карты
+            set strTestWarning_RU = "В данной версии вы можете увидеть десинхронизацию, баги, неправильную работу способностей и ошиКБи в словах."
+            set strWarning_RU = (RED + "Внимание:|r " + "вы играете в " + Version + " версию " + strVersion + ". ")
+            set strTestWarning_EN = "In this version you can experience desyncs, bugs, and miTSakes in localization."
+            set strWarning_EN = (RED + "Caution:|r " + "you are playing in " + Version + " version " + strVersion + ". ")
+            if (Version == "Test") then
+                set strVar_RU = strWarning_RU + strTestWarning_RU + "\n "
+                set strVar_EN = strWarning_EN + strTestWarning_EN + "\n "
+            elseif (Version == "Release") then
+                set strVar_RU = "Вы играете в " + GREEN + "стабильную|r " + strVersion + " версию.\n "
+                set strVar_EN = "You are playing in " + GREEN + "stable|r " + strVersion + " version.\n "
+            endif
+            if (Locale.evaluate() == "RU") then
+                call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 25, strVar_RU)
+            else
+                call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 25, strVar_EN)
+            endif
+
+            // Сообщение об обратной связи
+            set Feedback_RU = "Связь со мной: " + strEmail + " и Discord: " + strDiscord + "\n "
+            set Feedback_EN = "My contacts: " + strEmail + " and Discord: " + strDiscord + "\n "
+            if (Locale.evaluate() == "RU") then
+                call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_RU)
+            else
+                call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_EN)
+            endif
+
+            // Условие: один из разработчиков в игре?
+            for i = 0 to maxNumberOfPlayers - 1
+                if (GetPlayerName(Player(i)) == "Nokladr" or GetPlayerName(Player(i)) == "Nokladr#2429") then
+                    if (Locale.evaluate() == "RU") then
+                        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 35, ("С вами играет создатель данной карты, " + C_IntToColor(i) + "Nokladr#2429" + "|r. Критика приветствуется :)\n "))
+                    else
+                        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 35, ("You are playing with author, " + C_IntToColor(i) + "Nokladr#2429" + "|r. Any feedback is welcome :)\n "))
+                    endif
+                    set IsDevInGame = true
+                endif
+            endfor
+        endif
+
+        set strTestWarning_RU = null
+        set strWarning_RU = null
+        set strVar_RU = null
+        set Feedback_RU = null
+        set strTestWarning_EN = null
+        set strWarning_EN = null
+        set strVar_EN = null
+        set Feedback_EN = null
+    endfunction
+
+    private function Init takes nothing returns nothing
+        local trigger t = CreateTrigger()
+
+        call TriggerRegisterPlayerEvent(t, Player(0x00), EVENT_PLAYER_LEAVE)
+        call TriggerRegisterPlayerEvent(t, Player(0x01), EVENT_PLAYER_LEAVE)
+        call TriggerRegisterPlayerEvent(t, Player(0x02), EVENT_PLAYER_LEAVE)
+        call TriggerRegisterPlayerEvent(t, Player(0x03), EVENT_PLAYER_LEAVE)
+        call TriggerRegisterPlayerEvent(t, Player(0x04), EVENT_PLAYER_LEAVE)
+        call TriggerRegisterPlayerEvent(t, Player(0x05), EVENT_PLAYER_LEAVE)
+        call TriggerRegisterPlayerEvent(t, Player(0x06), EVENT_PLAYER_LEAVE)
+        call TriggerRegisterPlayerEvent(t, Player(0x07), EVENT_PLAYER_LEAVE)
+        call TriggerAddAction(t, function OnLeave)
+
+        call OnInit.execute()
+
+        set t = null
+    endfunction
+
+endscope
+scope Casino initializer Init
+
+    globals
+        
+    endglobals
+
+    private function Init takes nothing returns nothing
+        local integer i
+        local integer j
+        local unit lastCreatedUnit = null
+
+        // Миниигра казино
+        set udg_r = 0
+        set i = 1
+        loop
+            exitwhen i > 3
+            set j = 1
+            loop
+                exitwhen j > 5
+                set udg_r = udg_r + 1
+                // Opt. begin
+                // 'n001' - Circle of Power
+                set lastCreatedUnit = CreateUnitAtLoc(Player(PLAYER_NEUTRAL_PASSIVE), 'n001', PolarProjectionBJ(PolarProjectionBJ(GetRectCenter(gg_rct_circle), (-256.00 + (256.00 * I2R(i))), 270.00), (-256.00 + (256.00 * I2R(j))), 0), bj_UNIT_FACING)
+                call SetUnitUserData(lastCreatedUnit, udg_r)
+                if (ModuloInteger(udg_r, 2) == 1) then
+                    // Z offset = 0
+                    // Font size = 11
+                    // Red =    100%
+                    // Green =  10%
+                    // Blue =   10%
+                    // Transparency = 0%
+                    call CreateTextTagUnitBJ(I2S(udg_r), lastCreatedUnit, 0, 11.00, 100, 10.00, 10.00, 0)
+                    call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), players)
+                    call SetUnitColor(lastCreatedUnit, PLAYER_COLOR_RED)
+                else
+                    call CreateTextTagUnitBJ(I2S(udg_r), lastCreatedUnit, 0, 11.00, 10.00, 10.00, 10.00, 0)
+                    call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), players)
+                    call SetUnitColor(lastCreatedUnit, PLAYER_COLOR_MAROON)
+                endif
+                // Opt. end
+                set j = j + 1
+            endloop
+            set i = i + 1
+        endloop
+
+        set lastCreatedUnit = null
+    endfunction
+
+endscope
+scope Minigames initializer Init
+
+    globals
+        
+    endglobals
+
+    private function Conditions takes nothing returns boolean
+        local integer i = 0
+        if (udg_random_log == true) then
+            return false
+        endif
+        loop
+            exitwhen i > 8
+            if (udg_wave_mini[i] == (udg_r * 2)) then
+                return false
+            endif
+            set i = i + 1
+        endloop
+        return true
+    endfunction
+
+    private function Init takes nothing returns nothing
+        local integer i
+
+        // Что-то связанное с минииграми
+        set i = 0
+        loop
+            exitwhen i > udg_mini_game_max
+            if (i != 1) then
+                // Если не миниигра с боссом, то
+                set udg_random_log = false
+                loop // Заполняем wave_mini[] рандомными, неповторяющимися числами (2, 4, 6, ..., 18) - волны, когда будут миниигры. mode = 1 (стандартный режим)
+                    exitwhen udg_random_log
+                    set udg_r = GetRandomInt(1, (udg_mini_game_max + 1)) // От 1 до 9 (кол-во миниигр)
+                    if (Conditions()) then
+                        set udg_random_log = true
+                        set udg_wave_mini[i] = udg_r * 2
+                    endif
+                endloop
+            endif
+            set i = i + 1
+        endloop
+    endfunction
+
+endscope
+scope MIXMultiboard
+
+    globals
+        Multiboard mbstruct
+        MIXMB mb
+        MIXMBRow playerMIXMBRow
+        private integer curRow = 0
+    endglobals
+
+    struct MIXMB
+        MIXMBRow array playerMIXMBRow[8]
+
+        method operator [] takes player p returns MIXMBRow
+            local integer playerId = GetPlayerId(p)
+            return playerMIXMBRow[playerId]
+        endmethod
+    endstruct
+
+    struct MIXMBRow
+        integer row
+
+        static method create takes integer playerRow returns MIXMBRow
+            local MIXMBRow mmbrow = MIXMBRow.allocate()
+            set mmbrow.row = playerRow
+            return mmbrow
+        endmethod
+
+        method operator icon= takes string icon returns nothing
+            set mbstruct[this.row][0].icon = icon
+        endmethod
+
+        method operator name= takes string name returns nothing
+            set mbstruct[this.row][0].text = name
+        endmethod
+
+        method operator kills= takes integer kills returns nothing
+            set mbstruct[this.row][1].text = I2S(kills)
+        endmethod
+
+        method operator upgrades= takes integer upgrades returns nothing
+            set mbstruct[this.row][2].text = I2S(upgrades)
+        endmethod
+        
+        method operator castles= takes integer castles returns nothing
+            set mbstruct[this.row][3].text = I2S(castles)
+        endmethod
+
+        method operator points= takes integer points returns nothing
+            set mbstruct[this.row][4].text = I2S(points)
+        endmethod
+
+    endstruct
+
+    private function CreateMIXMBRows takes nothing returns nothing
+        local player p = GetEnumPlayer()
+        local integer playerId = GetPlayerId(p)
+
+        set curRow = curRow + 1
+        set mb.playerMIXMBRow[playerId] = MIXMBRow.create(curRow)
+
+        set p = null
+    endfunction
+
+    private function ForPlayer takes nothing returns nothing
+        local player p = GetEnumPlayer()
+        local integer playerId = GetPlayerId(p)
+
+        set mb[p].name = C_IntToColor(playerId) + GetPlayerName(p) + "|r"
+        debug set mb[p].kills = 100
+        debug set mb[p].upgrades = 100
+        debug set mb[p].castles = 100
+        debug set mb[p].points = 100
+
+        set p = null
+    endfunction
+
+    public function Init takes nothing returns nothing
+        local integer i
+        local integer numberofPlayers = CountPlayersInForceBJ(players)
+
+        set mbstruct = Multiboard.create(1 + numberofPlayers, 6)
+        set mb = MIXMB.create()
+
+        call mbstruct.setStyle(true, false)
+
+        set mbstruct.title = "Волна #" + I2S(curWave)
+        call mbstruct.row[0].setStyle(true, true)
+        call mbstruct.column[0].setStyle(true, true)
+        set mbstruct[0][0].text = "Имя игрока"
+        call mbstruct[0][0].setStyle(true, false)
+        set mbstruct.column[0].width = 0.12
+        set mbstruct.column[0].icon = "ReplaceableTextures\\CommandButtons\\BTNRallyPoint.blp"
+        set mbstruct[0][1].icon = "ReplaceableTextures\\CommandButtons\\BTNAttack.blp"
+        set mbstruct[0][2].icon = "ReplaceableTextures\\CommandButtons\\BTNSpy.blp"
+        set mbstruct[0][3].icon = "ReplaceableTextures\\CommandButtons\\BTNCastle.blp"
+        set mbstruct[0][4].icon = "ReplaceableTextures\\CommandButtons\\BTNOrcCaptureFlag.blp"
+        set mbstruct[0][5].icon = "ReplaceableTextures\\CommandButtons\\BTNTransmute.blp"
+        
+        call ForForce(players, function CreateMIXMBRows)
+        call ForForce(players, function ForPlayer)
+
+        
+        set mbstruct.display = true
+    endfunction
+
+endscope
+scope Players
+
+    globals
+        force players = CreateForce()
+    endglobals
+    
+    private function ForPlayer takes nothing returns nothing
+        local player p = GetEnumPlayer()
+        local real x = GetPlayerStartLocationX(p)
+        local real y = GetPlayerStartLocationY(p)
+        
+        call CameraSetupApplyForPlayer(true, gg_cam_logic, p, 0)
+
+        if (GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING and GetPlayerController(p) == MAP_CONTROL_USER) then
+            call SetPlayerState(p, PLAYER_STATE_GIVES_BOUNTY, 1)
+
+            call ForceAddPlayer(players, p)
+
+            call CreateUnitEx(p, 'ntav', x, y, bj_UNIT_FACING) // Таверна с расами на выбор
+            call CreateUnitEx(p, 'h001', x, y, bj_UNIT_FACING) // Юнит "Выбор героя"
+            call CreateUnitEx(p, 'h029', x, y, bj_UNIT_FACING) // Юнит "Не более 1 погодного эффекта в раунде"
+
+            call AddGoldToPlayer(100, p) // Золото на выбор расы в таверне
+
+            call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_all, true, false)) // Поле битвы
+            call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_minersregion, true, false)) // Миниигра "Минёры"
+            call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_fastarena, true, false)) // Миниарена
+            call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_horseregion, true, false)) // Миниигра "Конные бега"
+            call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_roulette, true, false)) // Миниигра "Казино"
+        endif
+
+        set p = null
+    endfunction
+
+    public function Init takes nothing returns nothing
+        call ForForce(bj_FORCE_ALL_PLAYERS, function ForPlayer)
+    endfunction
+
+endscope
 scope Arena initializer Init
 
     globals
@@ -3116,7 +4219,7 @@ scope Arena initializer Init
 
         set i = 0
         loop
-            exitwhen i >= numberOfPlayers
+            exitwhen i >= maxNumberOfPlayers
             set startRectForPlayer[i] = null
             set i = i + 1
         endloop
@@ -3144,7 +4247,7 @@ scope Arena initializer Init
 
         set i = 0
         loop
-            exitwhen i >= numberOfPlayers
+            exitwhen i >= maxNumberOfPlayers
 
             if GetPlayerSlotState(Player(i)) == PLAYER_SLOT_STATE_PLAYING then
                 set random = GetRandomInt(0, rectListSize - 1)
@@ -3169,7 +4272,7 @@ scope Arena initializer Init
             set i = i + 1
         endloop
 
-        call ForForce(udg_players_group, function ForPlayer)
+        call ForForce(players, function ForPlayer)
         call TimerStart(t, Arena_Time, false, function Timer_OnExpire)
         set Arena_TimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
         call TimerDialogSetTitle(Arena_TimerDialog, "Арена") // Title of timer dialog
@@ -3200,6 +4303,7 @@ scope FastArena initializer Init
         private real array damageByPlayer
         private real timerTime
         private rect curRect
+        private constant real firePitPercentDamage = 10.00
         
         real FA_Time = 60.00
         real FA_DebugTime = 10.00
@@ -3247,8 +4351,8 @@ scope FastArena initializer Init
     endfunction
 
     private function FirePitDoDamage takes nothing returns nothing
-        if (GetUnitLifePercent(GetEnumUnit()) > 4.00) then
-            call SetUnitLifePercentBJ(GetEnumUnit(),(GetUnitLifePercent(GetEnumUnit()) - 4.00))
+        if (GetUnitLifePercent(GetEnumUnit()) > firePitPercentDamage) then
+            call SetUnitLifePercentBJ(GetEnumUnit(),(GetUnitLifePercent(GetEnumUnit()) - firePitPercentDamage))
         endif
     endfunction
 
@@ -3256,7 +4360,7 @@ scope FastArena initializer Init
         local integer i = 1
         local integer curPlayerId = 0
         loop
-            exitwhen i >= numberOfPlayers
+            exitwhen i >= maxNumberOfPlayers
             if damageByPlayer[i] > damageByPlayer[curPlayerId] then
                 set curPlayerId = i
             endif
@@ -3268,7 +4372,7 @@ scope FastArena initializer Init
     private function Flush takes nothing returns nothing
         local integer i = 0
         loop
-            exitwhen i >= numberOfPlayers
+            exitwhen i >= maxNumberOfPlayers
             call GroupClear(unitGroup[i])
             set unitsInGroup[i] = 0
             set damageByPlayer[i] = 0
@@ -3349,7 +4453,7 @@ scope FastArena initializer Init
             set j = 1
             set curPlayerId = 0
             loop
-                exitwhen j >= numberOfPlayers
+                exitwhen j >= maxNumberOfPlayers
                 if unitsInGroup[j] > unitsInGroup[curPlayerId] then
                     set curPlayerId = j
                 endif
@@ -3409,7 +4513,7 @@ scope FastArena initializer Init
         
         set i = 0
         loop
-            exitwhen i >= numberOfPlayers
+            exitwhen i >= maxNumberOfPlayers
             call SetPlayerState(Player(i), PLAYER_STATE_GIVES_BOUNTY, 1)
             set i = i + 1
         endloop
@@ -3424,7 +4528,7 @@ scope FastArena initializer Init
 
         set i = 0
         loop
-            exitwhen i >= numberOfPlayers
+            exitwhen i >= maxNumberOfPlayers
             set unitGroup[i] = CreateGroup()
             set i = i + 1
         endloop
@@ -3468,6 +4572,9 @@ scope NextWave
     public function Force takes nothing returns nothing
         local timer t = CreateTimer()
         local integer i
+
+        set curWave = curWave + 1
+
         call ForGroup(udg_wave_units, function C_RemoveEnumUnits)
         call GroupClear(udg_wave_units)
         call ForGroup(udg_castle_unit, function C_RemoveEnumUnits)
@@ -3482,7 +4589,7 @@ scope NextWave
             endif
         endfor
 
-        call ForForce(udg_players_group, function ForPlayer)
+        call ForForce(players, function ForPlayer)
 
         call TimerStart(t, relaxWaveTime, false, function Timer_OnExprie)
         set relaxWaveTimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
@@ -3493,637 +4600,16 @@ scope NextWave
     endfunction
 
 endscope
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     01.11.2020 21:19       =
-=============================================
-
-Реализация окна победы/поражения.
-
-*/
-
-
-function defeat_quit takes nothing returns nothing
-    call EndGame(true)
-endfunction
-
-function win takes player p returns nothing
-    local trigger t = CreateTrigger()
-    local dialog  d = DialogCreate()
-    call RemovePlayer(p, PLAYER_GAME_RESULT_VICTORY)
-    if (GetPlayerController(p) == MAP_CONTROL_USER) then
-        call DialogSetMessage(d, GetLocalizedString("GAMEOVER_VICTORY_MSG"))
-        call TriggerRegisterDialogButtonEvent(t, DialogAddButton(d, GetLocalizedString("GAMEOVER_CONTINUE"), GetLocalizedHotkey("GAMEOVER_CONTINUE")))
-        call TriggerAddAction(t, function defeat_quit)
-        set t = CreateTrigger()
-        call TriggerRegisterDialogButtonEvent(t, DialogAddButton(d, GetLocalizedString("GAMEOVER_QUIT_MISSION"), GetLocalizedHotkey("GAMEOVER_QUIT_MISSION")))
-        call TriggerAddAction(t, function defeat_quit)
-        if (GetLocalPlayer() == p) then
-            call EnableUserControl(true)
-            call EnableUserUI(false)
-        endif
-        call DialogDisplay(p, d, true)
-        if (GetLocalPlayer() == p) then
-            call VolumeGroupSetVolume(SOUND_VOLUMEGROUP_UI, 1.)
-            call StartSound(bj_victoryDialogSound)
-        endif
-    endif
-    set t = null
-    set d = null
-endfunction
-
-function defeat takes player p returns nothing
-    local trigger t = CreateTrigger()
-    local dialog  d = DialogCreate()
-    call RemovePlayer(p, PLAYER_GAME_RESULT_DEFEAT)
-    if (GetPlayerController(p) == MAP_CONTROL_USER) then
-        if (Locale.evaluate() == "RU") then
-            call DialogSetMessage(d, "Вы проиграли!")
-        else
-            call DialogSetMessage(d, "You was defeated!")
-        endif
-        call TriggerRegisterDialogButtonEvent(t, DialogAddButton(d, GetLocalizedString("GAMEOVER_QUIT_MISSION"), GetLocalizedHotkey("GAMEOVER_QUIT_MISSION")))
-        call TriggerAddAction(t, function defeat_quit)
-        if (GetLocalPlayer() == p) then
-            call EnableUserControl(true)
-            call EnableUserUI(false)
-        endif
-        call DialogDisplay(p, d, true)
-        if (GetLocalPlayer() == p) then
-            call VolumeGroupSetVolume(SOUND_VOLUMEGROUP_UI, 1.)
-            call StartSound(bj_defeatDialogSound)
-        endif
-    endif
-    set t = null
-    set d = null
-endfunction
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     01.11.2020 18:41       =
-=============================================
-
-Объявление глобальных переменных
-
-*/
-
-globals
-    boolean IsDevInGame = false                                                                 // Условие: один из разработчиков в игре?
-    Table table                                                                                 // Инициализация таблицы
-    HashTable hash                                                                              // Инициализация хэш-таблицы
-    constant string strVersion = "0.0.2"                                                        // Версия карты, семантическое версионирование: (Major, Minor, Patch)
-    constant string Version = "Test"                                                            // Тип версии {Test, Release}
-    constant string strEmail = (LB + "Nostaleal.ru|r" + GOLD + "@|r" + LB + "yandex.ru|r")      // E-Mail адрес
-    constant string strDiscord = (LB + "! ! Nokladr|r" + GOLD + "#|r" + LB + "2205|r")          // Discord тэг
-    constant string strBuild_Time = "13 December 2020"                                          // Время создания билда карты
-
-    debug constant real debugTimeBeforeFirstWave = 10.00                                        // Время перед началом первой волны
-
-    leaderboard Leaderboard                                                                     // Таблица лидеров
-
-    constant integer numberOfPlayers = 8
-    constant integer finalWave = 15
-    constant integer numberOfMinigames = 8
+scope Waves initializer Init
     
-    constant integer base_gold = 755                                                            // Кол-во золота в начале игры
-    constant integer base_gems = 22                                                             // Кол-во гемов в начале игры
-
-    constant integer incSpellrc_count = 14                                                      // Кол-во инкам способностей(значение увеличено на 1 для удобства)
-    constant integer count_research_for_t1 = 12                                                 // Кол-во улучшений для доступа к т1
-    constant integer count_research_for_t2 = 20                                                 // Кол-во улучшений для доступа к т2      
-    constant integer max_players = 8                                                            // Максимальное кол-во игроков
-
-    integer array incSpellrc[incSpellrc_count]                                                  // Массив инкам способностей(заполнение в Main.j, function map_init)
-    player array ticket_list[max_ticket_list]
-
-    // Равкоды инкам улучшений и связанных с ними способностей
-    constant integer t1_research_rc = 'R018'                                                    // 12 исследований (т2 юниты Медива)
-    constant integer t2_research_rc = 'R019'                                                    // 20 исследований (т3 юниты Медива)
-    constant integer robbery_lvl3_rc = 'R023'                                                   // Грабёж(3 уровень)
-    constant integer robbery_lvl5_rc = 'R024'                                                   // Грабёж(5 уровень)
-    constant integer robbery_rc = 'R00J'                                                        // Грабёж
-    constant integer evforev_rc = 'R00R'                                                        // Развитие ради развития
-    constant integer aggrgame_rc = 'R02K'                                                       // Агрессивная игра
-    constant integer aggrgame_aura_rc = 'S000'                                                  // Аура Агрессивной игры
-    constant integer contr_to_pl_rc = 'R027'                                                    // Вклад в игрока
-    constant integer goldmining_rc = 'R00F'                                                     // Золотодобыча
-    constant integer ticket_rc = 'R00G'                                                         // Билет
-    constant integer jewelry_rc = 'R00H'                                                        // Драгоценные камни
-    constant integer deadmoney_rc = 'R00I'                                                      // Мёртвые деньги
-    constant integer contr_rc = 'R00Q'                                                          // Вклад
-    constant integer stab_rc = 'R00S'                                                           // Стабильность
-    constant integer wait_five_minutes_rc = 'R028'                                              // Подождите 5 минут, дополнительное улучшение для Вклада в игрока
-    constant integer leadership_rc = 'R029'                                                     // Лидерство
-    constant integer cursed_mine_rc = 'R02I'                                                    // Проклятый рудник
-
-    // Равкоды
-    constant integer castle_rc = 'h01O'
-    constant integer most_point_kill_last_round = 'h023'
-    constant integer or_leadership_arena_last_round = 'h024'
-    constant integer big_mine_rc = 'n003'
-    constant integer bigMineRC = 'n003'
-    constant integer small_mine_rc = 'n004'
-    constant integer smallMineRC = 'n004'
-    constant integer flag_rc = 'n005'
-    constant integer flagRC = 'n005'
-
-    // Настройки улучшения Вклад в игрока
-    constant integer contr_to_pl_gold = 300
-    constant integer contr_to_pl_gold_mod = 100
-    constant integer contr_to_pl_lumber = 10
-    constant integer contr_to_pl_lumber_mod = 5
-    constant real contr_to_pl_time = 300 // в секундах
-    constant real contr_to_pl_multy = 2
+    globals
+        integer curWave = 0
+    endglobals
     
-    // Настройки улучшения Грабёж, заполнение массива в Main.j
-    constant integer robbery_pr_count = 7
-    real array robbery_pr_f[robbery_pr_count]
-    real array robbery_pr_s[robbery_pr_count]
-
-    // Настройки улучшения Вклад
-    constant integer contr_gold = 200
-    constant integer contr_gold_mod = 100
-    constant integer contr_lumber = 8
-    constant integer contr_lumber_mod = 6
-    constant integer contr_percent = 150 // процент
-
-    // Настройки улучшения Стабильность, заполнение массива в Main.j
-    constant integer stab_count = 7
-    real array stab_time_gold[stab_count]
-    real array stab_time_lumber[stab_count]
-    integer array stab_gold[stab_count]
-    integer array stab_lumber[stab_count]
-    timer array stab_timer_gold[max_players]
-    timer array stab_timer_lumber[max_players]
-
-    // Настройки улучшения Лидерство
-    constant real leadership_bonus = 0.2
-
-    // Настройки улучшения Проклятый рудник
-    constant integer cursed_mine_percent = 3
-    constant real cursed_mine_range_damage = 700
-    constant integer cursed_mine_count_wave = 8
-    constant real cursed_mine_cast_range = 468
-    constant real cursed_mine_damage_for_lvl = 100
-
-    // Настройки улучшения Мёртвые деньги
-    constant integer deadmoney_money_for_lvl = 8
-
-    // Настройки улучшения Драгоценные камни
-    constant integer jewelry_lumber_for_lvl = 1
-
-    // Настройки улучшения Билет
-    constant integer max_ticket_list = 5
-
-    // Настройки улучшения Золотодобыча, заполнение массива в Main.j
-    constant integer goldmining_count = 6
-    integer array goldmining_main_mine[goldmining_count]
-    integer array goldmining_extra_mine[goldmining_count]
-    integer array goldmining_income[goldmining_count]
-
-    // Настройки улучшения Развитие ради развития
-    constant real evforev_bonus_res = 0.01
-    constant real evforev_bonus_res_mod = 0.01
-
-    // Настройки улучшения Агрессивная игра
-    // Аура - aggrgame_aura_rc, внутри неё менять скорость боя и перемещения
-endglobals
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     08.11.2020 19:46       =
-=============================================
-
-initialization in game Trigger
-
-Sets mini games' waves, players' constants and units.
-
-*/
-
-scope InitInGame
-
-    function initialization_in_game_wave_mini_condition takes nothing returns boolean
-        local integer i = 0
-        if (udg_random_log == true) then
-            return false
-        endif
-        loop
-            exitwhen i > 8
-            if (udg_wave_mini[i] == (udg_r * 2)) then
-                return false
-            endif
-            set i = i + 1
-        endloop
-        return true
-    endfunction
-
-    function initialization_in_game_players takes nothing returns nothing
-        local player p = GetEnumPlayer()
-        local real x = GetPlayerStartLocationX(p)
-        local real y = GetPlayerStartLocationY(p)
-        
-        call CameraSetupApplyForPlayer(true, gg_cam_logic, p, 0)
-        if (GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING and GetPlayerController(p) == MAP_CONTROL_USER) then
-            call SetPlayerState(p, PLAYER_STATE_GIVES_BOUNTY, 1)
-            call ForceAddPlayer(udg_players_group, p)
-            set udg_players_name[GetConvertedPlayerId(p)] = GetPlayerName(p)
-            set udg_info[GetConvertedPlayerId(p)] = true
-            set udg_income_gold[GetConvertedPlayerId(p)] = 240
-            set udg_income_wood[GetConvertedPlayerId(p)] = 8
-            set udg_leader_kf[GetConvertedPlayerId(p)] = 1.00
-            set udg_leader_wins[GetConvertedPlayerId(p)] = 0
-            set udg_changeSet[GetConvertedPlayerId(p)] = 3
-            call CreateUnitEx(p, 'ntav', x, y, bj_UNIT_FACING) // Таверна с расами на выбор
-            call CreateUnitEx(p, 'h001', x, y, bj_UNIT_FACING) // Юнит "Выбор героя"
-            call CreateUnitEx(p, 'h029', x, y, bj_UNIT_FACING) // Юнит "Не более 1 погодного эффекта в раунде"
-            call AddGoldToPlayer(100, p) // Золото на выбор расы в таверне
-            call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_all, true, false)) // Поле битвы
-            call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_minersregion, true, false)) // Миниигра "Минёры"
-            call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_fastarena, true, false)) // Миниарена
-            call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_horseregion, true, false)) // Миниигра "Конные бега"
-            call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_roulette, true, false)) // Миниигра "Казино"
-        endif
-
-        set p = null
-    endfunction
-
-    function initialization_in_game takes nothing returns nothing
-        local integer i = 0
-        local integer j = 0
-        local unit lastCreatedUnit = null
-        set udg_gg = 15 // Финальная волна
-        set udg_mini_game_max = 8 // Максимальное кол-во миниигр за игру
-        set udg_wave_mini[1] = 4 // Волна с боссом
-        set udg_const_point[0] = 3
-        set udg_const_point[1] = 6
-        set udg_gameset_time_first = 60.00 // Таймер начала до первой волны
-        debug set udg_gameset_time_first = debugTimeBeforeFirstWave
-        
-        // Что-то связанное с минииграми
-        loop
-            exitwhen i > udg_mini_game_max
-            if (i != 1) then
-                // Если не миниигра с боссом, то
-                set udg_random_log = false
-                loop // Заполняем wave_mini[] рандомными, неповторяющимися числами (2, 4, 6, ..., 18) - волны, когда будут миниигры. mode = 1 (стандартный режим)
-                    exitwhen udg_random_log
-                    set udg_r = GetRandomInt(1, (udg_mini_game_max + 1)) // От 1 до 9 (кол-во миниигр)
-                    if (initialization_in_game_wave_mini_condition()) then
-                        set udg_random_log = true
-                        set udg_wave_mini[i] = udg_r * 2
-                    endif
-                endloop
-            endif
-            set i = i + 1
-        endloop
-        
-        call ForForce(bj_FORCE_ALL_PLAYERS, function initialization_in_game_players)
-        
-        call faq_ini() // Starts voting for faq guide
-
-        // Миниигра казино
-        set udg_r = 0
-        set i = 1
-        loop
-            exitwhen i > 3
-            set j = 1
-            loop
-                exitwhen j > 5
-                set udg_r = udg_r + 1
-                // Opt. begin
-                // 'n001' - Circle of Power
-                set lastCreatedUnit = CreateUnitAtLoc(Player(PLAYER_NEUTRAL_PASSIVE), 'n001', PolarProjectionBJ(PolarProjectionBJ(GetRectCenter(gg_rct_circle), (-256.00 + (256.00 * I2R(i))), 270.00), (-256.00 + (256.00 * I2R(j))), 0), bj_UNIT_FACING)
-                call SetUnitUserData(lastCreatedUnit, udg_r)
-                if (ModuloInteger(udg_r, 2) == 1) then
-                    // Z offset = 0
-                    // Font size = 11
-                    // Red =    100%
-                    // Green =  10%
-                    // Blue =   10%
-                    // Transparency = 0%
-                    call CreateTextTagUnitBJ(I2S(udg_r), lastCreatedUnit, 0, 11.00, 100, 10.00, 10.00, 0)
-                    call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), udg_players_group)
-                    call SetUnitColor(lastCreatedUnit, PLAYER_COLOR_RED)
-                else
-                    call CreateTextTagUnitBJ(I2S(udg_r), lastCreatedUnit, 0, 11.00, 10.00, 10.00, 10.00, 0)
-                    call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), udg_players_group)
-                    call SetUnitColor(lastCreatedUnit, PLAYER_COLOR_MAROON)
-                endif
-                // Opt. end
-                set j = j + 1
-            endloop
-            set i = i + 1
-        endloop
-
-        set lastCreatedUnit = null
-    endfunction
-
-endscope
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     01.11.2020 18:30       =
-=============================================
-
-*/
-
-function Locale takes nothing returns string
-    local string s = GetLocalizedString("CHEATENABLED")
-    if (s == "Чит включен!") then
-        set s = "RU"
-    else
-        set s = "EN"
-    endif
-    return s
-
-endfunction
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     01.11.2020 18:28       =
-=============================================
-
-Главный и входной интерфейс карты.
-
-*/
-
-native GetUnitGoldCost takes integer unitid returns integer
-native GetUnitWoodCost takes integer unitid returns integer
-
-scope Main initializer MainInit
-  
-    function map_init takes nothing returns nothing
-        local string strTestWarning_RU  // Предупреждение к тестовому типу карты
-        local string strWarning_RU      // Предупреждение к тестовому типу карты
-        local string strVar_RU          // Итоговое сообщение о типе карты
-        local string Feedback_RU        // Сообщение об обратной связи с создателями карты
-
-        // Аналогично, но только по-английски.
-        local string strTestWarning_EN
-        local string strWarning_EN
-        local string strVar_EN
-        local string Feedback_EN
-
-        local integer i = 0
-
-
-        static if (not DEBUG_MODE) then
-            // Отображает strVar_** в зависимости от типа карты
-            set strTestWarning_RU = "В данной версии вы можете увидеть десинхронизацию, баги, неправильную работу способностей и ошиКБи в словах."
-            set strWarning_RU = (RED + "Внимание:|r " + "вы играете в " + Version + " версию " + strVersion + ". ")
-            set strTestWarning_EN = "In this version you can experience desyncs, bugs, and miTSakes in localization."
-            set strWarning_EN = (RED + "Caution:|r " + "you are playing in " + Version + " version " + strVersion + ". ")
-            if (Version != "" and strVersion != "") then
-                if (Version == "Test") then
-                    set strVar_RU = strWarning_RU + strTestWarning_RU + "\n "
-                    set strVar_EN = strWarning_EN + strTestWarning_EN + "\n "
-                elseif (Version == "Release") then
-                    set strVar_RU = "Вы играете в " + GREEN + "стабильную|r " + strVersion + " версию.\n "
-                    set strVar_EN = "You are playing in " + GREEN + "stable|r " + strVersion + " version.\n "
-                endif
-                if (Locale.evaluate() == "RU") then
-                    call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 25, strVar_RU)
-                else
-                    call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 25, strVar_EN)
-                endif
-            endif
-
-            // Сообщение об обратной связи
-            set Feedback_RU = "Связь со мной: " + strEmail + " и Discord: " + strDiscord + "\n "
-            set Feedback_EN = "My contacts: " + strEmail + " and Discord: " + strDiscord + "\n "
-            if (Locale.evaluate() == "RU") then
-                call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_RU)
-            else
-                call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 30, Feedback_EN)
-            endif
-
-            // Условие: один из разработчиков в игре?
-            loop
-                exitwhen (i > 11)
-                if (GetPlayerName(Player(i)) == "Nokladr" or GetPlayerName(Player(i)) == "Nokladr#2429") then
-                    if (Locale.evaluate() == "RU") then
-                        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 35, ("С вами играет создатель данной карты, " + C_IntToColor(i) + "Nokladr#2429" + "|r. Критика приветствуется :)\n "))
-                    else
-                        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 35, ("You are playing with author, " + C_IntToColor(i) + "Nokladr#2429" + "|r. Any feedback is welcome :)\n "))
-                    endif
-                    set IsDevInGame = true
-                endif
-                set i = i + 1
-            endloop
-        endif
-
-        // Инициализируем хэш-таблицу
-        set hash = HashTable.create()
-        set table = Table.create()
-
-        // Заполнение массива incSpellrc равкодами инкам способностей
-        set incSpellrc[1] = 'R00F'
-        set incSpellrc[2] = 'R00G'
-        set incSpellrc[3] = 'R00H'
-        set incSpellrc[4] = 'R00I'
-        set incSpellrc[5] = 'R00J'
-        set incSpellrc[6] = 'R00Q'
-        set incSpellrc[7] = 'R00R'
-        set incSpellrc[8] = 'R00S'
-        set incSpellrc[9] = 'R027'
-        set incSpellrc[10] = 'R029'
-        set incSpellrc[11] = 'R02I'
-        set incSpellrc[12] = 'R02J'
-        set incSpellrc[13] = 'R02K'
-
-        // Заполнение массивов robbery_pr_f и robbery_pr_s процентами спосоности Грабёж
-        set robbery_pr_f[1] = 5
-        set robbery_pr_f[2] = 10
-        set robbery_pr_f[3] = 15
-        set robbery_pr_f[4] = 20
-        set robbery_pr_f[5] = 30
-        set robbery_pr_f[6] = 40
-
-        set robbery_pr_s[1] = 5
-        set robbery_pr_s[2] = 6
-        set robbery_pr_s[3] = 7
-        set robbery_pr_s[4] = 8
-        set robbery_pr_s[5] = 9
-        set robbery_pr_s[6] = 10
-
-        // Заполнение массивов stab_time_gold и stab_time_lumber периодом инкама
-        set stab_time_gold[1] = 3
-        set stab_time_gold[2] = 3
-        set stab_time_gold[3] = 3
-        set stab_time_gold[4] = 3
-        set stab_time_gold[5] = 3
-        set stab_time_gold[6] = 3
-
-        set stab_time_lumber[1] = 40
-        set stab_time_lumber[2] = 40
-        set stab_time_lumber[3] = 30
-        set stab_time_lumber[4] = 20
-        set stab_time_lumber[5] = 15
-        set stab_time_lumber[6] = 12
-
-        // Заполнение массивов stab_gold и stab_lumber кол-вом инкама
-        set stab_gold[1] = 1
-        set stab_gold[2] = 1
-        set stab_gold[3] = 2
-        set stab_gold[4] = 2
-        set stab_gold[5] = 3
-        set stab_gold[6] = 4
-        
-        set stab_lumber[1] = 0
-        set stab_lumber[2] = 1
-        set stab_lumber[3] = 1
-        set stab_lumber[4] = 1
-        set stab_lumber[5] = 1
-        set stab_lumber[6] = 1
-
-        // Заполнение массивов goldmining_main_mine, goldmining_extra_mine, goldmining_income кол-вом увеличения инкама
-        set goldmining_main_mine[1] = 1
-        set goldmining_main_mine[2] = 1
-        set goldmining_main_mine[3] = 1
-        set goldmining_main_mine[4] = 1
-        set goldmining_main_mine[5] = 1
-        set goldmining_main_mine[6] = 1
-
-        set goldmining_extra_mine[1] = 0
-        set goldmining_extra_mine[2] = 0
-        set goldmining_extra_mine[3] = 1
-        set goldmining_extra_mine[4] = 0
-        set goldmining_extra_mine[5] = 1
-        set goldmining_extra_mine[6] = 1
-
-        set goldmining_income[1] = 10
-        set goldmining_income[2] = 10
-        set goldmining_income[3] = 10
-        set goldmining_income[4] = 10
-        set goldmining_income[5] = 10
-        set goldmining_income[6] = 10
-
-        call Log("map_init finished!")
-
-        // Не забываем обнулить переменные!!!
-        set strTestWarning_RU = null
-        set strWarning_RU = null
-        set strVar_RU = null
-        set Feedback_RU = null
-        
-        set strTestWarning_EN = null
-        set strWarning_EN = null
-        set strVar_EN = null
-        set Feedback_EN = null
-    endfunction
-
-    //-----------------------------Post main init------------------------------
-
-    function post_map_init takes nothing returns nothing
-
-        call initialization_in_game.execute()
-        call building_selling.execute()
-
-        // Disable Damage Detection System until Fast Arena begins
-        call DisableTrigger(DDS)
-
-        call Log("post_map_init finished!")
+    private function Init takes nothing returns nothing
         
     endfunction
-
-    //-------------------------The very first function-------------------------
-    // Starts map initialization
-    function MainInit takes nothing returns nothing
-        local trigger t = CreateTrigger()
-
-        call map_init()
-        call TriggerRegisterTimerEventSingle(t, 0)
-        call TriggerAddAction(t, function post_map_init)
-        call C_SetComputers()
-        call StartInitTimer()
-
-        set t = null
-    endfunction
-
-endscope
-/*
-
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     01.11.2020 18:30       =
-=============================================
-
-Интерфейс внутриигровых сообщений
-
-*/
-
-scope Messages initializer SetMessagesInit
-
-    function OnLeave takes nothing returns nothing
-        local unit u = GetEnumUnit()
-        if (GetUnitTypeId(u) != 'hhdl' and GetUnitTypeId(u) != 'n001') then
-            // Opt. begin
-            if (IsUnitInGroup(u, udg_wave_units) == true) then
-                call GroupRemoveUnitSimple(u, udg_wave_units)
-            endif
-            if (IsUnitInGroup(u, udg_buildings) == true) then
-                call GroupRemoveUnitSimple(u, udg_buildings)
-            endif
-            // Opt. end
-            call RemoveUnit(u)
-        else
-            call SetUnitOwner(u, Player(PLAYER_NEUTRAL_PASSIVE), true)
-        endif
-        set u = null
-    endfunction
-
-    function SetLeaveMessages takes nothing returns nothing
-        local player p = GetTriggerPlayer()
-        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0., 0., 10., (C_IntToColor(GetPlayerId(p)) + GetPlayerName(p) + "|r " + GOLD + "покидает игру!|r"))
-        call SetPlayerTechResearchedSwap('R00J', 0, p)
-        set pdb[p].scoreboard_result = 0
-        // Opt. begin
-        call ForGroup(GetUnitsOfPlayerMatching(p, null), function OnLeave)
-        call ForceRemovePlayerSimple( GetTriggerPlayer(), udg_players_group )
-        if (p == udg_game_owner) then
-            call gameset_owner.execute()
-        endif
-        call MultiboardSetItemValueBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetTriggerPlayer()) ), ( "|cFF9B9B9B" + udg_players_name[GetConvertedPlayerId(GetTriggerPlayer())] ) )
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetTriggerPlayer()) ), "ReplaceableTextures\\CommandButtonsDisabled\\DISBTNReplay-Loop.blp" )
-        // Opt. end
-        call defeat(p)
-        set p = null
-    endfunction
-
-    function SetMessagesInit takes nothing returns nothing
-        local trigger t = CreateTrigger()
-
-        call TriggerRegisterPlayerEvent(t, Player(0x00), EVENT_PLAYER_LEAVE)
-        call TriggerRegisterPlayerEvent(t, Player(0x01), EVENT_PLAYER_LEAVE)
-        call TriggerRegisterPlayerEvent(t, Player(0x02), EVENT_PLAYER_LEAVE)
-        call TriggerRegisterPlayerEvent(t, Player(0x03), EVENT_PLAYER_LEAVE)
-        call TriggerRegisterPlayerEvent(t, Player(0x04), EVENT_PLAYER_LEAVE)
-        call TriggerRegisterPlayerEvent(t, Player(0x05), EVENT_PLAYER_LEAVE)
-        call TriggerRegisterPlayerEvent(t, Player(0x06), EVENT_PLAYER_LEAVE)
-        call TriggerRegisterPlayerEvent(t, Player(0x07), EVENT_PLAYER_LEAVE)
-        
-        call TriggerAddAction(t, function SetLeaveMessages)
-        set t = null
-    endfunction
-
+    
 endscope
 //===========================================================================
 // 
@@ -4367,7 +4853,6 @@ globals
     sound                   gg_snd_BloodElfMagePissed1 = null
     sound                   gg_snd_BattleNetTick01     = null
     sound                   gg_snd_ClanInvitation      = null
-    trigger                 gg_trg_Untitled_Trigger_001 = null
     trigger                 gg_trg_initialization      = null
     trigger                 gg_trg_ini_id              = null
     trigger                 gg_trg_game_end            = null
@@ -5154,214 +5639,6 @@ endfunction
 //*  Triggers
 //*
 //***************************************************************************
-
-//===========================================================================
-// Trigger: scoreboard ini
-//
-// как-нибудь потом, если не забуду...
-//===========================================================================
-function Trig_scoreboard_ini_Func002Func001001 takes nothing returns boolean
-    return ( IsPlayerInForce(ConvertedPlayer(GetForLoopIndexA()), udg_players_group) == true )
-endfunction
-
-function Trig_scoreboard_ini_Func010A takes nothing returns nothing
-    call MultiboardSetItemValueBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetEnumPlayer()) ), ( udg_players_colour[GetConvertedPlayerId(GetEnumPlayer())] + udg_players_name[GetConvertedPlayerId(GetEnumPlayer())] ) )
-    call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetEnumPlayer()) ), "ReplaceableTextures\\CommandButtons\\BTNReplay-Loop.blp" )
-endfunction
-
-function Trig_scoreboard_ini_Func012Func001C takes nothing returns boolean
-    if ( not ( GetForLoopIndexB() != 7 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_scoreboard_ini_Func012Func003C takes nothing returns boolean
-    if ( not ( GetForLoopIndexB() == 2 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_scoreboard_ini_Func012Func004C takes nothing returns boolean
-    if ( not ( GetForLoopIndexB() == 3 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_scoreboard_ini_Func012Func005C takes nothing returns boolean
-    if ( not ( GetForLoopIndexB() == 4 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_scoreboard_ini_Func012Func006C takes nothing returns boolean
-    if ( not ( GetForLoopIndexB() == 5 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_scoreboard_ini_Func012Func007C takes nothing returns boolean
-    if ( not ( GetForLoopIndexB() == 6 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_scoreboard_ini_Func012Func008C takes nothing returns boolean
-    if ( not ( GetForLoopIndexB() == 7 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_scoreboard_ini_Func014A takes nothing returns nothing
-    call MultiboardSetItemValueBJ( udg_scoreboard, 2, ( GetConvertedPlayerId(GetEnumPlayer()) + 1 ), "TRIGSTR_846" )
-    call MultiboardSetItemValueBJ( udg_scoreboard, 3, ( GetConvertedPlayerId(GetEnumPlayer()) + 1 ), "TRIGSTR_847" )
-    call MultiboardSetItemValueBJ( udg_scoreboard, 4, ( GetConvertedPlayerId(GetEnumPlayer()) + 1 ), I2S(udg_scoreboard_kills[GetConvertedPlayerId(GetEnumPlayer())]) )
-    call MultiboardSetItemValueBJ( udg_scoreboard, 5, ( GetConvertedPlayerId(GetEnumPlayer()) + 1 ), I2S(udg_scoreboard_upg[GetConvertedPlayerId(GetEnumPlayer())]) )
-    call MultiboardSetItemValueBJ( udg_scoreboard, 6, ( GetConvertedPlayerId(GetEnumPlayer()) + 1 ), I2S(udg_scoreboard_mini[GetConvertedPlayerId(GetEnumPlayer())]) )
-    call MultiboardSetItemValueBJ( udg_scoreboard, 7, ( GetConvertedPlayerId(GetEnumPlayer()) + 1 ), I2S(udg_scoreboard_win[GetConvertedPlayerId(GetEnumPlayer())]) )
-endfunction
-
-function Trig_scoreboard_ini_Func019A takes nothing returns nothing
-    call MultiboardSetItemValueBJ( udg_scoreboard, 8, ( GetConvertedPlayerId(GetEnumPlayer()) + 1 ), R2S(udg_scoreboard_result[GetConvertedPlayerId(GetEnumPlayer())]) )
-endfunction
-
-function Trig_scoreboard_ini_Actions takes nothing returns nothing
-    set udg_scoreboard_coloumns = 8
-    set bj_forLoopAIndex = 1
-    set bj_forLoopAIndexEnd = 8
-    loop
-        exitwhen bj_forLoopAIndex > bj_forLoopAIndexEnd
-        if ( Trig_scoreboard_ini_Func002Func001001() ) then
-            set udg_scoreboard_limit = GetForLoopIndexA()
-        else
-            call DoNothing(  )
-        endif
-        set bj_forLoopAIndex = bj_forLoopAIndex + 1
-    endloop
-    call CreateMultiboardBJ( udg_scoreboard_coloumns, ( 1 + udg_scoreboard_limit ), ( "Информация | Волна #|cFF00FFFF" + ( I2S(udg_wave) + "|r" ) ) )
-    set udg_scoreboard = GetLastCreatedMultiboard()
-    // имя игрока
-    call MultiboardSetItemWidthBJ( udg_scoreboard, 1, 0, 11.50 )
-    call MultiboardSetItemStyleBJ( udg_scoreboard, 1, 1, true, false )
-    call MultiboardSetItemValueBJ( udg_scoreboard, 1, 1, "TRIGSTR_834" )
-    set bj_forLoopAIndex = 2
-    set bj_forLoopAIndexEnd = ( udg_scoreboard_limit + 1 )
-    loop
-        exitwhen bj_forLoopAIndex > bj_forLoopAIndexEnd
-        call MultiboardSetItemStyleBJ( udg_scoreboard, 1, GetForLoopIndexA(), true, true )
-        call MultiboardSetItemIconBJ( udg_scoreboard, 1, GetForLoopIndexA(), "ReplaceableTextures\\CommandButtonsDisabled\\DISBTNReplay-Loop.blp" )
-        set bj_forLoopAIndex = bj_forLoopAIndex + 1
-    endloop
-    call ForForce( udg_players_group, function Trig_scoreboard_ini_Func010A )
-    // доход
-    set bj_forLoopBIndex = 2
-    set bj_forLoopBIndexEnd = 7
-    loop
-        exitwhen bj_forLoopBIndex > bj_forLoopBIndexEnd
-        if ( Trig_scoreboard_ini_Func012Func001C() ) then
-            call MultiboardSetItemWidthBJ( udg_scoreboard, GetForLoopIndexB(), 0, 2.00 )
-        else
-            call MultiboardSetItemWidthBJ( udg_scoreboard, GetForLoopIndexB(), 0, 3.50 )
-        endif
-        call MultiboardSetItemStyleBJ( udg_scoreboard, GetForLoopIndexB(), 1, false, true )
-        if ( Trig_scoreboard_ini_Func012Func003C() ) then
-            call MultiboardSetItemIconBJ( udg_scoreboard, GetForLoopIndexB(), 1, "UI\\Feedback\\Resources\\ResourceGold.blp" )
-        else
-        endif
-        if ( Trig_scoreboard_ini_Func012Func004C() ) then
-            call MultiboardSetItemIconBJ( udg_scoreboard, GetForLoopIndexB(), 1, "ReplaceableTextures\\PassiveButtons\\PASBTNgems.blp" )
-        else
-        endif
-        if ( Trig_scoreboard_ini_Func012Func005C() ) then
-            call MultiboardSetItemIconBJ( udg_scoreboard, GetForLoopIndexB(), 1, "ReplaceableTextures\\CommandButtons\\BTNAttack.blp" )
-        else
-        endif
-        if ( Trig_scoreboard_ini_Func012Func006C() ) then
-            call MultiboardSetItemIconBJ( udg_scoreboard, GetForLoopIndexB(), 1, "ReplaceableTextures\\CommandButtons\\BTNSpy.blp" )
-        else
-        endif
-        if ( Trig_scoreboard_ini_Func012Func007C() ) then
-            call MultiboardSetItemIconBJ( udg_scoreboard, GetForLoopIndexB(), 1, "ReplaceableTextures\\CommandButtons\\BTNCastle.blp" )
-        else
-        endif
-        if ( Trig_scoreboard_ini_Func012Func008C() ) then
-            call MultiboardSetItemIconBJ( udg_scoreboard, GetForLoopIndexB(), 1, "ReplaceableTextures\\CommandButtons\\BTNOrcCaptureFlag.blp" )
-        else
-        endif
-        set bj_forLoopAIndex = 2
-        set bj_forLoopAIndexEnd = ( udg_scoreboard_limit + 1 )
-        loop
-            exitwhen bj_forLoopAIndex > bj_forLoopAIndexEnd
-            call MultiboardSetItemStyleBJ( udg_scoreboard, GetForLoopIndexB(), GetForLoopIndexA(), true, false )
-            set bj_forLoopAIndex = bj_forLoopAIndex + 1
-        endloop
-        set bj_forLoopBIndex = bj_forLoopBIndex + 1
-    endloop
-    call MultiboardSetItemWidthBJ( udg_scoreboard, 7, 0, 3.00 )
-    call ForForce( udg_players_group, function Trig_scoreboard_ini_Func014A )
-    // результат
-    call MultiboardSetItemWidthBJ( udg_scoreboard, 8, 0, 3.00 )
-    call MultiboardSetItemStyleBJ( udg_scoreboard, 8, 0, true, false )
-    call MultiboardSetItemStyleBJ( udg_scoreboard, 8, 1, false, false )
-    call ForForce( udg_players_group, function Trig_scoreboard_ini_Func019A )
-    // отображение
-    call MultiboardMinimizeBJ( true, GetLastCreatedMultiboard() )
-    call MultiboardMinimizeBJ( false, GetLastCreatedMultiboard() )
-endfunction
-
-//===========================================================================
-function InitTrig_scoreboard_ini takes nothing returns nothing
-    set gg_trg_scoreboard_ini = CreateTrigger(  )
-    call TriggerAddAction( gg_trg_scoreboard_ini, function Trig_scoreboard_ini_Actions )
-endfunction
-
-//===========================================================================
-// Trigger: scoreboard update
-//===========================================================================
-function Trig_scoreboard_update_Func001Func001C takes nothing returns boolean
-    if ( not ( IsPlayerInForce(ConvertedPlayer(udg_g), udg_players_group) == true ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_scoreboard_update_Func002A takes nothing returns nothing
-    set udg_scoreboard_result[GetConvertedPlayerId(GetEnumPlayer())] = 0.00
-    set udg_scoreboard_result[GetConvertedPlayerId(GetEnumPlayer())] = ( udg_scoreboard_result[GetConvertedPlayerId(GetEnumPlayer())] + ( ( I2R(GetPlayerState(GetEnumPlayer(), PLAYER_STATE_RESOURCE_GOLD)) / 1250.00 ) * 5.00 ) )
-    set udg_scoreboard_result[GetConvertedPlayerId(GetEnumPlayer())] = ( udg_scoreboard_result[GetConvertedPlayerId(GetEnumPlayer())] + ( ( I2R(GetPlayerState(GetEnumPlayer(), PLAYER_STATE_RESOURCE_LUMBER)) / 25.00 ) * 5.00 ) )
-    set udg_scoreboard_result[GetConvertedPlayerId(GetEnumPlayer())] = ( udg_scoreboard_result[GetConvertedPlayerId(GetEnumPlayer())] + ( ( I2R(udg_scoreboard_kills[GetConvertedPlayerId(GetEnumPlayer())]) / 5.00 ) * ( 10.00 + I2R(GetPlayerTechCountSimple('R02J', GetEnumPlayer())) ) ) )
-    set udg_scoreboard_result[GetConvertedPlayerId(GetEnumPlayer())] = ( udg_scoreboard_result[GetConvertedPlayerId(GetEnumPlayer())] + ( ( I2R(udg_scoreboard_upg[GetConvertedPlayerId(GetEnumPlayer())]) / 5.00 ) * 10.00 ) )
-    set udg_scoreboard_result[GetConvertedPlayerId(GetEnumPlayer())] = ( udg_scoreboard_result[GetConvertedPlayerId(GetEnumPlayer())] + ( ( I2R(udg_scoreboard_mini[GetConvertedPlayerId(GetEnumPlayer())]) / 2.00 ) * 25.00 ) )
-    set udg_scoreboard_result[GetConvertedPlayerId(GetEnumPlayer())] = ( udg_scoreboard_result[GetConvertedPlayerId(GetEnumPlayer())] + ( ( I2R(udg_scoreboard_win[GetConvertedPlayerId(GetEnumPlayer())]) * 0.07 ) * udg_leader_kf[GetConvertedPlayerId(GetEnumPlayer())] ) )
-    call MultiboardSetItemValueBJ( udg_scoreboard, 8, ( GetConvertedPlayerId(GetEnumPlayer()) + 1 ), R2S(udg_scoreboard_result[GetConvertedPlayerId(GetEnumPlayer())]) )
-endfunction
-
-function Trig_scoreboard_update_Actions takes nothing returns nothing
-    set udg_g = 1
-    loop
-        exitwhen udg_g > udg_scoreboard_limit
-        if ( Trig_scoreboard_update_Func001Func001C() ) then
-            call MultiboardSetItemValueBJ( udg_scoreboard, 2, ( udg_g + 1 ), I2S(GetPlayerState(ConvertedPlayer(udg_g), PLAYER_STATE_RESOURCE_GOLD)) )
-            call MultiboardSetItemValueBJ( udg_scoreboard, 3, ( udg_g + 1 ), I2S(GetPlayerState(ConvertedPlayer(udg_g), PLAYER_STATE_RESOURCE_LUMBER)) )
-        else
-        endif
-        set udg_g = udg_g + 1
-    endloop
-    call ForForce( udg_players_group, function Trig_scoreboard_update_Func002A )
-endfunction
-
-//===========================================================================
-function InitTrig_scoreboard_update takes nothing returns nothing
-    set gg_trg_scoreboard_update = CreateTrigger(  )
-    call TriggerRegisterTimerEventPeriodic( gg_trg_scoreboard_update, 1.00 )
-    call TriggerAddAction( gg_trg_scoreboard_update, function Trig_scoreboard_update_Actions )
-endfunction
 
 //===========================================================================
 // Trigger: units death
@@ -10822,8 +11099,6 @@ endfunction
 
 //===========================================================================
 function InitCustomTriggers takes nothing returns nothing
-    call InitTrig_scoreboard_ini(  )
-    call InitTrig_scoreboard_update(  )
     call InitTrig_units_death(  )
     call InitTrig_unit_dammi(  )
     call InitTrig_units_leave(  )

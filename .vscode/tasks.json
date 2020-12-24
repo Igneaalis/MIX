@@ -15,7 +15,7 @@
                 "${workspaceFolder}/tools/common.j",
                 "${workspaceFolder}/tools/Blizzard.j",
                 "${workspaceFolder}/output/raw_war3map.j",
-                "${workspaceFolder}/output/MIX 0.0.2.w3x"
+                "${workspaceFolder}/output/MIX.w3x"
             ],
             "dependsOrder": "sequence",
             "dependsOn": ["compile"],
@@ -38,7 +38,7 @@
                 "${workspaceFolder}/tools/common.j",
                 "${workspaceFolder}/tools/Blizzard.j",
                 "${workspaceFolder}/output/raw_war3map.j",
-                "${workspaceFolder}/output/MIX 0.0.2.w3x"
+                "${workspaceFolder}/output/MIX.w3x"
             ],
             "dependsOrder": "sequence",
             "dependsOn": ["compile"],
@@ -126,7 +126,7 @@
             "args": [
                 "-launch",
                 "-loadfile",
-                "${workspaceFolder}/output/MIX 0.0.2.w3x"
+                "${workspaceFolder}/output/MIX.w3x"
             ],
             "dependsOrder": "sequence",
             "dependsOn": ["Build"],
@@ -147,7 +147,7 @@
             "args": [
                 "-launch",
                 "-loadfile",
-                "${workspaceFolder}/output/MIX 0.0.2.w3x"
+                "${workspaceFolder}/output/MIX.w3x"
             ],
             "dependsOrder": "sequence",
             "dependsOn": ["Build debug"],
@@ -168,7 +168,7 @@
             "args": [
                 "-launch",
                 "-loadfile",
-                "${workspaceFolder}/output/MIX 0.0.2.w3x",
+                "${workspaceFolder}/output/MIX.w3x",
                 "-windowmode windowedfullscreen",
                 "-mapdiff 1",
                 "-testmapprofile Nokladr",
@@ -193,7 +193,7 @@
             "args": [
                 "-launch",
                 "-loadfile",
-                "${workspaceFolder}/output/MIX 0.0.2.w3x",
+                "${workspaceFolder}/output/MIX.w3x",
                 "-windowmode windowedfullscreen",
                 "-mapdiff 1",
                 "-testmapprofile Nokladr",

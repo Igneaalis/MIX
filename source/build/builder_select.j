@@ -61,8 +61,8 @@ scope BuilderSelect initializer builder_select
         call SelectUnitForPlayerSingle(peon, owner_of_peon) // Selects peon for player
         call ForGroup(group_of_dummies, function C_RemoveEnumUnits) // Remove dummies
 
-        call CreateUnit(owner_of_peon, 'hbla', x, y, bj_UNIT_FACING) // Юнит "Замок"
-        call CreateUnit(owner_of_peon, 'hwtw', x-450, y+640, bj_UNIT_FACING) // Юнит "Улучшения"
+        call CreateUnitEx(owner_of_peon, 'hbla', x, y, bj_UNIT_FACING) // Юнит "Замок"
+        call CreateUnitEx(owner_of_peon, 'hwtw', x-450, y+640, bj_UNIT_FACING) // Юнит "Улучшения"
         call SetUnitPosition(peon, x, y-250) // Peon's position
         call SetUnitFacing(peon, bj_UNIT_FACING) // Peon's facing
         call PanCameraToForPlayer(owner_of_peon, x, y)
@@ -89,8 +89,7 @@ scope BuilderSelect initializer builder_select
             call TriggerExecute(gg_trg_mediv_select)
         endif
 
-        call MultiboardSetItemIcon(mbitem, iconFileName)
-        call MultiboardReleaseItem(mbitem)
+        set mb[owner_of_peon].icon = iconFileName
 
         static if DEBUG_MODE then
             call AddGoldToPlayer(debugGold, owner_of_peon)

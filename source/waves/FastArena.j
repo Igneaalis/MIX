@@ -7,6 +7,7 @@ scope FastArena initializer Init
         private real array damageByPlayer
         private real timerTime
         private rect curRect
+        private constant real firePitPercentDamage = 10.00
         
         real FA_Time = 60.00
         real FA_DebugTime = 10.00
@@ -54,8 +55,8 @@ scope FastArena initializer Init
     endfunction
 
     private function FirePitDoDamage takes nothing returns nothing
-        if (GetUnitLifePercent(GetEnumUnit()) > 4.00) then
-            call SetUnitLifePercentBJ(GetEnumUnit(),(GetUnitLifePercent(GetEnumUnit()) - 4.00))
+        if (GetUnitLifePercent(GetEnumUnit()) > firePitPercentDamage) then
+            call SetUnitLifePercentBJ(GetEnumUnit(),(GetUnitLifePercent(GetEnumUnit()) - firePitPercentDamage))
         endif
     endfunction
 
@@ -63,7 +64,7 @@ scope FastArena initializer Init
         local integer i = 1
         local integer curPlayerId = 0
         loop
-            exitwhen i >= numberOfPlayers
+            exitwhen i >= maxNumberOfPlayers
             if damageByPlayer[i] > damageByPlayer[curPlayerId] then
                 set curPlayerId = i
             endif
@@ -75,7 +76,7 @@ scope FastArena initializer Init
     private function Flush takes nothing returns nothing
         local integer i = 0
         loop
-            exitwhen i >= numberOfPlayers
+            exitwhen i >= maxNumberOfPlayers
             call GroupClear(unitGroup[i])
             set unitsInGroup[i] = 0
             set damageByPlayer[i] = 0
@@ -156,7 +157,7 @@ scope FastArena initializer Init
             set j = 1
             set curPlayerId = 0
             loop
-                exitwhen j >= numberOfPlayers
+                exitwhen j >= maxNumberOfPlayers
                 if unitsInGroup[j] > unitsInGroup[curPlayerId] then
                     set curPlayerId = j
                 endif
@@ -216,7 +217,7 @@ scope FastArena initializer Init
         
         set i = 0
         loop
-            exitwhen i >= numberOfPlayers
+            exitwhen i >= maxNumberOfPlayers
             call SetPlayerState(Player(i), PLAYER_STATE_GIVES_BOUNTY, 1)
             set i = i + 1
         endloop
@@ -231,7 +232,7 @@ scope FastArena initializer Init
 
         set i = 0
         loop
-            exitwhen i >= numberOfPlayers
+            exitwhen i >= maxNumberOfPlayers
             set unitGroup[i] = CreateGroup()
             set i = i + 1
         endloop

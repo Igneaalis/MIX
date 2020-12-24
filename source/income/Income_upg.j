@@ -12,18 +12,32 @@
 
 */
 
-scope IncomeUpgrade initializer Init_income_upg
+scope IncomeUpgrade initializer Init
 
-    function Trig_income_upg_Conditions takes nothing returns boolean
-        local integer i = 1
-        local integer research_rc = GetResearched()
-        loop
-            exitwhen i == incSpellrc_count
-            if research_rc == incSpellrc[i] then
+    globals
+        private integer array incSpellRC
+        private constant integer incSpellRCSize = 13
+        private real array stabilityTimeGold
+        private real array stabilityTimeGems
+        private integer array stabilityGold
+        private integer array stabilityGems
+        private timer array stabilityTimerGold
+        private timer array stabilityTimerGems
+        private integer array goldmining_main_mine
+        private integer array goldmining_extra_mine
+        private integer array goldmining_income
+    endglobals
+
+    private function Conditions takes nothing returns boolean
+        local integer i
+        local integer researchRC = GetResearched()
+
+        for i = 1 to incSpellRCSize
+            if researchRC == incSpellRC[i] then
                 return true
             endif
-            set i = i + 1
-        endloop
+        endfor
+
         return false
     endfunction
 
@@ -70,11 +84,11 @@ scope IncomeUpgrade initializer Init_income_upg
 
     // Добавить в группу игроков всех играющих игроков
     function AllPlayingPlayers takes force gr_p returns nothing
-        local integer i = 1
+        local integer i = 0
         local player p
 
         loop
-            exitwhen i > max_players
+            exitwhen i > maxNumberOfPlayers
             set p = Player(i)
             if (GetPlayerSlotState(p) == PLAYER_SLOT_STATE_PLAYING) and (GetPlayerController(p) == MAP_CONTROL_USER) then
                 call ForceAddPlayer(gr_p, p)
@@ -206,8 +220,8 @@ scope IncomeUpgrade initializer Init_income_upg
         local integer i = 1 
 
         loop
-            exitwhen i > max_players
-            if (t == stab_timer_gold[i]) or (t == stab_timer_lumber[i]) then
+            exitwhen i > maxNumberOfPlayers
+            if (t == stabilityTimerGold[i]) or (t == stabilityTimerGems[i]) then
                 set number_timer = i
             endif
             set i = i + 1
@@ -216,8 +230,8 @@ scope IncomeUpgrade initializer Init_income_upg
         return number_timer
     endfunction
 
-    // Работа таймера stab_timer_gold
-    function stab_timer_gold_actions takes nothing returns nothing
+    // Работа таймера stabilityTimerGold
+    function stabilityTimerGold_actions takes nothing returns nothing
         local player p
         local integer number_p
         local integer count_research
@@ -227,14 +241,14 @@ scope IncomeUpgrade initializer Init_income_upg
         set p = Player(number_p - 1)
         set count_research = GetPlayerTechCount(p, stab_rc, true)
 
-        call AddGoldToPlayer(stab_gold[count_research], p)
+        call AddGoldToPlayer(stabilityGold[count_research], p)
 
         set p = null
         set t = null
     endfunction
 
-    // Работа таймера stab_timer_lumber
-    function stab_timer_lumber_actions takes nothing returns nothing
+    // Работа таймера stabilityTimerGems
+    function stabilityTimerGems_actions takes nothing returns nothing
         local player p
         local integer number_p
         local integer count_research
@@ -244,7 +258,7 @@ scope IncomeUpgrade initializer Init_income_upg
         set p = Player(number_p - 1)
         set count_research = GetPlayerTechCount(p, stab_rc, true)
 
-        call AddLumberToPlayer(stab_lumber[count_research], p)
+        call AddLumberToPlayer(stabilityGems[count_research], p)
 
         set p = null
         set t = null
@@ -253,12 +267,12 @@ scope IncomeUpgrade initializer Init_income_upg
     // Действие улучшения Стабильность
     function Trig_income_upg_actions_stab takes integer number_p, integer count_research returns nothing
         if count_research == 1 then
-            set stab_timer_gold[number_p] = CreateTimer()
-            set stab_timer_lumber[number_p] = CreateTimer()
+            set stabilityTimerGold[number_p] = CreateTimer()
+            set stabilityTimerGems[number_p] = CreateTimer()
         endif
 
-        call TimerStart(stab_timer_gold[number_p], stab_time_gold[count_research], true, function stab_timer_gold_actions)
-        call TimerStart(stab_timer_lumber[number_p], stab_time_lumber[count_research], true, function stab_timer_lumber_actions)
+        call TimerStart(stabilityTimerGold[number_p], stabilityTimeGold[count_research], true, function stabilityTimerGold_actions)
+        call TimerStart(stabilityTimerGems[number_p], stabilityTimeGems[count_research], true, function stabilityTimerGems_actions)
     endfunction
 
     // Условие улучшения Лидерство, удалить юнитов Больше всех убийств за прошедший раунд и Или лидерство по очкам арены за пошедший раунд
@@ -377,8 +391,75 @@ scope IncomeUpgrade initializer Init_income_upg
     endfunction
 
     //===========================================================================
-    function Init_income_upg takes nothing returns nothing
+    private function Init takes nothing returns nothing
         local trigger t = CreateTrigger()
+
+        // Заполнение массива incSpellrc равкодами инкам способностей
+        set incSpellRC[1] = 'R00F'
+        set incSpellRC[2] = 'R00G'
+        set incSpellRC[3] = 'R00H'
+        set incSpellRC[4] = 'R00I'
+        set incSpellRC[5] = 'R00J'
+        set incSpellRC[6] = 'R00Q'
+        set incSpellRC[7] = 'R00R'
+        set incSpellRC[8] = 'R00S'
+        set incSpellRC[9] = 'R027'
+        set incSpellRC[10] = 'R029'
+        set incSpellRC[11] = 'R02I'
+        set incSpellRC[12] = 'R02J'
+        set incSpellRC[13] = 'R02K'
+
+        // Заполнение массивов stabilityTimeGold и stabilityTimeGems периодом инкама
+        set stabilityTimeGold[1] = 3
+        set stabilityTimeGold[2] = 3
+        set stabilityTimeGold[3] = 3
+        set stabilityTimeGold[4] = 3
+        set stabilityTimeGold[5] = 3
+        set stabilityTimeGold[6] = 3
+
+        set stabilityTimeGems[1] = 40
+        set stabilityTimeGems[2] = 40
+        set stabilityTimeGems[3] = 30
+        set stabilityTimeGems[4] = 20
+        set stabilityTimeGems[5] = 15
+        set stabilityTimeGems[6] = 12
+
+        // Заполнение массивов stabilityGold и stabilityGems кол-вом инкама
+        set stabilityGold[1] = 1
+        set stabilityGold[2] = 1
+        set stabilityGold[3] = 2
+        set stabilityGold[4] = 2
+        set stabilityGold[5] = 3
+        set stabilityGold[6] = 4
+                
+        set stabilityGems[1] = 0
+        set stabilityGems[2] = 1
+        set stabilityGems[3] = 1
+        set stabilityGems[4] = 1
+        set stabilityGems[5] = 1
+        set stabilityGems[6] = 1
+
+        // Заполнение массивов goldmining_main_mine, goldmining_extra_mine, goldmining_income кол-вом увеличения инкама
+        set goldmining_main_mine[1] = 1
+        set goldmining_main_mine[2] = 1
+        set goldmining_main_mine[3] = 1
+        set goldmining_main_mine[4] = 1
+        set goldmining_main_mine[5] = 1
+        set goldmining_main_mine[6] = 1
+
+        set goldmining_extra_mine[1] = 0
+        set goldmining_extra_mine[2] = 0
+        set goldmining_extra_mine[3] = 1
+        set goldmining_extra_mine[4] = 0
+        set goldmining_extra_mine[5] = 1
+        set goldmining_extra_mine[6] = 1
+        
+        set goldmining_income[1] = 10
+        set goldmining_income[2] = 10
+        set goldmining_income[3] = 10
+        set goldmining_income[4] = 10
+        set goldmining_income[5] = 10
+        set goldmining_income[6] = 10
 
         call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
         call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
@@ -392,7 +473,7 @@ scope IncomeUpgrade initializer Init_income_upg
         call TriggerRegisterPlayerUnitEvent(t, Player(0x09), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
         call TriggerRegisterPlayerUnitEvent(t, Player(0x0A), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
         call TriggerRegisterPlayerUnitEvent(t, Player(0x0B), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-        call TriggerAddCondition(t, Condition(function Trig_income_upg_Conditions))
+        call TriggerAddCondition(t, Condition(function Conditions))
         call TriggerAddAction(t, function Trig_income_upg_Actions)
         
         set t = null

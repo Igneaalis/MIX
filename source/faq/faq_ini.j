@@ -36,7 +36,7 @@ function faq_ini takes nothing returns nothing
 
     // ---За---
     // Плавающий текст с требуемым кол-вом голосов "За"
-    set faq_tts[0] = NewTextTag((GREEN + "\"ЗА\"|r нужно " + I2S(CountPlayersInForceBJ(udg_players_group) / 2)), gg_rct_guideyes, 14.00)
+    set faq_tts[0] = NewTextTag((GREEN + "\"ЗА\"|r нужно " + I2S(CountPlayersInForceBJ(players) / 2)), gg_rct_guideyes, 14.00)
     
     // Плавающий текст с кол-вом голосов "За"
     set faq_tts[2] = NewTextTag(I2S(faq_vote_yes), gg_rct_guideyesvote, 10.00)
@@ -46,7 +46,7 @@ function faq_ini takes nothing returns nothing
 
     // ---Против---
     // Плавающий текст с требуемым кол-вом голосов "Против"
-    set faq_tts[1] = NewTextTag((RED + "\"ПРОТИВ\"|r нужно более " + I2S(CountPlayersInForceBJ(udg_players_group) / 2)), gg_rct_guideno, 14.00)
+    set faq_tts[1] = NewTextTag((RED + "\"ПРОТИВ\"|r нужно более " + I2S(CountPlayersInForceBJ(players) / 2)), gg_rct_guideno, 14.00)
 
     // Плавающий текст с кол-вом голосов "Против"
     set faq_tts[3] = NewTextTag(I2S(faq_vote_no), gg_rct_guidenovote, 10.00)
@@ -59,6 +59,6 @@ function faq_ini takes nothing returns nothing
     else
         call TimerStart(CreateTimer(), 1.00, true, function faq_voting_timer_counter) // Makes duration of voting visible in faq dialog's title
         call faq_voting_timer_counter() // First tick of timer
-        call ForForce(udg_players_group, function faq_show_dialog) // Shows faq dialog to all players
+        call ForForce(players, function faq_show_dialog) // Shows faq dialog to all players
     endif
 endfunction

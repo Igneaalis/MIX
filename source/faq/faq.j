@@ -28,9 +28,11 @@ library FAQ uses NokladrLib
 
     function faq_get_castle takes nothing returns nothing
         local player p = GetEnumPlayer()
+
         call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, p, 0) // Resets camera angle
         call PanCameraToTimedLocForPlayer(p, GetPlayerStartLocationLoc(p), 0) // Focuses camera at castle you own
         call SelectUnitForPlayerSingle(GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(p, 'ntav')), p) // Selects tavern
+        
         set p = null
     endfunction
 
@@ -44,7 +46,7 @@ library FAQ uses NokladrLib
 
     function faq_flush takes nothing returns nothing
         call UnfadeMap() // Unfades map
-        call ForForce(udg_players_group, function faq_hide_dialog) // Hides voting dialog
+        call ForForce(players, function faq_hide_dialog) // Hides voting dialog
         call DestroyTextTag(faq_tts[0]) // Уничтожает плавающий текст с голосами "За"
         call DestroyTextTag(faq_tts[1]) // Уничтожает плавающий текст с голосами "За"
         call DestroyTextTag(faq_tts[2]) // Уничтожает плавающий текст с голосами "Против"

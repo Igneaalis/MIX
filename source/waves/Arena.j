@@ -54,7 +54,7 @@ scope Arena initializer Init
 
         set i = 0
         loop
-            exitwhen i >= numberOfPlayers
+            exitwhen i >= maxNumberOfPlayers
             set startRectForPlayer[i] = null
             set i = i + 1
         endloop
@@ -82,7 +82,7 @@ scope Arena initializer Init
 
         set i = 0
         loop
-            exitwhen i >= numberOfPlayers
+            exitwhen i >= maxNumberOfPlayers
 
             if GetPlayerSlotState(Player(i)) == PLAYER_SLOT_STATE_PLAYING then
                 set random = GetRandomInt(0, rectListSize - 1)
@@ -107,7 +107,7 @@ scope Arena initializer Init
             set i = i + 1
         endloop
 
-        call ForForce(udg_players_group, function ForPlayer)
+        call ForForce(players, function ForPlayer)
         call TimerStart(t, Arena_Time, false, function Timer_OnExpire)
         set Arena_TimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
         call TimerDialogSetTitle(Arena_TimerDialog, "Арена") // Title of timer dialog

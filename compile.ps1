@@ -10,6 +10,6 @@ foreach ($File in $SourceFiles) {
     Get-Content -Path $File | Add-Content $OutputFile
 }
 
-Get-Content -Path "./source/base.j" | Add-Content $OutputFile
+Get-Content -Path "./source/main/base.j" | Add-Content $OutputFile
 
 Write-Output "Compiled successfully!"

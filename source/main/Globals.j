@@ -21,23 +21,11 @@ globals
     constant string strDiscord = (LB + "! ! Nokladr|r" + GOLD + "#|r" + LB + "2205|r")          // Discord тэг
     constant string strBuild_Time = "13 December 2020"                                          // Время создания билда карты
 
-    debug constant real debugTimeBeforeFirstWave = 10.00                                        // Время перед началом первой волны
+    constant integer maxNumberOfPlayers = 8
 
-    leaderboard Leaderboard                                                                     // Таблица лидеров
-
-    constant integer numberOfPlayers = 8
-    constant integer finalWave = 15
-    constant integer numberOfMinigames = 8
-    
-    constant integer base_gold = 755                                                            // Кол-во золота в начале игры
-    constant integer base_gems = 22                                                             // Кол-во гемов в начале игры
-
-    constant integer incSpellrc_count = 14                                                      // Кол-во инкам способностей(значение увеличено на 1 для удобства)
     constant integer count_research_for_t1 = 12                                                 // Кол-во улучшений для доступа к т1
     constant integer count_research_for_t2 = 20                                                 // Кол-во улучшений для доступа к т2      
-    constant integer max_players = 8                                                            // Максимальное кол-во игроков
 
-    integer array incSpellrc[incSpellrc_count]                                                  // Массив инкам способностей(заполнение в Main.j, function map_init)
     player array ticket_list[max_ticket_list]
 
     // Равкоды инкам улучшений и связанных с ними способностей
@@ -79,26 +67,12 @@ globals
     constant real contr_to_pl_time = 300 // в секундах
     constant real contr_to_pl_multy = 2
     
-    // Настройки улучшения Грабёж, заполнение массива в Main.j
-    constant integer robbery_pr_count = 7
-    real array robbery_pr_f[robbery_pr_count]
-    real array robbery_pr_s[robbery_pr_count]
-
     // Настройки улучшения Вклад
     constant integer contr_gold = 200
     constant integer contr_gold_mod = 100
     constant integer contr_lumber = 8
     constant integer contr_lumber_mod = 6
     constant integer contr_percent = 150 // процент
-
-    // Настройки улучшения Стабильность, заполнение массива в Main.j
-    constant integer stab_count = 7
-    real array stab_time_gold[stab_count]
-    real array stab_time_lumber[stab_count]
-    integer array stab_gold[stab_count]
-    integer array stab_lumber[stab_count]
-    timer array stab_timer_gold[max_players]
-    timer array stab_timer_lumber[max_players]
 
     // Настройки улучшения Лидерство
     constant real leadership_bonus = 0.2
@@ -118,12 +92,6 @@ globals
 
     // Настройки улучшения Билет
     constant integer max_ticket_list = 5
-
-    // Настройки улучшения Золотодобыча, заполнение массива в Main.j
-    constant integer goldmining_count = 6
-    integer array goldmining_main_mine[goldmining_count]
-    integer array goldmining_extra_mine[goldmining_count]
-    integer array goldmining_income[goldmining_count]
 
     // Настройки улучшения Развитие ради развития
     constant real evforev_bonus_res = 0.01

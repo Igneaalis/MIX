@@ -14,6 +14,8 @@ Shows all available commands and settings.
 */
 
 function faq_start_timer_actions takes nothing returns nothing
+    local timer t = GetExpiredTimer()
+
     call DestroyTimerDialog(faq_timerdialog) // Destroys timer dialog for commands and settings
     call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 15, "|cFFFF0000Команда |cFFFFFFFF-info|r |cFFFF0000отключит сообщения о штрафах и мини-арене.|r")
 
@@ -22,21 +24,24 @@ function faq_start_timer_actions takes nothing returns nothing
     call DisableTrigger(gg_trg_cmd_mode)
     call DisableTrigger(gg_trg_cmd_point)
     call DisableTrigger(gg_trg_cmd_arena)
+    
+    set curWave = curWave + 1
     call Arena_Force.execute()
-    // call TriggerExecute( gg_trg_set_wave_start_main )
-    // call TriggerExecute( gg_trg_set_wave_timer )
-    // call TriggerExecute( gg_trg_set_wave_region_rotate )
-    // call TriggerExecute( gg_trg_set_wave_unit_spawn )
+
+    set t = null
 endfunction
 
 function faq_start takes nothing returns nothing
-    call TimerStart(udg_gameset_timer, udg_gameset_time_first, false, function faq_start_timer_actions) // After settings were set
+    local timer t = CreateTimer()
+    
+    call TimerStart(t, timeBeforeFirstWave, false, function faq_start_timer_actions) // After settings were set
 
-    set faq_timerdialog = CreateTimerDialog(udg_gameset_timer) // Timer dialog in upper-left corner for commands and settings
+    set faq_timerdialog = CreateTimerDialog(t) // Timer dialog in upper-left corner for commands and settings
     call TimerDialogSetTitle(faq_timerdialog, "Настройка карты") // Title of timer dialog
     call TimerDialogDisplay(faq_timerdialog, true) // Shows timer dialog
 
     call gameset_owner.execute() // Sets owner of game
-    call TriggerExecute(gg_trg_scoreboard_ini) // Shows scoreboard
+
+    set t = null
 endfunction
 
