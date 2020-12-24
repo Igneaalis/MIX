@@ -376,7 +376,7 @@ scope Debug initializer Init
             // call Log(I2S(bj_PLAYER_NEUTRAL_EXTRA)) - 26
             // call Log(I2S(PLAYER_NEUTRAL_PASSIVE)) - 27
 
-            // call Log(I2S(bj_maxNumberOfPlayers)) - 24
+            // call Log(I2S(bj_MAX_PLAYERS)) - 24
             // call Log(I2S(bj_MAX_PLAYER_SLOTS)) - 28
         endif
         
@@ -1876,19 +1876,33 @@ library MIXLib initializer MIXLibInit requires NokladrLib  // Library by Nokladr
 
     struct DB
         private player p
-        real scoreboard_result = 0
-        integer income_gold = 240
-        integer income_gems = 8
-        real leader_coeff = 1.00
-        integer leader_wins = 0
-        integer arena_wins = 1
-        integer change_set = 3
+        real leaderCoeff = 1.00
+        integer leaderWins = 0
+        integer arenaWins = 1
+        integer changeSet = 3
+        integer incomeGold = 240
+        integer incomeGems = 8
         boolean info = true // показывать команды/полезную инфу
+        integer kills = 0
+        integer upgrades = 0
+        integer castlesDestroyed = 0
+        real points = 0
 
         static method create takes player p returns DB
             local DB db = DB.allocate()
                 set db.p = p
             return db
+        endmethod
+
+        method operator result takes nothing returns real
+            local real result = 0
+            set result = result + GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) / 250
+            set result = result + GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER) / 5
+            set result = result + kills / 5 * (10 + GetPlayerTechCount(p, pointsForKillsRC, true))
+            set result = result + upgrades * 2
+            set result = result + castlesDestroyed * 12.5
+            set result = result + points * 0.07 * leaderCoeff
+            return result
         endmethod
     endstruct
 
@@ -3489,6 +3503,7 @@ globals
     constant integer wait_five_minutes_rc = 'R028'                                              // Подождите 5 минут, дополнительное улучшение для Вклада в игрока
     constant integer leadership_rc = 'R029'                                                     // Лидерство
     constant integer cursed_mine_rc = 'R02I'                                                    // Проклятый рудник
+    constant integer pointsForKillsRC = 'R02J'                                                  // Очки за убийства
 
     // Равкоды
     constant integer castle_rc = 'h01O'
@@ -3824,7 +3839,6 @@ scope Messages initializer Init
 
         call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 10, (C_IntToColor(GetPlayerId(p)) + GetPlayerName(p) + "|r " + GOLD + "покидает игру!|r"))
         call SetPlayerTechResearchedSwap('R00J', 0, p)
-        set pdb[p].scoreboard_result = 0
         // Opt. begin
         call ForGroup(GetUnitsOfPlayerMatching(p, null), function ForUnits_OnLeave)
         call ForceRemovePlayer(players, p)
@@ -4061,12 +4075,16 @@ scope MIXMultiboard
             set mbstruct[this.row][2].text = I2S(upgrades)
         endmethod
         
-        method operator castles= takes integer castles returns nothing
-            set mbstruct[this.row][3].text = I2S(castles)
+        method operator castlesDestroyed= takes integer castlesDestroyed returns nothing
+            set mbstruct[this.row][3].text = I2S(castlesDestroyed)
         endmethod
 
-        method operator points= takes integer points returns nothing
-            set mbstruct[this.row][4].text = I2S(points)
+        method operator points= takes real points returns nothing
+            set mbstruct[this.row][4].text = I2S(R2I(points))
+        endmethod
+
+        method operator result= takes real result returns nothing
+            set mbstruct[this.row][5].text = I2S(R2I(result))
         endmethod
 
     endstruct
@@ -4086,12 +4104,24 @@ scope MIXMultiboard
         local integer playerId = GetPlayerId(p)
 
         set mb[p].name = C_IntToColor(playerId) + GetPlayerName(p) + "|r"
-        debug set mb[p].kills = 100
-        debug set mb[p].upgrades = 100
-        debug set mb[p].castles = 100
-        debug set mb[p].points = 100
 
         set p = null
+    endfunction
+
+    private function Timer_ForPlayer takes nothing returns nothing
+        local player p = GetEnumPlayer()
+        
+        set mb[p].kills = pdb[p].kills
+        set mb[p].upgrades = pdb[p].upgrades
+        set mb[p].castlesDestroyed = pdb[p].castlesDestroyed
+        set mb[p].points = pdb[p].points
+        set mb[p].result = pdb[p].result
+
+        set p = null
+    endfunction
+
+    private function Timer_OnTick takes nothing returns nothing
+        call ForForce(players, function Timer_ForPlayer)
     endfunction
 
     public function Init takes nothing returns nothing
@@ -4118,9 +4148,10 @@ scope MIXMultiboard
         
         call ForForce(players, function CreateMIXMBRows)
         call ForForce(players, function ForPlayer)
-
         
         set mbstruct.display = true
+
+        call TimerStart(CreateTimer(), 0.033, true, function Timer_OnTick)
     endfunction
 
 endscope
@@ -4549,11 +4580,11 @@ scope NextWave
         call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, p, 0)
         call PanCameraToTimedLocForPlayer(p, GetPlayerStartLocationLoc(p), 0) // Focuses camera at castle you own
 
-        call AddGoldToPlayer(pdb[p].income_gold, p)
-        call AddLumberToPlayer(pdb[p].income_gems, p)
+        call AddGoldToPlayer(pdb[p].incomeGold, p)
+        call AddLumberToPlayer(pdb[p].incomeGems, p)
 
-        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль золота: " + GOLD + I2S(pdb[p].income_gold) + "|r")
-        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль самоцветов: " + VIOLET + I2S(pdb[p].income_gems) + "|r")
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль золота: " + GOLD + I2S(pdb[p].incomeGold) + "|r")
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль самоцветов: " + VIOLET + I2S(pdb[p].incomeGems) + "|r")
 
         set p = null
     endfunction

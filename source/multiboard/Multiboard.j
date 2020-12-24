@@ -41,12 +41,16 @@ scope MIXMultiboard
             set mbstruct[this.row][2].text = I2S(upgrades)
         endmethod
         
-        method operator castles= takes integer castles returns nothing
-            set mbstruct[this.row][3].text = I2S(castles)
+        method operator castlesDestroyed= takes integer castlesDestroyed returns nothing
+            set mbstruct[this.row][3].text = I2S(castlesDestroyed)
         endmethod
 
-        method operator points= takes integer points returns nothing
-            set mbstruct[this.row][4].text = I2S(points)
+        method operator points= takes real points returns nothing
+            set mbstruct[this.row][4].text = I2S(R2I(points))
+        endmethod
+
+        method operator result= takes real result returns nothing
+            set mbstruct[this.row][5].text = I2S(R2I(result))
         endmethod
 
     endstruct
@@ -66,13 +70,24 @@ scope MIXMultiboard
         local integer playerId = GetPlayerId(p)
 
         set mb[p].name = C_IntToColor(playerId) + GetPlayerName(p) + "|r"
-        
-        debug set mb[p].kills = 100
-        debug set mb[p].upgrades = 100
-        debug set mb[p].castles = 100
-        debug set mb[p].points = 100
 
         set p = null
+    endfunction
+
+    private function Timer_ForPlayer takes nothing returns nothing
+        local player p = GetEnumPlayer()
+        
+        set mb[p].kills = pdb[p].kills
+        set mb[p].upgrades = pdb[p].upgrades
+        set mb[p].castlesDestroyed = pdb[p].castlesDestroyed
+        set mb[p].points = pdb[p].points
+        set mb[p].result = pdb[p].result
+
+        set p = null
+    endfunction
+
+    private function Timer_OnTick takes nothing returns nothing
+        call ForForce(players, function Timer_ForPlayer)
     endfunction
 
     public function Init takes nothing returns nothing
@@ -99,9 +114,10 @@ scope MIXMultiboard
         
         call ForForce(players, function CreateMIXMBRows)
         call ForForce(players, function ForPlayer)
-
         
         set mbstruct.display = true
+
+        call TimerStart(CreateTimer(), 0.033, true, function Timer_OnTick)
     endfunction
 
 endscope

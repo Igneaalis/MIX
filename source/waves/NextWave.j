@@ -11,11 +11,11 @@ scope NextWave
         call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, p, 0)
         call PanCameraToTimedLocForPlayer(p, GetPlayerStartLocationLoc(p), 0) // Focuses camera at castle you own
 
-        call AddGoldToPlayer(pdb[p].income_gold, p)
-        call AddLumberToPlayer(pdb[p].income_gems, p)
+        call AddGoldToPlayer(pdb[p].incomeGold, p)
+        call AddLumberToPlayer(pdb[p].incomeGems, p)
 
-        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль золота: " + GOLD + I2S(pdb[p].income_gold) + "|r")
-        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль самоцветов: " + VIOLET + I2S(pdb[p].income_gems) + "|r")
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль золота: " + GOLD + I2S(pdb[p].incomeGold) + "|r")
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль самоцветов: " + VIOLET + I2S(pdb[p].incomeGems) + "|r")
 
         set p = null
     endfunction

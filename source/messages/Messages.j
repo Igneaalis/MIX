@@ -38,7 +38,6 @@ scope Messages initializer Init
 
         call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 10, (C_IntToColor(GetPlayerId(p)) + GetPlayerName(p) + "|r " + GOLD + "покидает игру!|r"))
         call SetPlayerTechResearchedSwap('R00J', 0, p)
-        set pdb[p].scoreboard_result = 0
         // Opt. begin
         call ForGroup(GetUnitsOfPlayerMatching(p, null), function ForUnits_OnLeave)
         call ForceRemovePlayer(players, p)

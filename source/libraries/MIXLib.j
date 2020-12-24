@@ -6,19 +6,33 @@ library MIXLib initializer MIXLibInit requires NokladrLib  // Library by Nokladr
 
     struct DB
         private player p
-        real scoreboard_result = 0
-        integer income_gold = 240
-        integer income_gems = 8
-        real leader_coeff = 1.00
-        integer leader_wins = 0
-        integer arena_wins = 1
-        integer change_set = 3
+        real leaderCoeff = 1.00
+        integer leaderWins = 0
+        integer arenaWins = 1
+        integer changeSet = 3
+        integer incomeGold = 240
+        integer incomeGems = 8
         boolean info = true // показывать команды/полезную инфу
+        integer kills = 0
+        integer upgrades = 0
+        integer castlesDestroyed = 0
+        real points = 0
 
         static method create takes player p returns DB
             local DB db = DB.allocate()
                 set db.p = p
             return db
+        endmethod
+
+        method operator result takes nothing returns real
+            local real result = 0
+            set result = result + GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) / 250
+            set result = result + GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER) / 5
+            set result = result + kills / 5 * (10 + GetPlayerTechCount(p, pointsForKillsRC, true))
+            set result = result + upgrades * 2
+            set result = result + castlesDestroyed * 12.5
+            set result = result + points * 0.07 * leaderCoeff
+            return result
         endmethod
     endstruct
 

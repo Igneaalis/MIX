@@ -47,6 +47,7 @@ globals
     constant integer wait_five_minutes_rc = 'R028'                                              // Подождите 5 минут, дополнительное улучшение для Вклада в игрока
     constant integer leadership_rc = 'R029'                                                     // Лидерство
     constant integer cursed_mine_rc = 'R02I'                                                    // Проклятый рудник
+    constant integer pointsForKillsRC = 'R02J'                                                  // Очки за убийства
 
     // Равкоды
     constant integer castle_rc = 'h01O'
