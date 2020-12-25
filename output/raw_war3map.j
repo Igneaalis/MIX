@@ -3088,7 +3088,7 @@ library UnitRecycler initializer UnitRecyclerInit uses Colors, ArcingTextTag, Lo
         private constant boolean  AUTO_LOC = false          // If it's set to true, it will place automatically the heaven in one
                                                             // non visible corner of the map, else, it will use the HEAVEN_POS
                                                             // as a heaven location
-        private constant player   DUMMY_PLAYER = Player(0) // sets the player owner of the unit's heaven
+        private constant player   DUMMY_PLAYER = Player(27) // sets the player owner of the unit's heaven
         private constant real     MANA_FACTOR = 1           // sets the initial mana amount (as percentage of maximum mana)
                                                             // to recycled units when they are just placed in the game.
                                                             // This constant is used only by CreateUnitEx function.
