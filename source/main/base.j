@@ -223,6 +223,7 @@ sound gg_snd_BloodElfMageReady1= null
 sound gg_snd_BloodElfMagePissed1= null
 sound gg_snd_BattleNetTick01= null
 sound gg_snd_ClanInvitation= null
+trigger gg_trg_Untitled_Trigger_001= null
 trigger gg_trg_initialization= null
 trigger gg_trg_ini_id= null
 trigger gg_trg_game_end= null
@@ -744,7 +745,7 @@ endfunction
 
 function InitSounds takes nothing returns nothing
     set gg_snd_BattleNetTick=CreateSound("Sound\\Interface\\BattleNetTick.wav", false, false, false, 10, 10, "DefaultEAXON")
-    call SetSoundDuration(gg_snd_BattleNetTick, 476)
+    call SetSoundDuration(gg_snd_BattleNetTick, 657)
     call SetSoundChannel(gg_snd_BattleNetTick, 0)
     call SetSoundVolume(gg_snd_BattleNetTick, - 1)
     call SetSoundPitch(gg_snd_BattleNetTick, 1.0)
@@ -789,7 +790,7 @@ function InitSounds takes nothing returns nothing
     call SetSoundVolume(gg_snd_BloodElfMagePissed1, - 1)
     call SetSoundPitch(gg_snd_BloodElfMagePissed1, 1.0)
     set gg_snd_BattleNetTick01=CreateSound("Sound\\Interface\\BattleNetTick.wav", false, false, false, 10, 10, "DefaultEAXON")
-    call SetSoundDuration(gg_snd_BattleNetTick01, 476)
+    call SetSoundDuration(gg_snd_BattleNetTick01, 657)
     call SetSoundChannel(gg_snd_BattleNetTick01, 0)
     call SetSoundVolume(gg_snd_BattleNetTick01, - 1)
     call SetSoundPitch(gg_snd_BattleNetTick01, 1.0)

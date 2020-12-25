@@ -184,63 +184,15 @@ endscope
 
 */
 
-scope UnitDatabase
-    globals
-        UnitDB udb
-        private UnitStruct array usarr[128]
-        private integer usarrcounter = 1
-    endglobals
-
-    struct UnitStruct
-        private integer gold
-        private integer lumber
-        private real gold_raw
-        private real lumber_raw
-
-        static method create takes integer unitTypeId, integer parentUnitTypeId returns UnitStruct
-            local UnitStruct us = UnitStruct.allocate()
-            set us.gold_raw = GetUnitGoldCost(unitTypeId) * 0.8
-            set us.lumber_raw = GetUnitWoodCost(unitTypeId) * 0.8
-            if (usarr[table[parentUnitTypeId]] != null) then
-                set us.gold = R2I(us.gold_raw + usarr[table[parentUnitTypeId]].GetGoldRaw())
-                set us.lumber = R2I(us.lumber_raw + usarr[table[parentUnitTypeId]].GetLumberRaw())
-            else
-                set us.gold = IMaxBJ(R2I(GetUnitGoldCost(unitTypeId) * 0.8), 1)
-                set us.lumber = IMaxBJ(R2I(GetUnitWoodCost(unitTypeId) * 0.8), 1)
-            endif
-            set table[unitTypeId] = usarrcounter
-            set usarr[usarrcounter] = us
-            set usarrcounter = usarrcounter + 1
-            return us
-        endmethod
-
-        method GetGold takes nothing returns integer
-            return gold
-        endmethod
-        
-        method GetLumber takes nothing returns integer
-            return lumber
-        endmethod
-
-        method GetGoldRaw takes nothing returns real
-            return gold_raw
-        endmethod
-
-        method GetLumberRaw takes nothing returns real
-            return lumber_raw
-        endmethod
-
-    endstruct
-
-    struct UnitDB
-        method operator [] takes unit u returns UnitStruct
-            return usarr[table[GetUnitTypeId(u)]]
-        endmethod
-    endstruct
-
-endscope
-
 scope BuildingSelling
+
+    private function CreateSellingText takes integer gold, integer gems, unit u returns nothing
+        call ShowUnit(u, false)
+        call ArcingTextTag.create((GOLD + "+" + I2S(gold) + "|r"), u)
+        call TriggerSleepAction(0.1)
+        call ArcingTextTag.create((VIOLET + "+" + I2S(gems) + "|r"), u)
+        call RemoveUnitEx(u)
+    endfunction
 
     function building_selling_conditions takes nothing returns boolean
         return (GetSpellAbilityId() == 'A002') // Способность "Продать"
@@ -250,34 +202,15 @@ scope BuildingSelling
         local unit u = GetSpellAbilityUnit()
         local player p = GetTriggerPlayer()
         local integer gold = udb[u].GetGold()
-        local integer lumber = udb[u].GetLumber()
+        local integer gems = udb[u].GetGems()
         local texttag tt
         call GroupRemoveUnit(buildings, u)
 
         call AddGoldToPlayer(gold, p)
-        call AddLumberToPlayer(lumber, p)
+        call AddGemsToPlayer(gems, p)
 
-        set tt = NewTextTagAtUnit(GOLD + "+" + I2S(gold), u, 70.00, 11.00)
-        call SetTextTagVisibility(tt, false)
-        if (GetLocalPlayer() == p) then
-            call SetTextTagVisibility(tt, true)
-        endif
-        call SetTextTagPermanent(tt, false)
-        call SetTextTagLifespan(tt, 2.00)
-        call SetTextTagFadepoint(tt, 1.30)
-        call SetTextTagVelocity(tt, 0, 0.03)
-
-        set tt = NewTextTagAtUnit(VIOLET + "+" + I2S(lumber), u, 0.00, 11.00)
-        call SetTextTagVisibility(tt, false)
-        if (GetLocalPlayer() == p) then
-            call SetTextTagVisibility(tt, true)
-        endif
-        call SetTextTagPermanent(tt, false)
-        call SetTextTagLifespan(tt, 2.00)
-        call SetTextTagFadepoint(tt, 1.30)
-        call SetTextTagVelocity(tt, 0, 0.03)
-
-        call RemoveUnitEx(u)
+        call CreateSellingText.execute(gold, gems, u)
+        
         call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl", GetUnitX(u), GetUnitY(u)))
 
         set u = null
@@ -393,6 +326,63 @@ scope BuildingSelling
 
         set t = null
     endfunction
+
+endscope
+scope UnitDatabase
+    globals
+        UnitDB udb
+        private UnitStruct array usarr[128]
+        private integer usarrcounter = 1
+    endglobals
+
+    struct UnitStruct
+        private integer gold
+        private integer gems
+        private real gold_raw
+        private real gems_raw
+
+        static method create takes integer unitTypeId, integer parentUnitTypeId returns UnitStruct
+            local UnitStruct us = UnitStruct.allocate()
+            set us.gold_raw = GetUnitGoldCost(unitTypeId) * 0.8
+            set us.gems_raw = GetUnitWoodCost(unitTypeId) * 0.8
+            if (usarr[table[parentUnitTypeId]] != null) then
+                set us.gold_raw = us.gold_raw + usarr[table[parentUnitTypeId]].GetGoldRaw()
+                set us.gems_raw = us.gems_raw + usarr[table[parentUnitTypeId]].GetGemsRaw()
+                set us.gold = R2I(us.gold_raw)
+                set us.gems = R2I(us.gems_raw)
+            else
+                set us.gold = R2I(GetUnitGoldCost(unitTypeId) * 0.8)
+                set us.gems = R2I(GetUnitWoodCost(unitTypeId) * 0.8)
+            endif
+            set table[unitTypeId] = usarrcounter
+            set usarr[usarrcounter] = us
+            set usarrcounter = usarrcounter + 1
+            return us
+        endmethod
+
+        method GetGold takes nothing returns integer
+            return this.gold
+        endmethod
+        
+        method GetGems takes nothing returns integer
+            return this.gems
+        endmethod
+
+        method GetGoldRaw takes nothing returns real
+            return this.gold_raw
+        endmethod
+
+        method GetGemsRaw takes nothing returns real
+            return this.gems_raw
+        endmethod
+
+    endstruct
+
+    struct UnitDB
+        method operator [] takes unit u returns UnitStruct
+            return usarr[table[GetUnitTypeId(u)]]
+        endmethod
+    endstruct
 
 endscope
 scope Debug initializer Init
@@ -1965,6 +1955,22 @@ library Logs uses Colors
     // Лог сообщений
     function Log takes string s returns nothing
         debug call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 60, (GOLD + "Log:|r " + GREEN + s + "|r"))
+    endfunction
+
+endlibrary
+library MIXLib initializer Init requires NokladrLib, Colors, ArcingTextTag
+
+    globals
+        
+    endglobals
+
+    function AddGemsToPlayer takes integer gems, player p returns nothing
+        local integer lumber = gems
+        call AddLumberToPlayer(lumber, p)
+    endfunction
+
+    private function Init takes nothing returns nothing
+        
     endfunction
 
 endlibrary
@@ -3683,6 +3689,7 @@ scope IncomeObjects initializer Init
         minimapicon array IncomeObjects_minimapicons
         integer IncomeObjects_StartAmount = 3
         integer IncomeObjects_EndAmount = 6
+        integer IncomeObjects_MaxAmount = 9
     endglobals
 
     public function Shuffle takes nothing returns nothing
@@ -3771,7 +3778,7 @@ Income Objective OnDestroy()
 
 */
 
-scope IncomeObjectsColor initializer inc_colour
+scope IncomeObjectsDeath initializer inc_colour
 
     function inc_colour_actions takes nothing returns nothing
         local unit IncomeObjectiveUnit = GetDyingUnit() // IncomeObject
@@ -3791,16 +3798,11 @@ scope IncomeObjectsColor initializer inc_colour
         endif
 
         call ShowUnit(IncomeObjectiveUnit, false)
-
-        if IncomeObjectReceiever != IncomeObjectOwner then
-            // set pdb[IncomeObjectReceiever] = pdb[IncomeObjectReceiever] +
-            // set pdb[IncomeObjectOwner] = pdb[IncomeObjectOwner] -
-        endif
-
         call GroupRemoveUnit(IncomeObjects_group, IncomeObjectiveUnit)
         set IncomeObjectiveNewUnit = CreateUnitEx(IncomeObjectReceiever, GetUnitTypeId(IncomeObjectiveUnit), IncomeObjectiveUnitX, IncomeObjectiveUnitY, bj_UNIT_FACING)
         call RemoveUnitEx(IncomeObjectiveUnit) // Remove old IncomeObject to replace it with a new one
         call GroupAddUnit(IncomeObjects_group, IncomeObjectiveNewUnit)
+        call SetUnitAnimation(IncomeObjectiveNewUnit, "work")
         call SetUnitVertexColor(IncomeObjectiveNewUnit, playerColor.red, playerColor.green, playerColor.blue, 255) // Adjusts color to match receiver's one
 
         set IncomeObjectiveUnit = null
@@ -4259,6 +4261,14 @@ scope MIXMultiboard
         endif
         set mb[p].result = pdb[p].result
 
+        // static if DEBUG_MODE then
+        //     set mb[p].kills = 3333
+        //     set mb[p].upgrades = 333
+        //     set mb[p].castlesDestroyed = 33
+        //     set mb[p].points = I2S(R2I(33333)) + " (" + GREEN + I2S(R2I(33)) + ")|r"
+        //     set mb[p].result = 3333
+        // endif
+
         set p = null
     endfunction
 
@@ -4280,12 +4290,12 @@ scope MIXMultiboard
         call mbstruct.column[0].setStyle(true, true)
         set mbstruct[0][0].text = "Имя игрока"
         call mbstruct[0][0].setStyle(true, false)
-        set mbstruct.column[0].width = 0.12
-        set mbstruct.column[1].width = 0.05
-        set mbstruct.column[2].width = 0.05
-        set mbstruct.column[3].width = 0.05
-        set mbstruct.column[4].width = 0.05
-        set mbstruct.column[5].width = 0.05
+        set mbstruct.column[0].width = 0.12  // Name
+        set mbstruct.column[1].width = 0.025  // Kills
+        set mbstruct.column[2].width = 0.025  // Upgrades
+        set mbstruct.column[3].width = 0.025  // Castles destroyed
+        set mbstruct.column[4].width = 0.050  // Points
+        set mbstruct.column[5].width = 0.025  // Result
         set mbstruct.column[0].icon = "ReplaceableTextures\\CommandButtons\\BTNRallyPoint.blp"
         set mbstruct[0][1].icon = "ReplaceableTextures\\CommandButtons\\BTNAttack.blp"
         set mbstruct[0][2].icon = "ReplaceableTextures\\CommandButtons\\BTNSpy.blp"
@@ -4747,14 +4757,17 @@ scope FastArena initializer Init
 
     private function SetWinPlayer takes nothing returns nothing
         local integer i = 1
-        local integer curPlayerId = 0
-        loop
-            exitwhen i >= maxNumberOfPlayers
-            if damageByPlayer[i] > damageByPlayer[curPlayerId] then
+        local integer curPlayerId = -1
+
+        if damageByPlayer[0] > 0 then
+            set curPlayerId = 0
+        endif
+
+        for i = 1 to maxNumberOfPlayers - 1
+            if damageByPlayer[i] > damageByPlayer[i - 1] then
                 set curPlayerId = i
             endif
-            set i = i + 1
-        endloop
+        endfor
         set winPlayerId = curPlayerId
     endfunction
 
@@ -4888,13 +4901,20 @@ scope FastArena initializer Init
         call DisableTrigger(DDS)
         call SetWinPlayer.execute()
 
-        for i = 0 to maxNumberOfPlayers - 1
-            if (pdb[Player(i)].info == true) then
-                call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, ("Нанеся " + GOLD + I2S(R2I(damageByPlayer[winPlayerId])) + "|r ед. урона на арене, победил игрок " + C_IntToColor(winPlayerId) + GetPlayerName(Player(winPlayerId)) + "|r"))
-            endif
-        endfor
-
-        set pdb[Player(winPlayerId)].points = pdb[Player(winPlayerId)].points + 50
+        if winPlayerId != -1 then
+            for i = 0 to maxNumberOfPlayers - 1
+                if (pdb[Player(i)].info == true) then
+                    call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, ("Нанеся " + GOLD + I2S(R2I(damageByPlayer[winPlayerId])) + "|r ед. урона на арене, победил игрок " + C_IntToColor(winPlayerId) + GetPlayerName(Player(winPlayerId)) + "|r"))
+                endif
+            endfor
+            set pdb[Player(winPlayerId)].points = pdb[Player(winPlayerId)].points + 50
+        else
+            for i = 0 to maxNumberOfPlayers - 1
+                if (pdb[Player(i)].info == true) then
+                    call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, "На арене нет победителей.")
+                endif
+            endfor
+        endif
 
         call NextWave_Force.execute()
     endfunction
@@ -4963,7 +4983,7 @@ scope NextWave
         call ForGroup(IncomeObjects_group, function C_RemoveEnumUnits)
         call GroupClear(IncomeObjects_group)
 
-        for i = 1 to IncomeObjects_EndAmount
+        for i = 1 to IncomeObjects_MaxAmount
             if IncomeObjects_minimapicons[i] != null then
                 call DestroyMinimapIcon(IncomeObjects_minimapicons[i])
                 set IncomeObjects_minimapicons[i] = null
@@ -5221,6 +5241,7 @@ sound gg_snd_BloodElfMageReady1= null
 sound gg_snd_BloodElfMagePissed1= null
 sound gg_snd_BattleNetTick01= null
 sound gg_snd_ClanInvitation= null
+trigger gg_trg_Untitled_Trigger_001= null
 trigger gg_trg_initialization= null
 trigger gg_trg_ini_id= null
 trigger gg_trg_game_end= null
@@ -5742,7 +5763,7 @@ endfunction
 
 function InitSounds takes nothing returns nothing
     set gg_snd_BattleNetTick=CreateSound("Sound\\Interface\\BattleNetTick.wav", false, false, false, 10, 10, "DefaultEAXON")
-    call SetSoundDuration(gg_snd_BattleNetTick, 476)
+    call SetSoundDuration(gg_snd_BattleNetTick, 657)
     call SetSoundChannel(gg_snd_BattleNetTick, 0)
     call SetSoundVolume(gg_snd_BattleNetTick, - 1)
     call SetSoundPitch(gg_snd_BattleNetTick, 1.0)
@@ -5787,7 +5808,7 @@ function InitSounds takes nothing returns nothing
     call SetSoundVolume(gg_snd_BloodElfMagePissed1, - 1)
     call SetSoundPitch(gg_snd_BloodElfMagePissed1, 1.0)
     set gg_snd_BattleNetTick01=CreateSound("Sound\\Interface\\BattleNetTick.wav", false, false, false, 10, 10, "DefaultEAXON")
-    call SetSoundDuration(gg_snd_BattleNetTick01, 476)
+    call SetSoundDuration(gg_snd_BattleNetTick01, 657)
     call SetSoundChannel(gg_snd_BattleNetTick01, 0)
     call SetSoundVolume(gg_snd_BattleNetTick01, - 1)
     call SetSoundPitch(gg_snd_BattleNetTick01, 1.0)

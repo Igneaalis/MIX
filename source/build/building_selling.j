@@ -11,63 +11,15 @@
 
 */
 
-scope UnitDatabase
-    globals
-        UnitDB udb
-        private UnitStruct array usarr[128]
-        private integer usarrcounter = 1
-    endglobals
-
-    struct UnitStruct
-        private integer gold
-        private integer lumber
-        private real gold_raw
-        private real lumber_raw
-
-        static method create takes integer unitTypeId, integer parentUnitTypeId returns UnitStruct
-            local UnitStruct us = UnitStruct.allocate()
-            set us.gold_raw = GetUnitGoldCost(unitTypeId) * 0.8
-            set us.lumber_raw = GetUnitWoodCost(unitTypeId) * 0.8
-            if (usarr[table[parentUnitTypeId]] != null) then
-                set us.gold = R2I(us.gold_raw + usarr[table[parentUnitTypeId]].GetGoldRaw())
-                set us.lumber = R2I(us.lumber_raw + usarr[table[parentUnitTypeId]].GetLumberRaw())
-            else
-                set us.gold = IMaxBJ(R2I(GetUnitGoldCost(unitTypeId) * 0.8), 1)
-                set us.lumber = IMaxBJ(R2I(GetUnitWoodCost(unitTypeId) * 0.8), 1)
-            endif
-            set table[unitTypeId] = usarrcounter
-            set usarr[usarrcounter] = us
-            set usarrcounter = usarrcounter + 1
-            return us
-        endmethod
-
-        method GetGold takes nothing returns integer
-            return gold
-        endmethod
-        
-        method GetLumber takes nothing returns integer
-            return lumber
-        endmethod
-
-        method GetGoldRaw takes nothing returns real
-            return gold_raw
-        endmethod
-
-        method GetLumberRaw takes nothing returns real
-            return lumber_raw
-        endmethod
-
-    endstruct
-
-    struct UnitDB
-        method operator [] takes unit u returns UnitStruct
-            return usarr[table[GetUnitTypeId(u)]]
-        endmethod
-    endstruct
-
-endscope
-
 scope BuildingSelling
+
+    private function CreateSellingText takes integer gold, integer gems, unit u returns nothing
+        call ShowUnit(u, false)
+        call ArcingTextTag.create((GOLD + "+" + I2S(gold) + "|r"), u)
+        call TriggerSleepAction(0.1)
+        call ArcingTextTag.create((VIOLET + "+" + I2S(gems) + "|r"), u)
+        call RemoveUnitEx(u)
+    endfunction
 
     function building_selling_conditions takes nothing returns boolean
         return (GetSpellAbilityId() == 'A002') // Способность "Продать"
@@ -77,34 +29,15 @@ scope BuildingSelling
         local unit u = GetSpellAbilityUnit()
         local player p = GetTriggerPlayer()
         local integer gold = udb[u].GetGold()
-        local integer lumber = udb[u].GetLumber()
+        local integer gems = udb[u].GetGems()
         local texttag tt
         call GroupRemoveUnit(buildings, u)
 
         call AddGoldToPlayer(gold, p)
-        call AddLumberToPlayer(lumber, p)
+        call AddGemsToPlayer(gems, p)
 
-        set tt = NewTextTagAtUnit(GOLD + "+" + I2S(gold), u, 70.00, 11.00)
-        call SetTextTagVisibility(tt, false)
-        if (GetLocalPlayer() == p) then
-            call SetTextTagVisibility(tt, true)
-        endif
-        call SetTextTagPermanent(tt, false)
-        call SetTextTagLifespan(tt, 2.00)
-        call SetTextTagFadepoint(tt, 1.30)
-        call SetTextTagVelocity(tt, 0, 0.03)
-
-        set tt = NewTextTagAtUnit(VIOLET + "+" + I2S(lumber), u, 0.00, 11.00)
-        call SetTextTagVisibility(tt, false)
-        if (GetLocalPlayer() == p) then
-            call SetTextTagVisibility(tt, true)
-        endif
-        call SetTextTagPermanent(tt, false)
-        call SetTextTagLifespan(tt, 2.00)
-        call SetTextTagFadepoint(tt, 1.30)
-        call SetTextTagVelocity(tt, 0, 0.03)
-
-        call RemoveUnitEx(u)
+        call CreateSellingText.execute(gold, gems, u)
+        
         call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl", GetUnitX(u), GetUnitY(u)))
 
         set u = null

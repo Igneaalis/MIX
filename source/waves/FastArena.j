@@ -62,14 +62,17 @@ scope FastArena initializer Init
 
     private function SetWinPlayer takes nothing returns nothing
         local integer i = 1
-        local integer curPlayerId = 0
-        loop
-            exitwhen i >= maxNumberOfPlayers
-            if damageByPlayer[i] > damageByPlayer[curPlayerId] then
+        local integer curPlayerId = -1
+
+        if damageByPlayer[0] > 0 then
+            set curPlayerId = 0
+        endif
+
+        for i = 1 to maxNumberOfPlayers - 1
+            if damageByPlayer[i] > damageByPlayer[i - 1] then
                 set curPlayerId = i
             endif
-            set i = i + 1
-        endloop
+        endfor
         set winPlayerId = curPlayerId
     endfunction
 
@@ -203,13 +206,20 @@ scope FastArena initializer Init
         call DisableTrigger(DDS)
         call SetWinPlayer.execute()
 
-        for i = 0 to maxNumberOfPlayers - 1
-            if (pdb[Player(i)].info == true) then
-                call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, ("Нанеся " + GOLD + I2S(R2I(damageByPlayer[winPlayerId])) + "|r ед. урона на арене, победил игрок " + C_IntToColor(winPlayerId) + GetPlayerName(Player(winPlayerId)) + "|r"))
-            endif
-        endfor
-
-        set pdb[Player(winPlayerId)].points = pdb[Player(winPlayerId)].points + 50
+        if winPlayerId != -1 then
+            for i = 0 to maxNumberOfPlayers - 1
+                if (pdb[Player(i)].info == true) then
+                    call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, ("Нанеся " + GOLD + I2S(R2I(damageByPlayer[winPlayerId])) + "|r ед. урона на арене, победил игрок " + C_IntToColor(winPlayerId) + GetPlayerName(Player(winPlayerId)) + "|r"))
+                endif
+            endfor
+            set pdb[Player(winPlayerId)].points = pdb[Player(winPlayerId)].points + 50
+        else
+            for i = 0 to maxNumberOfPlayers - 1
+                if (pdb[Player(i)].info == true) then
+                    call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, "На арене нет победителей.")
+                endif
+            endfor
+        endif
 
         call NextWave_Force.execute()
     endfunction

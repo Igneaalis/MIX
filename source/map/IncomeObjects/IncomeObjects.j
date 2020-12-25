@@ -15,6 +15,7 @@ scope IncomeObjects initializer Init
         minimapicon array IncomeObjects_minimapicons
         integer IncomeObjects_StartAmount = 3
         integer IncomeObjects_EndAmount = 6
+        integer IncomeObjects_MaxAmount = 9
     endglobals
 
     public function Shuffle takes nothing returns nothing

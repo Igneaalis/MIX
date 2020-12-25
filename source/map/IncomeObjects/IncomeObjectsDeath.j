@@ -13,7 +13,7 @@ Income Objective OnDestroy()
 
 */
 
-scope IncomeObjectsColor initializer inc_colour
+scope IncomeObjectsDeath initializer inc_colour
 
     function inc_colour_actions takes nothing returns nothing
         local unit IncomeObjectiveUnit = GetDyingUnit() // IncomeObject
@@ -33,16 +33,11 @@ scope IncomeObjectsColor initializer inc_colour
         endif
 
         call ShowUnit(IncomeObjectiveUnit, false)
-
-        if IncomeObjectReceiever != IncomeObjectOwner then
-            // set pdb[IncomeObjectReceiever] = pdb[IncomeObjectReceiever] +
-            // set pdb[IncomeObjectOwner] = pdb[IncomeObjectOwner] -
-        endif
-
         call GroupRemoveUnit(IncomeObjects_group, IncomeObjectiveUnit)
         set IncomeObjectiveNewUnit = CreateUnitEx(IncomeObjectReceiever, GetUnitTypeId(IncomeObjectiveUnit), IncomeObjectiveUnitX, IncomeObjectiveUnitY, bj_UNIT_FACING)
         call RemoveUnitEx(IncomeObjectiveUnit) // Remove old IncomeObject to replace it with a new one
         call GroupAddUnit(IncomeObjects_group, IncomeObjectiveNewUnit)
+        call SetUnitAnimation(IncomeObjectiveNewUnit, "work")
         call SetUnitVertexColor(IncomeObjectiveNewUnit, playerColor.red, playerColor.green, playerColor.blue, 255) // Adjusts color to match receiver's one
 
         set IncomeObjectiveUnit = null

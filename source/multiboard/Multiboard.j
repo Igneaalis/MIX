@@ -88,6 +88,14 @@ scope MIXMultiboard
         endif
         set mb[p].result = pdb[p].result
 
+        // static if DEBUG_MODE then
+        //     set mb[p].kills = 3333
+        //     set mb[p].upgrades = 333
+        //     set mb[p].castlesDestroyed = 33
+        //     set mb[p].points = I2S(R2I(33333)) + " (" + GREEN + I2S(R2I(33)) + ")|r"
+        //     set mb[p].result = 3333
+        // endif
+
         set p = null
     endfunction
 
@@ -109,12 +117,12 @@ scope MIXMultiboard
         call mbstruct.column[0].setStyle(true, true)
         set mbstruct[0][0].text = "Имя игрока"
         call mbstruct[0][0].setStyle(true, false)
-        set mbstruct.column[0].width = 0.12
-        set mbstruct.column[1].width = 0.05
-        set mbstruct.column[2].width = 0.05
-        set mbstruct.column[3].width = 0.05
-        set mbstruct.column[4].width = 0.05
-        set mbstruct.column[5].width = 0.05
+        set mbstruct.column[0].width = 0.12  // Name
+        set mbstruct.column[1].width = 0.025  // Kills
+        set mbstruct.column[2].width = 0.025  // Upgrades
+        set mbstruct.column[3].width = 0.025  // Castles destroyed
+        set mbstruct.column[4].width = 0.050  // Points
+        set mbstruct.column[5].width = 0.025  // Result
         set mbstruct.column[0].icon = "ReplaceableTextures\\CommandButtons\\BTNRallyPoint.blp"
         set mbstruct[0][1].icon = "ReplaceableTextures\\CommandButtons\\BTNAttack.blp"
         set mbstruct[0][2].icon = "ReplaceableTextures\\CommandButtons\\BTNSpy.blp"

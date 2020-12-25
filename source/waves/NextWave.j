@@ -47,7 +47,7 @@ scope NextWave
         call ForGroup(IncomeObjects_group, function C_RemoveEnumUnits)
         call GroupClear(IncomeObjects_group)
 
-        for i = 1 to IncomeObjects_EndAmount
+        for i = 1 to IncomeObjects_MaxAmount
             if IncomeObjects_minimapicons[i] != null then
                 call DestroyMinimapIcon(IncomeObjects_minimapicons[i])
                 set IncomeObjects_minimapicons[i] = null
