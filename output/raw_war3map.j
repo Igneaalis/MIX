@@ -4572,7 +4572,7 @@ scope Arena initializer Init
         timerdialog Arena_TimerDialog
         
         real Arena_Time = 120.00
-        private constant real debugTime = 40.00
+        private constant real debugTime = 5.00
     endglobals
 
     private function Conditions takes nothing returns boolean
@@ -4705,7 +4705,7 @@ scope FastArena initializer Init
         private constant real firePitPercentDamage = 10.00
         
         real FA_Time = 60.00
-        real FA_DebugTime = 10.00
+        real FA_DebugTime = 5.00
         timerdialog FA_TimerDialog
     endglobals
 
@@ -4934,7 +4934,22 @@ scope FastArena initializer Init
     endfunction
 
 endscope
-scope NextWave
+scope MinigameWaves initializer Init
+    
+    globals
+        integer minigameWave = 2
+    endglobals
+
+    public function Force takes nothing returns nothing
+        
+    endfunction
+    
+    private function Init takes nothing returns nothing
+        
+    endfunction
+    
+endscope
+scope NextWave initializer Init
 
     globals
         private timerdialog relaxWaveTimerDialog
@@ -4963,7 +4978,14 @@ scope NextWave
         call DestroyTimerDialog(relaxWaveTimerDialog)
         call PauseTimer(t)
         call DestroyTimer(t)
-        call Arena_Force.execute()
+
+        if ModuloInteger(curWave, minigameWave) == 0 then
+            debug call Log("Minigame!")
+            call MinigameWaves_Force.execute()
+        else
+            debug call Log("Arena!")
+            call Arena_Force.execute()
+        endif
 
         set t = null
     endfunction

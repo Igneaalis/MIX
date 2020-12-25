@@ -1,4 +1,4 @@
-scope NextWave
+scope NextWave initializer Init
 
     globals
         private timerdialog relaxWaveTimerDialog
@@ -27,7 +27,16 @@ scope NextWave
         call DestroyTimerDialog(relaxWaveTimerDialog)
         call PauseTimer(t)
         call DestroyTimer(t)
-        call Arena_Force.execute()
+
+        set curWave = curWave + 1
+
+        if ModuloInteger(curWave, minigameWave) == 0 then
+            debug call Log("Minigame!")
+            call MinigameWaves_Force.execute()
+        else
+            debug call Log("Arena!")
+            call Arena_Force.execute()
+        endif
 
         set t = null
     endfunction
@@ -35,8 +44,6 @@ scope NextWave
     public function Force takes nothing returns nothing
         local timer t = CreateTimer()
         local integer i
-
-        set curWave = curWave + 1
 
         call ForGroup(waveUnits, function C_RemoveEnumUnits)
         call GroupClear(waveUnits)

@@ -10,7 +10,7 @@ scope FastArena initializer Init
         private constant real firePitPercentDamage = 10.00
         
         real FA_Time = 60.00
-        real FA_DebugTime = 10.00
+        real FA_DebugTime = 5.00
         timerdialog FA_TimerDialog
     endglobals
 
