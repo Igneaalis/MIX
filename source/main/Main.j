@@ -16,38 +16,39 @@ native GetUnitWoodCost takes integer unitid returns integer
 
 scope Main initializer Init
 
-    private function PostInit takes nothing returns nothing
-
-        // NokladrLib.j
-        call C_SetComputers.execute()
-        call StartInitTimer.execute()
-
-        call building_selling.execute()
-        
-        // Disable Damage Detection System until Fast Arena begins
-        call DisableTrigger(DDS)
-        
-        call Players_Init.execute()
-        call MIXMultiboard_Init.execute()
-        call faq_ini.execute() // Starts voting for faq guide
-
-        debug call Log("Post initialization complete!")
-        
-    endfunction
-
     //-------------------------The very first function-------------------------
     // Starts map initialization
     private function Init takes nothing returns nothing
-        local trigger t = CreateTrigger()
+        call TriggerSleepAction(0)
 
         // Инициализируем хэш-таблицу
         set hash = HashTable.create()
         set table = Table.create()
 
-        call TriggerRegisterTimerEventSingle(t, 0)
-        call TriggerAddAction(t, function PostInit)
+        // NokladrLib.j
+        call TriggerSleepAction(0)
+        call C_SetComputers.execute()
+        
+        call TriggerSleepAction(0)
+        call StartInitTimer.execute()
 
-        set t = null
+        call TriggerSleepAction(0)
+        call building_selling.execute()
+        
+        // Disable Damage Detection System until Fast Arena begins
+        call DisableTrigger(DDS)
+        
+        call TriggerSleepAction(0)
+        call Players_Init.execute()
+
+        call TriggerSleepAction(0)
+        call MIXMultiboard_Init.execute()
+
+        call TriggerSleepAction(0)
+        call faq_ini.execute() // Starts voting for faq guide
+
+        debug call Log("Initialization completed!")
+
     endfunction
 
 endscope

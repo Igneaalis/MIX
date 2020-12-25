@@ -3,12 +3,12 @@ scope Arena initializer Init
     globals
         private constant integer rectListSize = 8
         private constant integer unitTypeIdOffset = 49 * 256 * 256 // https://xgm.guru/p/wc3/rawcode-to-string
-        private constant real debugTime = 30.00
         private rect array startRectForPlayer
         private rect array rectList
-
-        real Arena_Time = 120.00
         timerdialog Arena_TimerDialog
+        
+        real Arena_Time = 120.00
+        private constant real debugTime = 40.00
     endglobals
 
     private function Conditions takes nothing returns boolean
@@ -36,7 +36,7 @@ scope Arena initializer Init
 
         // debug call Log("ForceArena_ForPlayer: player = " + GetPlayerName(p))
 
-        call GroupAddUnit(udg_castle_unit, CreateUnitEx(p, castle_rc, x, y, 270))
+        call GroupAddUnit(castles, CreateUnitEx(p, castleRC, x, y, 270))
 
         set g = GetUnitsOfPlayerMatching(p, Condition(function Conditions))
         call ForGroup(g, function ForPlayerUnits)

@@ -28,7 +28,7 @@ scope IncomeObjects initializer Init
         local unit u
 
         set numberOfObjects = GetRandomInt(IncomeObjects_StartAmount, IncomeObjects_EndAmount)
-        // debug set numberOfObjects = IncomeObjects_EndAmount
+        debug set numberOfObjects = 9
 
         for i = 1 to numberOfObjects
             set random = GetRandomInt(1, rectListSize)

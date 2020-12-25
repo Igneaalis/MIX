@@ -1,8 +1,9 @@
 scope NextWave
 
     globals
-        constant real relaxWaveTime = 5.00
-        timerdialog relaxWaveTimerDialog
+        private timerdialog relaxWaveTimerDialog
+        private real relaxWaveTime = 30.00
+        private constant real debugRelaxWaveTime = 10.00
     endglobals
 
     private function ForPlayer takes nothing returns nothing
@@ -39,8 +40,10 @@ scope NextWave
 
         call ForGroup(waveUnits, function C_RemoveEnumUnits)
         call GroupClear(waveUnits)
-        call ForGroup(udg_castle_unit, function C_RemoveEnumUnits)
-        call GroupClear(udg_castle_unit)
+
+        call ForGroup(castles, function C_RemoveEnumUnits)
+        call GroupClear(castles)
+
         call ForGroup(IncomeObjects_group, function C_RemoveEnumUnits)
         call GroupClear(IncomeObjects_group)
 
@@ -59,6 +62,10 @@ scope NextWave
         call TimerDialogDisplay(relaxWaveTimerDialog, true) // Shows timer dialog
         
         set t = null
+    endfunction
+
+    private function Init takes nothing returns nothing
+        debug set relaxWaveTime = debugRelaxWaveTime
     endfunction
 
 endscope

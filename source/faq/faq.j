@@ -31,7 +31,8 @@ library FAQ uses NokladrLib
 
         call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, p, 0) // Resets camera angle
         call PanCameraToTimedLocForPlayer(p, GetPlayerStartLocationLoc(p), 0) // Focuses camera at castle you own
-        call SelectUnitForPlayerSingle(GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(p, 'ntav')), p) // Selects tavern
+        call SelectUnitAddForPlayer(GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(p, 'ntav')), p) // Selects tavern
+        call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, 100)
         
         set p = null
     endfunction

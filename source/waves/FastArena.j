@@ -203,24 +203,13 @@ scope FastArena initializer Init
         call DisableTrigger(DDS)
         call SetWinPlayer.execute()
 
-        set i = 0
-        loop
-            exitwhen i > 8
-            if (udg_info[i+1] == true) then
+        for i = 0 to maxNumberOfPlayers - 1
+            if (pdb[Player(i)].info == true) then
                 call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, ("Нанеся " + GOLD + I2S(R2I(damageByPlayer[winPlayerId])) + "|r ед. урона на арене, победил игрок " + C_IntToColor(winPlayerId) + GetPlayerName(Player(winPlayerId)) + "|r"))
             endif
-            set i = i + 1
-        endloop
-        
-        // set udg_scoreboard_win[winPlayerId] = (udg_scoreboard_win[winPlayerId] + 50) // Test
-        // call MultiboardSetItemValueBJ(udg_scoreboard, 7, winPlayerId, I2S(udg_scoreboard_win[winPlayerId])) // Test
-        
-        set i = 0
-        loop
-            exitwhen i >= maxNumberOfPlayers
-            call SetPlayerState(Player(i), PLAYER_STATE_GIVES_BOUNTY, 1)
-            set i = i + 1
-        endloop
+        endfor
+
+        set pdb[Player(winPlayerId)].points = pdb[Player(winPlayerId)].points + 50
 
         call NextWave_Force.execute()
     endfunction
