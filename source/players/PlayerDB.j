@@ -1,4 +1,4 @@
-library MIXLib initializer MIXLibInit requires NokladrLib  // Library by Nokladr special for MIX Community https://github.com/Igneaalis/MIX
+library PlayerDBLib initializer Init requires NokladrLib  // Library by Nokladr special for MIX Community https://github.com/Igneaalis/MIX
     globals
         Playerdb pdb
         private DB array dbarr[8]
@@ -54,7 +54,7 @@ library MIXLib initializer MIXLibInit requires NokladrLib  // Library by Nokladr
         set dbarr[7] = DB.create(Player(0x07))
     endfunction
 
-    private function MIXLibInit takes nothing returns nothing
+    private function Init takes nothing returns nothing
         call fill_dbarr()
     endfunction
 endlibrary
