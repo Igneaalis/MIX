@@ -33,6 +33,12 @@ scope IncomeObjectsColor initializer inc_colour
         endif
 
         call ShowUnit(IncomeObjectiveUnit, false)
+
+        if IncomeObjectReceiever != IncomeObjectOwner then
+            // set pdb[IncomeObjectReceiever] = pdb[IncomeObjectReceiever] +
+            // set pdb[IncomeObjectOwner] = pdb[IncomeObjectOwner] -
+        endif
+
         call GroupRemoveUnit(IncomeObjects_group, IncomeObjectiveUnit)
         set IncomeObjectiveNewUnit = CreateUnitEx(IncomeObjectReceiever, GetUnitTypeId(IncomeObjectiveUnit), IncomeObjectiveUnitX, IncomeObjectiveUnitY, bj_UNIT_FACING)
         call RemoveUnitEx(IncomeObjectiveUnit) // Remove old IncomeObject to replace it with a new one

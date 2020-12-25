@@ -5,6 +5,9 @@
 scope IncomeObjects initializer Init
 
     globals
+        constant integer bigMineRC = 'n003'
+        constant integer smallMineRC = 'n004'
+        constant integer flagRC = 'n005'
         private rect array rectList
         private integer rectListSize = 9
         private rect array filledRectList

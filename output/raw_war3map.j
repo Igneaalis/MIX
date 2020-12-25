@@ -719,6 +719,69 @@ function gameset_owner takes nothing returns nothing
     // Opt. end
 endfunction
 
+scope IncomeIncomeObjects initializer Init
+    
+    globals
+        
+    endglobals
+
+    private function CreateIncomeObjectText takes integer gold, integer points, unit u returns nothing
+        call ArcingTextTag.create((GOLD + "+" + I2S(gold) + "|r"), u)
+        call TriggerSleepAction(0.33)
+        call ArcingTextTag.create((RED + "+" + I2S(points) + "|r"), u)
+    endfunction
+
+    private function ForIncomeObject takes nothing returns nothing
+        local player p = GetEnumPlayer()
+        local unit u = GetEnumUnit()
+        local integer uTypeId = GetUnitTypeId(u)
+        local integer gold
+        local integer points
+
+        if p != GetOwningPlayer(u) then
+            set p = null
+            set u = null
+            return
+        endif
+
+        if uTypeId == bigMineRC then
+            set gold = pdb[p].incomeBigMineGold
+            set points = pdb[p].incomeBigMinePoints
+        elseif uTypeId == smallMineRC then
+            set gold = pdb[p].incomeSmallMineGold
+            set points = pdb[p].incomeSmallMinePoints
+        elseif uTypeId == flagRC then
+            set gold = pdb[p].incomeFlagGold
+            set points = pdb[p].incomeFlagPoints
+        endif
+
+        call AddGoldToPlayer(gold, p)
+        set pdb[p].points = pdb[p].points + points
+        call CreateIncomeObjectText.execute(gold, points, u)
+
+        set p = null
+        set u = null
+    endfunction
+
+    private function ForPlayer takes nothing returns nothing
+        local player p = GetEnumPlayer()
+        local real curPoints = pdb[p].points
+
+        call ForGroup(IncomeObjects_group, function ForIncomeObject)
+        set pdb[p].incomePoints = pdb[p].points - curPoints
+
+        set p = null
+    endfunction
+
+    private function Actions takes nothing returns nothing
+        call ForForce(players, function ForPlayer)
+    endfunction
+    
+    private function Init takes nothing returns nothing
+        call TimerStart(CreateTimer(), 1, true, function Actions)
+    endfunction
+    
+endscope
 /*
 
 =============================================
@@ -3484,11 +3547,8 @@ globals
     constant integer most_point_kill_last_round = 'h023'
     constant integer or_leadership_arena_last_round = 'h024'
     constant integer big_mine_rc = 'n003'
-    constant integer bigMineRC = 'n003'
     constant integer small_mine_rc = 'n004'
-    constant integer smallMineRC = 'n004'
     constant integer flag_rc = 'n005'
-    constant integer flagRC = 'n005'
 
     // Настройки улучшения Вклад в игрока
     constant integer contr_to_pl_gold = 300
@@ -3609,6 +3669,9 @@ endscope
 scope IncomeObjects initializer Init
 
     globals
+        constant integer bigMineRC = 'n003'
+        constant integer smallMineRC = 'n004'
+        constant integer flagRC = 'n005'
         private rect array rectList
         private integer rectListSize = 9
         private rect array filledRectList
@@ -3724,6 +3787,12 @@ scope IncomeObjectsColor initializer inc_colour
         endif
 
         call ShowUnit(IncomeObjectiveUnit, false)
+
+        if IncomeObjectReceiever != IncomeObjectOwner then
+            // set pdb[IncomeObjectReceiever] = pdb[IncomeObjectReceiever] +
+            // set pdb[IncomeObjectOwner] = pdb[IncomeObjectOwner] -
+        endif
+
         call GroupRemoveUnit(IncomeObjects_group, IncomeObjectiveUnit)
         set IncomeObjectiveNewUnit = CreateUnitEx(IncomeObjectReceiever, GetUnitTypeId(IncomeObjectiveUnit), IncomeObjectiveUnitX, IncomeObjectiveUnitY, bj_UNIT_FACING)
         call RemoveUnitEx(IncomeObjectiveUnit) // Remove old IncomeObject to replace it with a new one
@@ -3798,10 +3867,11 @@ scope Units initializer Init
         endif
 
         if IsPlayerInForce(ownerOfDyingUnit, players) then
-            call GroupRemoveUnit(waveUnits, dyingUnit)
-            set pdb[ownerOfKillerUnit].kills = pdb[ownerOfKillerUnit].kills + 1
             if dyingUnitTypeId == castleRC then
                 set pdb[ownerOfKillerUnit].castlesDestroyed = pdb[ownerOfKillerUnit].castlesDestroyed + 1
+            else
+                call GroupRemoveUnit(waveUnits, dyingUnit)
+                set pdb[ownerOfKillerUnit].kills = pdb[ownerOfKillerUnit].kills + 1
             endif
         endif
 
@@ -4130,8 +4200,8 @@ scope MIXMultiboard
             set mbstruct[this.row][3].text = I2S(castlesDestroyed)
         endmethod
 
-        method operator points= takes real points returns nothing
-            set mbstruct[this.row][4].text = I2S(R2I(points))
+        method operator points= takes string points returns nothing
+            set mbstruct[this.row][4].text = points
         endmethod
 
         method operator result= takes real result returns nothing
@@ -4162,10 +4232,15 @@ scope MIXMultiboard
     private function Timer_ForPlayer takes nothing returns nothing
         local player p = GetEnumPlayer()
         
+        set mbstruct.title = "Волна #" + I2S(curWave)
         set mb[p].kills = pdb[p].kills
         set mb[p].upgrades = pdb[p].upgrades
         set mb[p].castlesDestroyed = pdb[p].castlesDestroyed
-        set mb[p].points = pdb[p].points
+        if pdb[p].incomePoints > 0 then
+            set mb[p].points = I2S(R2I(pdb[p].points)) + " (" + GREEN + I2S(R2I(pdb[p].incomePoints)) + ")|r"
+        else
+            set mb[p].points = I2S(R2I(pdb[p].points))
+        endif
         set mb[p].result = pdb[p].result
 
         set p = null
@@ -4190,6 +4265,11 @@ scope MIXMultiboard
         set mbstruct[0][0].text = "Имя игрока"
         call mbstruct[0][0].setStyle(true, false)
         set mbstruct.column[0].width = 0.12
+        set mbstruct.column[1].width = 0.05
+        set mbstruct.column[2].width = 0.05
+        set mbstruct.column[3].width = 0.05
+        set mbstruct.column[4].width = 0.05
+        set mbstruct.column[5].width = 0.05
         set mbstruct.column[0].icon = "ReplaceableTextures\\CommandButtons\\BTNRallyPoint.blp"
         set mbstruct[0][1].icon = "ReplaceableTextures\\CommandButtons\\BTNAttack.blp"
         set mbstruct[0][2].icon = "ReplaceableTextures\\CommandButtons\\BTNSpy.blp"
@@ -4220,6 +4300,13 @@ library PlayerDBLib initializer Init requires NokladrLib  // Library by Nokladr 
         integer changeSet = 3
         integer incomeGold = 240
         integer incomeGems = 8
+        integer incomeBigMineGold = 3
+        integer incomeBigMinePoints = 2
+        integer incomeSmallMineGold = 1
+        integer incomeSmallMinePoints = 1
+        integer incomeFlagGold = 1
+        integer incomeFlagPoints = 1
+        real incomePoints = 0
         boolean info = true // показывать команды/полезную инфу
         integer kills = 0
         integer upgrades = 0
@@ -4304,6 +4391,119 @@ scope Players
         call ForForce(bj_FORCE_ALL_PLAYERS, function ForPlayer)
     endfunction
 
+endscope
+scope CastleUpgradeBlank initializer Init
+    
+    globals
+        private constant integer upgradeRC = '0000'
+    endglobals
+
+    private function Actions takes nothing returns nothing
+        local integer researchRC = GetResearched()
+        local player p = GetTriggerPlayer()
+        local integer lvl = GetPlayerTechCount(p, researchRC, true)
+
+        if researchRC != upgradeRC then
+            set p = null
+            return
+        endif
+
+        
+
+        set p = null
+    endfunction
+    
+    private function Init takes nothing returns nothing
+        local trigger t = CreateTrigger()
+        
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerAddAction(t, function Actions)
+        
+        set t = null
+    endfunction
+    
+endscope
+// Улучшение: "Золотодобыча"
+
+scope CastleUpgradeQ initializer Init
+    
+    globals
+        private constant integer upgradeRC = 'R00F'
+        private integer array s_incomeBigMineGold
+        private integer array s_incomeSmallMineGold
+        private integer array s_incomeFlagGold
+        private integer array s_incomeGold
+    endglobals
+
+    private function Actions takes nothing returns nothing
+        local integer researchRC = GetResearched()
+        local player p = GetTriggerPlayer()
+        local integer lvl = GetPlayerTechCount(p, researchRC, true)
+
+        if researchRC != upgradeRC then
+            set p = null
+            return
+        endif
+
+        set pdb[p].incomeBigMineGold = pdb[p].incomeBigMineGold + s_incomeBigMineGold[lvl]
+        set pdb[p].incomeSmallMineGold = pdb[p].incomeSmallMineGold + s_incomeSmallMineGold[lvl]
+        set pdb[p].incomeFlagGold = pdb[p].incomeFlagGold + s_incomeFlagGold[lvl]
+        set pdb[p].incomeGold = pdb[p].incomeGold + s_incomeGold[lvl]
+
+        set p = null
+    endfunction
+    
+    private function Init takes nothing returns nothing
+        local trigger t = CreateTrigger()
+
+        set s_incomeBigMineGold[1] = 1
+        set s_incomeBigMineGold[2] = 1
+        set s_incomeBigMineGold[3] = 1
+        set s_incomeBigMineGold[4] = 1
+        set s_incomeBigMineGold[5] = 1
+        set s_incomeBigMineGold[6] = 1
+
+        set s_incomeSmallMineGold[1] = 0
+        set s_incomeSmallMineGold[2] = 0
+        set s_incomeSmallMineGold[3] = 1
+        set s_incomeSmallMineGold[4] = 0
+        set s_incomeSmallMineGold[5] = 1
+        set s_incomeSmallMineGold[6] = 1
+
+        set s_incomeFlagGold[1] = 0
+        set s_incomeFlagGold[2] = 0
+        set s_incomeFlagGold[3] = 1
+        set s_incomeFlagGold[4] = 0
+        set s_incomeFlagGold[5] = 1
+        set s_incomeFlagGold[6] = 1
+        
+        set s_incomeGold[1] = 10
+        set s_incomeGold[2] = 10
+        set s_incomeGold[3] = 10
+        set s_incomeGold[4] = 10
+        set s_incomeGold[5] = 10
+        set s_incomeGold[6] = 10
+        
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        call TriggerAddAction(t, function Actions)
+        
+        set t = null
+    endfunction
+    
 endscope
 scope Upgrades initializer Init
     

@@ -55,11 +55,8 @@ globals
     constant integer most_point_kill_last_round = 'h023'
     constant integer or_leadership_arena_last_round = 'h024'
     constant integer big_mine_rc = 'n003'
-    constant integer bigMineRC = 'n003'
     constant integer small_mine_rc = 'n004'
-    constant integer smallMineRC = 'n004'
     constant integer flag_rc = 'n005'
-    constant integer flagRC = 'n005'
 
     // Настройки улучшения Вклад в игрока
     constant integer contr_to_pl_gold = 300

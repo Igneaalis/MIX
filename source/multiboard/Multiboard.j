@@ -45,8 +45,8 @@ scope MIXMultiboard
             set mbstruct[this.row][3].text = I2S(castlesDestroyed)
         endmethod
 
-        method operator points= takes real points returns nothing
-            set mbstruct[this.row][4].text = I2S(R2I(points))
+        method operator points= takes string points returns nothing
+            set mbstruct[this.row][4].text = points
         endmethod
 
         method operator result= takes real result returns nothing
@@ -77,10 +77,15 @@ scope MIXMultiboard
     private function Timer_ForPlayer takes nothing returns nothing
         local player p = GetEnumPlayer()
         
+        set mbstruct.title = "Волна #" + I2S(curWave)
         set mb[p].kills = pdb[p].kills
         set mb[p].upgrades = pdb[p].upgrades
         set mb[p].castlesDestroyed = pdb[p].castlesDestroyed
-        set mb[p].points = pdb[p].points
+        if pdb[p].incomePoints > 0 then
+            set mb[p].points = I2S(R2I(pdb[p].points)) + " (" + GREEN + I2S(R2I(pdb[p].incomePoints)) + ")|r"
+        else
+            set mb[p].points = I2S(R2I(pdb[p].points))
+        endif
         set mb[p].result = pdb[p].result
 
         set p = null
@@ -105,6 +110,11 @@ scope MIXMultiboard
         set mbstruct[0][0].text = "Имя игрока"
         call mbstruct[0][0].setStyle(true, false)
         set mbstruct.column[0].width = 0.12
+        set mbstruct.column[1].width = 0.05
+        set mbstruct.column[2].width = 0.05
+        set mbstruct.column[3].width = 0.05
+        set mbstruct.column[4].width = 0.05
+        set mbstruct.column[5].width = 0.05
         set mbstruct.column[0].icon = "ReplaceableTextures\\CommandButtons\\BTNRallyPoint.blp"
         set mbstruct[0][1].icon = "ReplaceableTextures\\CommandButtons\\BTNAttack.blp"
         set mbstruct[0][2].icon = "ReplaceableTextures\\CommandButtons\\BTNSpy.blp"

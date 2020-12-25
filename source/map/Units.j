@@ -22,10 +22,11 @@ scope Units initializer Init
         endif
 
         if IsPlayerInForce(ownerOfDyingUnit, players) then
-            call GroupRemoveUnit(waveUnits, dyingUnit)
-            set pdb[ownerOfKillerUnit].kills = pdb[ownerOfKillerUnit].kills + 1
             if dyingUnitTypeId == castleRC then
                 set pdb[ownerOfKillerUnit].castlesDestroyed = pdb[ownerOfKillerUnit].castlesDestroyed + 1
+            else
+                call GroupRemoveUnit(waveUnits, dyingUnit)
+                set pdb[ownerOfKillerUnit].kills = pdb[ownerOfKillerUnit].kills + 1
             endif
         endif
 

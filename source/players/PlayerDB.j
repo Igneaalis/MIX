@@ -12,6 +12,13 @@ library PlayerDBLib initializer Init requires NokladrLib  // Library by Nokladr 
         integer changeSet = 3
         integer incomeGold = 240
         integer incomeGems = 8
+        integer incomeBigMineGold = 3
+        integer incomeBigMinePoints = 2
+        integer incomeSmallMineGold = 1
+        integer incomeSmallMinePoints = 1
+        integer incomeFlagGold = 1
+        integer incomeFlagPoints = 1
+        real incomePoints = 0
         boolean info = true // показывать команды/полезную инфу
         integer kills = 0
         integer upgrades = 0
