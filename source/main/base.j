@@ -331,6 +331,7 @@ trigger gg_trg_parody_ini_start= null
 trigger gg_trg_parodys_set_cast= null
 trigger gg_trg_parodys_cast= null
 trigger gg_trg_parody_dies= null
+rect gg_rct_HungryHungryKodos= null
 
 
 //JASSHelper struct globals:
@@ -953,6 +954,7 @@ function CreateRegions takes nothing returns nothing
     set gg_rct_hideandseekall=Rect(3456.0, 4224.0, 7040.0, 7808.0)
     set we=AddWeatherEffect(gg_rct_hideandseekall, 'RLlr')
     call EnableWeatherEffect(we, true)
+    set gg_rct_HungryHungryKodos=Rect(5824.0, - 960.0, 7744.0, 960.0)
 endfunction
 
 //***************************************************************************

@@ -8,8 +8,7 @@ scope IncomeObjects initializer Init
         constant integer bigMineRC = 'n003'
         constant integer smallMineRC = 'n004'
         constant integer flagRC = 'n005'
-        private rect array rectList
-        private integer rectListSize = 9
+        private rect array rectList[9]
         private rect array filledRectList
         group IncomeObjects_group = CreateGroup()
         minimapicon array IncomeObjects_minimapicons
@@ -32,12 +31,12 @@ scope IncomeObjects initializer Init
         debug set numberOfObjects = 9
 
         for i = 1 to numberOfObjects
-            set random = GetRandomInt(1, rectListSize)
+            set random = GetRandomInt(0, rectList.size - 1)
 
             set j = i - 1
             while j > 0
                 if (filledRectList[j] == rectList[random]) then
-                    set random = GetRandomInt(1, rectListSize)
+                    set random = GetRandomInt(0, rectList.size - 1)
                     set j = i - 1
                 else
                     set j = j - 1
@@ -49,7 +48,7 @@ scope IncomeObjects initializer Init
             set x = GetRectCenterX(curRect)
             set y = GetRectCenterY(curRect)
 
-            if curRect == rectList[1] then
+            if curRect == rectList[0] then
                 set u = CreateUnitEx(Player(27), bigMineRC, x, y, 270)
                 set IncomeObjects_minimapicons[i] = CreateMinimapIcon(x, y, 0xff, 0xff, 0xff, "UI\\Minimap\\MiniMap-Goldmine.mdl", FOG_OF_WAR_VISIBLE)
                 // call UnitSetUsesAltIcon(u, true)
@@ -74,16 +73,16 @@ scope IncomeObjects initializer Init
     endfunction
 
     private function Init takes nothing returns nothing
-        set rectList[1] = gg_rct_centreCENTRE
+        set rectList[0] = gg_rct_centreCENTRE
         // Clockwise
-        set rectList[2] = gg_rct_upmid
-        set rectList[3] = gg_rct_upright
-        set rectList[4] = gg_rct_rightmid
-        set rectList[5] = gg_rct_downright
-        set rectList[6] = gg_rct_downmid
-        set rectList[7] = gg_rct_downleft
-        set rectList[8] = gg_rct_leftmid
-        set rectList[9] = gg_rct_upleft
+        set rectList[1] = gg_rct_upmid
+        set rectList[2] = gg_rct_upright
+        set rectList[3] = gg_rct_rightmid
+        set rectList[4] = gg_rct_downright
+        set rectList[5] = gg_rct_downmid
+        set rectList[6] = gg_rct_downleft
+        set rectList[7] = gg_rct_leftmid
+        set rectList[8] = gg_rct_upleft
 
         // call SetAltMinimapIcon("UI\\Minimap\\minimap-gold.blp")
     endfunction

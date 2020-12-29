@@ -15,8 +15,7 @@
 scope IncomeUpgrade initializer Init
 
     globals
-        private integer array incSpellRC
-        private constant integer incSpellRCSize = 13
+        private integer array incSpellRC[13]
         private real array stabilityTimeGold
         private real array stabilityTimeGems
         private integer array stabilityGold
@@ -32,7 +31,7 @@ scope IncomeUpgrade initializer Init
         local integer i
         local integer researchRC = GetResearched()
 
-        for i = 1 to incSpellRCSize
+        for i = 0 to incSpellRC.size - 1
             if researchRC == incSpellRC[i] then
                 return true
             endif
@@ -395,19 +394,19 @@ scope IncomeUpgrade initializer Init
         local trigger t = CreateTrigger()
 
         // Заполнение массива incSpellrc равкодами инкам способностей
-        set incSpellRC[1] = 'R00F'
-        set incSpellRC[2] = 'R00G'
-        set incSpellRC[3] = 'R00H'
-        set incSpellRC[4] = 'R00I'
-        set incSpellRC[5] = 'R00J'
-        set incSpellRC[6] = 'R00Q'
-        set incSpellRC[7] = 'R00R'
-        set incSpellRC[8] = 'R00S'
-        set incSpellRC[9] = 'R027'
-        set incSpellRC[10] = 'R029'
-        set incSpellRC[11] = 'R02I'
-        set incSpellRC[12] = 'R02J'
-        set incSpellRC[13] = 'R02K'
+        set incSpellRC[0] = 'R00F'
+        set incSpellRC[1] = 'R00G'
+        set incSpellRC[2] = 'R00H'
+        set incSpellRC[3] = 'R00I'
+        set incSpellRC[4] = 'R00J'
+        set incSpellRC[5] = 'R00Q'
+        set incSpellRC[6] = 'R00R'
+        set incSpellRC[7] = 'R00S'
+        set incSpellRC[8] = 'R027'
+        set incSpellRC[9] = 'R029'
+        set incSpellRC[10] = 'R02I'
+        set incSpellRC[11] = 'R02J'
+        set incSpellRC[12] = 'R02K'
 
         // Заполнение массивов stabilityTimeGold и stabilityTimeGems периодом инкама
         set stabilityTimeGold[1] = 3

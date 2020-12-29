@@ -793,8 +793,7 @@ endscope
 scope IncomeUpgrade initializer Init
 
     globals
-        private integer array incSpellRC
-        private constant integer incSpellRCSize = 13
+        private integer array incSpellRC[13]
         private real array stabilityTimeGold
         private real array stabilityTimeGems
         private integer array stabilityGold
@@ -810,7 +809,7 @@ scope IncomeUpgrade initializer Init
         local integer i
         local integer researchRC = GetResearched()
 
-        for i = 1 to incSpellRCSize
+        for i = 0 to incSpellRC.size - 1
             if researchRC == incSpellRC[i] then
                 return true
             endif
@@ -1173,19 +1172,19 @@ scope IncomeUpgrade initializer Init
         local trigger t = CreateTrigger()
 
         // Заполнение массива incSpellrc равкодами инкам способностей
-        set incSpellRC[1] = 'R00F'
-        set incSpellRC[2] = 'R00G'
-        set incSpellRC[3] = 'R00H'
-        set incSpellRC[4] = 'R00I'
-        set incSpellRC[5] = 'R00J'
-        set incSpellRC[6] = 'R00Q'
-        set incSpellRC[7] = 'R00R'
-        set incSpellRC[8] = 'R00S'
-        set incSpellRC[9] = 'R027'
-        set incSpellRC[10] = 'R029'
-        set incSpellRC[11] = 'R02I'
-        set incSpellRC[12] = 'R02J'
-        set incSpellRC[13] = 'R02K'
+        set incSpellRC[0] = 'R00F'
+        set incSpellRC[1] = 'R00G'
+        set incSpellRC[2] = 'R00H'
+        set incSpellRC[3] = 'R00I'
+        set incSpellRC[4] = 'R00J'
+        set incSpellRC[5] = 'R00Q'
+        set incSpellRC[6] = 'R00R'
+        set incSpellRC[7] = 'R00S'
+        set incSpellRC[8] = 'R027'
+        set incSpellRC[9] = 'R029'
+        set incSpellRC[10] = 'R02I'
+        set incSpellRC[11] = 'R02J'
+        set incSpellRC[12] = 'R02K'
 
         // Заполнение массивов stabilityTimeGold и stabilityTimeGems периодом инкама
         set stabilityTimeGold[1] = 3
@@ -3682,8 +3681,7 @@ scope IncomeObjects initializer Init
         constant integer bigMineRC = 'n003'
         constant integer smallMineRC = 'n004'
         constant integer flagRC = 'n005'
-        private rect array rectList
-        private integer rectListSize = 9
+        private rect array rectList[9]
         private rect array filledRectList
         group IncomeObjects_group = CreateGroup()
         minimapicon array IncomeObjects_minimapicons
@@ -3706,12 +3704,12 @@ scope IncomeObjects initializer Init
         debug set numberOfObjects = 9
 
         for i = 1 to numberOfObjects
-            set random = GetRandomInt(1, rectListSize)
+            set random = GetRandomInt(0, rectList.size - 1)
 
             set j = i - 1
             while j > 0
                 if (filledRectList[j] == rectList[random]) then
-                    set random = GetRandomInt(1, rectListSize)
+                    set random = GetRandomInt(0, rectList.size - 1)
                     set j = i - 1
                 else
                     set j = j - 1
@@ -3723,7 +3721,7 @@ scope IncomeObjects initializer Init
             set x = GetRectCenterX(curRect)
             set y = GetRectCenterY(curRect)
 
-            if curRect == rectList[1] then
+            if curRect == rectList[0] then
                 set u = CreateUnitEx(Player(27), bigMineRC, x, y, 270)
                 set IncomeObjects_minimapicons[i] = CreateMinimapIcon(x, y, 0xff, 0xff, 0xff, "UI\\Minimap\\MiniMap-Goldmine.mdl", FOG_OF_WAR_VISIBLE)
                 // call UnitSetUsesAltIcon(u, true)
@@ -3748,16 +3746,16 @@ scope IncomeObjects initializer Init
     endfunction
 
     private function Init takes nothing returns nothing
-        set rectList[1] = gg_rct_centreCENTRE
+        set rectList[0] = gg_rct_centreCENTRE
         // Clockwise
-        set rectList[2] = gg_rct_upmid
-        set rectList[3] = gg_rct_upright
-        set rectList[4] = gg_rct_rightmid
-        set rectList[5] = gg_rct_downright
-        set rectList[6] = gg_rct_downmid
-        set rectList[7] = gg_rct_downleft
-        set rectList[8] = gg_rct_leftmid
-        set rectList[9] = gg_rct_upleft
+        set rectList[1] = gg_rct_upmid
+        set rectList[2] = gg_rct_upright
+        set rectList[3] = gg_rct_rightmid
+        set rectList[4] = gg_rct_downright
+        set rectList[5] = gg_rct_downmid
+        set rectList[6] = gg_rct_downleft
+        set rectList[7] = gg_rct_leftmid
+        set rectList[8] = gg_rct_upleft
 
         // call SetAltMinimapIcon("UI\\Minimap\\minimap-gold.blp")
     endfunction
@@ -4077,100 +4075,6 @@ scope Messages initializer Init
     endfunction
 
 endscope
-scope Casino initializer Init
-
-    globals
-        
-    endglobals
-
-    private function Init takes nothing returns nothing
-        local integer i
-        local integer j
-        local unit lastCreatedUnit = null
-
-        // Миниигра казино
-        set udg_r = 0
-        set i = 1
-        loop
-            exitwhen i > 3
-            set j = 1
-            loop
-                exitwhen j > 5
-                set udg_r = udg_r + 1
-                // Opt. begin
-                // 'n001' - Circle of Power
-                set lastCreatedUnit = CreateUnitAtLoc(Player(PLAYER_NEUTRAL_PASSIVE), 'n001', PolarProjectionBJ(PolarProjectionBJ(GetRectCenter(gg_rct_circle), (-256.00 + (256.00 * I2R(i))), 270.00), (-256.00 + (256.00 * I2R(j))), 0), bj_UNIT_FACING)
-                call SetUnitUserData(lastCreatedUnit, udg_r)
-                if (ModuloInteger(udg_r, 2) == 1) then
-                    // Z offset = 0
-                    // Font size = 11
-                    // Red =    100%
-                    // Green =  10%
-                    // Blue =   10%
-                    // Transparency = 0%
-                    call CreateTextTagUnitBJ(I2S(udg_r), lastCreatedUnit, 0, 11.00, 100, 10.00, 10.00, 0)
-                    call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), players)
-                    call SetUnitColor(lastCreatedUnit, PLAYER_COLOR_RED)
-                else
-                    call CreateTextTagUnitBJ(I2S(udg_r), lastCreatedUnit, 0, 11.00, 10.00, 10.00, 10.00, 0)
-                    call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), players)
-                    call SetUnitColor(lastCreatedUnit, PLAYER_COLOR_MAROON)
-                endif
-                // Opt. end
-                set j = j + 1
-            endloop
-            set i = i + 1
-        endloop
-
-        set lastCreatedUnit = null
-    endfunction
-
-endscope
-scope Minigames initializer Init
-
-    globals
-        
-    endglobals
-
-    private function Conditions takes nothing returns boolean
-        local integer i = 0
-        if (udg_random_log == true) then
-            return false
-        endif
-        loop
-            exitwhen i > 8
-            if (udg_wave_mini[i] == (udg_r * 2)) then
-                return false
-            endif
-            set i = i + 1
-        endloop
-        return true
-    endfunction
-
-    private function Init takes nothing returns nothing
-        local integer i
-
-        // Что-то связанное с минииграми
-        set i = 0
-        loop
-            exitwhen i > udg_mini_game_max
-            if (i != 1) then
-                // Если не миниигра с боссом, то
-                set udg_random_log = false
-                loop // Заполняем wave_mini[] рандомными, неповторяющимися числами (2, 4, 6, ..., 18) - волны, когда будут миниигры. mode = 1 (стандартный режим)
-                    exitwhen udg_random_log
-                    set udg_r = GetRandomInt(1, (udg_mini_game_max + 1)) // От 1 до 9 (кол-во миниигр)
-                    if (Conditions()) then
-                        set udg_random_log = true
-                        set udg_wave_mini[i] = udg_r * 2
-                    endif
-                endloop
-            endif
-            set i = i + 1
-        endloop
-    endfunction
-
-endscope
 scope MIXMultiboard
 
     globals
@@ -4406,6 +4310,7 @@ scope Players
             call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_fastarena, true, false)) // Миниарена
             call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_horseregion, true, false)) // Миниигра "Конные бега"
             call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_roulette, true, false)) // Миниигра "Казино"
+            call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_HungryHungryKodos, true, false)) // Миниигра "Голодные Кодо"
         endif
 
         set p = null
@@ -4562,13 +4467,117 @@ scope Upgrades initializer Init
     endfunction
     
 endscope
+// scope Casino initializer Init
+
+//     globals
+        
+//     endglobals
+
+//     private function Init takes nothing returns nothing
+//         local integer i
+//         local integer j
+//         local unit lastCreatedUnit = null
+
+//         // Миниигра казино
+//         set udg_r = 0
+//         set i = 1
+//         loop
+//             exitwhen i > 3
+//             set j = 1
+//             loop
+//                 exitwhen j > 5
+//                 set udg_r = udg_r + 1
+//                 // Opt. begin
+//                 // 'n001' - Circle of Power
+//                 set lastCreatedUnit = CreateUnitAtLoc(Player(PLAYER_NEUTRAL_PASSIVE), 'n001', PolarProjectionBJ(PolarProjectionBJ(GetRectCenter(gg_rct_circle), (-256.00 + (256.00 * I2R(i))), 270.00), (-256.00 + (256.00 * I2R(j))), 0), bj_UNIT_FACING)
+//                 call SetUnitUserData(lastCreatedUnit, udg_r)
+//                 if (ModuloInteger(udg_r, 2) == 1) then
+//                     // Z offset = 0
+//                     // Font size = 11
+//                     // Red =    100%
+//                     // Green =  10%
+//                     // Blue =   10%
+//                     // Transparency = 0%
+//                     call CreateTextTagUnitBJ(I2S(udg_r), lastCreatedUnit, 0, 11.00, 100, 10.00, 10.00, 0)
+//                     call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), players)
+//                     call SetUnitColor(lastCreatedUnit, PLAYER_COLOR_RED)
+//                 else
+//                     call CreateTextTagUnitBJ(I2S(udg_r), lastCreatedUnit, 0, 11.00, 10.00, 10.00, 10.00, 0)
+//                     call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), players)
+//                     call SetUnitColor(lastCreatedUnit, PLAYER_COLOR_MAROON)
+//                 endif
+//                 // Opt. end
+//                 set j = j + 1
+//             endloop
+//             set i = i + 1
+//         endloop
+
+//         set lastCreatedUnit = null
+//     endfunction
+
+// endscope
+scope MinigameHungryHungryKodos
+
+    globals
+        private constant real offset = 550
+        private constant integer kodoTypeId = 'o000'
+        private constant integer pigTypeId = 'n007'
+        private constant integer rabbitTypeId = 'n008'
+        private integer playersInForce
+        private real angle
+    endglobals
+
+    private function ForPlayer takes nothing returns nothing
+        local real x = 6784
+        local real y = 0
+        local player p = GetEnumPlayer()
+        local real facing = Atan2BJ(-offset * Sin(angle), -offset * Cos(angle))
+
+        call GroupAddUnit(minigameUnits, CreateUnitEx(p, kodoTypeId, x + offset * Cos(angle), y + offset * Sin(angle), facing))
+        set angle = angle + 2*bj_PI / playersInForce
+
+        set p = null
+    endfunction
+
+    struct HungryHungryKodos extends IsMinigame
+        string title = "Голодные кодо"
+        string description = "Постарайтесь прокормить своего кодо как можно дольше."
+        real timerTime = 10.00
+        real x = 6784
+        real y = 0
+        
+        method Fire takes nothing returns nothing
+            set playersInForce = CountPlayersInForceBJ(players)
+            set angle = 2*bj_PI / playersInForce
+
+            call ForForce(players, function ForPlayer)
+        endmethod
+
+        method Finish takes nothing returns nothing
+            
+        endmethod
+    endstruct
+
+endscope
+library MinigameInterface
+
+    interface IsMinigame
+        string title
+        string description
+        real timerTime
+        real x
+        real y
+        method Fire takes nothing returns nothing
+        method Finish takes nothing returns nothing
+    endinterface
+
+endlibrary
 scope Arena initializer Init
 
     globals
-        private constant integer rectListSize = 8
         private constant integer unitTypeIdOffset = 49 * 256 * 256 // https://xgm.guru/p/wc3/rawcode-to-string
         private rect array startRectForPlayer
-        private rect array rectList
+        private rect array rectList[8]
         timerdialog Arena_TimerDialog
         
         real Arena_Time = 120.00
@@ -4649,7 +4658,7 @@ scope Arena initializer Init
             exitwhen i >= maxNumberOfPlayers
 
             if GetPlayerSlotState(Player(i)) == PLAYER_SLOT_STATE_PLAYING then
-                set random = GetRandomInt(0, rectListSize - 1)
+                set random = GetRandomInt(0, rectList.size - 1)
                 set startRectForPlayer[i] = rectList[random]
 
                 set j = 0
@@ -4657,7 +4666,7 @@ scope Arena initializer Init
                     exitwhen j >= i
 
                     if startRectForPlayer[j] == rectList[random] then
-                        set random = GetRandomInt(0, rectListSize - 1)
+                        set random = GetRandomInt(0, rectList.size - 1)
                         set startRectForPlayer[i] = rectList[random]
                         set j = 0
                     else
@@ -4937,15 +4946,82 @@ endscope
 scope MinigameWaves initializer Init
     
     globals
+        private IsMinigame array minigames[1]
+        private IsMinigame array minigamesShuffled[1]
+        private integer curMinigame = 0
+        group minigameUnits = CreateGroup()
         integer minigameWave = 2
+        private timerdialog td
     endglobals
 
+    private function Shuffle takes nothing returns nothing
+        local integer i
+        local integer j
+        local integer random
+
+        for i = 0 to minigames.size - 1
+            set random = GetRandomInt(0, minigames.size - 1)
+
+            set j = i - 1
+            while j > -1
+                if (minigamesShuffled[j] == minigames[random]) then
+                    set random = GetRandomInt(0, minigames.size - 1)
+                    set j = i - 1
+                else
+                    set j = j - 1
+                endif
+            endwhile
+
+            set minigamesShuffled[i] = minigames[random]
+        endfor
+    endfunction
+
+    private function Timer_OnExpire takes nothing returns nothing
+        local timer t = GetExpiredTimer()
+
+        call DestroyTimerDialog(td)
+        call PauseTimer(t)
+        call DestroyTimer(t)
+
+        call minigamesShuffled[curMinigame].Finish()
+        set curMinigame = curMinigame + 1
+
+        call NextWave_Force.execute()
+
+        set t = null
+    endfunction
+
     public function Force takes nothing returns nothing
-        
+        local timer t = CreateTimer()
+        local IsMinigame minigame
+
+        if curMinigame >= minigames.size then
+            set curMinigame = 0
+            call Shuffle.execute()
+        endif
+
+        set minigame = minigamesShuffled[curMinigame]
+
+        call TimerStart(t, minigame.timerTime, false, function Timer_OnExpire)
+        set td = CreateTimerDialog(t)
+        call TimerDialogSetTitle(td, minigame.title) // Title of timer dialog
+        call TimerDialogDisplay(td, true) // Shows timer dialog
+
+        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 10, " ")
+        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 10, GOLD + "Миниигра:|r " + minigame.title)
+        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 10, minigame.description)
+
+        call PanCameraToTimed(minigame.x, minigame.y, 0)
+
+        call minigame.Fire()
+
+        set t = null
     endfunction
     
     private function Init takes nothing returns nothing
-        
+        set minigames[0] = HungryHungryKodos.create()
+
+        call Shuffle.execute()
     endfunction
     
 endscope
@@ -4979,11 +5055,11 @@ scope NextWave initializer Init
         call PauseTimer(t)
         call DestroyTimer(t)
 
+        set curWave = curWave + 1
+
         if ModuloInteger(curWave, minigameWave) == 0 then
-            debug call Log("Minigame!")
             call MinigameWaves_Force.execute()
         else
-            debug call Log("Arena!")
             call Arena_Force.execute()
         endif
 
@@ -4994,7 +5070,8 @@ scope NextWave initializer Init
         local timer t = CreateTimer()
         local integer i
 
-        set curWave = curWave + 1
+        call ForGroup(minigameUnits, function C_RemoveEnumUnits)
+        call GroupClear(minigameUnits)
 
         call ForGroup(waveUnits, function C_RemoveEnumUnits)
         call GroupClear(waveUnits)
@@ -5371,6 +5448,7 @@ trigger gg_trg_parody_ini_start= null
 trigger gg_trg_parodys_set_cast= null
 trigger gg_trg_parodys_cast= null
 trigger gg_trg_parody_dies= null
+rect gg_rct_HungryHungryKodos= null
 
 
 //JASSHelper struct globals:
@@ -5993,6 +6071,7 @@ function CreateRegions takes nothing returns nothing
     set gg_rct_hideandseekall=Rect(3456.0, 4224.0, 7040.0, 7808.0)
     set we=AddWeatherEffect(gg_rct_hideandseekall, 'RLlr')
     call EnableWeatherEffect(we, true)
+    set gg_rct_HungryHungryKodos=Rect(5824.0, - 960.0, 7744.0, 960.0)
 endfunction
 
 //***************************************************************************

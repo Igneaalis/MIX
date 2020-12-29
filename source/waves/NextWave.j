@@ -31,10 +31,8 @@ scope NextWave initializer Init
         set curWave = curWave + 1
 
         if ModuloInteger(curWave, minigameWave) == 0 then
-            debug call Log("Minigame!")
             call MinigameWaves_Force.execute()
         else
-            debug call Log("Arena!")
             call Arena_Force.execute()
         endif
 
@@ -44,6 +42,9 @@ scope NextWave initializer Init
     public function Force takes nothing returns nothing
         local timer t = CreateTimer()
         local integer i
+
+        call ForGroup(minigameUnits, function C_RemoveEnumUnits)
+        call GroupClear(minigameUnits)
 
         call ForGroup(waveUnits, function C_RemoveEnumUnits)
         call GroupClear(waveUnits)

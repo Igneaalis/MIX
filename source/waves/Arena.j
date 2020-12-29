@@ -1,10 +1,9 @@
 scope Arena initializer Init
 
     globals
-        private constant integer rectListSize = 8
         private constant integer unitTypeIdOffset = 49 * 256 * 256 // https://xgm.guru/p/wc3/rawcode-to-string
         private rect array startRectForPlayer
-        private rect array rectList
+        private rect array rectList[8]
         timerdialog Arena_TimerDialog
         
         real Arena_Time = 120.00
@@ -85,7 +84,7 @@ scope Arena initializer Init
             exitwhen i >= maxNumberOfPlayers
 
             if GetPlayerSlotState(Player(i)) == PLAYER_SLOT_STATE_PLAYING then
-                set random = GetRandomInt(0, rectListSize - 1)
+                set random = GetRandomInt(0, rectList.size - 1)
                 set startRectForPlayer[i] = rectList[random]
 
                 set j = 0
@@ -93,7 +92,7 @@ scope Arena initializer Init
                     exitwhen j >= i
 
                     if startRectForPlayer[j] == rectList[random] then
-                        set random = GetRandomInt(0, rectListSize - 1)
+                        set random = GetRandomInt(0, rectList.size - 1)
                         set startRectForPlayer[i] = rectList[random]
                         set j = 0
                     else
