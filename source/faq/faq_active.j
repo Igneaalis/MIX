@@ -7,9 +7,7 @@
 = Дата создания:     21.11.2020 21:02       =
 =============================================
 
-faq active Trigger
-
-Voting for viewing faq guide.
+Voting for watching FAQ
 
 */
 

@@ -7,9 +7,7 @@
 = Дата создания:     20.11.2020 16:00       =
 =============================================
 
-faq stop Trigger
-
-Stops voting for faq guide
+Stops voting for watching FAQ
 
 */
 

@@ -7,8 +7,6 @@
 = Дата создания:     21.11.2020 21:03       =
 =============================================
 
-faq start Trigger
-
 Shows all available commands and settings.
 
 */

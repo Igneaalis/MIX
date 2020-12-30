@@ -9,8 +9,6 @@
 
 Интерфейс внутриигровых сообщений
 
-TODO: Multiboard
-
 */
 
 scope Messages initializer Init
@@ -39,16 +37,16 @@ scope Messages initializer Init
         local player p = GetTriggerPlayer()
 
         call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 10, (C_IntToColor(GetPlayerId(p)) + GetPlayerName(p) + "|r " + GOLD + "покидает игру!|r"))
-        call SetPlayerTechResearchedSwap('R00J', 0, p)
-        // Opt. begin
+        call SetPlayerTechResearched(p, 'R00J', 0)
         call ForGroup(GetUnitsOfPlayerMatching(p, null), function ForUnits_OnLeave)
         call ForceRemovePlayer(players, p)
         if (p == udg_game_owner) then
             call gameset_owner.execute()
         endif
-        // call MultiboardSetItemValueBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetTriggerPlayer()) ), ( "|cFF9B9B9B" + udg_players_name[GetConvertedPlayerId(GetTriggerPlayer())] ) )
-        // call MultiboardSetItemIconBJ( udg_scoreboard, 1, ( 1 + GetConvertedPlayerId(GetTriggerPlayer()) ), "ReplaceableTextures\\CommandButtonsDisabled\\DISBTNReplay-Loop.blp" )
-        // Opt. end
+
+        set mb[p].name = GRAY + GetPlayerName(p) + "|r"
+        set mb[p].icon = "ReplaceableTextures\\CommandButtonsDisabled\\DISBTNReplay-Loop.blp"
+
         call defeat.execute(p)
 
         set p = null

@@ -1,3 +1,16 @@
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     25.12.2020 12:03       =
+=============================================
+
+Реализация прибыли за каждый Income Object и создание плавающего текста
+
+*/
+
 scope IncomeIncomeObjects initializer Init
     
     globals

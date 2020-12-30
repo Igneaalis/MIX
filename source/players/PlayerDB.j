@@ -1,3 +1,16 @@
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     13.12.2020 20:30       =
+=============================================
+
+Структура данных для каждого игрока
+
+*/
+
 library PlayerDBLib initializer Init  // Library by Nokladr special for MIX Community https://github.com/Igneaalis/MIX
     globals
         Playerdb pdb

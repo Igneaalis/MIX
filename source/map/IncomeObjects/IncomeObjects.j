@@ -1,6 +1,15 @@
-// function Trig_inc_rotate_Copy_Func012Func002Func002Func001Func013A takes nothing returns nothing
-    //     call ShowUnitShow(GetEnumUnit())
-// endfunction
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     23.12.2020 9:55       =
+=============================================
+
+Реализация перемешивания Income Objects и их создание
+
+*/
 
 scope IncomeObjects initializer Init
 

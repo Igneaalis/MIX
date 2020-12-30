@@ -7,9 +7,7 @@
 = Дата создания:     20.11.2020 16:00       =
 =============================================
 
-faq ini Trigger
-
-Starts voting for faq guide
+Starts voting for watching FAQ
 
 */
 

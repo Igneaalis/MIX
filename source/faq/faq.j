@@ -7,9 +7,9 @@
 = Дата создания:     20.11.2020 22:46       =
 =============================================
 
-faq library-ish
+FAQ library-ish
 
-Globals and common functions for faq
+Globals and shared functions for FAQ
 
 */
 

@@ -1,3 +1,16 @@
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     16.12.2020 15:06       =
+=============================================
+
+Реализация Arena wave
+
+*/
+
 scope Arena initializer Init
 
     globals

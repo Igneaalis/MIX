@@ -7,11 +7,9 @@
 = Дата создания:     20.11.2020 21:07       =
 =============================================
 
-gameset owner Trigger
-
-Sets owner of game.
+Sets the owner of the game.
 Shows all available commands and settings
-Owner can modify game settings.
+Owner can modify game settings via commands.
 
 */
 

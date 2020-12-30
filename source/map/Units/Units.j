@@ -1,3 +1,17 @@
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     25.12.2020 15:04       =
+=============================================
+
+Объявление group waveUnits
+Реализация OnDie() event
+
+*/
+
 scope Units initializer Init
     
     globals

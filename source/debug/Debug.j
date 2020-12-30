@@ -1,3 +1,16 @@
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     13.12.2020 20:30       =
+=============================================
+
+Реализация тестирования при инициализации
+
+*/
+
 scope Debug initializer Init
 
     private function Init takes nothing returns nothing

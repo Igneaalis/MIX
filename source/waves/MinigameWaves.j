@@ -1,3 +1,16 @@
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     25.12.2020 22:32       =
+=============================================
+
+Реализация Minigame wave
+
+*/
+
 scope MinigameWaves initializer Init
     
     globals

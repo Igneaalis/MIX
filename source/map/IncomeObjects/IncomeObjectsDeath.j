@@ -7,9 +7,7 @@
 = Дата создания:     13.12.2020 16:21       =
 =============================================
 
-inc_colour Trigger
-
-Income Objective OnDestroy()
+Income Objects OnDestroy() event
 
 */
 

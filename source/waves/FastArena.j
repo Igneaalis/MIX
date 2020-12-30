@@ -1,3 +1,16 @@
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     15.12.2020 23:43       =
+=============================================
+
+Реализация FastArena wave
+
+*/
+
 scope FastArena initializer Init
 
     globals
