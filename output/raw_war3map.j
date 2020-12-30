@@ -49,7 +49,8 @@ builder select Trigger
 scope BuilderSelect initializer builder_select
 
     globals
-        integer array peonsId[12]
+        private integer array peonsId[6]
+        
         debug constant integer debugGold = 12000
         debug constant integer debugGems = 12000
     endglobals
@@ -130,8 +131,8 @@ scope BuilderSelect initializer builder_select
             call SetPlayerTechResearched(owner_of_peon, 'R018', 1) // Улучшение "12 исследований"
             call SetPlayerTechResearched(owner_of_peon, 'R019', 1) // Улучшение "20 исследований"
             else
-            call AddGoldToPlayer(base_gold, owner_of_peon) // Check Globals.j
-            call AddLumberToPlayer(base_gems, owner_of_peon) // Check Globals.j
+            call AddGoldToPlayer(baseGold, owner_of_peon) // Check Globals.j
+            call AddLumberToPlayer(baseGems, owner_of_peon) // Check Globals.j
         endif
 
         set peon = null
@@ -622,7 +623,7 @@ endfunction
 function faq_start takes nothing returns nothing
     local timer t = CreateTimer()
     
-    call TimerStart(t, timeBeforeFirstWave, false, function faq_start_timer_actions) // After settings were set
+    call TimerStart(t, settingsTimerTime, false, function faq_start_timer_actions) // After settings were set
 
     set faq_timerdialog = CreateTimerDialog(t) // Timer dialog in upper-left corner for commands and settings
     call TimerDialogSetTitle(faq_timerdialog, "Настройка карты") // Title of timer dialog
@@ -3657,17 +3658,16 @@ scope Settings initializer Init
 
     globals
         integer finalWave = 15
-        integer numberOfMinigames = 8
         
-        constant integer base_gold = 755  // Кол-во золота в начале игры
-        constant integer base_gems = 22   // Кол-во гемов в начале игры
+        constant integer baseGold = 755  // Кол-во золота в начале игры
+        constant integer baseGems = 22   // Кол-во гемов в начале игры
 
-        real timeBeforeFirstWave = 60.00
-        debug constant real debugTimeBeforeFirstWave = 10.00
+        real settingsTimerTime = 60.00
+        debug constant real debugSettingsTimerTime = 10.00
     endglobals
 
     private function Init takes nothing returns nothing
-        debug set timeBeforeFirstWave = debugTimeBeforeFirstWave
+        debug set settingsTimerTime = debugSettingsTimerTime
     endfunction
 
 endscope
@@ -3701,7 +3701,7 @@ scope IncomeObjects initializer Init
         local unit u
 
         set numberOfObjects = GetRandomInt(IncomeObjects_StartAmount, IncomeObjects_EndAmount)
-        debug set numberOfObjects = 9
+        debug set numberOfObjects = IncomeObjects_MaxAmount
 
         for i = 1 to numberOfObjects
             set random = GetRandomInt(0, rectList.size - 1)
@@ -4080,7 +4080,6 @@ scope MIXMultiboard
     globals
         Multiboard mbstruct
         MIXMB mb
-        MIXMBRow playerMIXMBRow
         private integer curRow = 0
     endglobals
 
@@ -4216,14 +4215,15 @@ scope MIXMultiboard
     endfunction
 
 endscope
-library PlayerDBLib initializer Init requires NokladrLib  // Library by Nokladr special for MIX Community https://github.com/Igneaalis/MIX
+library PlayerDBLib initializer Init  // Library by Nokladr special for MIX Community https://github.com/Igneaalis/MIX
     globals
         Playerdb pdb
-        private DB array dbarr[8]
+        private PlayerStruct array playerStructs[8]
     endglobals
 
-    struct DB
+    struct PlayerStruct
         private player p
+
         real leaderCoeff = 1.00
         integer leaderWins = 0
         integer arenaWins = 1
@@ -4243,10 +4243,10 @@ library PlayerDBLib initializer Init requires NokladrLib  // Library by Nokladr 
         integer castlesDestroyed = 0
         real points = 0
 
-        static method create takes player p returns DB
-            local DB db = DB.allocate()
-                set db.p = p
-            return db
+        static method create takes player p returns PlayerStruct
+            local PlayerStruct playerStruct = PlayerStruct.allocate()
+                set playerStruct.p = p
+            return playerStruct
         endmethod
 
         method operator result takes nothing returns real
@@ -4262,21 +4262,21 @@ library PlayerDBLib initializer Init requires NokladrLib  // Library by Nokladr 
     endstruct
 
     struct Playerdb
-        method operator [] takes player p returns DB
-            return dbarr[GetPlayerId(p)]
+        method operator [] takes player p returns PlayerStruct
+            return playerStructs[GetPlayerId(p)]
         endmethod
     endstruct
 
     private function fill_dbarr takes nothing returns nothing
         set pdb = Playerdb.create()
-        set dbarr[0] = DB.create(Player(0x00))
-        set dbarr[1] = DB.create(Player(0x01))
-        set dbarr[2] = DB.create(Player(0x02))
-        set dbarr[3] = DB.create(Player(0x03))
-        set dbarr[4] = DB.create(Player(0x04))
-        set dbarr[5] = DB.create(Player(0x05))
-        set dbarr[6] = DB.create(Player(0x06))
-        set dbarr[7] = DB.create(Player(0x07))
+        set playerStructs[0] = PlayerStruct.create(Player(0x00))
+        set playerStructs[1] = PlayerStruct.create(Player(0x01))
+        set playerStructs[2] = PlayerStruct.create(Player(0x02))
+        set playerStructs[3] = PlayerStruct.create(Player(0x03))
+        set playerStructs[4] = PlayerStruct.create(Player(0x04))
+        set playerStructs[5] = PlayerStruct.create(Player(0x05))
+        set playerStructs[6] = PlayerStruct.create(Player(0x06))
+        set playerStructs[7] = PlayerStruct.create(Player(0x07))
     endfunction
 
     private function Init takes nothing returns nothing
@@ -4539,10 +4539,10 @@ scope MinigameHungryHungryKodos
         set p = null
     endfunction
 
-    struct HungryHungryKodos extends IsMinigame
+    struct HungryHungryKodos extends Minigame
         string title = "Голодные кодо"
         string description = "Постарайтесь прокормить своего кодо как можно дольше."
-        real timerTime = 10.00
+        real timerTime = 60.00
         real x = 6784
         real y = 0
         
@@ -4561,7 +4561,7 @@ scope MinigameHungryHungryKodos
 endscope
 library MinigameInterface
 
-    interface IsMinigame
+    interface Minigame
         string title
         string description
         real timerTime
@@ -4580,8 +4580,8 @@ scope Arena initializer Init
         private rect array rectList[8]
         timerdialog Arena_TimerDialog
         
-        real Arena_Time = 120.00
-        private constant real debugTime = 5.00
+        private real arenaTimerTime = 120.00
+        private constant real debugArenaTimerTime = 5.00
     endglobals
 
     private function Conditions takes nothing returns boolean
@@ -4681,7 +4681,7 @@ scope Arena initializer Init
         endloop
 
         call ForForce(players, function ForPlayer)
-        call TimerStart(t, Arena_Time, false, function Timer_OnExpire)
+        call TimerStart(t, arenaTimerTime, false, function Timer_OnExpire)
         set Arena_TimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
         call TimerDialogSetTitle(Arena_TimerDialog, "Арена") // Title of timer dialog
         call TimerDialogDisplay(Arena_TimerDialog, true) // Shows timer dialog
@@ -4690,7 +4690,7 @@ scope Arena initializer Init
     endfunction
 
     private function Init takes nothing returns nothing
-        debug set Arena_Time = debugTime
+        debug set arenaTimerTime = debugArenaTimerTime
         set rectList[0] = gg_rct_start1
         set rectList[1] = gg_rct_start2
         set rectList[2] = gg_rct_start3
@@ -4711,11 +4711,11 @@ scope FastArena initializer Init
         private real array damageByPlayer
         private real timerTime
         private rect curRect
+        private timerdialog td
+
         private constant real firePitPercentDamage = 10.00
-        
-        real FA_Time = 60.00
-        real FA_DebugTime = 5.00
-        timerdialog FA_TimerDialog
+        private real fastArenaTimerTime = 60.00
+        private constant real debugFastArenaTimerTime = 5.00
     endglobals
 
     private function Conditions takes nothing returns boolean
@@ -4787,11 +4787,11 @@ scope FastArena initializer Init
             call GroupClear(unitGroup[i])
             set unitsInGroup[i] = 0
             set damageByPlayer[i] = 0
-            set timerTime = FA_Time
+            set timerTime = fastArenaTimerTime
             call SetPlayerState(Player(i), PLAYER_STATE_GIVES_BOUNTY, 0)
             set i = i + 1
         endloop
-        set timerTime = FA_Time
+        set timerTime = fastArenaTimerTime
     endfunction
 
     private function Timer_OnTick takes nothing returns nothing
@@ -4821,7 +4821,7 @@ scope FastArena initializer Init
     private function Timer_OnExpire takes nothing returns nothing
         local timer t = GetExpiredTimer()
 
-        call DestroyTimerDialog(FA_TimerDialog)
+        call DestroyTimerDialog(td)
         call PauseTimer(t)
         call DestroyTimer(t)
 
@@ -4880,7 +4880,7 @@ scope FastArena initializer Init
         loop
             exitwhen i > 8
             if (udg_info[i+1] == true) then
-                call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "У вас есть " + GOLD + I2S(R2I(FA_Time)) + "|r сек.")
+                call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "У вас есть " + GOLD + I2S(R2I(fastArenaTimerTime)) + "|r сек.")
                 call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "Были отобраны первые четверо игроков с наибольшим количеством живых юнитов.")
                 call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "По истечении времени игрок, нанёсший наибольшее количество урона, получит бонусные очки арены.")
             endif
@@ -4891,10 +4891,10 @@ scope FastArena initializer Init
         call ForGroup(GetUnitsInRectMatching(gg_rct_all, Condition(function Conditions)),function RemoveUnits)
         call DestroyGroup(g_tmp)
         
-        call TimerStart(t, FA_Time, false, function Timer_OnExpire)
-        set FA_TimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
-        call TimerDialogSetTitle(FA_TimerDialog, "Быстрая битва") // Title of timer dialog
-        call TimerDialogDisplay(FA_TimerDialog, true) // Shows timer dialog
+        call TimerStart(t, fastArenaTimerTime, false, function Timer_OnExpire)
+        set td = CreateTimerDialog(t) // Timer dialog in upper-left corner
+        call TimerDialogSetTitle(td, "Быстрая битва") // Title of timer dialog
+        call TimerDialogDisplay(td, true) // Shows timer dialog
         
         call TimerStart(CreateTimer(), 1, true, function Timer_OnTick)
         
@@ -4931,7 +4931,7 @@ scope FastArena initializer Init
     private function Init takes nothing returns nothing
         local integer i
 
-        debug set FA_Time = FA_DebugTime
+        debug set fastArenaTimerTime = debugFastArenaTimerTime
 
         set i = 0
         loop
@@ -4946,12 +4946,14 @@ endscope
 scope MinigameWaves initializer Init
     
     globals
-        private IsMinigame array minigames[1]
-        private IsMinigame array minigamesShuffled[1]
+        private Minigame array minigames[1]
+        private Minigame array minigamesShuffled[1]
+        private timerdialog td
         private integer curMinigame = 0
+
+        private constant real debugMinigameTimerTime = 10.00
         group minigameUnits = CreateGroup()
         integer minigameWave = 2
-        private timerdialog td
     endglobals
 
     private function Shuffle takes nothing returns nothing
@@ -4993,7 +4995,7 @@ scope MinigameWaves initializer Init
 
     public function Force takes nothing returns nothing
         local timer t = CreateTimer()
-        local IsMinigame minigame
+        local Minigame minigame
 
         if curMinigame >= minigames.size then
             set curMinigame = 0
@@ -5002,7 +5004,11 @@ scope MinigameWaves initializer Init
 
         set minigame = minigamesShuffled[curMinigame]
 
-        call TimerStart(t, minigame.timerTime, false, function Timer_OnExpire)
+        static if DEBUG_MODE then
+            call TimerStart(t, debugMinigameTimerTime, false, function Timer_OnExpire)
+        else
+            call TimerStart(t, minigame.timerTime, false, function Timer_OnExpire)
+        endif
         set td = CreateTimerDialog(t)
         call TimerDialogSetTitle(td, minigame.title) // Title of timer dialog
         call TimerDialogDisplay(td, true) // Shows timer dialog

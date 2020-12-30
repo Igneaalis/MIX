@@ -3,7 +3,6 @@ scope MIXMultiboard
     globals
         Multiboard mbstruct
         MIXMB mb
-        MIXMBRow playerMIXMBRow
         private integer curRow = 0
     endglobals
 

@@ -1,12 +1,14 @@
 scope MinigameWaves initializer Init
     
     globals
-        private IsMinigame array minigames[1]
-        private IsMinigame array minigamesShuffled[1]
+        private Minigame array minigames[1]
+        private Minigame array minigamesShuffled[1]
+        private timerdialog td
         private integer curMinigame = 0
+
+        private constant real debugMinigameTimerTime = 10.00
         group minigameUnits = CreateGroup()
         integer minigameWave = 2
-        private timerdialog td
     endglobals
 
     private function Shuffle takes nothing returns nothing
@@ -48,7 +50,7 @@ scope MinigameWaves initializer Init
 
     public function Force takes nothing returns nothing
         local timer t = CreateTimer()
-        local IsMinigame minigame
+        local Minigame minigame
 
         if curMinigame >= minigames.size then
             set curMinigame = 0
@@ -57,7 +59,11 @@ scope MinigameWaves initializer Init
 
         set minigame = minigamesShuffled[curMinigame]
 
-        call TimerStart(t, minigame.timerTime, false, function Timer_OnExpire)
+        static if DEBUG_MODE then
+            call TimerStart(t, debugMinigameTimerTime, false, function Timer_OnExpire)
+        else
+            call TimerStart(t, minigame.timerTime, false, function Timer_OnExpire)
+        endif
         set td = CreateTimerDialog(t)
         call TimerDialogSetTitle(td, minigame.title) // Title of timer dialog
         call TimerDialogDisplay(td, true) // Shows timer dialog

@@ -16,7 +16,8 @@ builder select Trigger
 scope BuilderSelect initializer builder_select
 
     globals
-        integer array peonsId[12]
+        private integer array peonsId[6]
+        
         debug constant integer debugGold = 12000
         debug constant integer debugGems = 12000
     endglobals
@@ -97,8 +98,8 @@ scope BuilderSelect initializer builder_select
             call SetPlayerTechResearched(owner_of_peon, 'R018', 1) // Улучшение "12 исследований"
             call SetPlayerTechResearched(owner_of_peon, 'R019', 1) // Улучшение "20 исследований"
             else
-            call AddGoldToPlayer(base_gold, owner_of_peon) // Check Globals.j
-            call AddLumberToPlayer(base_gems, owner_of_peon) // Check Globals.j
+            call AddGoldToPlayer(baseGold, owner_of_peon) // Check Globals.j
+            call AddLumberToPlayer(baseGems, owner_of_peon) // Check Globals.j
         endif
 
         set peon = null

@@ -1,6 +1,6 @@
 library MinigameInterface
 
-    interface IsMinigame
+    interface Minigame
         string title
         string description
         real timerTime

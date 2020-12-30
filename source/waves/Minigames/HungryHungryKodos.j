@@ -21,10 +21,10 @@ scope MinigameHungryHungryKodos
         set p = null
     endfunction
 
-    struct HungryHungryKodos extends IsMinigame
+    struct HungryHungryKodos extends Minigame
         string title = "Голодные кодо"
         string description = "Постарайтесь прокормить своего кодо как можно дольше."
-        real timerTime = 10.00
+        real timerTime = 60.00
         real x = 6784
         real y = 0
         

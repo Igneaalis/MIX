@@ -6,8 +6,8 @@ scope Arena initializer Init
         private rect array rectList[8]
         timerdialog Arena_TimerDialog
         
-        real Arena_Time = 120.00
-        private constant real debugTime = 5.00
+        private real arenaTimerTime = 120.00
+        private constant real debugArenaTimerTime = 5.00
     endglobals
 
     private function Conditions takes nothing returns boolean
@@ -107,7 +107,7 @@ scope Arena initializer Init
         endloop
 
         call ForForce(players, function ForPlayer)
-        call TimerStart(t, Arena_Time, false, function Timer_OnExpire)
+        call TimerStart(t, arenaTimerTime, false, function Timer_OnExpire)
         set Arena_TimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
         call TimerDialogSetTitle(Arena_TimerDialog, "Арена") // Title of timer dialog
         call TimerDialogDisplay(Arena_TimerDialog, true) // Shows timer dialog
@@ -116,7 +116,7 @@ scope Arena initializer Init
     endfunction
 
     private function Init takes nothing returns nothing
-        debug set Arena_Time = debugTime
+        debug set arenaTimerTime = debugArenaTimerTime
         set rectList[0] = gg_rct_start1
         set rectList[1] = gg_rct_start2
         set rectList[2] = gg_rct_start3

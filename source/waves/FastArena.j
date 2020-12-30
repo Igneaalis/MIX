@@ -7,11 +7,11 @@ scope FastArena initializer Init
         private real array damageByPlayer
         private real timerTime
         private rect curRect
+        private timerdialog td
+
         private constant real firePitPercentDamage = 10.00
-        
-        real FA_Time = 60.00
-        real FA_DebugTime = 5.00
-        timerdialog FA_TimerDialog
+        private real fastArenaTimerTime = 60.00
+        private constant real debugFastArenaTimerTime = 5.00
     endglobals
 
     private function Conditions takes nothing returns boolean
@@ -83,11 +83,11 @@ scope FastArena initializer Init
             call GroupClear(unitGroup[i])
             set unitsInGroup[i] = 0
             set damageByPlayer[i] = 0
-            set timerTime = FA_Time
+            set timerTime = fastArenaTimerTime
             call SetPlayerState(Player(i), PLAYER_STATE_GIVES_BOUNTY, 0)
             set i = i + 1
         endloop
-        set timerTime = FA_Time
+        set timerTime = fastArenaTimerTime
     endfunction
 
     private function Timer_OnTick takes nothing returns nothing
@@ -117,7 +117,7 @@ scope FastArena initializer Init
     private function Timer_OnExpire takes nothing returns nothing
         local timer t = GetExpiredTimer()
 
-        call DestroyTimerDialog(FA_TimerDialog)
+        call DestroyTimerDialog(td)
         call PauseTimer(t)
         call DestroyTimer(t)
 
@@ -176,7 +176,7 @@ scope FastArena initializer Init
         loop
             exitwhen i > 8
             if (udg_info[i+1] == true) then
-                call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "У вас есть " + GOLD + I2S(R2I(FA_Time)) + "|r сек.")
+                call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "У вас есть " + GOLD + I2S(R2I(fastArenaTimerTime)) + "|r сек.")
                 call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "Были отобраны первые четверо игроков с наибольшим количеством живых юнитов.")
                 call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "По истечении времени игрок, нанёсший наибольшее количество урона, получит бонусные очки арены.")
             endif
@@ -187,10 +187,10 @@ scope FastArena initializer Init
         call ForGroup(GetUnitsInRectMatching(gg_rct_all, Condition(function Conditions)),function RemoveUnits)
         call DestroyGroup(g_tmp)
         
-        call TimerStart(t, FA_Time, false, function Timer_OnExpire)
-        set FA_TimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
-        call TimerDialogSetTitle(FA_TimerDialog, "Быстрая битва") // Title of timer dialog
-        call TimerDialogDisplay(FA_TimerDialog, true) // Shows timer dialog
+        call TimerStart(t, fastArenaTimerTime, false, function Timer_OnExpire)
+        set td = CreateTimerDialog(t) // Timer dialog in upper-left corner
+        call TimerDialogSetTitle(td, "Быстрая битва") // Title of timer dialog
+        call TimerDialogDisplay(td, true) // Shows timer dialog
         
         call TimerStart(CreateTimer(), 1, true, function Timer_OnTick)
         
@@ -227,7 +227,7 @@ scope FastArena initializer Init
     private function Init takes nothing returns nothing
         local integer i
 
-        debug set FA_Time = FA_DebugTime
+        debug set fastArenaTimerTime = debugFastArenaTimerTime
 
         set i = 0
         loop

@@ -34,7 +34,7 @@ endfunction
 function faq_start takes nothing returns nothing
     local timer t = CreateTimer()
     
-    call TimerStart(t, timeBeforeFirstWave, false, function faq_start_timer_actions) // After settings were set
+    call TimerStart(t, settingsTimerTime, false, function faq_start_timer_actions) // After settings were set
 
     set faq_timerdialog = CreateTimerDialog(t) // Timer dialog in upper-left corner for commands and settings
     call TimerDialogSetTitle(faq_timerdialog, "Настройка карты") // Title of timer dialog
