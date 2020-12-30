@@ -6,3 +6,4 @@ logs
 tools/!MPQEditor.exe
 tools/!XDI.lnk
 .vscode/settings.json
+output/raw_war3map.j
