@@ -5,209 +5,36 @@
     // Currently run task doesn't work because it requires --scriptonly arguments and clean war3map.j.
     // Igneaalis: currently working on .ps1 script.
     "version": "2.0.0",
+    "type": "shell",
+    "command": "${workspaceFolder}\\compile.ps1",
+    "problemMatcher": [],
+    "presentation": {
+        "showReuseMessage": false
+    },
+    "dependsOn": ["Unlock PowerShell"],
     "tasks": [
         {
-            "label": "Build",
-            "type": "shell",
-            "command": "${workspaceFolder}/tools/JassHelper/jasshelper.exe",
-            "group": "build",
-            "args": [
-                "${workspaceFolder}/tools/common.j",
-                "${workspaceFolder}/tools/Blizzard.j",
-                "${workspaceFolder}/output/raw_war3map.j",
-                "${workspaceFolder}/output/MIX.w3x"
-            ],
-            "dependsOrder": "sequence",
-            "dependsOn": ["compile"],
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": false
-            }
-        },
-        {
-            "label": "Build debug",
-            "type": "shell",
-            "command": "${workspaceFolder}/tools/JassHelper/clijasshelper.exe",
-            "group": "build",
-            "args": [
-                "--debug",
-                "${workspaceFolder}/tools/common.j",
-                "${workspaceFolder}/tools/Blizzard.j",
-                "${workspaceFolder}/output/raw_war3map.j",
-                "${workspaceFolder}/output/MIX.w3x"
-            ],
-            "dependsOrder": "sequence",
-            "dependsOn": ["compile"],
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": false
-            }
-        },
-        {
-            "label": "jasshelper debug",
-            "type": "shell",
-            "command": "${workspaceFolder}/tools/JassHelper/jasshelper.exe",
-            "group": "test",
-            "args": [
-                "--debug",
-                "--scriptonly",
-                "${workspaceFolder}/tools/common.j",
-                "${workspaceFolder}/tools/Blizzard.j",
-                "${workspaceFolder}/output/raw_war3map.j",
-                "${workspaceFolder}/output/war3map.j"
-            ],
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": false
-            }
-        },
-        {
-            "label": "jasshelper",
-            "type": "shell",
-            "command": "${workspaceFolder}/tools/JassHelper/jasshelper.exe",
-            "group": "test",
-            "args": [
-                "--scriptonly",
-                "${workspaceFolder}/tools/common.j",
-                "${workspaceFolder}/tools/Blizzard.j",
-                "${workspaceFolder}/output/raw_war3map.j",
-                "${workspaceFolder}/output/war3map.j"
-            ],
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": false
-            }
-        },
-        {
-            "label": "compile",
-            "type": "shell",
-            "command": "powershell",
-            "group": "build",
-            "args": [
-                {
-                    "value": "-ExecutionPolicy ByPass",
-                    "quoting": "escape"
-                },
-                {
-                    "value": "-File ${workspaceFolder}\\compile.ps1",
-                    "quoting": "escape"
-                }
-            ],
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": true
-            }
-        },
-        {
-            "label": "WE",
-            "type": "shell",
-            "command": "D:/Games/Warcraft III/_retail_/x86_64/World Editor.exe",
-            "group": "test",
-            "args": [
-                "-launch",
-                "-loadfile",
-                "${workspaceFolder}/output/MIX.w3x"
-            ],
-            "dependsOrder": "sequence",
-            "dependsOn": ["Build"],
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": false
-            }
-        },
-        {
-            "label": "WE debug",
-            "type": "shell",
-            "command": "D:/Games/Warcraft III/_retail_/x86_64/World Editor.exe",
-            "group": "test",
-            "args": [
-                "-launch",
-                "-loadfile",
-                "${workspaceFolder}/output/MIX.w3x"
-            ],
-            "dependsOrder": "sequence",
-            "dependsOn": ["Build debug"],
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": false
-            }
+            "label": "Play"
         },
         {
             "label": "Play debug",
-            "type": "shell",
-            "command": "D:/Games/Warcraft III/_retail_/x86_64/Warcraft III.exe",
-            "group": "test",
-            "args": [
-                "-launch",
-                "-loadfile",
-                "${workspaceFolder}/output/MIX.w3x",
-                "-windowmode windowedfullscreen",
-                "-mapdiff 1",
-                "-testmapprofile Nokladr",
-                "-fixedseed 1"
-            ],
-            "dependsOrder": "sequence",
-            "dependsOn": ["Build debug"],
-            "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": false
-            }
+            "args": ["-debug"]
         },
         {
-            "label": "Play",
-            "type": "shell",
-            "command": "D:/Games/Warcraft III/_retail_/x86_64/Warcraft III.exe",
-            "group": "test",
-            "args": [
-                "-launch",
-                "-loadfile",
-                "${workspaceFolder}/output/MIX.w3x",
-                "-windowmode windowedfullscreen",
-                "-mapdiff 1",
-                "-testmapprofile Nokladr",
-                "-fixedseed 0"
-            ],
-            "dependsOrder": "sequence",
-            "dependsOn": ["Build"],
+            "label": "WE",
+            "args": ["-worldeditor"]
+        },
+        {
+            "label": "WE debug",
+            "args": ["-debug", "-worldeditor"]
+        },
+        {
+            "label": "Unlock PowerShell",
+            "command": "powershell",
+            "args": ["Set-ExecutionPolicy -Scope CurrentUser Unrestricted"],
             "presentation": {
-                "echo": true,
-                "reveal": "always",
-                "focus": false,
-                "panel": "shared",
-                "showReuseMessage": false,
-                "clear": false
+                "echo": false,
+                "clear": true
             }
         }
     ]
