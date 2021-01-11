@@ -32,11 +32,15 @@ if ($Config.WarcraftPath -match "\b\w[:]((\\|\/)(\w|\d|[ ])*)*\b") {
     }
     Start-Process -FilePath "$pwd\tools\JassHelper\clijasshelper.exe" -ArgumentList $JassHelperArgs -NoNewWindow -Wait
     if ($worldeditor) {
-        Start-Process -FilePath $Config.WorldEditorPath -ArgumentList "-launch", "-loadfile", "$pwd\output\MIX.w3x"
+        if ($Config.WorldEditorPath -match "\b\w[:]((\\|\/)(\w|\d|[ ])*)*\b") {
+            Start-Process -FilePath $Config.WorldEditorPath -ArgumentList "-launch", "-loadfile", "$pwd\output\MIX.w3x"
+        } else {
+            Write-Output "EXCEPTION: `"World Editor.exe`" is not found!`nPlease check:`n`t-> .\config.ini`n`t`t-> WorldEditorPath"
+        }
     } else {
-        Start-Process -FilePath $Config.WarcraftPath -ArgumentList "-launch", "-loadfile", "$pwd\output\MIX.w3x", "-windowmode windowedfullscreen", "-testmapprofile Player", "-fixedseed 1"
+        Start-Process -FilePath $Config.WarcraftPath -ArgumentList "-launch", "-loadfile", "$pwd\output\MIX.w3x", "-testmapprofile MIX", $Config.WarcraftArguments
     }
     Write-Output "`n`nLaunched successfully!"
 } else {
-    Write-Output "EXCEPTION: `"Warcraft III.exe`" is not found!`nPlease check:`n`t-> .\launch.ini`n`t`t-> WarcraftPath"
+    Write-Output "EXCEPTION: `"Warcraft III.exe`" is not found!`nPlease check:`n`t-> .\config.ini`n`t`t-> WarcraftPath"
 }
