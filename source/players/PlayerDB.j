@@ -63,7 +63,7 @@ library PlayerDBLib initializer Init  // Library by Nokladr special for MIX Comm
         endmethod
     endstruct
 
-    private function fill_dbarr takes nothing returns nothing
+    private function Init takes nothing returns nothing
         set pdb = Playerdb.create()
         set playerStructs[0] = PlayerStruct.create(Player(0x00))
         set playerStructs[1] = PlayerStruct.create(Player(0x01))
@@ -73,9 +73,5 @@ library PlayerDBLib initializer Init  // Library by Nokladr special for MIX Comm
         set playerStructs[5] = PlayerStruct.create(Player(0x05))
         set playerStructs[6] = PlayerStruct.create(Player(0x06))
         set playerStructs[7] = PlayerStruct.create(Player(0x07))
-    endfunction
-
-    private function Init takes nothing returns nothing
-        call fill_dbarr()
     endfunction
 endlibrary
