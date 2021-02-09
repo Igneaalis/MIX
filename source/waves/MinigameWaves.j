@@ -19,7 +19,7 @@ scope MinigameWaves initializer Init
         private timerdialog td
         private integer curMinigame = 0
 
-        private constant real debugMinigameTimerTime = 10.00
+        private constant real debugMinigameTimerTime = 30.00
         group minigameUnits = CreateGroup()
         integer minigameWave = 2
     endglobals
