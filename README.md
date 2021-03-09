@@ -12,6 +12,7 @@
         - [T2](#t2)
     - [Геймдизайнеры](#геймдизайнеры)
     - [Кодеры](#кодеры)
+      - [VS Code Extensions](#vs-code-extensions)
     - [Ревьюеры](#ревьюеры)
     - [Менторы](#менторы)
 
@@ -70,10 +71,23 @@
 ### Кодеры
 
 - Warcraft 3 Reforged: 1.32.9 (latest release)
-- IDE: Visual Studio Code 1.52.1 (latest release)
+- IDE: Visual Studio Code 1.53.2 (latest release)
 
-- Нужно перенести код, написанный на GUI, на JASS + vJASS. Внимательно посмотрите [README](source/README.md)!
-- Чтобы скомпилировать проект и запустить карту (или редактор карт), используйте [VS Code Tasks](.vscode/tasks.json), **не забудьте** указать расположение папки с Warcraft 3!
+- Нужно реализовать миниигры. Внимательно ознакомьтесь с существующими структурами: [README](source/README.md).
+- Чтобы скомпилировать проект и запустить карту (или редактор карт), используйте [VS Code](.vscode/launch.json), **не забудьте** настроить [конфиг](\config.ini)!
+
+#### VS Code Extensions
+
+Я использую следующие расширения (`Ctrl+Shift+X`) для VS Code:
+
+- **superjass**
+- **PowerShell**
+- **GitHub**
+- **GitHub Pull Requests and Issues**
+- Explorer Exclude
+- Intellij IDEA Keybindings
+- Markdown All in One
+- markdownlint
 
 ### Ревьюеры
 
