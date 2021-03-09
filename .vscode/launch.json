@@ -1,0 +1,31 @@
+{
+    "configurations": [
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "Play",
+            "script": "${workspaceFolder}\\compile.ps1"
+        },
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "Play debug",
+            "script": "${workspaceFolder}\\compile.ps1",
+            "args": ["-debug"]
+        },
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "World Editor",
+            "script": "${workspaceFolder}\\compile.ps1",
+            "args": ["-worldeditor"]
+        },
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "World Editor debug",
+            "script": "${workspaceFolder}\\compile.ps1",
+            "args": ["-worldeditor -debug"]
+        }
+    ]
+}
