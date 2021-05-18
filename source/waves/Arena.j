@@ -19,7 +19,7 @@ scope Arena initializer Init
         private rect array rectList[8]
         timerdialog Arena_TimerDialog
         
-        private real arenaTimerTime = 120.00
+        real arenaTimerTime = 120.00
         private constant real debugArenaTimerTime = 5.00
     endglobals
 

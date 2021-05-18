@@ -81,6 +81,8 @@ scope IncomeUpgrade initializer Init
         set gr = null
     endfunction
 
+    // Opt. begin
+
     // Добавить в группу игроков всех играющих игроков
     function AllPlayingPlayers takes force gr_p returns nothing
         local integer i = 0
@@ -97,6 +99,8 @@ scope IncomeUpgrade initializer Init
 
         set p = null
     endfunction
+
+    // Opt. end
 
     // Работа таймера Вклад в игрока
     function Timer_contr_to_pl_actions takes nothing returns nothing

@@ -38,7 +38,7 @@ function faq_start takes nothing returns nothing
     call TimerDialogSetTitle(faq_timerdialog, "Настройка карты") // Title of timer dialog
     call TimerDialogDisplay(faq_timerdialog, true) // Shows timer dialog
 
-    call gameset_owner.execute() // Sets owner of game
+    call GameSetOwner_SetOwner.execute() // Sets owner of game
 
     set t = null
 endfunction

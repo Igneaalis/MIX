@@ -15,7 +15,7 @@ scope NextWave initializer Init
 
     globals
         private timerdialog relaxWaveTimerDialog
-        private real relaxWaveTime = 30.00
+        real relaxWaveTime = 30.00
         private constant real debugRelaxWaveTime = 10.00
     endglobals
 

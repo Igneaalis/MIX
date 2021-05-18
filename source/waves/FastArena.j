@@ -18,9 +18,16 @@ scope FastArena initializer Init
         private integer array unitsInGroup
         private integer winPlayerId
         private real array damageByPlayer
+        private force actingPlayers = CreateForce()
+        private force availablePlayers = CreateForce()
+        private integer numberOfActingPlayers = 0
+        private integer numberOfAvailablePlayers = 0
         private real timerTime
         private rect curRect
         private timerdialog td
+
+        private player curGoodPlayer
+        private integer maxUnits
 
         private constant real firePitPercentDamage = 10.00
         private real fastArenaTimerTime = 60.00
@@ -37,6 +44,20 @@ scope FastArena initializer Init
         // debug call Log(I2S(unitsInGroup[GetPlayerId(GetOwningPlayer(GetEnumUnit()))]) + " " + GetPlayerName(GetOwningPlayer(GetEnumUnit())) + " " + GetUnitName(GetEnumUnit()))
     endfunction
 
+    private function AddPlayersInForce takes nothing returns nothing
+        if unitsInGroup[GetPlayerId(GetEnumPlayer())] > 0 then
+            call ForceAddPlayer(availablePlayers, GetEnumPlayer())
+            set numberOfAvailablePlayers = numberOfAvailablePlayers + 1
+        endif
+    endfunction
+
+    private function FindGoodPlayerInForce takes nothing returns nothing
+        if unitsInGroup[GetPlayerId(GetEnumPlayer())] > maxUnits then
+            set curGoodPlayer = GetEnumPlayer()
+            set maxUnits = unitsInGroup[GetPlayerId(GetEnumPlayer())]
+        endif
+    endfunction
+
     private function MoveUnitsToArena takes nothing returns nothing
         local real x = GetRectCenterX(curRect)
         local real y = GetRectCenterY(curRect)
@@ -51,7 +72,7 @@ scope FastArena initializer Init
         local integer sourcePlayerId = GetPlayerId(sourcePlayer)
         local player targetPlayer = GetOwningPlayer(BlzGetEventDamageTarget())
 
-        if (sourcePlayer != targetPlayer) then
+        if (sourcePlayer != targetPlayer and targetPlayer != Player(27) and sourcePlayer != Player(27)) then
             set damageByPlayer[sourcePlayerId] = damageByPlayer[sourcePlayerId] + GetEventDamage()
         else
             debug set damageByPlayer[sourcePlayerId] = damageByPlayer[sourcePlayerId] + GetEventDamage()
@@ -96,8 +117,13 @@ scope FastArena initializer Init
             call GroupClear(unitGroup[i])
             set unitsInGroup[i] = 0
             set damageByPlayer[i] = 0
-            set timerTime = fastArenaTimerTime
             call SetPlayerState(Player(i), PLAYER_STATE_GIVES_BOUNTY, 0)
+            call ForceClear(actingPlayers)
+            call ForceClear(availablePlayers)
+            set numberOfActingPlayers = 0
+            set numberOfAvailablePlayers = 0
+            set curGoodPlayer = null
+            set maxUnits = 0
             set i = i + 1
         endloop
         set timerTime = fastArenaTimerTime
@@ -153,9 +179,14 @@ scope FastArena initializer Init
         call Flush.execute()
         call PanCameraToTimed(GetRectCenterX(gg_rct_fastarena), GetRectCenterY(gg_rct_fastarena), 0)
 
+        set g_tmp = GetUnitsInRectMatching(gg_rct_all, Condition(function Conditions))
+        call ForGroup(g_tmp, function AddUnitInGroup)
+        call GroupClear(g_tmp)
+        call ForForce(players, function AddPlayersInForce) // Depends on AddUnitInGroup!
+
         set i = 1
         loop
-            exitwhen i > 4
+            exitwhen i > 4 or numberOfAvailablePlayers == 0
             if (i == 1) then
                 set curRect = gg_rct_fastarenaSPAWN1
             elseif (i == 2) then
@@ -166,38 +197,37 @@ scope FastArena initializer Init
                 set curRect = gg_rct_fastarenaSPAWN4
             endif
 
-            set g_tmp = GetUnitsInRectMatching(gg_rct_all, Condition(function Conditions))
-            call ForGroup(g_tmp, function AddUnitInGroup)
-            call DestroyGroup(g_tmp)
+            call ForForce(availablePlayers, function FindGoodPlayerInForce)
 
-            set j = 1
-            set curPlayerId = 0
-            loop
-                exitwhen j >= maxNumberOfPlayers
-                if unitsInGroup[j] > unitsInGroup[curPlayerId] then
-                    set curPlayerId = j
-                endif
-                set j = j + 1
-            endloop
-            call ForGroup(unitGroup[curPlayerId], function MoveUnitsToArena)
-            call PanCameraToTimedForPlayer(Player(curPlayerId), GetRectCenterX(curRect), GetRectCenterY(curRect), 0)
-            set unitsInGroup[curPlayerId] = -1
+            call ForceAddPlayer(actingPlayers, curGoodPlayer)
+            set numberOfActingPlayers = numberOfActingPlayers + 1
+
+            call ForGroup(unitGroup[GetPlayerId(curGoodPlayer)], function MoveUnitsToArena)
+            call PanCameraToTimedForPlayer(curGoodPlayer, GetRectCenterX(curRect), GetRectCenterY(curRect), 0)
+
+            call ForceRemovePlayer(availablePlayers, curGoodPlayer)
+            set numberOfAvailablePlayers = numberOfAvailablePlayers - 1
+            set curGoodPlayer = null
+            set maxUnits = 0
+
             set i = i + 1
         endloop
 
         set i = 0
         loop
-            exitwhen i > 8
-            if (udg_info[i+1] == true) then
-                call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "У вас есть " + GOLD + I2S(R2I(fastArenaTimerTime)) + "|r сек.")
-                call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "Были отобраны первые четверо игроков с наибольшим количеством живых юнитов.")
-                call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "По истечении времени игрок, нанёсший наибольшее количество урона, получит бонусные очки арены.")
+            exitwhen i == maxNumberOfPlayers
+            static if not DEBUG_MODE then
+                if (pdb[Player(i)].info == true) then
+                    call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "У вас есть " + GOLD + I2S(R2I(fastArenaTimerTime)) + "|r сек.")
+                    call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "Были отобраны первые четверо игроков с наибольшим количеством живых юнитов.")
+                    call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "По истечении времени игрок, нанёсший наибольшее количество урона, получит бонусные очки арены.")
+                endif
             endif
             set i = i + 1
         endloop
         
         set g_tmp = GetUnitsInRectMatching(gg_rct_all, Condition(function Conditions))
-        call ForGroup(GetUnitsInRectMatching(gg_rct_all, Condition(function Conditions)),function RemoveUnits)
+        call ForGroup(g_tmp, function RemoveUnits)
         call DestroyGroup(g_tmp)
         
         call TimerStart(t, fastArenaTimerTime, false, function Timer_OnExpire)
