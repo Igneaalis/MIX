@@ -107,7 +107,6 @@ scope BuilderSelect initializer builder_select
         call DestroyGroup(group_of_dummies)
         set group_of_dummies = null
         set mbitem = null
-        set iconFileName = null
     endfunction
 
     //===========================================================================

@@ -79,12 +79,6 @@ scope IncomeUpgradeA initializer Init
         set p_v = null
         set killer = null
         set victim = null
-        set killer_mes = null
-        set victim_mes = null
-        set color_k = null
-        set color_v = null
-        set name_k = null
-        set name_v = null
     endfunction
 
     //===========================================================================

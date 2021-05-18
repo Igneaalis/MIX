@@ -107,15 +107,6 @@ scope Messages initializer Init
                 endif
             endfor
         endif
-
-        set strTestWarning_RU = null
-        set strWarning_RU = null
-        set strVar_RU = null
-        set Feedback_RU = null
-        set strTestWarning_EN = null
-        set strWarning_EN = null
-        set strVar_EN = null
-        set Feedback_EN = null
     endfunction
 
     private function Init takes nothing returns nothing

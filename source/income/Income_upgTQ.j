@@ -124,12 +124,9 @@ scope IncomeUpgradeTQ initializer Init_income_upgTQ
         set killer = null
         set victim = null
         call DestroyGroup(gr)
-        set name_ef = null
         set gr = null
         set p_v = null
         set p_k = null
-        set s1 = null
-        set s2 = null
     endfunction
 
     //===========================================================================

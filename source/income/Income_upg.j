@@ -127,8 +127,6 @@ scope IncomeUpgrade initializer Init
         call DestroyTimer(t)
         set p = null
         set t = null
-        set s1 = null
-        set s2 = null
     endfunction
 
     // Действие улучшения Вклад в игрока
@@ -163,7 +161,6 @@ scope IncomeUpgrade initializer Init
         call DestroyForce(gr_p)
         set gr_p = null
         set rand_p = null
-        set mes = null
         set t = null
     endfunction
 
@@ -208,9 +205,6 @@ scope IncomeUpgrade initializer Init
         call AddLumberToPlayer(lumber, p)
         call DisplayTextToPlayer(p, 0, 0, s1)
         call DisplayTextToPlayer(p, 0, 0, s2)
-
-        set s1 = null
-        set s2 = null
     endfunction
 
     // Поиск номера таймера
