@@ -47,7 +47,7 @@ scope Main initializer Init
         call TriggerSleepAction(0)
         call faq_ini.execute() // Starts voting for faq guide
 
-        debug call Log("Initialization completed!")
+        debug call Log("Debug mode enabled!")
 
     endfunction
 
