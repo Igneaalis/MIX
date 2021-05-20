@@ -62,7 +62,7 @@ scope IncomeObjects initializer Init
                 set IncomeObjects_minimapicons[i] = CreateMinimapIcon(x, y, 0xff, 0xff, 0xff, "UI\\Minimap\\MiniMap-Goldmine.mdl", FOG_OF_WAR_VISIBLE)
                 // call UnitSetUsesAltIcon(u, true)
             else
-                if ModuloInteger(random, 2) == 1 then
+                if ModuloInteger(random, 2) == 0 then
                     set u = CreateUnitEx(Player(27), smallMineRC, x, y, 270)
                     set IncomeObjects_minimapicons[i] = CreateMinimapIcon(x, y, 0xcc, 0x00, 0xff, "UI\\Minimap\\MiniMap-Hero.mdl", FOG_OF_WAR_VISIBLE)
                 else
