@@ -13,6 +13,26 @@
 
 scope Debug initializer Init
 
+    // private function debug_test_ForForce takes nothing returns nothing
+    //     set debug_test_playerList = debug_test_playerList + GetPlayerName(GetEnumPlayer()) + " "
+    //     set debug_test_numberOfPlayers = debug_test_numberOfPlayers + 1
+    // endfunction
+
+    // private function debug_test takes nothing returns nothing
+    //     set debug_test_playerList = ""
+    //     set debug_test_numberOfPlayers = 0
+    //     call ForForce(minigameActingPlayers, function debug_test_ForForce)
+    //     call Log("Minigame number of acting players: " + I2S(minigameNumberOfActingPlayers))
+    //     call Log("Minigame number of acting players in force: " + I2S(debug_test_numberOfPlayers))
+    //     call Log("Minigame acting players in force: " + debug_test_playerList)
+    //     call Log("------------------------")
+    //     set debug_test_playerList = ""
+    //     set debug_test_numberOfPlayers = 0
+    //     call ForForce(players, function debug_test_ForForce)
+    //     call Log("Number of players in force: " + I2S(debug_test_numberOfPlayers))
+    //     call Log("Players in force: " + debug_test_playerList)
+    // endfunction
+
     private function Init takes nothing returns nothing
         debug local trigger t = CreateTrigger()
         debug local integer i
@@ -27,6 +47,10 @@ scope Debug initializer Init
 
             // call Log(I2S(bj_MAX_PLAYERS)) - 24
             // call Log(I2S(bj_MAX_PLAYER_SLOTS)) - 28
+
+            // for i = 1 to 15
+            //     call Log(I2S(GetRandomInt(0, 2))) - 0, 1, 2
+            // endfor
         endif
         
         debug set t = null
