@@ -89,6 +89,7 @@ scope FastArena initializer Init
     endfunction
 
     private function FirePitDoDamage takes nothing returns nothing
+        // TODO: добавить негорящие типы
         if (GetUnitLifePercent(GetEnumUnit()) > firePitPercentDamage) then
             call SetUnitLifePercentBJ(GetEnumUnit(),(GetUnitLifePercent(GetEnumUnit()) - firePitPercentDamage))
         endif
