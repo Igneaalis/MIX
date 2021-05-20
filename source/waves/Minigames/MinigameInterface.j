@@ -17,6 +17,7 @@ library MinigameInterface
         string title
         string description
         real timerTime
+        real debugTimerTime
         real x
         real y
         method Fire takes nothing returns nothing
