@@ -18,11 +18,19 @@ scope MinigameWaves initializer Init
         private Minigame array minigamesShuffled[1]
         private timerdialog td
         private integer curMinigame = 0
-
-        private constant real debugMinigameTimerTime = 30.00
+        private timer nextWaveTimer
+        
+        force minigameActingPlayers = CreateForce()
+        integer minigameNumberOfActingPlayers = 0
         group minigameUnits = CreateGroup()
         integer minigameWave = 2
+        boolean isMinigameForceStopped
     endglobals
+
+    private function AddPlayersInForce takes nothing returns nothing
+        call ForceAddPlayer(minigameActingPlayers, GetEnumPlayer())
+        set minigameNumberOfActingPlayers = minigameNumberOfActingPlayers + 1
+    endfunction
 
     private function Shuffle takes nothing returns nothing
         local integer i
@@ -47,7 +55,12 @@ scope MinigameWaves initializer Init
     endfunction
 
     private function Timer_OnExpire takes nothing returns nothing
-        local timer t = GetExpiredTimer()
+        local timer t = nextWaveTimer
+
+        if isMinigameForceStopped == true then
+            set t = null
+            return
+        endif
 
         call DestroyTimerDialog(td)
         call PauseTimer(t)
@@ -56,14 +69,36 @@ scope MinigameWaves initializer Init
         call minigamesShuffled[curMinigame].Finish()
         set curMinigame = curMinigame + 1
 
+        call ForceClear(minigameActingPlayers)
+        set minigameNumberOfActingPlayers = 0
         call NextWave_Force.execute()
 
         set t = null
     endfunction
 
+    public function FinishMinigame takes nothing returns nothing
+        local timer t = nextWaveTimer
+        set isMinigameForceStopped = true
+
+        call DestroyTimerDialog(td)
+        call PauseTimer(t)
+        call DestroyTimer(t)
+
+        call minigamesShuffled[curMinigame].Finish()
+        set curMinigame = curMinigame + 1
+
+        call ForceClear(minigameActingPlayers)
+        set minigameNumberOfActingPlayers = 0
+        call NextWave_Force.execute()
+    endfunction
+
     public function Force takes nothing returns nothing
         local timer t = CreateTimer()
         local Minigame minigame
+        set isMinigameForceStopped = false
+        set nextWaveTimer = t
+
+        set WasItMinigameWave = true
 
         if curMinigame >= minigames.size then
             set curMinigame = 0
@@ -73,7 +108,7 @@ scope MinigameWaves initializer Init
         set minigame = minigamesShuffled[curMinigame]
 
         static if DEBUG_MODE then
-            call TimerStart(t, debugMinigameTimerTime, false, function Timer_OnExpire)
+            call TimerStart(t, minigame.debugTimerTime, false, function Timer_OnExpire)
         else
             call TimerStart(t, minigame.timerTime, false, function Timer_OnExpire)
         endif
@@ -87,6 +122,9 @@ scope MinigameWaves initializer Init
 
         call PanCameraToTimed(minigame.x, minigame.y, 0)
 
+        call ForceClear(minigameActingPlayers)
+        set minigameNumberOfActingPlayers = 0
+        call ForForce(players, function AddPlayersInForce)
         call minigame.Fire()
 
         set t = null

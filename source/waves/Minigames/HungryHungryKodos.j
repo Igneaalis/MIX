@@ -20,10 +20,49 @@ scope MinigameHungryHungryKodos initializer Init
         private constant integer rabbitTypeId = 'n008'
         private constant real X = 6784
         private constant real Y = 0
-        private integer playersInForce
         private real angle
+        private boolean IsMinigameFinished
         private timer t = CreateTimer()
+        private string playerList = ""
+
+        private string debug_test_playerList = ""
+        private integer debug_test_numberOfPlayers = 0
     endglobals
+
+    private function RewardWinner takes player winner returns nothing
+        local integer i
+
+        for i = 0 to maxNumberOfPlayers - 1
+            if (pdb[Player(i)].info == true) then
+                call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, "Дольше всех смог прокормить своего кодоя игрок: " + C_IntToColor(GetPlayerId(winner)) + GetPlayerName(winner) + "|r и получает за это " + GOLD + "100|r золота и " + RED + "10|r очков!")
+            endif
+        endfor
+        call AddGoldToPlayer(100, winner)
+        set pdb[winner].points = pdb[winner].points + 10
+    endfunction
+
+    private function RewardAllRemainingPlayers_ForForce takes nothing returns nothing
+        local player p = GetEnumPlayer()
+
+        set playerList = playerList + C_IntToColor(GetPlayerId(p)) + GetPlayerName(p) + "|r "
+        call AddGoldToPlayer(100 / minigameNumberOfActingPlayers, p)
+        set pdb[p].points = pdb[p].points + 10 / minigameNumberOfActingPlayers
+
+        set p = null
+    endfunction
+
+    private function RewardAllRemainingPlayers takes nothing returns nothing
+        local integer i
+        set playerList = ""
+
+        call ForForce(minigameActingPlayers, function RewardAllRemainingPlayers_ForForce)
+
+        for i = 0 to maxNumberOfPlayers - 1
+            if (pdb[Player(i)].info == true) then
+                call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, "Дольше всех смогли прокормить своего кодоя игроки: " + playerList +  "и получают за это " + GOLD + I2S(100 / minigameNumberOfActingPlayers) + "|r золота и " + RED + I2S(10 / minigameNumberOfActingPlayers) + "|r очков!")
+            endif
+        endfor
+    endfunction
 
     private function ForPlayer takes nothing returns nothing
         local real x = X
@@ -32,7 +71,7 @@ scope MinigameHungryHungryKodos initializer Init
         local real facing = Atan2BJ(-offsetFromCenter * Sin(angle), -offsetFromCenter * Cos(angle))
 
         call GroupAddUnit(minigameUnits, CreateUnitEx(p, kodoTypeId, x + offsetFromCenter * Cos(angle), y + offsetFromCenter * Sin(angle), facing))
-        set angle = angle + 2*bj_PI / playersInForce
+        set angle = angle + 2*bj_PI / minigameNumberOfActingPlayers
 
         set p = null
     endfunction
@@ -43,36 +82,137 @@ scope MinigameHungryHungryKodos initializer Init
         local real finishX = GetRandomReal(X - offsetFromCenter, X + offsetFromCenter)
         local real finishY = GetRandomReal(Y - offsetFromCenter, Y + offsetFromCenter)
         local real facingAtFinishPoint = Atan2BJ(finishY - startY, finishX - startX)
-        local unit rabbit = CreateUnitEx(Player(PLAYER_NEUTRAL_AGGRESSIVE), rabbitTypeId, startX, startY, facingAtFinishPoint)
-        call GroupAddUnit(minigameUnits, rabbit)
-        call IssuePointOrder(rabbit, "patrol", finishX, finishY)
+        local unit animal
+        if GetRandomInt(1, 3) == 3 then
+            set animal = CreateUnitEx(Player(PLAYER_NEUTRAL_AGGRESSIVE), pigTypeId, startX, startY, facingAtFinishPoint)
+        else
+            set animal = CreateUnitEx(Player(PLAYER_NEUTRAL_AGGRESSIVE), rabbitTypeId, startX, startY, facingAtFinishPoint)
+        endif
+        call GroupAddUnit(minigameUnits, animal)
+        call IssuePointOrder(animal, "patrol", finishX, finishY)
+        set animal = null
+    endfunction
+
+    private function Kodo_OnTick takes unit u, unit target, real lifeRegeneration returns nothing
+        local integer tickRate = 12
+        call TriggerSleepAction(0)
+        while not IsUnitDeadBJ(target) and not IsMinigameFinished and GetUnitAbilityLevel(u, 'Bdvv') > 0
+            call SetWidgetLife(u, GetWidgetLife(u) + lifeRegeneration / tickRate)
+            call TriggerSleepAction(1 / tickRate)
+        endwhile
+    endfunction
+
+    private function Kodo_OnEat takes nothing returns nothing
+        local unit kodo = GetTriggerUnit()
+        local unit animal = GetSpellTargetUnit()
+
+        if GetUnitTypeId(kodo) != 'o000' then
+            set kodo = null
+            set animal = null
+            return
+        endif
+
+        if GetUnitTypeId(animal) == rabbitTypeId then
+            call Kodo_OnTick.execute(kodo, animal, 35)
+        endif
+
+        if GetUnitTypeId(animal) == pigTypeId then
+            call Kodo_OnTick.execute(kodo, animal, 100)
+        endif
+
+        set kodo = null
+        set animal = null
+    endfunction
+
+    private function Kodo_OnDeath takes nothing returns nothing
+        local unit kodo = GetTriggerUnit()
+        local player kodoOwner = GetOwningPlayer(kodo)
+        local player winner
+
+        if GetUnitTypeId(kodo) != 'o000' then
+            set kodo = null
+            return
+        endif
+
+        if minigameNumberOfActingPlayers == 1 then  // If a player is the last man standing
+            set winner = kodoOwner
+            set IsMinigameFinished = true
+            call RewardWinner(winner)
+            call MinigameWaves_FinishMinigame.execute()
+            set kodo = null
+            set kodoOwner = null
+            set winner = null
+            return
+        endif
+
+        call ForceRemovePlayer(minigameActingPlayers, kodoOwner)
+        set minigameNumberOfActingPlayers = minigameNumberOfActingPlayers - 1
+
+        if minigameNumberOfActingPlayers == 1 then
+            set winner = ForcePickRandomPlayer(minigameActingPlayers)
+            set IsMinigameFinished = true
+            call RewardWinner(winner)
+            call MinigameWaves_FinishMinigame.execute()
+        endif
+
+        set kodo = null
+        set kodoOwner = null
+        set winner = null
     endfunction
 
     private function Init takes nothing returns nothing
         local trigger t = CreateTrigger()
-        
-        // call TriggerAddAction(t, function )
+
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_SPELL_EFFECT, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_SPELL_EFFECT, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_SPELL_EFFECT, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_SPELL_EFFECT, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_SPELL_EFFECT, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_SPELL_EFFECT, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_SPELL_EFFECT, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_SPELL_EFFECT, null)
+        call TriggerAddAction(t, function Kodo_OnEat)
+
+        set t = CreateTrigger()
+
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
+        call TriggerAddAction(t, function Kodo_OnDeath)
         
         set t = null
     endfunction
 
     struct HungryHungryKodos extends Minigame
         string title = "Голодные кодо"
-        string description = "Победит самый сытый кодо."
+        string description = "Победят только живые кодо."
         real timerTime = 60.00
+        real debugTimerTime = 40.00
         real x = X
         real y = Y
         
         method Fire takes nothing returns nothing
-            set playersInForce = CountPlayersInForceBJ(players)
-            set angle = 2*bj_PI / playersInForce
+            set angle = 2*bj_PI / minigameNumberOfActingPlayers
 
             call ForForce(players, function ForPlayer)
-            call TimerStart(t, 2., true, function Timer_OnTick)
+            call TimerStart(t, 3., true, function Timer_OnTick)
+            set IsMinigameFinished = false
         endmethod
 
         method Finish takes nothing returns nothing
             call PauseTimer(t)
+            if IsMinigameFinished == false then
+                if minigameNumberOfActingPlayers > 1 then
+                    call RewardAllRemainingPlayers()
+                else
+                    call RewardWinner(ForcePickRandomPlayer(minigameActingPlayers))
+                endif
+            endif
         endmethod
     endstruct
 

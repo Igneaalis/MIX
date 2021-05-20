@@ -15,6 +15,8 @@ scope NextWave initializer Init
 
     globals
         private timerdialog relaxWaveTimerDialog
+
+        boolean WasItMinigameWave
         real relaxWaveTime = 30.00
         private constant real debugRelaxWaveTime = 10.00
     endglobals
@@ -25,11 +27,13 @@ scope NextWave initializer Init
         call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, p, 0)
         call PanCameraToTimedLocForPlayer(p, GetPlayerStartLocationLoc(p), 0) // Focuses camera at castle you own
 
-        call AddGoldToPlayer(pdb[p].incomeGold, p)
-        call AddLumberToPlayer(pdb[p].incomeGems, p)
+        if WasItMinigameWave == false then
+            call AddGoldToPlayer(pdb[p].incomeGold, p)
+            call AddLumberToPlayer(pdb[p].incomeGems, p)
 
-        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль золота: " + GOLD + I2S(pdb[p].incomeGold) + "|r")
-        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль самоцветов: " + VIOLET + I2S(pdb[p].incomeGems) + "|r")
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль золота: " + GOLD + I2S(pdb[p].incomeGold) + "|r")
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль самоцветов: " + VIOLET + I2S(pdb[p].incomeGems) + "|r")
+        endif
 
         set p = null
     endfunction

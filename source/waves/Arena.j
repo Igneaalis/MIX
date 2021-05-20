@@ -89,6 +89,7 @@ scope Arena initializer Init
         local integer random
         local timer t = CreateTimer()
 
+        set WasItMinigameWave = false
         call Flush.execute()
         call IncomeObjects_Shuffle.execute()
 
