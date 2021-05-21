@@ -17,6 +17,22 @@ library MIXLib initializer Init requires NokladrLib
         
     endglobals
 
+    //! textmacro CreateCommand takes name
+    function Command_$name$_Init takes nothing returns nothing
+        local trigger t = CreateTrigger()
+        call TriggerRegisterPlayerChatEvent(t, Player(0x00), "-$name$", false)
+        call TriggerRegisterPlayerChatEvent(t, Player(0x01), "-$name$", false)
+        call TriggerRegisterPlayerChatEvent(t, Player(0x02), "-$name$", false)
+        call TriggerRegisterPlayerChatEvent(t, Player(0x03), "-$name$", false)
+        call TriggerRegisterPlayerChatEvent(t, Player(0x04), "-$name$", false)
+        call TriggerRegisterPlayerChatEvent(t, Player(0x05), "-$name$", false)
+        call TriggerRegisterPlayerChatEvent(t, Player(0x06), "-$name$", false)
+        call TriggerRegisterPlayerChatEvent(t, Player(0x07), "-$name$", false)
+        call TriggerAddAction(t, function Command_$name$)
+        set t = null
+    endfunction
+    //! endtextmacro
+
     function AddGemsToPlayer takes integer gems, player p returns nothing
         local integer lumber = gems
         call AddLumberToPlayer(lumber, p)
