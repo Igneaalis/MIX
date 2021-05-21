@@ -66,8 +66,8 @@ library Multiboard /* v2.0.0.1
     *
     ************************************************************************************/
     globals
-        private Table table
-        private Table table2
+        private Table mbtable
+        private Table mbtable2
         private integer array r
         private integer ic = 0
         private multiboard array boardp
@@ -79,8 +79,8 @@ library Multiboard /* v2.0.0.1
     private module Init
 
         private static method onInit takes nothing returns nothing
-            set table = Table.create()
-            set table2 = Table.create()
+            set mbtable = Table.create()
+            set mbtable2 = Table.create()
         endmethod
 
     endmodule
@@ -88,19 +88,19 @@ library Multiboard /* v2.0.0.1
     struct MultiboardItem extends array
 
         method operator text= takes string value returns nothing
-            call MultiboardSetItemValue(table.multiboarditem[this], value)
+            call MultiboardSetItemValue(mbtable.multiboarditem[this], value)
         endmethod
         method setColor takes integer red, integer green, integer blue, integer alpha returns nothing
-            call MultiboardSetItemValueColor(table.multiboarditem[this], red, green, blue, alpha)
+            call MultiboardSetItemValueColor(mbtable.multiboarditem[this], red, green, blue, alpha)
         endmethod
         method setStyle takes boolean showValue, boolean showIcon returns nothing
-            call MultiboardSetItemStyle(table.multiboarditem[this], showValue, showIcon)
+            call MultiboardSetItemStyle(mbtable.multiboarditem[this], showValue, showIcon)
         endmethod
         method operator icon= takes string str returns nothing
-            call MultiboardSetItemIcon(table.multiboarditem[this], str)
+            call MultiboardSetItemIcon(mbtable.multiboarditem[this], str)
         endmethod
         method operator width= takes real percent returns nothing
-            call MultiboardSetItemWidth(table.multiboarditem[this], percent)
+            call MultiboardSetItemWidth(mbtable.multiboarditem[this], percent)
         endmethod
     
         implement Init
@@ -134,8 +134,8 @@ library Multiboard /* v2.0.0.1
                 set column = cc[this]
                 loop
                     set mbi = MultiboardGetItem(boardp[this], row, column)
-                    set table.multiboarditem[(this*500+row)*500+column] = mbi
-                    set table2.multiboarditem[(this*500+column)*500+row] = mbi
+                    set mbtable.multiboarditem[(this*500+row)*500+column] = mbi
+                    set mbtable2.multiboarditem[(this*500+column)*500+row] = mbi
                     exitwhen 0 == column
                     set column = column - 1
                 endloop
@@ -150,9 +150,9 @@ library Multiboard /* v2.0.0.1
             loop
                 set column = cc[this]
                 loop
-                    call MultiboardReleaseItem(table.multiboarditem[(this*500+row)*500+column])
-                    call table.handle.remove((this*500+row)*500+column)
-                    call table2.handle.remove((this*500+column)*500+row)
+                    call MultiboardReleaseItem(mbtable.multiboarditem[(this*500+row)*500+column])
+                    call mbtable.handle.remove((this*500+row)*500+column)
+                    call mbtable2.handle.remove((this*500+column)*500+row)
                     exitwhen 0 == column
                     set column = column - 1
                 endloop
@@ -285,19 +285,19 @@ library Multiboard /* v2.0.0.1
             call Multiboard(this).getItems()
         endmethod
         method operator text= takes string value returns nothing
-            call MultiboardSet(this).text(value, rc[this/250000], table2)
+            call MultiboardSet(this).text(value, rc[this/250000], mbtable2)
         endmethod
         method setColor takes integer red, integer green, integer blue, integer alpha returns nothing
-            call MultiboardSet(this).color(red, green, blue, alpha, rc[this/250000], table2)
+            call MultiboardSet(this).color(red, green, blue, alpha, rc[this/250000], mbtable2)
         endmethod
         method setStyle takes boolean showValue, boolean showIcon returns nothing
-            call MultiboardSet(this).style(showValue, showIcon, rc[this/250000], table2)
+            call MultiboardSet(this).style(showValue, showIcon, rc[this/250000], mbtable2)
         endmethod
         method operator icon= takes string str returns nothing
-            call MultiboardSet(this).icon(str, rc[this/250000], table2)
+            call MultiboardSet(this).icon(str, rc[this/250000], mbtable2)
         endmethod
         method operator width= takes real percent returns nothing
-            call MultiboardSet(this).width(percent, rc[this/250000], table2)
+            call MultiboardSet(this).width(percent, rc[this/250000], mbtable2)
         endmethod
         method operator [] takes integer column returns thistype
             return (this*500+column)*500
@@ -317,19 +317,19 @@ library Multiboard /* v2.0.0.1
             call Multiboard(this).getItems()
         endmethod
         method operator text= takes string value returns nothing
-            call MultiboardSet(this).text(value, cc[this/250000], table)
+            call MultiboardSet(this).text(value, cc[this/250000], mbtable)
         endmethod
         method setColor takes integer red, integer green, integer blue, integer alpha returns nothing
-            call MultiboardSet(this).color(red, green, blue, alpha, cc[this/250000], table)
+            call MultiboardSet(this).color(red, green, blue, alpha, cc[this/250000], mbtable)
         endmethod
         method setStyle takes boolean showValue, boolean showIcon returns nothing
-            call MultiboardSet(this).style(showValue, showIcon, cc[this/250000], table)
+            call MultiboardSet(this).style(showValue, showIcon, cc[this/250000], mbtable)
         endmethod
         method operator icon= takes string str returns nothing
-            call MultiboardSet(this).icon(str, cc[this/250000], table)
+            call MultiboardSet(this).icon(str, cc[this/250000], mbtable)
         endmethod
         method operator width= takes real percent returns nothing
-            call MultiboardSet(this).width(percent,cc[this/250000], table)
+            call MultiboardSet(this).width(percent,cc[this/250000], mbtable)
         endmethod
         method operator [] takes integer row returns thistype
             return (this*500+row)*500
