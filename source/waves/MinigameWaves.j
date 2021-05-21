@@ -14,8 +14,8 @@
 scope MinigameWaves initializer Init
     
     globals
-        private Minigame array minigames[1]
-        private Minigame array minigamesShuffled[1]
+        private Minigame array minigames[2]
+        private Minigame array minigamesShuffled[2]
         private timerdialog td
         private integer curMinigameNumber = 0
         private timer nextWaveTimer
@@ -72,6 +72,7 @@ scope MinigameWaves initializer Init
 
         call ForceClear(minigameActingPlayers)
         set minigameNumberOfActingPlayers = 0
+        set curMinigame = 0
         call NextWave_Force.execute()
 
         set t = null
@@ -132,8 +133,8 @@ scope MinigameWaves initializer Init
     endfunction
     
     private function Init takes nothing returns nothing
-        // set minigames[0] = HungryHungryKodos.create()
-        set minigames[0] = Casino.create()
+        set minigames[0] = HungryHungryKodos.create()
+        set minigames[1] = Casino.create()
 
         call Shuffle.execute()
     endfunction

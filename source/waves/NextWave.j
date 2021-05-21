@@ -29,7 +29,7 @@ scope NextWave initializer Init
 
         if WasItMinigameWave == false then
             call AddGoldToPlayer(pdb[p].incomeGold, p)
-            call AddLumberToPlayer(pdb[p].incomeGems, p)
+            call AddGemsToPlayer(pdb[p].incomeGems, p)
 
             call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль золота: " + GOLD + I2S(pdb[p].incomeGold) + "|r")
             call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль самоцветов: " + VIOLET + I2S(pdb[p].incomeGems) + "|r")
