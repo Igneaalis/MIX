@@ -20,7 +20,7 @@ scope IncomeObjects initializer Init
         private rect array rectList[9]
         private rect array filledRectList
         group IncomeObjects_group = CreateGroup()
-        minimapicon array IncomeObjects_minimapicons
+        // minimapicon array IncomeObjects_minimapicons
         integer IncomeObjects_StartAmount = 3
         integer IncomeObjects_EndAmount = 6
         integer IncomeObjects_MaxAmount = 9
@@ -59,15 +59,15 @@ scope IncomeObjects initializer Init
 
             if curRect == rectList[0] then
                 set u = CreateUnitEx(Player(27), bigMineRC, x, y, 270)
-                set IncomeObjects_minimapicons[i] = CreateMinimapIcon(x, y, 0xff, 0xff, 0xff, "UI\\Minimap\\MiniMap-Goldmine.mdl", FOG_OF_WAR_VISIBLE)
+                // set IncomeObjects_minimapicons[i] = CreateMinimapIcon(x, y, 0xff, 0xff, 0xff, "UI\\Minimap\\MiniMap-Goldmine.mdl", FOG_OF_WAR_VISIBLE)
                 // call UnitSetUsesAltIcon(u, true)
             else
                 if ModuloInteger(random, 2) == 0 then
                     set u = CreateUnitEx(Player(27), smallMineRC, x, y, 270)
-                    set IncomeObjects_minimapicons[i] = CreateMinimapIcon(x, y, 0xcc, 0x00, 0xff, "UI\\Minimap\\MiniMap-Hero.mdl", FOG_OF_WAR_VISIBLE)
+                    // set IncomeObjects_minimapicons[i] = CreateMinimapIcon(x, y, 0xcc, 0x00, 0xff, "UI\\Minimap\\MiniMap-Hero.mdl", FOG_OF_WAR_VISIBLE)
                 else
                     set u = CreateUnitEx(Player(27), flagRC, x, y, 270)
-                    set IncomeObjects_minimapicons[i] = CreateMinimapIcon(x, y, 0xff, 0x00, 0x00, "UI\\Minimap\\MiniMap-Goldmine.mdl", FOG_OF_WAR_VISIBLE)
+                    // set IncomeObjects_minimapicons[i] = CreateMinimapIcon(x, y, 0xff, 0x00, 0x00, "UI\\Minimap\\MiniMap-Goldmine.mdl", FOG_OF_WAR_VISIBLE)
                 endif
             endif
 
