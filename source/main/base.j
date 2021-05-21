@@ -236,10 +236,7 @@ trigger gg_trg_cmd_point= null
 trigger gg_trg_cmd_gg= null
 trigger gg_trg_cmd_info= null
 trigger gg_trg_cmd_zoom= null
-trigger gg_trg_damage_system_initialization= null
 trigger gg_trg_damage_system= null
-trigger gg_trg_scoreboard_ini= null
-trigger gg_trg_scoreboard_update= null
 trigger gg_trg_unit_resources= null
 trigger gg_trg_upgrade_def_and_dmg= null
 trigger gg_trg_set_wave_start_main= null
@@ -249,7 +246,6 @@ trigger gg_trg_wave_end_timer= null
 trigger gg_trg_wave_end= null
 trigger gg_trg_wave_result_rotation= null
 trigger gg_trg_wave_castle_destr= null
-trigger gg_trg_inc_per_second= null
 trigger gg_trg_inc_upg= null
 trigger gg_trg_income_upg= null
 trigger gg_trg_income_upgQ= null
@@ -292,6 +288,8 @@ trigger gg_trg_tip= null
 trigger gg_trg_gold_for_gems= null
 trigger gg_trg_gems_for_gold= null
 trigger gg_trg_sea_dragon= null
+trigger gg_trg_wave_friends_on= null
+trigger gg_trg_wave_friends_off= null
 trigger gg_trg_boss_ini_start= null
 trigger gg_trg_boss_ini_finish= null
 trigger gg_trg_boss_end_timer= null
@@ -306,10 +304,7 @@ trigger gg_trg_hunter_time= null
 trigger gg_trg_hunter_end= null
 trigger gg_trg_zombie_ini_start= null
 trigger gg_trg_zombie_ini_finish= null
-trigger gg_trg_zombie_death= null
-trigger gg_trg_zombie_spawn= null
 trigger gg_trg_gold_ini_start= null
-trigger gg_trg_gold_bet= null
 trigger gg_trg_gold_result= null
 trigger gg_trg_horse_ini_start= null
 trigger gg_trg_horse_speed= null
@@ -745,7 +740,7 @@ endfunction
 
 function InitSounds takes nothing returns nothing
     set gg_snd_BattleNetTick=CreateSound("Sound\\Interface\\BattleNetTick.wav", false, false, false, 10, 10, "DefaultEAXON")
-    call SetSoundDuration(gg_snd_BattleNetTick, 657)
+    call SetSoundDuration(gg_snd_BattleNetTick, 476)
     call SetSoundChannel(gg_snd_BattleNetTick, 0)
     call SetSoundVolume(gg_snd_BattleNetTick, - 1)
     call SetSoundPitch(gg_snd_BattleNetTick, 1.0)
@@ -790,7 +785,7 @@ function InitSounds takes nothing returns nothing
     call SetSoundVolume(gg_snd_BloodElfMagePissed1, - 1)
     call SetSoundPitch(gg_snd_BloodElfMagePissed1, 1.0)
     set gg_snd_BattleNetTick01=CreateSound("Sound\\Interface\\BattleNetTick.wav", false, false, false, 10, 10, "DefaultEAXON")
-    call SetSoundDuration(gg_snd_BattleNetTick01, 657)
+    call SetSoundDuration(gg_snd_BattleNetTick01, 476)
     call SetSoundChannel(gg_snd_BattleNetTick01, 0)
     call SetSoundVolume(gg_snd_BattleNetTick01, - 1)
     call SetSoundPitch(gg_snd_BattleNetTick01, 1.0)
@@ -2807,6 +2802,54 @@ function InitTrig_sea_dragon takes nothing returns nothing
 endfunction
 
 //===========================================================================
+// Trigger: wave friends on
+//===========================================================================
+function Trig_wave_friends_on_Actions takes nothing returns nothing
+    set udg_i=1
+    loop
+        exitwhen udg_i > 7
+        set udg_j=( udg_i + 1 )
+        loop
+            exitwhen udg_j > 8
+            call SetPlayerAllianceBJ(ConvertedPlayer(udg_i), ALLIANCE_PASSIVE, true, ConvertedPlayer(udg_j))
+            call SetPlayerAllianceBJ(ConvertedPlayer(udg_j), ALLIANCE_PASSIVE, true, ConvertedPlayer(udg_i))
+            set udg_j=udg_j + 1
+        endloop
+        set udg_i=udg_i + 1
+    endloop
+endfunction
+
+//===========================================================================
+function InitTrig_wave_friends_on takes nothing returns nothing
+    set gg_trg_wave_friends_on=CreateTrigger()
+    call TriggerAddAction(gg_trg_wave_friends_on, function Trig_wave_friends_on_Actions)
+endfunction
+
+//===========================================================================
+// Trigger: wave friends off
+//===========================================================================
+function Trig_wave_friends_off_Actions takes nothing returns nothing
+    set udg_i=1
+    loop
+        exitwhen udg_i > 7
+        set udg_j=( udg_i + 1 )
+        loop
+            exitwhen udg_j > 8
+            call SetPlayerAllianceBJ(ConvertedPlayer(udg_i), ALLIANCE_PASSIVE, false, ConvertedPlayer(udg_j))
+            call SetPlayerAllianceBJ(ConvertedPlayer(udg_j), ALLIANCE_PASSIVE, false, ConvertedPlayer(udg_i))
+            set udg_j=udg_j + 1
+        endloop
+        set udg_i=udg_i + 1
+    endloop
+endfunction
+
+//===========================================================================
+function InitTrig_wave_friends_off takes nothing returns nothing
+    set gg_trg_wave_friends_off=CreateTrigger()
+    call TriggerAddAction(gg_trg_wave_friends_off, function Trig_wave_friends_off_Actions)
+endfunction
+
+//===========================================================================
 // Trigger: boss end timer
 //===========================================================================
 function Trig_boss_end_timer_Conditions takes nothing returns boolean
@@ -3453,12 +3496,8 @@ endfunction
 //===========================================================================
 // Trigger: zombie ini start
 //===========================================================================
-function Trig_zombie_ini_start_Func001A takes nothing returns nothing
-    call SetPlayerTechMaxAllowedSwap('hhou', 20, GetEnumPlayer())
-endfunction
-
 function Trig_zombie_ini_start_Actions takes nothing returns nothing
-    call ForForce(udg_players_group, function Trig_zombie_ini_start_Func001A)
+    call EnableTrigger(gg_trg_wave_friends_on)
     call SetDayNightModels("", "")
     set udg_k=1
     loop
@@ -3474,9 +3513,6 @@ function Trig_zombie_ini_start_Actions takes nothing returns nothing
     call CreateDestructableLoc('B008', GetRectCenter(gg_rct_downright), GetRandomDirectionDeg(), 2.00, 0)
     call CreateDestructableLoc('B008', GetRectCenter(gg_rct_downleft), GetRandomDirectionDeg(), 2.00, 0)
     call CreateDestructableLoc('B008', GetRectCenter(gg_rct_upleft), GetRandomDirectionDeg(), 2.00, 0)
-    call TriggerSleepAction(30.00)
-    set udg_k=0
-    call EnableTrigger(gg_trg_zombie_spawn)
 endfunction
 
 //===========================================================================
@@ -3488,610 +3524,35 @@ endfunction
 //===========================================================================
 // Trigger: zombie ini finish
 //===========================================================================
-function Trig_zombie_ini_finish_Func004Func001C takes nothing returns boolean
+function Trig_zombie_ini_finish_Func003Func001C takes nothing returns boolean
     if ( not ( GetDestructableTypeId(GetEnumDestructable()) == 'B008' ) ) then
         return false
     endif
     return true
 endfunction
 
-function Trig_zombie_ini_finish_Func004A takes nothing returns nothing
-    if ( Trig_zombie_ini_finish_Func004Func001C() ) then
+function Trig_zombie_ini_finish_Func003A takes nothing returns nothing
+    if ( Trig_zombie_ini_finish_Func003Func001C() ) then
         call RemoveDestructable(GetEnumDestructable())
     else
     endif
 endfunction
 
-function Trig_zombie_ini_finish_Func005A takes nothing returns nothing
-    call SetPlayerAllianceBJ(GetEnumPlayer(), ALLIANCE_PASSIVE, false, Player(11))
-    call SetPlayerAllianceBJ(Player(11), ALLIANCE_PASSIVE, false, GetEnumPlayer())
-endfunction
-
-function Trig_zombie_ini_finish_Func006A takes nothing returns nothing
-    call RemoveUnit(GetEnumUnit())
-endfunction
-
-function Trig_zombie_ini_finish_Func007Func001Func001A takes nothing returns nothing
-    call AdjustPlayerStateBJ(( 150 + ( 25 * udg_wave ) ), GetOwningPlayer(GetEnumUnit()), PLAYER_STATE_RESOURCE_GOLD)
-endfunction
-
-function Trig_zombie_ini_finish_Func007Func001A takes nothing returns nothing
-    call ForGroupBJ(GetUnitsOfPlayerAndTypeId(GetEnumPlayer(), 'nzom'), function Trig_zombie_ini_finish_Func007Func001Func001A)
-endfunction
-
-function Trig_zombie_ini_finish_Func007Func004Func001A takes nothing returns nothing
-    call AdjustPlayerStateBJ(( 325 + ( 35 * udg_wave ) ), GetOwningPlayer(GetEnumUnit()), PLAYER_STATE_RESOURCE_GOLD)
-endfunction
-
-function Trig_zombie_ini_finish_Func007Func004A takes nothing returns nothing
-    call ForGroupBJ(GetUnitsOfPlayerAndTypeId(GetEnumPlayer(), 'h00I'), function Trig_zombie_ini_finish_Func007Func004Func001A)
-endfunction
-
-function Trig_zombie_ini_finish_Func007Func007001001002001 takes nothing returns boolean
-    return ( GetUnitTypeId(GetFilterUnit()) == 'h00I' )
-endfunction
-
-function Trig_zombie_ini_finish_Func007Func007001001002002 takes nothing returns boolean
-    return ( IsUnitAliveBJ(GetFilterUnit()) == true )
-endfunction
-
-function Trig_zombie_ini_finish_Func007Func007001001002 takes nothing returns boolean
-    return GetBooleanAnd((GetUnitTypeId(GetFilterUnit()) == 'h00I'), (IsUnitAliveBJ(GetFilterUnit()) == true)) // INLINED!!
-endfunction
-
-function Trig_zombie_ini_finish_Func007C takes nothing returns boolean
-    if ( not ( CountUnitsInGroup(GetUnitsInRectMatching(GetPlayableMapRect(), Condition(function Trig_zombie_ini_finish_Func007Func007001001002))) > 0 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_zombie_ini_finish_Func008A takes nothing returns nothing
-    call RemoveUnit(GetEnumUnit())
-endfunction
-
-function Trig_zombie_ini_finish_Func009A takes nothing returns nothing
-    call GroupRemoveUnitSimple(GetEnumUnit(), udg_wave_units)
+function Trig_zombie_ini_finish_Func004A takes nothing returns nothing
     call RemoveUnit(GetEnumUnit())
 endfunction
 
 function Trig_zombie_ini_finish_Actions takes nothing returns nothing
-    call SetDayNightModels("Environment\\DNC\\DNCLordaeron\\DNCLordaeronTerrain\\DNCLordaeronTerrain.mdl", "Environment\\DNC\\DNCLordaeron\\DNCLordaeronUnit\\DNCLordaeronUnit.mdl")
-    call DisableTrigger(gg_trg_zombie_spawn)
-    call EnumDestructablesInRectAll(GetPlayableMapRect(), function Trig_zombie_ini_finish_Func004A)
-    call ForForce(udg_players_group, function Trig_zombie_ini_finish_Func005A)
-    call ForGroupBJ(GetUnitsOfTypeIdAll('hhou'), function Trig_zombie_ini_finish_Func006A)
-    if ( Trig_zombie_ini_finish_Func007C() ) then
-        call ForForce(udg_players_group, function Trig_zombie_ini_finish_Func007Func004A)
-        call DisplayTimedTextToForce(GetPlayersAll(), 15.00, "TRIGSTR_484")
-        call DisplayTimedTextToForce(GetPlayersAll(), 15.00, ( "Все выжившие игроки получают |cFFFFCD00" + ( I2S(( 325 + ( 35 * udg_wave ) )) + "|r ед. золота!" ) ))
-    else
-        call ForForce(udg_players_group, function Trig_zombie_ini_finish_Func007Func001A)
-        call DisplayTimedTextToForce(GetPlayersAll(), 15.00, "TRIGSTR_3793")
-        call DisplayTimedTextToForce(GetPlayersAll(), 15.00, ( "Все игроки получают |cFFFFCD00" + ( I2S(( 150 + ( 25 * udg_wave ) )) + "|r ед. золота!" ) ))
-    endif
-    call ForGroupBJ(GetUnitsOfTypeIdAll('nzom'), function Trig_zombie_ini_finish_Func008A)
-    call ForGroupBJ(GetUnitsOfTypeIdAll('h00I'), function Trig_zombie_ini_finish_Func009A)
+    call SetDayNightModels("Environment\\DNC\\DNCDalaran\\DNCDalaranTerrain\\DNCDalaranTerrain.mdl", "Environment\\DNC\\DNCDalaran\\DNCDalaranUnit\\DNCDalaranUnit.mdl")
+    call TriggerExecute(gg_trg_wave_friends_off)
+    call EnumDestructablesInRectAll(GetPlayableMapRect(), function Trig_zombie_ini_finish_Func003A)
+    call ForGroupBJ(GetUnitsOfTypeIdAll('hhou'), function Trig_zombie_ini_finish_Func004A)
 endfunction
 
 //===========================================================================
 function InitTrig_zombie_ini_finish takes nothing returns nothing
     set gg_trg_zombie_ini_finish=CreateTrigger()
     call TriggerAddAction(gg_trg_zombie_ini_finish, function Trig_zombie_ini_finish_Actions)
-endfunction
-
-//===========================================================================
-// Trigger: zombie death
-//===========================================================================
-function Trig_zombie_death_Conditions takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetDyingUnit()) == 'h00I' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_zombie_death_Func002A takes nothing returns nothing
-    call SetPlayerAllianceBJ(GetOwningPlayer(GetDyingUnit()), ALLIANCE_PASSIVE, false, GetEnumPlayer())
-    call SetPlayerAllianceBJ(GetEnumPlayer(), ALLIANCE_PASSIVE, false, GetOwningPlayer(GetDyingUnit()))
-endfunction
-
-function Trig_zombie_death_Func010Func002A takes nothing returns nothing
-    call RemoveUnit(GetEnumUnit())
-endfunction
-
-function Trig_zombie_death_Func010Func003001001002001 takes nothing returns boolean
-    return ( GetUnitTypeId(GetFilterUnit()) == 'h00I' )
-endfunction
-
-function Trig_zombie_death_Func010Func003001001002002 takes nothing returns boolean
-    return ( IsUnitAliveBJ(GetFilterUnit()) == true )
-endfunction
-
-function Trig_zombie_death_Func010Func003001001002 takes nothing returns boolean
-    return GetBooleanAnd((GetUnitTypeId(GetFilterUnit()) == 'h00I'), (IsUnitAliveBJ(GetFilterUnit()) == true)) // INLINED!!
-endfunction
-
-function Trig_zombie_death_Func010C takes nothing returns boolean
-    if ( not ( CountUnitsInGroup(GetUnitsInRectMatching(GetPlayableMapRect(), Condition(function Trig_zombie_death_Func010Func003001001002))) == 0 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_zombie_death_Actions takes nothing returns nothing
-    call ForForce(udg_players_group, function Trig_zombie_death_Func002A)
-    call SetPlayerAllianceBJ(GetOwningPlayer(GetDyingUnit()), ALLIANCE_PASSIVE, true, Player(11))
-    call SetPlayerAllianceBJ(Player(11), ALLIANCE_PASSIVE, true, GetOwningPlayer(GetDyingUnit()))
-    call CreateNUnitsAtLoc(1, 'nzom', GetOwningPlayer(GetDyingUnit()), GetUnitLoc(GetDyingUnit()), bj_UNIT_FACING)
-    call IssuePointOrderLocBJ(GetLastCreatedUnit(), "attack", GetUnitLoc(GroupPickRandomUnit(udg_wave_units)))
-    call UnitAddAbilityBJ('A00U', GetLastCreatedUnit())
-    call UnitAddAbilityBJ('A00V', GetLastCreatedUnit())
-    call SetUnitColor(GetLastCreatedUnit(), GetPlayerColor(GetOwningPlayer(GetLastCreatedUnit())))
-    if ( Trig_zombie_death_Func010C() ) then
-        call TriggerExecute(gg_trg_zombie_ini_finish)
-        call ForGroupBJ(GetUnitsOfTypeIdAll('nzom'), function Trig_zombie_death_Func010Func002A)
-    else
-    endif
-endfunction
-
-//===========================================================================
-function InitTrig_zombie_death takes nothing returns nothing
-    set gg_trg_zombie_death=CreateTrigger()
-    call TriggerRegisterAnyUnitEventBJ(gg_trg_zombie_death, EVENT_PLAYER_UNIT_DEATH)
-    call TriggerAddCondition(gg_trg_zombie_death, Condition(function Trig_zombie_death_Conditions))
-    call TriggerAddAction(gg_trg_zombie_death, function Trig_zombie_death_Actions)
-endfunction
-
-//===========================================================================
-// Trigger: zombie spawn
-//===========================================================================
-function Trig_zombie_spawn_Func002C takes nothing returns boolean
-    if ( not ( udg_k >= ( 9 - CountPlayersInForceBJ(udg_players_group) ) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_zombie_spawn_Actions takes nothing returns nothing
-    set udg_k=( udg_k + 1 )
-    if ( Trig_zombie_spawn_Func002C() ) then
-        set udg_k=0
-        call CreateNUnitsAtLoc(1, 'nzom', Player(11), PolarProjectionBJ(GetRectCenter(gg_rct_centreCENTRE), GetRandomReal(0, 5000.00), GetRandomDirectionDeg()), bj_UNIT_FACING)
-        call IssuePointOrderLocBJ(GetLastCreatedUnit(), "attack", GetUnitLoc(GroupPickRandomUnit(udg_wave_units)))
-    else
-    endif
-endfunction
-
-//===========================================================================
-function InitTrig_zombie_spawn takes nothing returns nothing
-    set gg_trg_zombie_spawn=CreateTrigger()
-    call DisableTrigger(gg_trg_zombie_spawn)
-    call TriggerRegisterTimerEventPeriodic(gg_trg_zombie_spawn, 1.00)
-    call TriggerAddAction(gg_trg_zombie_spawn, function Trig_zombie_spawn_Actions)
-endfunction
-
-//===========================================================================
-// Trigger: gold ini start
-//===========================================================================
-function Trig_gold_ini_start_Func001Func001A takes nothing returns nothing
-    call PauseUnitBJ(true, GetEnumUnit())
-endfunction
-
-function Trig_gold_ini_start_Func001A takes nothing returns nothing
-    call ForGroupBJ(GetUnitsOfPlayerAll(GetEnumPlayer()), function Trig_gold_ini_start_Func001Func001A)
-endfunction
-
-function Trig_gold_ini_start_Func004A takes nothing returns nothing
-    call SetCameraBoundsToRectForPlayerBJ(GetEnumPlayer(), gg_rct_roulette)
-    call CreateNUnitsAtLoc(1, 'h00X', GetEnumPlayer(), GetRandomLocInRect(gg_rct_roulettespawn), bj_UNIT_FACING)
-    call GroupAddUnitSimple(GetLastCreatedUnit(), udg_wave_units)
-    call SelectUnitForPlayerSingle(GetLastCreatedUnit(), GetEnumPlayer())
-    call PanCameraToTimedLocForPlayer(GetEnumPlayer(), GetUnitLoc(GetLastCreatedUnit()), 0)
-endfunction
-
-function Trig_gold_ini_start_Func006A takes nothing returns nothing
-    call UnitAddAbilityBJ('A00U', GetEnumUnit())
-    call SetUnitColor(GetEnumUnit(), GetPlayerColor(GetOwningPlayer(GetEnumUnit())))
-endfunction
-
-function Trig_gold_ini_start_Actions takes nothing returns nothing
-    call ForForce(udg_players_group, function Trig_gold_ini_start_Func001A)
-    call TriggerSleepAction(0.30)
-    call EnableTrigger(gg_trg_gold_bet)
-    call ForForce(udg_players_group, function Trig_gold_ini_start_Func004A)
-    call TriggerSleepAction(0.10)
-    call ForGroupBJ(GetUnitsOfTypeIdAll('h00X'), function Trig_gold_ini_start_Func006A)
-endfunction
-
-//===========================================================================
-function InitTrig_gold_ini_start takes nothing returns nothing
-    set gg_trg_gold_ini_start=CreateTrigger()
-    call TriggerAddAction(gg_trg_gold_ini_start, function Trig_gold_ini_start_Actions)
-endfunction
-
-//===========================================================================
-// Trigger: gold bet
-//===========================================================================
-function Trig_gold_bet_Func002C takes nothing returns boolean
-    if ( ( SubStringBJ(GetEventPlayerChatString(), 1, 5) == "-gold" ) ) then
-        return true
-    endif
-    if ( ( SubStringBJ(GetEventPlayerChatString(), 1, 5) == "-gems" ) ) then
-        return true
-    endif
-    return false
-endfunction
-
-function Trig_gold_bet_Conditions takes nothing returns boolean
-    if ( not Trig_gold_bet_Func002C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_bet_Func001Func001Func002Func002Func001C takes nothing returns boolean
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 7, 11)) >= 0 ) ) then
-        return false
-    endif
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 7, 11)) <= 10 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_bet_Func001Func001Func002Func002C takes nothing returns boolean
-    if ( not Trig_gold_bet_Func001Func001Func002Func002Func001C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_bet_Func001Func001Func002Func003Func002C takes nothing returns boolean
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 7, 11)) >= 11 ) ) then
-        return false
-    endif
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 7, 11)) <= 25 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_bet_Func001Func001Func002Func003C takes nothing returns boolean
-    if ( not Trig_gold_bet_Func001Func001Func002Func003Func002C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_bet_Func001Func001Func002Func004Func002C takes nothing returns boolean
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 7, 11)) >= 26 ) ) then
-        return false
-    endif
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 7, 11)) <= 50 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_bet_Func001Func001Func002Func004C takes nothing returns boolean
-    if ( not Trig_gold_bet_Func001Func001Func002Func004Func002C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_bet_Func001Func001Func002Func005Func002C takes nothing returns boolean
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 7, 11)) >= 51 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_bet_Func001Func001Func002Func005C takes nothing returns boolean
-    if ( not Trig_gold_bet_Func001Func001Func002Func005Func002C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_bet_Func001Func001Func002C takes nothing returns boolean
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 7, 11)) <= GetPlayerState(GetTriggerPlayer(), PLAYER_STATE_RESOURCE_LUMBER) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_bet_Func001Func001C takes nothing returns boolean
-    if ( not ( SubStringBJ(GetEventPlayerChatString(), 1, 5) == "-gems" ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_bet_Func001Func002Func003Func001C takes nothing returns boolean
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 7, 11)) >= 0 ) ) then
-        return false
-    endif
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 7, 11)) <= 200 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_bet_Func001Func002Func003C takes nothing returns boolean
-    if ( not Trig_gold_bet_Func001Func002Func003Func001C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_bet_Func001Func002Func004Func002C takes nothing returns boolean
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 7, 11)) >= 201 ) ) then
-        return false
-    endif
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 7, 11)) <= 500 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_bet_Func001Func002Func004C takes nothing returns boolean
-    if ( not Trig_gold_bet_Func001Func002Func004Func002C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_bet_Func001Func002Func005Func002C takes nothing returns boolean
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 7, 11)) >= 501 ) ) then
-        return false
-    endif
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 7, 11)) <= 1000 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_bet_Func001Func002Func005C takes nothing returns boolean
-    if ( not Trig_gold_bet_Func001Func002Func005Func002C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_bet_Func001Func002Func006Func002C takes nothing returns boolean
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 7, 11)) >= 1001 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_bet_Func001Func002Func006C takes nothing returns boolean
-    if ( not Trig_gold_bet_Func001Func002Func006Func002C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_bet_Func001Func002C takes nothing returns boolean
-    if ( not ( S2I(SubStringBJ(GetEventPlayerChatString(), 6, 10)) <= GetPlayerState(GetTriggerPlayer(), PLAYER_STATE_RESOURCE_GOLD) ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_bet_Func001C takes nothing returns boolean
-    if ( not ( SubStringBJ(GetEventPlayerChatString(), 1, 5) == "-gold" ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_bet_Actions takes nothing returns nothing
-    if ( Trig_gold_bet_Func001C() ) then
-        if ( Trig_gold_bet_Func001Func002C() ) then
-            if ( Trig_gold_bet_Func001Func002Func003C() ) then
-                set udg_roulette_gold[GetConvertedPlayerId(GetTriggerPlayer())]=R2I(( 0.25 * S2R(SubStringBJ(GetEventPlayerChatString(), 7, 11)) ))
-            else
-            endif
-            if ( Trig_gold_bet_Func001Func002Func004C() ) then
-                set udg_roulette_gold[GetConvertedPlayerId(GetTriggerPlayer())]=R2I(( 0.50 * S2R(SubStringBJ(GetEventPlayerChatString(), 7, 11)) ))
-            else
-            endif
-            if ( Trig_gold_bet_Func001Func002Func005C() ) then
-                set udg_roulette_gold[GetConvertedPlayerId(GetTriggerPlayer())]=R2I(( 0.75 * S2R(SubStringBJ(GetEventPlayerChatString(), 7, 11)) ))
-            else
-            endif
-            if ( Trig_gold_bet_Func001Func002Func006C() ) then
-                set udg_roulette_gold[GetConvertedPlayerId(GetTriggerPlayer())]=R2I(( 1.00 * S2R(SubStringBJ(GetEventPlayerChatString(), 7, 11)) ))
-            else
-            endif
-            call DisplayTextToForce(GetForceOfPlayer(GetTriggerPlayer()), ( "|cFF00FF00Вы ввели ставку золота|r, в случае победы вы получите: " + I2S(R2I(( 0.80 * I2R(udg_roulette_gold[GetConvertedPlayerId(GetTriggerPlayer())]) ))) ))
-            call DisplayTextToForce(GetForceOfPlayer(GetTriggerPlayer()), ( "|cFFFF0000Вы ввели ставку золота|r, в случае проигрыша вы потеряете: " + I2S(udg_roulette_gold[GetConvertedPlayerId(GetTriggerPlayer())]) ))
-        else
-            call DisplayTextToForce(GetForceOfPlayer(GetTriggerPlayer()), "TRIGSTR_1092")
-        endif
-    else
-        if ( Trig_gold_bet_Func001Func001C() ) then
-            if ( Trig_gold_bet_Func001Func001Func002C() ) then
-                if ( Trig_gold_bet_Func001Func001Func002Func002C() ) then
-                    set udg_roulette_gems[GetConvertedPlayerId(GetTriggerPlayer())]=R2I(( 0.25 * S2R(SubStringBJ(GetEventPlayerChatString(), 7, 11)) ))
-                else
-                endif
-                if ( Trig_gold_bet_Func001Func001Func002Func003C() ) then
-                    set udg_roulette_gems[GetConvertedPlayerId(GetTriggerPlayer())]=R2I(( 0.50 * S2R(SubStringBJ(GetEventPlayerChatString(), 7, 11)) ))
-                else
-                endif
-                if ( Trig_gold_bet_Func001Func001Func002Func004C() ) then
-                    set udg_roulette_gems[GetConvertedPlayerId(GetTriggerPlayer())]=R2I(( 0.75 * S2R(SubStringBJ(GetEventPlayerChatString(), 7, 11)) ))
-                else
-                endif
-                if ( Trig_gold_bet_Func001Func001Func002Func005C() ) then
-                    set udg_roulette_gems[GetConvertedPlayerId(GetTriggerPlayer())]=R2I(( 1.00 * S2R(SubStringBJ(GetEventPlayerChatString(), 7, 11)) ))
-                else
-                endif
-                call DisplayTextToForce(GetForceOfPlayer(GetTriggerPlayer()), ( "|cFF00FF00Вы ввели ставку самоцветов|r, в случае победы вы получите: " + I2S(R2I(( 0.80 * I2R(udg_roulette_gems[GetConvertedPlayerId(GetTriggerPlayer())]) ))) ))
-                call DisplayTextToForce(GetForceOfPlayer(GetTriggerPlayer()), ( "|cFFFF0000Вы ввели ставку самоцветов|r, в случае проигрыша вы потеряете: " + I2S(udg_roulette_gems[GetConvertedPlayerId(GetTriggerPlayer())]) ))
-            else
-                call DisplayTextToForce(GetForceOfPlayer(GetTriggerPlayer()), "TRIGSTR_1093")
-            endif
-        else
-            call DisplayTextToForce(GetForceOfPlayer(GetTriggerPlayer()), "TRIGSTR_1085")
-        endif
-    endif
-endfunction
-
-//===========================================================================
-function InitTrig_gold_bet takes nothing returns nothing
-    set gg_trg_gold_bet=CreateTrigger()
-    call DisableTrigger(gg_trg_gold_bet)
-    call TriggerRegisterPlayerChatEvent(gg_trg_gold_bet, Player(0), "-gold", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_gold_bet, Player(0), "-gems", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_gold_bet, Player(1), "-gold", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_gold_bet, Player(1), "-gems", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_gold_bet, Player(2), "-gold", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_gold_bet, Player(2), "-gems", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_gold_bet, Player(3), "-gold", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_gold_bet, Player(3), "-gems", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_gold_bet, Player(4), "-gold", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_gold_bet, Player(4), "-gems", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_gold_bet, Player(5), "-gold", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_gold_bet, Player(5), "-gems", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_gold_bet, Player(6), "-gold", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_gold_bet, Player(6), "-gems", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_gold_bet, Player(7), "-gold", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_gold_bet, Player(7), "-gems", false)
-    call TriggerAddCondition(gg_trg_gold_bet, Condition(function Trig_gold_bet_Conditions))
-    call TriggerAddAction(gg_trg_gold_bet, function Trig_gold_bet_Actions)
-endfunction
-
-//===========================================================================
-// Trigger: gold result
-//===========================================================================
-function Trig_gold_result_Func001A takes nothing returns nothing
-    call PauseUnitBJ(true, GetEnumUnit())
-endfunction
-
-function Trig_gold_result_Func002Func001001002002 takes nothing returns boolean
-    return ( GetUnitTypeId(GetFilterUnit()) == 'n001' )
-endfunction
-
-function Trig_gold_result_Func002Func001Func005001003 takes nothing returns boolean
-    return ( GetUnitTypeId(GetFilterUnit()) == 'h00X' )
-endfunction
-
-function Trig_gold_result_Func002Func001Func005A takes nothing returns nothing
-    call ForceAddPlayerSimple(GetOwningPlayer(GetEnumUnit()), udg_roulette_winners)
-endfunction
-
-function Trig_gold_result_Func002Func001A takes nothing returns nothing
-    call DisplayTimedTextToForce(GetPlayersAll(), 20.00, ( "Победили номер |cFFFF9B00" + I2S(GetUnitUserData(GetEnumUnit())) ))
-    call SetUnitScalePercent(GetEnumUnit(), 150.00, 150.00, 150.00)
-    call AddSpecialEffectTargetUnitBJ("overhead", GetEnumUnit(), "Abilities\\Spells\\Other\\TalkToMe\\TalkToMe.mdl")
-    call PlaySoundBJ(gg_snd_QuestNew)
-    call ForGroupBJ(GetUnitsInRangeOfLocMatching(64.00, GetUnitLoc(GetEnumUnit()), Condition(function Trig_gold_result_Func002Func001Func005001003)), function Trig_gold_result_Func002Func001Func005A)
-endfunction
-
-function Trig_gold_result_Func002Func002001002002 takes nothing returns boolean
-    return ( GetUnitTypeId(GetFilterUnit()) == 'n001' )
-endfunction
-
-function Trig_gold_result_Func002Func002Func005001003 takes nothing returns boolean
-    return ( GetUnitTypeId(GetFilterUnit()) == 'h00X' )
-endfunction
-
-function Trig_gold_result_Func002Func002Func005A takes nothing returns nothing
-    call ForceAddPlayerSimple(GetOwningPlayer(GetEnumUnit()), udg_roulette_winners)
-endfunction
-
-function Trig_gold_result_Func002Func002A takes nothing returns nothing
-    call DisplayTimedTextToForce(GetPlayersAll(), 20.00, ( "Победили номер |cFFFF9B00" + I2S(GetUnitUserData(GetEnumUnit())) ))
-    call SetUnitScalePercent(GetEnumUnit(), 150.00, 150.00, 150.00)
-    call AddSpecialEffectTargetUnitBJ("overhead", GetEnumUnit(), "Abilities\\Spells\\Other\\TalkToMe\\TalkToMe.mdl")
-    call PlaySoundBJ(gg_snd_QuestNew)
-    call ForGroupBJ(GetUnitsInRangeOfLocMatching(64.00, GetUnitLoc(GetEnumUnit()), Condition(function Trig_gold_result_Func002Func002Func005001003)), function Trig_gold_result_Func002Func002Func005A)
-endfunction
-
-function Trig_gold_result_Func002C takes nothing returns boolean
-    if ( not ( CountPlayersInForceBJ(udg_players_group) <= 4 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_result_Func003Func001Func003Func002C takes nothing returns boolean
-    if ( ( udg_roulette_gold[GetConvertedPlayerId(GetEnumPlayer())] != 0 ) ) then
-        return true
-    endif
-    if ( ( udg_roulette_gems[GetConvertedPlayerId(GetEnumPlayer())] != 0 ) ) then
-        return true
-    endif
-    return false
-endfunction
-
-function Trig_gold_result_Func003Func001Func003C takes nothing returns boolean
-    if ( not Trig_gold_result_Func003Func001Func003Func002C() ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_result_Func003Func001C takes nothing returns boolean
-    if ( not ( IsPlayerInForce(GetEnumPlayer(), udg_roulette_winners) == false ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_gold_result_Func003A takes nothing returns nothing
-    if ( Trig_gold_result_Func003Func001C() ) then
-        call AdjustPlayerStateBJ(( udg_roulette_gold[GetConvertedPlayerId(GetEnumPlayer())] * - 1 ), GetEnumPlayer(), PLAYER_STATE_RESOURCE_GOLD)
-        call AdjustPlayerStateBJ(( udg_roulette_gems[GetConvertedPlayerId(GetEnumPlayer())] * - 1 ), GetEnumPlayer(), PLAYER_STATE_RESOURCE_LUMBER)
-        if ( Trig_gold_result_Func003Func001Func003C() ) then
-            call DisplayTextToForce(GetForceOfPlayer(GetEnumPlayer()), "TRIGSTR_1088")
-        else
-        endif
-    else
-        call AdjustPlayerStateBJ(R2I(( I2R(udg_roulette_gold[GetConvertedPlayerId(GetEnumPlayer())]) * 0.80 )), GetEnumPlayer(), PLAYER_STATE_RESOURCE_GOLD)
-        call AdjustPlayerStateBJ(R2I(( I2R(udg_roulette_gems[GetConvertedPlayerId(GetEnumPlayer())]) * 0.80 )), GetEnumPlayer(), PLAYER_STATE_RESOURCE_LUMBER)
-        call DisplayTextToForce(GetPlayersAll(), ( udg_players_colour[GetConvertedPlayerId(GetEnumPlayer())] + ( udg_players_name[GetConvertedPlayerId(GetEnumPlayer())] + ( "|r выигрывает |cFFFFCD00" + ( I2S(R2I(( 0.80 * I2R(udg_roulette_gold[GetConvertedPlayerId(GetEnumPlayer())]) ))) + ( "|r ед. золота и |cFFB23AEE" + ( I2S(R2I(( 0.80 * I2R(udg_roulette_gems[GetConvertedPlayerId(GetEnumPlayer())]) ))) + "|r ед. самоцветов." ) ) ) ) ) ))
-    endif
-endfunction
-
-function Trig_gold_result_Func004Func001001002 takes nothing returns boolean
-    return ( GetUnitTypeId(GetFilterUnit()) != 'h00X' )
-endfunction
-
-function Trig_gold_result_Func004Func001A takes nothing returns nothing
-    call PauseUnitBJ(false, GetEnumUnit())
-endfunction
-
-function Trig_gold_result_Func004A takes nothing returns nothing
-    call ForGroupBJ(GetUnitsOfPlayerMatching(GetEnumPlayer(), Condition(function Trig_gold_result_Func004Func001001002)), function Trig_gold_result_Func004Func001A)
-endfunction
-
-function Trig_gold_result_Func006A takes nothing returns nothing
-    call RemoveUnit(GetEnumUnit())
-endfunction
-
-function Trig_gold_result_Actions takes nothing returns nothing
-    call ForGroupBJ(GetUnitsOfTypeIdAll('h00X'), function Trig_gold_result_Func001A)
-    if ( Trig_gold_result_Func002C() ) then
-        call ForGroupBJ(GetRandomSubGroup(4, GetUnitsInRectMatching(gg_rct_roulettegame, Condition(function Trig_gold_result_Func002Func002001002002))), function Trig_gold_result_Func002Func002A)
-    else
-        call ForGroupBJ(GetRandomSubGroup(2, GetUnitsInRectMatching(gg_rct_roulettegame, Condition(function Trig_gold_result_Func002Func001001002002))), function Trig_gold_result_Func002Func001A)
-    endif
-    call ForForce(udg_players_group, function Trig_gold_result_Func003A)
-    call ForForce(udg_players_group, function Trig_gold_result_Func004A)
-    call TriggerSleepAction(5.00)
-    call ForGroupBJ(GetUnitsOfTypeIdAll('h00X'), function Trig_gold_result_Func006A)
-    call GroupClear(udg_wave_units)
-endfunction
-
-//===========================================================================
-function InitTrig_gold_result takes nothing returns nothing
-    set gg_trg_gold_result=CreateTrigger()
-    call TriggerAddAction(gg_trg_gold_result, function Trig_gold_result_Actions)
 endfunction
 
 //===========================================================================
@@ -5906,6 +5367,8 @@ function InitCustomTriggers takes nothing returns nothing
     call InitTrig_gold_for_gems()
     call InitTrig_gems_for_gold()
     call InitTrig_sea_dragon()
+    call InitTrig_wave_friends_on()
+    call InitTrig_wave_friends_off()
     call InitTrig_boss_end_timer()
     call InitTrig_boss_end()
     call InitTrig_spells_check()
@@ -5918,11 +5381,6 @@ function InitCustomTriggers takes nothing returns nothing
     call InitTrig_hunter_end()
     call InitTrig_zombie_ini_start()
     call InitTrig_zombie_ini_finish()
-    call InitTrig_zombie_death()
-    call InitTrig_zombie_spawn()
-    call InitTrig_gold_ini_start()
-    call InitTrig_gold_bet()
-    call InitTrig_gold_result()
     call InitTrig_horse_ini_start()
     call InitTrig_horse_speed()
     call InitTrig_horse_finish()

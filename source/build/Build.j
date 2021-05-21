@@ -22,7 +22,7 @@ scope Build initializer Init
         local integer uTypeId = GetUnitTypeId(u)
         local player p = GetOwningPlayer(u)
 
-        if not IsPlayerInForce(p, players) or not IsUnitType(u, UNIT_TYPE_STRUCTURE) or IsUnitInGroup(u, castles) or IsUnitInGroup(u, IncomeObjects_group) or IsUnitInGroup(u, buildings) then
+        if not IsPlayerInForce(p, players) or not IsUnitType(u, UNIT_TYPE_STRUCTURE) or IsUnitInGroup(u, castles) or IsUnitInGroup(u, IncomeObjects_group) or IsUnitInGroup(u, buildings) or IsUnitType(u, UNIT_TYPE_GIANT) then
             return
         endif
 

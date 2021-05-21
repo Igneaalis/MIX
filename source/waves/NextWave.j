@@ -60,9 +60,6 @@ scope NextWave initializer Init
         local timer t = CreateTimer()
         local integer i
 
-        call ForGroup(minigameUnits, function C_RemoveEnumUnits)
-        call GroupClear(minigameUnits)
-
         call ForGroup(waveUnits, function C_RemoveEnumUnits)
         call GroupClear(waveUnits)
 

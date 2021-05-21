@@ -14,8 +14,8 @@
 scope MinigameWaves initializer Init
     
     globals
-        private Minigame array minigames[2]
-        private Minigame array minigamesShuffled[2]
+        private Minigame array minigames[3]
+        private Minigame array minigamesShuffled[3]
         private timerdialog td
         private integer curMinigameNumber = 0
         private timer nextWaveTimer
@@ -55,29 +55,6 @@ scope MinigameWaves initializer Init
         endfor
     endfunction
 
-    private function Timer_OnExpire takes nothing returns nothing
-        local timer t = nextWaveTimer
-
-        if isMinigameForceStopped == true then
-            set t = null
-            return
-        endif
-
-        call DestroyTimerDialog(td)
-        call PauseTimer(t)
-        call DestroyTimer(t)
-
-        call minigamesShuffled[curMinigameNumber].Finish()
-        set curMinigameNumber = curMinigameNumber + 1
-
-        call ForceClear(minigameActingPlayers)
-        set minigameNumberOfActingPlayers = 0
-        set curMinigame = 0
-        call NextWave_Force.execute()
-
-        set t = null
-    endfunction
-
     public function FinishMinigame takes nothing returns nothing
         local timer t = nextWaveTimer
         set isMinigameForceStopped = true
@@ -90,9 +67,20 @@ scope MinigameWaves initializer Init
         set curMinigameNumber = curMinigameNumber + 1
         set curMinigame = 0
 
+        call ForGroup(minigameUnits, function C_RemoveEnumUnits)
+        call GroupClear(minigameUnits)
+
         call ForceClear(minigameActingPlayers)
         set minigameNumberOfActingPlayers = 0
         call NextWave_Force.execute()
+    endfunction
+
+    private function Timer_OnExpire takes nothing returns nothing
+        if isMinigameForceStopped == true then
+            return
+        endif
+
+        call MinigameWaves_FinishMinigame()
     endfunction
 
     public function Force takes nothing returns nothing
@@ -135,6 +123,7 @@ scope MinigameWaves initializer Init
     private function Init takes nothing returns nothing
         set minigames[0] = HungryHungryKodos.create()
         set minigames[1] = Casino.create()
+        set minigames[2] = Zombies.create()
 
         call Shuffle.execute()
     endfunction

@@ -134,10 +134,11 @@ scope MinigameHungryHungryKodos initializer Init
             return
         endif
 
-        if minigameNumberOfActingPlayers == 1 then  // If a player is the last man standing
+        if minigameNumberOfActingPlayers == 1 then  // If player is the last man standing
             set winner = kodoOwner
             set IsMinigameFinished = true
             call RewardWinner(winner)
+            call PauseTimer(t)
             call MinigameWaves_FinishMinigame.execute()
             set kodo = null
             set kodoOwner = null
@@ -152,6 +153,7 @@ scope MinigameHungryHungryKodos initializer Init
             set winner = ForcePickRandomPlayer(minigameActingPlayers)
             set IsMinigameFinished = true
             call RewardWinner(winner)
+            call PauseTimer(t)
             call MinigameWaves_FinishMinigame.execute()
         endif
 

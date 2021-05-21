@@ -15,6 +15,7 @@ scope Players
 
     globals
         force players = CreateForce()
+        integer numberOfPlayers = 0
     endglobals
     
     private function ForPlayer takes nothing returns nothing
@@ -28,6 +29,7 @@ scope Players
             call SetPlayerState(p, PLAYER_STATE_GIVES_BOUNTY, 1)
 
             call ForceAddPlayer(players, p)
+            set numberOfPlayers = numberOfPlayers + 1
 
             call CreateUnitEx(p, 'ntav', x, y, bj_UNIT_FACING) // Таверна с расами на выбор
             call CreateUnitEx(p, 'h001', x, y, bj_UNIT_FACING) // Юнит "Выбор героя"
