@@ -4,12 +4,14 @@
             "type": "PowerShell",
             "request": "launch",
             "name": "Play",
-            "script": "${workspaceFolder}\\compile.ps1"
+            "preLaunchTask": "Save all editors",
+            "script": "${workspaceFolder}\\compile.ps1",
         },
         {
             "type": "PowerShell",
             "request": "launch",
             "name": "Play debug",
+            "preLaunchTask": "Save all editors",
             "script": "${workspaceFolder}\\compile.ps1",
             "args": ["-debug"]
         },
@@ -17,6 +19,7 @@
             "type": "PowerShell",
             "request": "launch",
             "name": "World Editor",
+            "preLaunchTask": "Save all editors",
             "script": "${workspaceFolder}\\compile.ps1",
             "args": ["-worldeditor"]
         },
@@ -24,6 +27,7 @@
             "type": "PowerShell",
             "request": "launch",
             "name": "World Editor debug",
+            "preLaunchTask": "Save all editors",
             "script": "${workspaceFolder}\\compile.ps1",
             "args": ["-worldeditor -debug"]
         }
