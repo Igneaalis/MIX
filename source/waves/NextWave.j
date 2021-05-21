@@ -18,7 +18,7 @@ scope NextWave initializer Init
 
         boolean WasItMinigameWave
         real relaxWaveTime = 30.00
-        private constant real debugRelaxWaveTime = 10.00
+        private constant real debugRelaxWaveTime = 5.00
     endglobals
 
     private function ForPlayer takes nothing returns nothing
@@ -72,12 +72,12 @@ scope NextWave initializer Init
         call ForGroup(IncomeObjects_group, function C_RemoveEnumUnits)
         call GroupClear(IncomeObjects_group)
 
-        for i = 1 to IncomeObjects_MaxAmount
-            if IncomeObjects_minimapicons[i] != null then
-                call DestroyMinimapIcon(IncomeObjects_minimapicons[i])
-                set IncomeObjects_minimapicons[i] = null
-            endif
-        endfor
+        // for i = 1 to IncomeObjects_MaxAmount
+        //     if IncomeObjects_minimapicons[i] != null then
+        //         call DestroyMinimapIcon(IncomeObjects_minimapicons[i])
+        //         set IncomeObjects_minimapicons[i] = null
+        //     endif
+        // endfor
 
         call ForForce(players, function ForPlayer)
 

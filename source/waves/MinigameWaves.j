@@ -17,9 +17,10 @@ scope MinigameWaves initializer Init
         private Minigame array minigames[1]
         private Minigame array minigamesShuffled[1]
         private timerdialog td
-        private integer curMinigame = 0
+        private integer curMinigameNumber = 0
         private timer nextWaveTimer
         
+        Minigame curMinigame = 0
         force minigameActingPlayers = CreateForce()
         integer minigameNumberOfActingPlayers = 0
         group minigameUnits = CreateGroup()
@@ -66,8 +67,8 @@ scope MinigameWaves initializer Init
         call PauseTimer(t)
         call DestroyTimer(t)
 
-        call minigamesShuffled[curMinigame].Finish()
-        set curMinigame = curMinigame + 1
+        call minigamesShuffled[curMinigameNumber].Finish()
+        set curMinigameNumber = curMinigameNumber + 1
 
         call ForceClear(minigameActingPlayers)
         set minigameNumberOfActingPlayers = 0
@@ -84,8 +85,9 @@ scope MinigameWaves initializer Init
         call PauseTimer(t)
         call DestroyTimer(t)
 
-        call minigamesShuffled[curMinigame].Finish()
-        set curMinigame = curMinigame + 1
+        call curMinigame.Finish()
+        set curMinigameNumber = curMinigameNumber + 1
+        set curMinigame = 0
 
         call ForceClear(minigameActingPlayers)
         set minigameNumberOfActingPlayers = 0
@@ -94,44 +96,44 @@ scope MinigameWaves initializer Init
 
     public function Force takes nothing returns nothing
         local timer t = CreateTimer()
-        local Minigame minigame
         set isMinigameForceStopped = false
         set nextWaveTimer = t
 
         set WasItMinigameWave = true
 
-        if curMinigame >= minigames.size then
-            set curMinigame = 0
+        if curMinigameNumber >= minigames.size then
+            set curMinigameNumber = 0
             call Shuffle.execute()
         endif
 
-        set minigame = minigamesShuffled[curMinigame]
+        set curMinigame = minigamesShuffled[curMinigameNumber]
 
         static if DEBUG_MODE then
-            call TimerStart(t, minigame.debugTimerTime, false, function Timer_OnExpire)
+            call TimerStart(t, curMinigame.debugTimerTime, false, function Timer_OnExpire)
         else
-            call TimerStart(t, minigame.timerTime, false, function Timer_OnExpire)
+            call TimerStart(t, curMinigame.timerTime, false, function Timer_OnExpire)
         endif
         set td = CreateTimerDialog(t)
-        call TimerDialogSetTitle(td, minigame.title) // Title of timer dialog
+        call TimerDialogSetTitle(td, curMinigame.title) // Title of timer dialog
         call TimerDialogDisplay(td, true) // Shows timer dialog
 
         call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 10, " ")
-        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 10, GOLD + "Миниигра:|r " + minigame.title)
-        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 10, minigame.description)
+        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 10, GOLD + "Миниигра:|r " + curMinigame.title)
+        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 10, curMinigame.description)
 
-        call PanCameraToTimed(minigame.x, minigame.y, 0)
+        call PanCameraToTimed(curMinigame.x, curMinigame.y, 0)
 
         call ForceClear(minigameActingPlayers)
         set minigameNumberOfActingPlayers = 0
         call ForForce(players, function AddPlayersInForce)
-        call minigame.Fire()
+        call curMinigame.Fire()
 
         set t = null
     endfunction
     
     private function Init takes nothing returns nothing
-        set minigames[0] = HungryHungryKodos.create()
+        // set minigames[0] = HungryHungryKodos.create()
+        set minigames[0] = Casino.create()
 
         call Shuffle.execute()
     endfunction

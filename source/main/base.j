@@ -224,7 +224,6 @@ sound gg_snd_BloodElfMageReady1= null
 sound gg_snd_BloodElfMagePissed1= null
 sound gg_snd_BattleNetTick01= null
 sound gg_snd_ClanInvitation= null
-trigger gg_trg_Untitled_Trigger_001= null
 trigger gg_trg_initialization= null
 trigger gg_trg_ini_id= null
 trigger gg_trg_game_end= null
@@ -845,6 +844,17 @@ function CreateNeutralPassiveBuildings takes nothing returns nothing
 endfunction
 
 //===========================================================================
+function CreateNeutralPassive takes nothing returns nothing
+    local player p= Player(PLAYER_NEUTRAL_PASSIVE)
+    local unit u
+    local integer unitID
+    local trigger t
+    local real life
+
+    set u=BlzCreateUnitWithSkin(p, 'n009', - 4029.4, 7316.8, 270.000, 'n009')
+endfunction
+
+//===========================================================================
 function CreatePlayerBuildings takes nothing returns nothing
 endfunction
 
@@ -856,6 +866,7 @@ endfunction
 function CreateAllUnits takes nothing returns nothing
     call CreateNeutralPassiveBuildings()
     call CreatePlayerBuildings()
+    call CreateNeutralPassive()
     call CreatePlayerUnits()
 endfunction
 
@@ -954,7 +965,7 @@ function CreateRegions takes nothing returns nothing
     set gg_rct_hideandseekall=Rect(3456.0, 4224.0, 7040.0, 7808.0)
     set we=AddWeatherEffect(gg_rct_hideandseekall, 'RLlr')
     call EnableWeatherEffect(we, true)
-    set gg_rct_HungryHungryKodos=Rect(5824.0, - 960.0, 7744.0, 960.0)
+    set gg_rct_HungryHungryKodos=Rect(6048.0, - 736.0, 7520.0, 736.0)
 endfunction
 
 //***************************************************************************

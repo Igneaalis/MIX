@@ -175,6 +175,18 @@ library NokladrLib uses Colors, Logs, optional UnitRecycler  // Library by Nokla
         return tt
     endfunction
 
+    // Создаёт colored texttag по координатам юнита, упрощённая и оптимизированная версия CreateTextTagLocBJ
+    function NewTextTagAtUnitColored takes string s, unit u, real zOffset, real size, integer red, integer green, integer blue returns texttag
+        local texttag tt = CreateTextTag()
+        // SetTextTagTextBJ
+        call SetTextTagText(tt, s, TextTagSize2Height(size))
+        // SetTextTagPosBJ
+        call SetTextTagPos(tt, GetUnitX(u), GetUnitY(u), zOffset)
+        // SetTextTagColorBJ
+        call SetTextTagColor(tt, red, green, blue, 255)
+        return tt
+    endfunction
+
     // Makes map normal in opposite to FadeMap()
     function UnfadeMap takes nothing returns nothing
         call SetDayNightModels("Environment\\DNC\\DNCDalaran\\DNCDalaranTerrain\\DNCDalaranTerrain.mdl", "Environment\\DNC\\DNCDalaran\\DNCDalaranUnit\\DNCDalaranUnit.mdl")
