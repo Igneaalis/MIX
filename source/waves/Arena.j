@@ -89,7 +89,8 @@ scope Arena initializer Init
         local integer random
         local timer t = CreateTimer()
 
-        set WasItMinigameWave = false
+        set curWave = curWave + 1
+        set curWaveWithMinigames = curWaveWithMinigames + 1
         call Flush.execute()
         call IncomeObjects_Shuffle.execute()
 

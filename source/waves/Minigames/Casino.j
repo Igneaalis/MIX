@@ -171,7 +171,7 @@ scope MinigameCasino initializer Init
                 set circle = CreateUnit(Player(PLAYER_NEUTRAL_PASSIVE), circleTypeId, startPointX + 256 * j, startPointY - 256 * i, 270)
                 set count = count + 1
                 set table[StringHash("Casino")].unit[count] = circle
-                if (ModuloInteger(count, 2) == 1) then
+                if (ModuloInteger(count, 2) == 0) then
                     // Z offset = 0
                     // Font size = 11.00
                     // Red =    100.00%
@@ -181,8 +181,8 @@ scope MinigameCasino initializer Init
                     set tt = NewTextTagAtUnitColored(I2S(count), circle, 0, 11, 255, 26, 26)
                     call SetUnitColor(circle, PLAYER_COLOR_RED)
                 else
-                    set tt = NewTextTagAtUnitColored(I2S(count), circle, 0, 11, 75, 75, 55)
-                    call SetUnitColor(circle, PLAYER_COLOR_BROWN)
+                    set tt = NewTextTagAtUnitColored(I2S(count), circle, 0, 11, 0, 41, 255)
+                    call SetUnitColor(circle, PLAYER_COLOR_LIGHT_BLUE)
                 endif
             endfor
         endfor

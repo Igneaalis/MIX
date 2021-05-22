@@ -35,8 +35,8 @@ scope MinigameZombies initializer Init
     endfunction
 
     private function ForPlayer_SwitchAllianceOffTowardPlayer11 takes nothing returns nothing
-        call SetPlayerAllianceBJ(Player(11), ALLIANCE_PASSIVE, true, GetEnumPlayer())
-        call SetPlayerAllianceBJ(GetEnumPlayer(), ALLIANCE_PASSIVE, true, Player(11))
+        call SetPlayerAllianceBJ(Player(11), ALLIANCE_PASSIVE, false, GetEnumPlayer())
+        call SetPlayerAllianceBJ(GetEnumPlayer(), ALLIANCE_PASSIVE, false, Player(11))
     endfunction
 
     private function RewardWinner takes player winner returns nothing
@@ -83,8 +83,6 @@ scope MinigameZombies initializer Init
         set minigameNumberOfActingPlayers = minigameNumberOfActingPlayers - 1
 
         if CountUnitsInGroup(peasants) == 0 then
-            set isMinigameForceStopped = true
-            call curMinigame.Finish()
             call MinigameWaves_FinishMinigame.execute()
             set peasant = null
             set zombie = null
@@ -134,7 +132,7 @@ scope MinigameZombies initializer Init
         string title = "Зомби"
         string description = "На следующей волне вам предстоит выживать против нескончаемых орд зомби."
         real timerTime = 150.00
-        real debugTimerTime = 60.00
+        real debugTimerTime = 90.00
         real x = 0
         real y = 0
 

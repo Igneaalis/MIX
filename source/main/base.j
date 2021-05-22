@@ -77,10 +77,6 @@ integer array udg_roulette_gems
 force udg_roulette_winners= null
 integer udg_mini_game_max= 0
 real array udg_end_result
-group array udg_fastarena_group
-integer array udg_fastarena_value
-integer array udg_fastarena_player
-integer udg_fastarena_time= 0
 rect udg_FFF= null
 integer udg_cycle_i= 0
 integer udg_rot_P= 0
@@ -91,9 +87,6 @@ force udg_income_group= null
 integer udg_income_max= 0
 group udg_castle_unit= null
 real udg_point= 0
-real array udg_fastarena_hp
-real array udg_fastarena_hp_start
-force udg_fastarena_players= null
 player udg_vkad= null
 integer array udg_vklad_timer
 integer array udg_inc_max
@@ -308,7 +301,6 @@ trigger gg_trg_gold_ini_start= null
 trigger gg_trg_gold_result= null
 trigger gg_trg_horse_ini_start= null
 trigger gg_trg_horse_speed= null
-trigger gg_trg_horse_finish= null
 trigger gg_trg_miners_ini_start= null
 trigger gg_trg_miners_death= null
 trigger gg_trg_miners_explosion= null
@@ -558,28 +550,6 @@ function InitGlobals takes nothing returns nothing
         set i=i + 1
     endloop
 
-    set i=0
-    loop
-        exitwhen ( i > 8 )
-        set udg_fastarena_group[i]=CreateGroup()
-        set i=i + 1
-    endloop
-
-    set i=0
-    loop
-        exitwhen ( i > 1 )
-        set udg_fastarena_value[i]=0
-        set i=i + 1
-    endloop
-
-    set i=0
-    loop
-        exitwhen ( i > 1 )
-        set udg_fastarena_player[i]=0
-        set i=i + 1
-    endloop
-
-    set udg_fastarena_time=0
     set udg_cycle_i=0
     set udg_rot_P=0
     set udg_cycle_j=0
@@ -595,21 +565,6 @@ function InitGlobals takes nothing returns nothing
     set udg_income_max=0
     set udg_castle_unit=CreateGroup()
     set udg_point=0
-    set i=0
-    loop
-        exitwhen ( i > 1 )
-        set udg_fastarena_hp[i]=0
-        set i=i + 1
-    endloop
-
-    set i=0
-    loop
-        exitwhen ( i > 1 )
-        set udg_fastarena_hp_start[i]=0
-        set i=i + 1
-    endloop
-
-    set udg_fastarena_players=CreateForce()
     set i=0
     loop
         exitwhen ( i > 1 )
@@ -3558,76 +3513,84 @@ endfunction
 //===========================================================================
 // Trigger: horse ini start
 //===========================================================================
-function Trig_horse_ini_start_Func004C takes nothing returns boolean
+function Trig_horse_ini_start_Func003C takes nothing returns boolean
     if ( not ( GetPlayerSlotState(Player(0)) == PLAYER_SLOT_STATE_PLAYING ) ) then
         return false
     endif
     return true
 endfunction
 
-function Trig_horse_ini_start_Func005C takes nothing returns boolean
+function Trig_horse_ini_start_Func004C takes nothing returns boolean
     if ( not ( GetPlayerSlotState(Player(1)) == PLAYER_SLOT_STATE_PLAYING ) ) then
         return false
     endif
     return true
 endfunction
 
-function Trig_horse_ini_start_Func006C takes nothing returns boolean
+function Trig_horse_ini_start_Func005C takes nothing returns boolean
     if ( not ( GetPlayerSlotState(Player(2)) == PLAYER_SLOT_STATE_PLAYING ) ) then
         return false
     endif
     return true
 endfunction
 
-function Trig_horse_ini_start_Func007C takes nothing returns boolean
+function Trig_horse_ini_start_Func006C takes nothing returns boolean
     if ( not ( GetPlayerSlotState(Player(3)) == PLAYER_SLOT_STATE_PLAYING ) ) then
         return false
     endif
     return true
 endfunction
 
-function Trig_horse_ini_start_Func008C takes nothing returns boolean
+function Trig_horse_ini_start_Func007C takes nothing returns boolean
     if ( not ( GetPlayerSlotState(Player(4)) == PLAYER_SLOT_STATE_PLAYING ) ) then
         return false
     endif
     return true
 endfunction
 
-function Trig_horse_ini_start_Func009C takes nothing returns boolean
+function Trig_horse_ini_start_Func008C takes nothing returns boolean
     if ( not ( GetPlayerSlotState(Player(5)) == PLAYER_SLOT_STATE_PLAYING ) ) then
         return false
     endif
     return true
 endfunction
 
-function Trig_horse_ini_start_Func010C takes nothing returns boolean
+function Trig_horse_ini_start_Func009C takes nothing returns boolean
     if ( not ( GetPlayerSlotState(Player(6)) == PLAYER_SLOT_STATE_PLAYING ) ) then
         return false
     endif
     return true
 endfunction
 
-function Trig_horse_ini_start_Func011C takes nothing returns boolean
+function Trig_horse_ini_start_Func010C takes nothing returns boolean
     if ( not ( GetPlayerSlotState(Player(7)) == PLAYER_SLOT_STATE_PLAYING ) ) then
         return false
     endif
     return true
 endfunction
 
-function Trig_horse_ini_start_Func012Func001002001001002 takes nothing returns boolean
+function Trig_horse_ini_start_Func011001001 takes nothing returns boolean
+    return ( GetPlayerSlotState(GetFilterPlayer()) == PLAYER_SLOT_STATE_PLAYING )
+endfunction
+
+function Trig_horse_ini_start_Func011Func001002001001002 takes nothing returns boolean
     return ( GetUnitTypeId(GetFilterUnit()) == 'hhdl' )
 endfunction
 
-function Trig_horse_ini_start_Func012A takes nothing returns nothing
-    call PanCameraToTimedLocForPlayer(GetEnumPlayer(), GetUnitLoc(GroupPickRandomUnit(GetUnitsOfPlayerMatching(GetEnumPlayer(), Condition(function Trig_horse_ini_start_Func012Func001002001001002)))), 0)
+function Trig_horse_ini_start_Func011A takes nothing returns nothing
+    call PanCameraToTimedLocForPlayer(GetEnumPlayer(), GetUnitLoc(GroupPickRandomUnit(GetUnitsOfPlayerMatching(GetEnumPlayer(), Condition(function Trig_horse_ini_start_Func011Func001002001001002)))), 0)
     call SetCameraTargetControllerNoZForPlayer(GetEnumPlayer(), GroupPickRandomUnit(GetUnitsOfPlayerAndTypeId(GetEnumPlayer(), 'hhdl')), 0, 0, false)
 endfunction
 
-function Trig_horse_ini_start_Func015Func001001002 takes nothing returns boolean
+function Trig_horse_ini_start_Func014001001 takes nothing returns boolean
+    return ( GetPlayerSlotState(GetFilterPlayer()) == PLAYER_SLOT_STATE_PLAYING )
+endfunction
+
+function Trig_horse_ini_start_Func014Func001001002 takes nothing returns boolean
     return ( GetUnitTypeId(GetFilterUnit()) == 'hhdl' )
 endfunction
 
-function Trig_horse_ini_start_Func015Func001A takes nothing returns nothing
+function Trig_horse_ini_start_Func014Func001A takes nothing returns nothing
     call CreateTextTagLocBJ("TRIGSTR_491", GetUnitLoc(GetEnumUnit()), 0, 60.00, 100, 100, 100, 0)
     call ShowTextTagForceBJ(false, GetLastCreatedTextTag(), GetPlayersAll())
     call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), GetForceOfPlayer(GetEnumPlayer()))
@@ -3636,15 +3599,19 @@ function Trig_horse_ini_start_Func015Func001A takes nothing returns nothing
     call SetTextTagLifespanBJ(GetLastCreatedTextTag(), 1.00)
 endfunction
 
-function Trig_horse_ini_start_Func015A takes nothing returns nothing
-    call ForGroupBJ(GetUnitsOfPlayerMatching(GetEnumPlayer(), Condition(function Trig_horse_ini_start_Func015Func001001002)), function Trig_horse_ini_start_Func015Func001A)
+function Trig_horse_ini_start_Func014A takes nothing returns nothing
+    call ForGroupBJ(GetUnitsOfPlayerMatching(GetEnumPlayer(), Condition(function Trig_horse_ini_start_Func014Func001001002)), function Trig_horse_ini_start_Func014Func001A)
 endfunction
 
-function Trig_horse_ini_start_Func018Func001001002 takes nothing returns boolean
+function Trig_horse_ini_start_Func017001001 takes nothing returns boolean
+    return ( GetPlayerSlotState(GetFilterPlayer()) == PLAYER_SLOT_STATE_PLAYING )
+endfunction
+
+function Trig_horse_ini_start_Func017Func001001002 takes nothing returns boolean
     return ( GetUnitTypeId(GetFilterUnit()) == 'hhdl' )
 endfunction
 
-function Trig_horse_ini_start_Func018Func001A takes nothing returns nothing
+function Trig_horse_ini_start_Func017Func001A takes nothing returns nothing
     call CreateTextTagLocBJ("TRIGSTR_1032", GetUnitLoc(GetEnumUnit()), 0, 60.00, 100, 100, 100, 0)
     call ShowTextTagForceBJ(false, GetLastCreatedTextTag(), GetPlayersAll())
     call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), GetForceOfPlayer(GetEnumPlayer()))
@@ -3653,15 +3620,19 @@ function Trig_horse_ini_start_Func018Func001A takes nothing returns nothing
     call SetTextTagLifespanBJ(GetLastCreatedTextTag(), 1.00)
 endfunction
 
-function Trig_horse_ini_start_Func018A takes nothing returns nothing
-    call ForGroupBJ(GetUnitsOfPlayerMatching(GetEnumPlayer(), Condition(function Trig_horse_ini_start_Func018Func001001002)), function Trig_horse_ini_start_Func018Func001A)
+function Trig_horse_ini_start_Func017A takes nothing returns nothing
+    call ForGroupBJ(GetUnitsOfPlayerMatching(GetEnumPlayer(), Condition(function Trig_horse_ini_start_Func017Func001001002)), function Trig_horse_ini_start_Func017Func001A)
 endfunction
 
-function Trig_horse_ini_start_Func021Func001001002 takes nothing returns boolean
+function Trig_horse_ini_start_Func020001001 takes nothing returns boolean
+    return ( GetPlayerSlotState(GetFilterPlayer()) == PLAYER_SLOT_STATE_PLAYING )
+endfunction
+
+function Trig_horse_ini_start_Func020Func001001002 takes nothing returns boolean
     return ( GetUnitTypeId(GetFilterUnit()) == 'hhdl' )
 endfunction
 
-function Trig_horse_ini_start_Func021Func001A takes nothing returns nothing
+function Trig_horse_ini_start_Func020Func001A takes nothing returns nothing
     call CreateTextTagLocBJ("TRIGSTR_1033", GetUnitLoc(GetEnumUnit()), 0, 60.00, 100, 100, 100, 0)
     call ShowTextTagForceBJ(false, GetLastCreatedTextTag(), GetPlayersAll())
     call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), GetForceOfPlayer(GetEnumPlayer()))
@@ -3670,15 +3641,19 @@ function Trig_horse_ini_start_Func021Func001A takes nothing returns nothing
     call SetTextTagLifespanBJ(GetLastCreatedTextTag(), 1.00)
 endfunction
 
-function Trig_horse_ini_start_Func021A takes nothing returns nothing
-    call ForGroupBJ(GetUnitsOfPlayerMatching(GetEnumPlayer(), Condition(function Trig_horse_ini_start_Func021Func001001002)), function Trig_horse_ini_start_Func021Func001A)
+function Trig_horse_ini_start_Func020A takes nothing returns nothing
+    call ForGroupBJ(GetUnitsOfPlayerMatching(GetEnumPlayer(), Condition(function Trig_horse_ini_start_Func020Func001001002)), function Trig_horse_ini_start_Func020Func001A)
 endfunction
 
-function Trig_horse_ini_start_Func023Func001001002 takes nothing returns boolean
+function Trig_horse_ini_start_Func022001001 takes nothing returns boolean
+    return ( GetPlayerSlotState(GetFilterPlayer()) == PLAYER_SLOT_STATE_PLAYING )
+endfunction
+
+function Trig_horse_ini_start_Func022Func001001002 takes nothing returns boolean
     return ( GetUnitTypeId(GetFilterUnit()) == 'hhdl' )
 endfunction
 
-function Trig_horse_ini_start_Func023Func001A takes nothing returns nothing
+function Trig_horse_ini_start_Func022Func001A takes nothing returns nothing
     call CreateTextTagLocBJ("TRIGSTR_1034", GetUnitLoc(GetEnumUnit()), 0, 20.00, 100, 0.00, 0.00, 0)
     call ShowTextTagForceBJ(false, GetLastCreatedTextTag(), GetPlayersAll())
     call ShowTextTagForceBJ(true, GetLastCreatedTextTag(), GetForceOfPlayer(GetEnumPlayer()))
@@ -3687,81 +3662,79 @@ function Trig_horse_ini_start_Func023Func001A takes nothing returns nothing
     call SetTextTagLifespanBJ(GetLastCreatedTextTag(), 6.00)
 endfunction
 
-function Trig_horse_ini_start_Func023A takes nothing returns nothing
-    call ForGroupBJ(GetUnitsOfPlayerMatching(GetEnumPlayer(), Condition(function Trig_horse_ini_start_Func023Func001001002)), function Trig_horse_ini_start_Func023Func001A)
+function Trig_horse_ini_start_Func022A takes nothing returns nothing
+    call ForGroupBJ(GetUnitsOfPlayerMatching(GetEnumPlayer(), Condition(function Trig_horse_ini_start_Func022Func001001002)), function Trig_horse_ini_start_Func022Func001A)
 endfunction
 
-function Trig_horse_ini_start_Func026A takes nothing returns nothing
+function Trig_horse_ini_start_Func024A takes nothing returns nothing
     call IssuePointOrderLocBJ(GetEnumUnit(), "move", PolarProjectionBJ(GetUnitLoc(GetEnumUnit()), 5568.00, 0))
 endfunction
 
 function Trig_horse_ini_start_Actions takes nothing returns nothing
-    call TriggerSleepAction(0.30)
     set udg_r=0
     // Я без понятия чего редактор так активно создаёт дессинхрон при цикличном спавне лошадок, посему каждому персонально. мдя.
-    if ( Trig_horse_ini_start_Func004C() ) then
+    if ( Trig_horse_ini_start_Func003C() ) then
         call CreateNUnitsAtLoc(1, 'hhdl', Player(0), GetRectCenter(gg_rct_horse1), 0.00)
         call SetUnitColor(GetLastCreatedUnit(), GetPlayerColor(Player(0)))
         call GroupAddUnitSimple(GetLastCreatedUnit(), udg_wave_units)
     else
     endif
-    if ( Trig_horse_ini_start_Func005C() ) then
+    if ( Trig_horse_ini_start_Func004C() ) then
         call CreateNUnitsAtLoc(1, 'hhdl', Player(1), GetRectCenter(gg_rct_horse2), 0.00)
         call SetUnitColor(GetLastCreatedUnit(), GetPlayerColor(Player(1)))
         call GroupAddUnitSimple(GetLastCreatedUnit(), udg_wave_units)
     else
     endif
-    if ( Trig_horse_ini_start_Func006C() ) then
+    if ( Trig_horse_ini_start_Func005C() ) then
         call CreateNUnitsAtLoc(1, 'hhdl', Player(2), GetRectCenter(gg_rct_horse3), 0.00)
         call SetUnitColor(GetLastCreatedUnit(), GetPlayerColor(Player(2)))
         call GroupAddUnitSimple(GetLastCreatedUnit(), udg_wave_units)
     else
     endif
-    if ( Trig_horse_ini_start_Func007C() ) then
+    if ( Trig_horse_ini_start_Func006C() ) then
         call CreateNUnitsAtLoc(1, 'hhdl', Player(3), GetRectCenter(gg_rct_horse4), 0.00)
         call SetUnitColor(GetLastCreatedUnit(), GetPlayerColor(Player(3)))
         call GroupAddUnitSimple(GetLastCreatedUnit(), udg_wave_units)
     else
     endif
-    if ( Trig_horse_ini_start_Func008C() ) then
+    if ( Trig_horse_ini_start_Func007C() ) then
         call CreateNUnitsAtLoc(1, 'hhdl', Player(4), GetRectCenter(gg_rct_horse5), 0.00)
         call SetUnitColor(GetLastCreatedUnit(), GetPlayerColor(Player(4)))
         call GroupAddUnitSimple(GetLastCreatedUnit(), udg_wave_units)
     else
     endif
-    if ( Trig_horse_ini_start_Func009C() ) then
+    if ( Trig_horse_ini_start_Func008C() ) then
         call CreateNUnitsAtLoc(1, 'hhdl', Player(5), GetRectCenter(gg_rct_horse6), 0.00)
         call SetUnitColor(GetLastCreatedUnit(), GetPlayerColor(Player(5)))
         call GroupAddUnitSimple(GetLastCreatedUnit(), udg_wave_units)
     else
     endif
-    if ( Trig_horse_ini_start_Func010C() ) then
+    if ( Trig_horse_ini_start_Func009C() ) then
         call CreateNUnitsAtLoc(1, 'hhdl', Player(6), GetRectCenter(gg_rct_horse7), 0.00)
         call SetUnitColor(GetLastCreatedUnit(), GetPlayerColor(Player(6)))
         call GroupAddUnitSimple(GetLastCreatedUnit(), udg_wave_units)
     else
     endif
-    if ( Trig_horse_ini_start_Func011C() ) then
+    if ( Trig_horse_ini_start_Func010C() ) then
         call CreateNUnitsAtLoc(1, 'hhdl', Player(7), GetRectCenter(gg_rct_horse8), 0.00)
         call SetUnitColor(GetLastCreatedUnit(), GetPlayerColor(Player(7)))
         call GroupAddUnitSimple(GetLastCreatedUnit(), udg_wave_units)
     else
     endif
-    call ForForce(udg_players_group, function Trig_horse_ini_start_Func012A)
+    call ForForce(GetPlayersMatching(Condition(function Trig_horse_ini_start_Func011001001)), function Trig_horse_ini_start_Func011A)
     call TriggerSleepAction(2.00)
     call PlaySoundBJ(gg_snd_BattleNetTick)
-    call ForForce(udg_players_group, function Trig_horse_ini_start_Func015A)
+    call ForForce(GetPlayersMatching(Condition(function Trig_horse_ini_start_Func014001001)), function Trig_horse_ini_start_Func014A)
     call TriggerSleepAction(1.00)
     call PlaySoundBJ(gg_snd_BattleNetTick)
-    call ForForce(udg_players_group, function Trig_horse_ini_start_Func018A)
+    call ForForce(GetPlayersMatching(Condition(function Trig_horse_ini_start_Func017001001)), function Trig_horse_ini_start_Func017A)
     call TriggerSleepAction(1.00)
     call PlaySoundBJ(gg_snd_BattleNetTick)
-    call ForForce(udg_players_group, function Trig_horse_ini_start_Func021A)
+    call ForForce(GetPlayersMatching(Condition(function Trig_horse_ini_start_Func020001001)), function Trig_horse_ini_start_Func020A)
     call TriggerSleepAction(1.00)
-    call ForForce(udg_players_group, function Trig_horse_ini_start_Func023A)
+    call ForForce(GetPlayersMatching(Condition(function Trig_horse_ini_start_Func022001001)), function Trig_horse_ini_start_Func022A)
     call EnableTrigger(gg_trg_horse_speed)
-    call EnableTrigger(gg_trg_horse_finish)
-    call ForGroupBJ(GetUnitsOfTypeIdAll('hhdl'), function Trig_horse_ini_start_Func026A)
+    call ForGroupBJ(GetUnitsOfTypeIdAll('hhdl'), function Trig_horse_ini_start_Func024A)
 endfunction
 
 //===========================================================================
@@ -3786,83 +3759,22 @@ function InitTrig_horse_speed takes nothing returns nothing
     set gg_trg_horse_speed=CreateTrigger()
     call DisableTrigger(gg_trg_horse_speed)
     call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(0), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_LEFT)
-    call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(0), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_UP)
+    call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(0), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_RIGHT)
     call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(1), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_LEFT)
-    call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(1), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_UP)
+    call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(1), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_RIGHT)
     call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(2), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_LEFT)
-    call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(2), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_UP)
+    call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(2), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_RIGHT)
     call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(3), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_LEFT)
-    call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(3), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_UP)
+    call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(3), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_RIGHT)
     call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(4), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_LEFT)
-    call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(4), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_UP)
+    call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(4), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_RIGHT)
     call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(5), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_LEFT)
-    call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(5), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_UP)
+    call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(5), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_RIGHT)
     call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(6), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_LEFT)
-    call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(6), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_UP)
+    call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(6), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_RIGHT)
     call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(7), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_LEFT)
-    call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(7), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_UP)
+    call TriggerRegisterPlayerKeyEventBJ(gg_trg_horse_speed, Player(7), bj_KEYEVENTTYPE_DEPRESS, bj_KEYEVENTKEY_RIGHT)
     call TriggerAddAction(gg_trg_horse_speed, function Trig_horse_speed_Actions)
-endfunction
-
-//===========================================================================
-// Trigger: horse finish
-//===========================================================================
-function Trig_horse_finish_Conditions takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) == 'hhdl' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_horse_finish_Func005Func001Func004C takes nothing returns boolean
-    if ( not ( GetForLoopIndexA() == 1 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_horse_finish_Func005C takes nothing returns boolean
-    if ( not ( CountUnitsInGroup(udg_wave_units) == 0 ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_horse_finish_Actions takes nothing returns nothing
-    set udg_r=( udg_r + 1 )
-    call DisplayTimedTextToForce(GetPlayersAll(), 15.00, ( udg_players_colour[GetConvertedPlayerId(GetOwningPlayer(GetEnteringUnit()))] + ( udg_players_name[GetConvertedPlayerId(GetOwningPlayer(GetEnteringUnit()))] + ( "|r финишировал со скоростью |cFFFF9B00" + R2S(GetUnitMoveSpeed(GetEnteringUnit())) ) ) ))
-    set udg_horse_winners[udg_r]=GetOwningPlayer(GetEnteringUnit())
-    call GroupRemoveUnitSimple(GetEnteringUnit(), udg_wave_units)
-    if ( Trig_horse_finish_Func005C() ) then
-        set bj_forLoopAIndex=1
-        set bj_forLoopAIndexEnd=udg_r
-        loop
-            exitwhen bj_forLoopAIndex > bj_forLoopAIndexEnd
-            call DisplayTimedTextToForce(GetPlayersAll(), 15.00, ( "Место |cFF00FF00#" + ( I2S(GetForLoopIndexA()) + ( "|r занимает " + ( udg_players_colour[GetConvertedPlayerId(udg_horse_winners[GetForLoopIndexA()])] + udg_players_name[GetConvertedPlayerId(udg_horse_winners[GetForLoopIndexA()])] ) ) ) ))
-            call AdjustPlayerStateBJ(( 666 - ( 66 * GetForLoopIndexA() ) ), udg_horse_winners[GetForLoopIndexA()], PLAYER_STATE_RESOURCE_GOLD)
-            call DisplayTimedTextToForce(GetForceOfPlayer(udg_horse_winners[GetForLoopIndexA()]), 10.00, ( "Золото за результат гонок: |cFFFFCD00" + I2S(( 666 - ( GetForLoopIndexA() * 66 ) )) ))
-            if ( Trig_horse_finish_Func005Func001Func004C() ) then
-            else
-            endif
-            set bj_forLoopAIndex=bj_forLoopAIndex + 1
-        endloop
-        set udg_r=0
-        call DisableTrigger(GetTriggeringTrigger())
-        call DisableTrigger(gg_trg_horse_speed)
-    else
-    endif
-    call AddSpecialEffectLocBJ(GetUnitLoc(GetEnteringUnit()), "Abilities\\Spells\\Items\\AIsm\\AIsmTarget.mdl")
-    call DestroyEffectBJ(GetLastCreatedEffectBJ())
-    call RemoveUnit(GetEnteringUnit())
-endfunction
-
-//===========================================================================
-function InitTrig_horse_finish takes nothing returns nothing
-    set gg_trg_horse_finish=CreateTrigger()
-    call DisableTrigger(gg_trg_horse_finish)
-    call TriggerRegisterEnterRectSimple(gg_trg_horse_finish, gg_rct_finish)
-    call TriggerAddCondition(gg_trg_horse_finish, Condition(function Trig_horse_finish_Conditions))
-    call TriggerAddAction(gg_trg_horse_finish, function Trig_horse_finish_Actions)
 endfunction
 
 //===========================================================================
@@ -5383,7 +5295,6 @@ function InitCustomTriggers takes nothing returns nothing
     call InitTrig_zombie_ini_finish()
     call InitTrig_horse_ini_start()
     call InitTrig_horse_speed()
-    call InitTrig_horse_finish()
     call InitTrig_miners_ini_start()
     call InitTrig_miners_death()
     call InitTrig_miners_explosion()

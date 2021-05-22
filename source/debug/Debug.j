@@ -51,6 +51,16 @@ scope Debug initializer Init
             // for i = 1 to 15
             //     call Log(I2S(GetRandomInt(0, 2))) - 0, 1, 2
             // endfor
+
+            // for i = 0 to 0
+            //     call Log("i = : " + I2S(i)) - 0
+            // endfor
+
+            // call Log("-------")
+
+            // for i = 0 to 1
+            //     call Log("i = : " + I2S(i)) - 0, 1
+            // endfor
         endif
         
         debug set t = null

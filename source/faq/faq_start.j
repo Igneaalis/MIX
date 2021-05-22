@@ -23,7 +23,6 @@ function faq_start_timer_actions takes nothing returns nothing
     call DisableTrigger(gg_trg_cmd_point)
     call DisableTrigger(gg_trg_cmd_arena)
     
-    set curWave = curWave + 1
     call Arena_Force.execute()
 
     set t = null

@@ -20,46 +20,53 @@ scope MinigameHungryHungryKodos initializer Init
         private constant integer rabbitTypeId = 'n008'
         private constant real X = 6784
         private constant real Y = 0
+        private constant integer prizeGoldInitial = 250
+        private constant integer prizeGoldPerWave = 30
+        private constant integer prizePointsInitial = 10
+        private constant integer prizePointsPerWave = 5
         private real angle
         private boolean IsMinigameFinished
         private timer t = CreateTimer()
         private string playerList = ""
-
-        private string debug_test_playerList = ""
-        private integer debug_test_numberOfPlayers = 0
     endglobals
 
     private function RewardWinner takes player winner returns nothing
-        local integer i
+        local integer i = 0
+        local integer prizeGoldTotal = prizeGoldInitial + prizeGoldPerWave * curWave
+        local integer prizePointsTotal = prizePointsInitial + prizePointsPerWave * curWave
 
         for i = 0 to maxNumberOfPlayers - 1
             if (pdb[Player(i)].info == true) then
-                call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, "Дольше всех смог прокормить своего кодоя игрок: " + C_IntToColor(GetPlayerId(winner)) + GetPlayerName(winner) + "|r и получает за это " + GOLD + "100|r золота и " + RED + "10|r очков!")
+                call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, "Дольше всех смог прокормить своего кодоя игрок " + C_IntToColor(GetPlayerId(winner)) + GetPlayerName(winner) + "|r. Он получил за это " + GOLD + I2S(prizeGoldTotal) + "|r золота и " + RED + I2S(prizePointsTotal) + "|r очков!")
             endif
         endfor
-        call AddGoldToPlayer(100, winner)
-        set pdb[winner].points = pdb[winner].points + 10
+        call AddGoldToPlayer(prizeGoldTotal, winner)
+        set pdb[winner].points = pdb[winner].points + prizePointsTotal
     endfunction
 
     private function RewardAllRemainingPlayers_ForForce takes nothing returns nothing
         local player p = GetEnumPlayer()
+        local integer prizeGoldTotal = prizeGoldInitial + prizeGoldPerWave * curWave
+        local integer prizePointsTotal = prizePointsInitial + prizePointsPerWave * curWave
 
         set playerList = playerList + C_IntToColor(GetPlayerId(p)) + GetPlayerName(p) + "|r "
-        call AddGoldToPlayer(100 / minigameNumberOfActingPlayers, p)
-        set pdb[p].points = pdb[p].points + 10 / minigameNumberOfActingPlayers
+        call AddGoldToPlayer(prizeGoldTotal / minigameNumberOfActingPlayers, p)
+        set pdb[p].points = pdb[p].points + prizePointsTotal / minigameNumberOfActingPlayers
 
         set p = null
     endfunction
 
     private function RewardAllRemainingPlayers takes nothing returns nothing
-        local integer i
+        local integer i = 0
+        local integer prizeGoldTotal = prizeGoldInitial + prizeGoldPerWave * curWave
+        local integer prizePointsTotal = prizePointsInitial + prizePointsPerWave * curWave
         set playerList = ""
 
         call ForForce(minigameActingPlayers, function RewardAllRemainingPlayers_ForForce)
 
         for i = 0 to maxNumberOfPlayers - 1
             if (pdb[Player(i)].info == true) then
-                call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, "Дольше всех смогли прокормить своего кодоя игроки: " + playerList +  "и получают за это " + GOLD + I2S(100 / minigameNumberOfActingPlayers) + "|r золота и " + RED + I2S(10 / minigameNumberOfActingPlayers) + "|r очков!")
+                call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, "Дольше всех смогли прокормить своего кодоя игроки: " + playerList +  "Они получили за это " + GOLD + I2S(prizeGoldTotal / minigameNumberOfActingPlayers) + "|r золота и " + RED + I2S(prizePointsTotal / minigameNumberOfActingPlayers) + "|r очков!")
             endif
         endfor
     endfunction

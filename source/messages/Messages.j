@@ -40,7 +40,7 @@ scope Messages initializer Init
         call SetPlayerTechResearched(p, 'R00J', 0)
         call ForGroup(GetUnitsOfPlayerMatching(p, null), function ForUnits_OnLeave)
         call ForceRemovePlayer(players, p)
-        set udg_players_group = players
+        call ForceRemovePlayer(udg_players_group, p)
         set numberOfPlayers = numberOfPlayers - 1
         if (p == GameOwner) then
             call GameSetOwner_SetOwner.execute()

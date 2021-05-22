@@ -29,6 +29,7 @@ scope Players
             call SetPlayerState(p, PLAYER_STATE_GIVES_BOUNTY, 1)
 
             call ForceAddPlayer(players, p)
+            call ForceAddPlayer(udg_players_group, p)
             set numberOfPlayers = numberOfPlayers + 1
 
             call CreateUnitEx(p, 'ntav', x, y, bj_UNIT_FACING) // Таверна с расами на выбор
@@ -48,7 +49,6 @@ scope Players
 
     public function Init takes nothing returns nothing
         call ForForce(bj_FORCE_ALL_PLAYERS, function ForPlayer)
-        set udg_players_group = players
     endfunction
 
 endscope

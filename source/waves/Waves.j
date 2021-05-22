@@ -15,6 +15,7 @@ scope Waves initializer Init
     
     globals
         integer curWave = 0
+        integer curWaveWithMinigames = 0
     endglobals
     
     private function Init takes nothing returns nothing

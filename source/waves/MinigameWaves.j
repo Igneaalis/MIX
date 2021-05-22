@@ -14,8 +14,8 @@
 scope MinigameWaves initializer Init
     
     globals
-        private Minigame array minigames[3]
-        private Minigame array minigamesShuffled[3]
+        private Minigame array minigames[4]
+        private Minigame array minigamesShuffled[4]
         private timerdialog td
         private integer curMinigameNumber = 0
         private timer nextWaveTimer
@@ -24,7 +24,7 @@ scope MinigameWaves initializer Init
         force minigameActingPlayers = CreateForce()
         integer minigameNumberOfActingPlayers = 0
         group minigameUnits = CreateGroup()
-        integer minigameWave = 2
+        integer minigameWave = 2  // if ModuloInteger(curWaveWithMinigames, minigameWave) == 0 then call MinigameWaves_Force.execute() else call Arena_Force.execute()
         boolean isMinigameForceStopped
     endglobals
 
@@ -53,6 +53,15 @@ scope MinigameWaves initializer Init
 
             set minigamesShuffled[i] = minigames[random]
         endfor
+    endfunction
+
+    public function RemoveMinigameTimer takes nothing returns nothing
+        local timer t = nextWaveTimer
+
+        call TimerDialogDisplay(td, false)
+        call PauseTimer(t)
+
+        set t = null
     endfunction
 
     public function FinishMinigame takes nothing returns nothing
@@ -85,10 +94,12 @@ scope MinigameWaves initializer Init
 
     public function Force takes nothing returns nothing
         local timer t = CreateTimer()
+        local integer i = 0
+
+        set curWaveWithMinigames = curWaveWithMinigames + 1
+        
         set isMinigameForceStopped = false
         set nextWaveTimer = t
-
-        set WasItMinigameWave = true
 
         if curMinigameNumber >= minigames.size then
             set curMinigameNumber = 0
@@ -106,9 +117,12 @@ scope MinigameWaves initializer Init
         call TimerDialogSetTitle(td, curMinigame.title) // Title of timer dialog
         call TimerDialogDisplay(td, true) // Shows timer dialog
 
-        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 10, " ")
-        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 10, GOLD + "Миниигра:|r " + curMinigame.title)
-        call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 10, curMinigame.description)
+        for i = 0 to maxNumberOfPlayers - 1
+            if pdb[Player(i)].info == true then
+                call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, " \n" + GOLD + "Миниигра:|r " + curMinigame.title)
+                call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, curMinigame.description)
+            endif
+        endfor
 
         call PanCameraToTimed(curMinigame.x, curMinigame.y, 0)
 
@@ -124,6 +138,7 @@ scope MinigameWaves initializer Init
         set minigames[0] = HungryHungryKodos.create()
         set minigames[1] = Casino.create()
         set minigames[2] = Zombies.create()
+        set minigames[3] = HorseRacing.create()
 
         call Shuffle.execute()
     endfunction

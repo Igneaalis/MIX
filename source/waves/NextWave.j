@@ -45,11 +45,11 @@ scope NextWave initializer Init
         call PauseTimer(t)
         call DestroyTimer(t)
 
-        set curWave = curWave + 1
-
-        if ModuloInteger(curWave, minigameWave) == 0 then
+        if ModuloInteger(curWaveWithMinigames, minigameWave) == minigameWave - 1 then
+            set WasItMinigameWave = true
             call MinigameWaves_Force.execute()
         else
+            set WasItMinigameWave = false
             call Arena_Force.execute()
         endif
 
