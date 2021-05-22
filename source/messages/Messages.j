@@ -17,14 +17,12 @@ scope Messages initializer Init
         local unit u = GetEnumUnit()
 
         if (GetUnitTypeId(u) != 'hhdl' and GetUnitTypeId(u) != 'n001') then
-            // Opt. begin
             if (IsUnitInGroup(u, waveUnits) == true) then
                 call GroupRemoveUnit(waveUnits, u)
             endif
             if (IsUnitInGroup(u, buildings) == true) then
                 call GroupRemoveUnit(buildings, u)
             endif
-            // Opt. end
             call RemoveUnitEx(u)
         else
             call SetUnitOwner(u, Player(PLAYER_NEUTRAL_PASSIVE), true)

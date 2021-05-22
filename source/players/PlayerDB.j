@@ -14,7 +14,7 @@
 library PlayerDBLib initializer Init  // Library by Nokladr special for MIX Community https://github.com/Igneaalis/MIX
     globals
         Playerdb pdb
-        private PlayerStruct array playerStructs[8]
+        private PlayerStruct array playerStructs[maxNumberOfPlayers]
     endglobals
 
     struct PlayerStruct
@@ -59,19 +59,19 @@ library PlayerDBLib initializer Init  // Library by Nokladr special for MIX Comm
 
     struct Playerdb
         method operator [] takes player p returns PlayerStruct
-            return playerStructs[GetPlayerId(p)]
+            if p != null then
+                return playerStructs[GetPlayerId(p)]
+            else
+                return PlayerStruct.create(null)
+            endif
         endmethod
     endstruct
 
     private function Init takes nothing returns nothing
+        local integer i = 0
         set pdb = Playerdb.create()
-        set playerStructs[0] = PlayerStruct.create(Player(0x00))
-        set playerStructs[1] = PlayerStruct.create(Player(0x01))
-        set playerStructs[2] = PlayerStruct.create(Player(0x02))
-        set playerStructs[3] = PlayerStruct.create(Player(0x03))
-        set playerStructs[4] = PlayerStruct.create(Player(0x04))
-        set playerStructs[5] = PlayerStruct.create(Player(0x05))
-        set playerStructs[6] = PlayerStruct.create(Player(0x06))
-        set playerStructs[7] = PlayerStruct.create(Player(0x07))
+        for i = 0 to maxNumberOfPlayers - 1
+            set playerStructs[i] = PlayerStruct.create(Player(i))
+        endfor
     endfunction
 endlibrary

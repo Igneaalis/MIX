@@ -14,13 +14,13 @@
 scope Settings initializer Init
 
     globals
-        integer finalWave = 15
+        integer finalWave = 1
         
         constant integer baseGold = 755  // Кол-во золота в начале игры
         constant integer baseGems = 22   // Кол-во гемов в начале игры
 
         real settingsTimerTime = 60.00
-        private constant real debugSettingsTimerTime = 3.00
+        private constant real debugSettingsTimerTime = 8.00
 
         boolean IsBuildingDuringWavesAllowed = true
         integer gameMode = 1

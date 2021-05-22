@@ -219,7 +219,6 @@ sound gg_snd_BattleNetTick01= null
 sound gg_snd_ClanInvitation= null
 trigger gg_trg_initialization= null
 trigger gg_trg_ini_id= null
-trigger gg_trg_game_end= null
 trigger gg_trg_cmd_clear= null
 trigger gg_trg_cmd_build= null
 trigger gg_trg_cmd_time= null

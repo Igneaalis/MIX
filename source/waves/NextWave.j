@@ -15,17 +15,72 @@ scope NextWave initializer Init
 
     globals
         private timerdialog relaxWaveTimerDialog
+        private player curWinner = null
 
         boolean WasItMinigameWave
         real relaxWaveTime = 30.00
         private constant real debugRelaxWaveTime = 5.00
     endglobals
 
-    private function ForPlayer takes nothing returns nothing
+    private function Condition_IsUnitInBuildingsGroup takes nothing returns boolean
+        if IsUnitInGroup(GetFilterUnit(), buildings) == true then
+            return true
+        endif
+        return false
+    endfunction
+
+    private function ForUnit_Sell takes nothing returns nothing
+        call IssueImmediateOrder(GetEnumUnit(), "berserk")
+    endfunction
+
+    private function ForPlayer_FindWinner takes nothing returns nothing
+        local player p = GetEnumPlayer()
+
+        if pdb[p].result > pdb[curWinner].result then
+            set curWinner = p
+        endif
+
+        set p = null
+    endfunction
+
+    private function SellUnits takes nothing returns nothing
+        local unit u = null
+        local integer i = 0
+
+        for i = 0 to maxNumberOfPlayers - 1
+            set u = FirstOfGroup(GetUnitsOfPlayerMatching(Player(i), function Condition_IsUnitInBuildingsGroup))
+            if u != null then
+                call IssueImmediateOrder(u, "berserk")
+            endif
+        endfor
+
+        set u = null
+    endfunction
+
+    private function ForPlayer_PanCamera takes nothing returns nothing
         local player p = GetEnumPlayer()
 
         call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, p, 0)
         call PanCameraToTimedLocForPlayer(p, GetPlayerStartLocationLoc(p), 0) // Focuses camera at castle you own
+
+        set p = null
+    endfunction
+
+    private function ForPlayer_AtFinalWave takes nothing returns nothing
+        local player p = GetEnumPlayer()
+        local integer i
+
+        call CreateDestructableLoc('B008', GetPlayerStartLocationLoc(p), GetRandomDirectionDeg(), 2.00, 0)  // Свечение (нормальное)
+        for i = 1 to 8
+            call CreateDestructableLoc('B008', PolarProjectionBJ(GetPlayerStartLocationLoc(p), 633, 45*i), GetRandomDirectionDeg(), 2.00, 0)  // Свечение (нормальное)
+        endfor
+
+        set p = null
+    endfunction
+
+    private function ForPlayer takes nothing returns nothing
+        local player p = GetEnumPlayer()
+        local integer i
 
         if WasItMinigameWave == false then
             call AddGoldToPlayer(pdb[p].incomeGold, p)
@@ -76,7 +131,46 @@ scope NextWave initializer Init
         //     endif
         // endfor
 
-        call ForForce(players, function ForPlayer)
+        call ForForce(players, function ForPlayer_PanCamera)
+        if curWave == finalWave then
+            call CinematicModeBJ(true, players)
+            call SetCameraField(CAMERA_FIELD_TARGET_DISTANCE, 3000, 1)
+            call ClearTextMessages()
+            
+            call TriggerSleepAction(1)
+            call FadeMap()
+
+            call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 900, "Игра закончится через 10 сек.")
+            call ForForce(players, function ForPlayer_AtFinalWave)
+            call TimerStart(t, 0.1, true, function SellUnits)
+
+            // call ForGroup(GetUnitsOfTypeIdAll('hbla'), function C_RemoveEnumUnits)  // Юнит "Замок"
+            // call ForGroup(GetUnitsOfTypeIdAll('hwtw'), function C_RemoveEnumUnits)  // Юнит "Улучшения"
+            // call ForGroup(GetUnitsOfTypeIdAll('ntav'), function C_RemoveEnumUnits)  // Таверна с расами на выбор
+            call ForGroup(GetUnitsOfTypeIdAll('h001'), function C_RemoveEnumUnits)  // Юнит "Выбор героя"
+            call ForGroup(GetUnitsOfTypeIdAll('h029'), function C_RemoveEnumUnits)  // Юнит "Не более 1 погодного эффекта в раунде"
+            call ForGroup(GetUnitsOfTypeIdAll('h02I'), function C_RemoveEnumUnits)  // Работник
+            call ForGroup(GetUnitsOfTypeIdAll('h015'), function C_RemoveEnumUnits)  // Послушник
+            call ForGroup(GetUnitsOfTypeIdAll('h01G'), function C_RemoveEnumUnits)  // Светлячок
+            call ForGroup(GetUnitsOfTypeIdAll('h01U'), function C_RemoveEnumUnits)  // Раб
+            call ForGroup(GetUnitsOfTypeIdAll('h025'), function C_RemoveEnumUnits)  // Маргол-раб
+            call ForGroup(GetUnitsOfTypeIdAll('h02H'), function C_RemoveEnumUnits)  // Медив
+
+            call TriggerSleepAction(10.00)
+            call PauseTimer(t)
+            call DestroyTimer(t)
+            call CinematicModeBJ(false, players)
+            call ClearTextMessages()
+            call ForForce(players, function ForPlayer_FindWinner)
+            call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 900, "Победил игрок " + C_IntToColor(GetPlayerId(curWinner)) + GetPlayerName(curWinner) + "|r со счётом " + RED + I2S(R2I(pdb[curWinner].result)) + "|r!")
+            call PlaySoundBJ(gg_snd_ClanInvitation)
+            call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 900, "Спасибо за прохождение карты |cffff8c99M|cffffbf40I|r|cfffffe00X|r! Возвращайтесь снова!\nDiscord: " + GOLD + "https://discord.gg/kazvQVA2QN" + "|r")
+
+            set t = null
+            return
+        else
+            call ForForce(players, function ForPlayer)
+        endif
 
         call TimerStart(t, relaxWaveTime, false, function Timer_OnExprie)
         set relaxWaveTimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
