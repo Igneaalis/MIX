@@ -42,14 +42,14 @@ scope GameSetOwner initializer Init
                     // Shows all available commands and settings
                     call DisplayTimedTextToPlayer(GameOwner, 0, 0, cmdDisplayTime, "Настройка карты доступна первые " + GREEN + I2S(R2I(settingsTimerTime)) + "|r сек.")
                     call DisplayTimedTextToPlayer(GameOwner, 0, 0, cmdDisplayTime,  GOLD + "-time ##|r, где ## - время между раундами от 20 до 60 сек. " + "Текущий показатель: " + GREEN + I2S(R2I(relaxWaveTime)) + "|r сек.")
-                    call DisplayTimedTextToPlayer(GameOwner, 0, 0, cmdDisplayTime,  GOLD + "-arena ###|r, где ### - начальное время раунда на арене от 60 сек. до 150 сек. " + "Текущий показатель: " + GREEN + I2S(R2I(arenaTimerTime)) + "|r сек.")
+                    call DisplayTimedTextToPlayer(GameOwner, 0, 0, cmdDisplayTime,  GOLD + "-arena ###|r, где ### - длительность арены от 60 сек. до 300 сек. " + "Текущий показатель: " + GREEN + I2S(R2I(arenaTimerTime)) + "|r сек.")
                     if (IsBuildingDuringWavesAllowed == true) then
-                        call DisplayTimedTextToPlayer(GameOwner, 0, 0, cmdDisplayTime,  GOLD + "-build #|r, при # = 1 во время раунда можно строить и улучшать юнитов, при # = 0 - нельзя. " + "Текущий показатель: " + GREEN + "1|r")
+                        call DisplayTimedTextToPlayer(GameOwner, 0, 0, cmdDisplayTime,  GOLD + "-build ###|r, при # = \"" + GREEN + "on|r" + "\" во время раунда можно строить и улучшать юнитов, при # = \"" + GREEN + "off|r" + "\" - нельзя. " + "Текущий показатель: " + GREEN + "on|r")
                     else
-                        call DisplayTimedTextToPlayer(GameOwner, 0, 0, cmdDisplayTime,  GOLD + "-build #|r, при # = 1 во время раунда можно строить и улучшать юнитов, при # = 0 - нельзя. " + "Текущий показатель: " + GREEN + "0|r")
+                    call DisplayTimedTextToPlayer(GameOwner, 0, 0, cmdDisplayTime,  GOLD + "-build ###|r, при # = \"" + GREEN + "on|r" + "\" во время раунда можно строить и улучшать юнитов, при # = \"" + GREEN + "off|r" + "\" - нельзя. " + "Текущий показатель: " + GREEN + "off|r")
                     endif
                     call DisplayTimedTextToPlayer(GameOwner, 0, 0, cmdDisplayTime,  GOLD + "-point #-#|r, влияет на число контрольных точек. " + "Текущий показатель: " + GREEN + I2S(IncomeObjects_StartAmount) + "-" + I2S(IncomeObjects_EndAmount) + "|r")
-                    call DisplayTimedTextToPlayer(GameOwner, 0, 0, cmdDisplayTime,  GOLD + "-mode #|r, при # = 1 мини-игры будут чередоваться каждую вторую волну, при # = 2 мини-игры будут каждые 3 волны, при # = 3 мини-игр не будет совсем. " + "Текущий показатель: " + GREEN + I2S(gameMode) + "|r")
+                    call DisplayTimedTextToPlayer(GameOwner, 0, 0, cmdDisplayTime,  GOLD + "-mgw ##|r, при ## = 1 миниигры будут каждую волну, при ## = 2 миниигры будут каждые 2 волны, при ## = 0 миниигр не будет совсем. " + "Текущий показатель: " + GREEN + I2S(minigameWave) + "|r")
                     call DisplayTimedTextToPlayer(GameOwner, 0, 0, cmdDisplayTime,  GOLD + "-final ##|r, где ## - волна, после которой закончится игра. " + "Текущий показатель: " + GREEN + I2S(finalWave) + "|r")
                 endif
             endif

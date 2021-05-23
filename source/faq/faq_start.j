@@ -15,16 +15,9 @@ function faq_start_timer_actions takes nothing returns nothing
     local timer t = GetExpiredTimer()
 
     call DestroyTimerDialog(faq_timerdialog) // Destroys timer dialog for commands and settings
-    call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 15, "|cFFFF0000Команда |cFFFFFFFF-info|r |cFFFF0000отключит сообщения о штрафах и мини-арене.|r")
-
-    call DisableTrigger(gg_trg_cmd_time)
-    call DisableTrigger(gg_trg_cmd_build)
-    call DisableTrigger(gg_trg_cmd_mode)
-    call DisableTrigger(gg_trg_cmd_point)
-    call DisableTrigger(gg_trg_cmd_arena)
+    call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 10, GOLD + "-info off|r скрывает сообщения о минииграх, штрафах и быстрой битве.")
     
-    set WasItMinigameWave = false
-    call Arena_Force.execute()
+    call NextWave_ForceNextWave.execute()
 
     set t = null
 endfunction

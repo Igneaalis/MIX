@@ -137,6 +137,33 @@ scope NextWave initializer Init
         set p = null
     endfunction
 
+    public function IsPeon takes nothing returns boolean
+        return IsUnitType(GetFilterUnit(), UNIT_TYPE_PEON)
+    endfunction
+
+    public function PauseUnits takes nothing returns nothing
+        call PauseUnit(GetEnumUnit(), true)
+    endfunction
+
+    public function UnpauseUnits takes nothing returns nothing
+        call PauseUnit(GetEnumUnit(), false)
+    endfunction
+
+    public function ForceNextWave takes nothing returns nothing
+        if not IsBuildingDuringWavesAllowed then
+            call ForGroup(buildings, function PauseUnits)
+            call ForGroup(GetUnitsInRectMatching(GetPlayableMapRect(), function IsPeon), function PauseUnits)
+        endif
+
+        if minigameWave > 0 and ModuloInteger(curWaveWithMinigames, minigameWave) == minigameWave - 1 then
+            set WasItMinigameWave = true
+            call MinigameWaves_Force.execute()
+        else
+            set WasItMinigameWave = false
+            call Arena_Force.execute()
+        endif
+    endfunction
+
     private function Timer_OnExprie takes nothing returns nothing
         local timer t = GetExpiredTimer()
 
@@ -144,13 +171,7 @@ scope NextWave initializer Init
         call PauseTimer(t)
         call DestroyTimer(t)
 
-        if ModuloInteger(curWaveWithMinigames, minigameWave) == minigameWave - 1 then
-            set WasItMinigameWave = true
-            call MinigameWaves_Force.execute()
-        else
-            set WasItMinigameWave = false
-            call Arena_Force.execute()
-        endif
+        call NextWave_ForceNextWave()
 
         set t = null
     endfunction
@@ -190,6 +211,8 @@ scope NextWave initializer Init
 
         call ForForce(players, function FindLeaders)
         call ForForce(players, function ForPlayer_PanCamera)
+        call ForGroup(buildings, function UnpauseUnits)
+        call ForGroup(GetUnitsInRectMatching(GetPlayableMapRect(), function IsPeon), function UnpauseUnits)
         if curWave == finalWave then
             call CinematicModeBJ(true, players)
             call SetCameraField(CAMERA_FIELD_TARGET_DISTANCE, 3000, 1)

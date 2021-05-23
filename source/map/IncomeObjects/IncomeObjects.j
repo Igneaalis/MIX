@@ -37,7 +37,6 @@ scope IncomeObjects initializer Init
         local unit u
 
         set numberOfObjects = GetRandomInt(IncomeObjects_StartAmount, IncomeObjects_EndAmount)
-        debug set numberOfObjects = IncomeObjects_MaxAmount
 
         for i = 1 to numberOfObjects
             set random = GetRandomInt(0, rectList.size - 1)

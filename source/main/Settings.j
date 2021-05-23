@@ -23,7 +23,6 @@ scope Settings initializer Init
         private constant real debugSettingsTimerTime = 8.00
 
         boolean IsBuildingDuringWavesAllowed = true
-        integer gameMode = 1
     endglobals
 
     private function Init takes nothing returns nothing
