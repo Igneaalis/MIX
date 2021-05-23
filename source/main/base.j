@@ -255,11 +255,8 @@ trigger gg_trg_income_upgZ= null
 trigger gg_trg_income_upgX= null
 trigger gg_trg_Income_T_upgQ= null
 trigger gg_trg_income_effects= null
-trigger gg_trg_Untitled_Trigger_001= null
+trigger gg_trg_Armageddon_effects= null
 trigger gg_trg_Weather= null
-trigger gg_trg_Armageddon= null
-trigger gg_trg_Armageddon_effect= null
-trigger gg_trg_Armageddon_effect_2= null
 trigger gg_trg_faq= null
 trigger gg_trg_builder_left= null
 trigger gg_trg_mediv_select= null
@@ -1331,73 +1328,62 @@ function InitTrig_income_effects takes nothing returns nothing
 endfunction
 
 //===========================================================================
-// Trigger: Armageddon effect
+// Trigger: Armageddon effects
 //===========================================================================
-function Trig_Armageddon_effect_Func005Func001003001001002001 takes nothing returns boolean
-    return ( IsPlayerEnemy(GetOwningPlayer(GetFilterUnit()), Player(PLAYER_NEUTRAL_AGGRESSIVE)) == true )
-endfunction
-
-function Trig_Armageddon_effect_Func005Func001003001001002002 takes nothing returns boolean
-    return ( IsUnitAliveBJ(GetFilterUnit()) == true )
-endfunction
-
-function Trig_Armageddon_effect_Func005Func001003001001002 takes nothing returns boolean
-    return GetBooleanAnd((IsPlayerEnemy(GetOwningPlayer(GetFilterUnit()), Player(PLAYER_NEUTRAL_AGGRESSIVE)) == true), (IsUnitAliveBJ(GetFilterUnit()) == true)) // INLINED!!
-endfunction
-
-function Trig_Armageddon_effect_Func005A takes nothing returns nothing
-    call IssuePointOrderLocBJ(GetEnumUnit(), "attack", GetUnitLoc(GroupPickRandomUnit(GetUnitsInRectMatching(gg_rct_all, Condition(function Trig_Armageddon_effect_Func005Func001003001001002)))))
-endfunction
-
-function Trig_Armageddon_effect_Actions takes nothing returns nothing
-    call CreateNUnitsAtLoc(1, 'h00G', Player(PLAYER_NEUTRAL_AGGRESSIVE), GetRectCenter(GetPlayableMapRect()), bj_UNIT_FACING)
-    call UnitApplyTimedLifeBJ(5.00, 'BTLF', GetLastCreatedUnit())
-    call UnitAddAbilityBJ('A03B', GetLastCreatedUnit())
-    call IssuePointOrderLocBJ(GetLastCreatedUnit(), "dreadlordinferno", GetRandomLocInRect(gg_rct_all))
-    call ForGroupBJ(GetUnitsOfTypeIdAll('ninf'), function Trig_Armageddon_effect_Func005A)
-endfunction
-
-//===========================================================================
-function InitTrig_Armageddon_effect takes nothing returns nothing
-    set gg_trg_Armageddon_effect=CreateTrigger()
-    call DisableTrigger(gg_trg_Armageddon_effect)
-    call TriggerRegisterTimerEventPeriodic(gg_trg_Armageddon_effect, 10.00)
-    call TriggerAddAction(gg_trg_Armageddon_effect, function Trig_Armageddon_effect_Actions)
-endfunction
-
-//===========================================================================
-// Trigger: Armageddon effect 2
-//===========================================================================
-function Trig_Armageddon_effect_2_Conditions takes nothing returns boolean
-    if ( not ( GetUnitTypeId(GetEnteringUnit()) == 'ninf' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_Armageddon_effect_2_Func001003001001002001 takes nothing returns boolean
-    return ( IsPlayerEnemy(GetOwningPlayer(GetFilterUnit()), Player(PLAYER_NEUTRAL_AGGRESSIVE)) == true )
-endfunction
-
-function Trig_Armageddon_effect_2_Func001003001001002002 takes nothing returns boolean
-    return ( IsUnitAliveBJ(GetFilterUnit()) == true )
-endfunction
-
-function Trig_Armageddon_effect_2_Func001003001001002 takes nothing returns boolean
-    return GetBooleanAnd((IsPlayerEnemy(GetOwningPlayer(GetFilterUnit()), Player(PLAYER_NEUTRAL_AGGRESSIVE)) == true), (IsUnitAliveBJ(GetFilterUnit()) == true)) // INLINED!!
-endfunction
-
-function Trig_Armageddon_effect_2_Actions takes nothing returns nothing
-    call IssuePointOrderLocBJ(GetEnteringUnit(), "attack", GetUnitLoc(GroupPickRandomUnit(GetUnitsInRectMatching(gg_rct_all, Condition(function Trig_Armageddon_effect_2_Func001003001001002)))))
+function Trig_Armageddon_effects_Actions takes nothing returns nothing
+    set udg_k=1
+    loop
+        exitwhen udg_k > 8
+        call CreateDestructableLoc('B008', PolarProjectionBJ(GetRectCenter(gg_rct_centreCENTRE), 512.00, ( 45.00 * I2R(udg_k) )), GetRandomDirectionDeg(), 2.00, 0)
+        set udg_k=udg_k + 1
+    endloop
+    set udg_k=1
+    loop
+        exitwhen udg_k > 9
+        call CreateDestructableLoc('B008', PolarProjectionBJ(GetRectCenter(gg_rct_centreCENTRE), 768.00, ( 40.00 * I2R(udg_k) )), GetRandomDirectionDeg(), 2.00, 0)
+        set udg_k=udg_k + 1
+    endloop
+    set udg_k=1
+    loop
+        exitwhen udg_k > 10
+        call CreateDestructableLoc('B008', PolarProjectionBJ(GetRectCenter(gg_rct_centreCENTRE), 1024.00, ( 36.00 * I2R(udg_k) )), GetRandomDirectionDeg(), 2.00, 0)
+        set udg_k=udg_k + 1
+    endloop
+    set udg_k=1
+    loop
+        exitwhen udg_k > 12
+        call CreateDestructableLoc('B008', PolarProjectionBJ(GetRectCenter(gg_rct_centreCENTRE), 1512.00, ( 30.00 * I2R(udg_k) )), GetRandomDirectionDeg(), 2.00, 0)
+        set udg_k=udg_k + 1
+    endloop
+    set udg_k=1
+    loop
+        exitwhen udg_k > 18
+        call CreateDestructableLoc('B008', PolarProjectionBJ(GetRectCenter(gg_rct_centreCENTRE), 2048.00, ( 20.00 * I2R(udg_k) )), GetRandomDirectionDeg(), 2.00, 0)
+        set udg_k=udg_k + 1
+    endloop
+    set udg_k=1
+    loop
+        exitwhen udg_k > 24
+        call CreateDestructableLoc('B008', PolarProjectionBJ(GetRectCenter(gg_rct_centreCENTRE), 3072.00, ( 15.00 * I2R(udg_k) )), GetRandomDirectionDeg(), 2.00, 0)
+        set udg_k=udg_k + 1
+    endloop
+    set udg_k=1
+    loop
+        exitwhen udg_k > 36
+        call CreateDestructableLoc('B008', PolarProjectionBJ(GetRectCenter(gg_rct_centreCENTRE), 4096.00, ( 10.00 * I2R(udg_k) )), GetRandomDirectionDeg(), 2.00, 0)
+        set udg_k=udg_k + 1
+    endloop
+    call CreateDestructableLoc('B008', GetRectCenter(gg_rct_centreCENTRE), GetRandomDirectionDeg(), 2.00, 0)
+    call CreateDestructableLoc('B008', GetRectCenter(gg_rct_upright), GetRandomDirectionDeg(), 2.00, 0)
+    call CreateDestructableLoc('B008', GetRectCenter(gg_rct_downright), GetRandomDirectionDeg(), 2.00, 0)
+    call CreateDestructableLoc('B008', GetRectCenter(gg_rct_downleft), GetRandomDirectionDeg(), 2.00, 0)
+    call CreateDestructableLoc('B008', GetRectCenter(gg_rct_upleft), GetRandomDirectionDeg(), 2.00, 0)
 endfunction
 
 //===========================================================================
-function InitTrig_Armageddon_effect_2 takes nothing returns nothing
-    set gg_trg_Armageddon_effect_2=CreateTrigger()
-    call DisableTrigger(gg_trg_Armageddon_effect_2)
-    call TriggerRegisterEnterRectSimple(gg_trg_Armageddon_effect_2, gg_rct_all)
-    call TriggerAddCondition(gg_trg_Armageddon_effect_2, Condition(function Trig_Armageddon_effect_2_Conditions))
-    call TriggerAddAction(gg_trg_Armageddon_effect_2, function Trig_Armageddon_effect_2_Actions)
+function InitTrig_Armageddon_effects takes nothing returns nothing
+    set gg_trg_Armageddon_effects=CreateTrigger()
+    call TriggerAddAction(gg_trg_Armageddon_effects, function Trig_Armageddon_effects_Actions)
 endfunction
 
 //===========================================================================
@@ -5135,8 +5121,7 @@ function InitCustomTriggers takes nothing returns nothing
     call InitTrig_unit_resources()
     call InitTrig_upgrade_def_and_dmg()
     call InitTrig_income_effects()
-    call InitTrig_Armageddon_effect()
-    call InitTrig_Armageddon_effect_2()
+    call InitTrig_Armageddon_effects()
     call InitTrig_faq()
     call InitTrig_builder_left()
     call InitTrig_mediv_select()
