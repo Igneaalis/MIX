@@ -69,6 +69,7 @@ library Weather initializer Init requires NokladrLib, UnitRecycler, Logs
 
     struct Storm extends IWeather
         static integer researchId = 'R02M'
+        static integer buffId = 'A03A'
 
         private static string lightningBoltModelFile = "Doodads\\Cinematic\\Lightningbolt\\Lightningbolt.mdl"
         private static string thunderClapModelFile = "Abilities\\Spells\\Human\\ThunderClap\\ThunderClapCaster.mdl"
@@ -103,6 +104,7 @@ library Weather initializer Init requires NokladrLib, UnitRecycler, Logs
         endmethod
 
         method Force takes nothing returns nothing
+            call UnitAddAbility(FirstOfGroup(GetUnitsOfPlayerAndTypeId(weather.owner, castleRC)), buffId)
             call TimerStart(t, 1, true, function thistype.Timer_onTick)
             set weather.curWeatherEffect = AddWeatherEffect(gg_rct_all, 'RAhr')
             call EnableWeatherEffect(weather.curWeatherEffect, true)
@@ -114,6 +116,7 @@ library Weather initializer Init requires NokladrLib, UnitRecycler, Logs
         endmethod
 
         method Finish takes nothing returns nothing
+            call UnitRemoveAbility(FirstOfGroup(GetUnitsOfPlayerAndTypeId(weather.owner, castleRC)), buffId)
             call PauseTimer(t)
         endmethod
 
