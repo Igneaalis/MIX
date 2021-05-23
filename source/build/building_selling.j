@@ -15,9 +15,15 @@ scope BuildingSelling
 
     private function CreateSellingText takes integer gold, integer gems, unit u returns nothing
         call ShowUnit(u, false)
-        call ArcingTextTag.create((GOLD + "+" + I2S(gold) + "|r"), u)
-        call TriggerSleepAction(0.1)
-        call ArcingTextTag.create((VIOLET + "+" + I2S(gems) + "|r"), u)
+        if gold > 0 then
+            call ArcingTextTag.create((GOLD + "+" + I2S(gold) + "|r"), u)
+            if gems > 0 then
+                call TriggerSleepAction(0.1)
+            endif
+        endif
+        if gems > 0 then
+            call ArcingTextTag.create((VIOLET + "+" + I2S(gems) + "|r"), u)
+        endif
         call RemoveUnitEx(u)
     endfunction
 
@@ -38,7 +44,9 @@ scope BuildingSelling
 
         call CreateSellingText.execute(gold, gems, u)
         
-        call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl", GetUnitX(u), GetUnitY(u)))
+        if gold > 0 or gems > 0 then
+            call DestroyEffect(AddSpecialEffect("Abilities\\Spells\\Other\\Transmute\\PileofGold.mdl", GetUnitX(u), GetUnitY(u)))
+        endif
 
         set u = null
         set p = null

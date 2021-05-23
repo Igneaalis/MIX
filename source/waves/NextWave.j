@@ -17,7 +17,7 @@ scope NextWave initializer Init
         private timerdialog relaxWaveTimerDialog
         private player curWinner = null
 
-        boolean WasItMinigameWave
+        boolean WasItMinigameWave = false
         real relaxWaveTime = 30.00
         private constant real debugRelaxWaveTime = 5.00
     endglobals
@@ -66,9 +66,29 @@ scope NextWave initializer Init
         set p = null
     endfunction
 
+    private function ForPlayer_CheckPenalties takes nothing returns nothing
+        local player p = GetEnumPlayer()
+        local integer i = 0
+
+        if WasItMinigameWave == false then
+            if pdb[p].curWaveIncomeObjectsCaptured == 0 or pdb[p].curWaveCastlesDestroyed == 0 then
+                for i = 0 to maxNumberOfPlayers - 1
+                    if pdb[Player(i)].info == true then
+                        call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, RED + "Штраф|r: игрок " + C_IntToColor(GetPlayerId(p)) + GetPlayerName(p) + "|r теряет " + RED + I2S(40) + "|r очков арены, т.к. не захватил ни одной контрольной точки и не разрушил ни одного замка.")
+                    endif
+                endfor
+            endif
+            set pdb[p].points = RMaxBJ(0, pdb[p].points - 40)
+            set pdb[p].curWaveIncomeObjectsCaptured = 0
+            set pdb[p].curWaveCastlesDestroyed = 0
+        endif
+
+        set p = null
+    endfunction
+
     private function ForPlayer_AtFinalWave takes nothing returns nothing
         local player p = GetEnumPlayer()
-        local integer i
+        local integer i = 0
 
         call CreateDestructableLoc('B008', GetPlayerStartLocationLoc(p), GetRandomDirectionDeg(), 2.00, 0)  // Свечение (нормальное)
         for i = 1 to 8
@@ -78,17 +98,26 @@ scope NextWave initializer Init
         set p = null
     endfunction
 
-    private function ForPlayer takes nothing returns nothing
+    private function ForPlayer_AtArenaWaveEnd takes nothing returns nothing
         local player p = GetEnumPlayer()
-        local integer i
+        local integer i = 0
 
-        if WasItMinigameWave == false then
-            call AddGoldToPlayer(pdb[p].incomeGold, p)
-            call AddGemsToPlayer(pdb[p].incomeGems, p)
+        call AddGoldToPlayer(pdb[p].incomeGold, p)
+        call AddGemsToPlayer(pdb[p].incomeGems, p)
 
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль золота: " + GOLD + I2S(pdb[p].incomeGold) + "|r")
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль самоцветов: " + VIOLET + I2S(pdb[p].incomeGems) + "|r")
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль золота: " + GOLD + I2S(pdb[p].incomeGold) + "|r")
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль самоцветов: " + VIOLET + I2S(pdb[p].incomeGems) + "|r")
+
+        if pdb[p].curWaveIncomeObjectsCaptured == 0 or pdb[p].curWaveCastlesDestroyed == 0 then
+            for i = 0 to maxNumberOfPlayers - 1
+                if pdb[Player(i)].info == true then
+                    call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, RED + "Штраф|r: игрок " + C_IntToColor(GetPlayerId(p)) + GetPlayerName(p) + "|r теряет " + RED + I2S(40) + "|r очков арены, т.к. не захватил ни одной контрольной точки и не разрушил ни одного замка.")
+                endif
+            endfor
         endif
+
+        set pdb[p].curWaveIncomeObjectsCaptured = 0
+        set pdb[p].curWaveCastlesDestroyed = 0
 
         set p = null
     endfunction
@@ -113,7 +142,7 @@ scope NextWave initializer Init
 
     public function Force takes nothing returns nothing
         local timer t = CreateTimer()
-        local integer i
+        local integer i = 0
 
         call ForGroup(waveUnits, function C_RemoveEnumUnits)
         call GroupClear(waveUnits)
@@ -136,6 +165,7 @@ scope NextWave initializer Init
             call CinematicModeBJ(true, players)
             call SetCameraField(CAMERA_FIELD_TARGET_DISTANCE, 3000, 1)
             call ClearTextMessages()
+            call ForForce(players, function ForPlayer_CheckPenalties)
             
             call TriggerSleepAction(1)
             call FadeMap()
@@ -169,7 +199,10 @@ scope NextWave initializer Init
             set t = null
             return
         else
-            call ForForce(players, function ForPlayer)
+            call ForForce(players, function ForPlayer_CheckPenalties)
+            if WasItMinigameWave == false then
+                call ForForce(players, function ForPlayer_AtArenaWaveEnd)
+            endif
         endif
 
         call TimerStart(t, relaxWaveTime, false, function Timer_OnExprie)

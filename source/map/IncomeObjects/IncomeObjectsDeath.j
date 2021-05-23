@@ -15,8 +15,8 @@ scope IncomeObjectsDeath initializer inc_colour
 
     function inc_colour_actions takes nothing returns nothing
         local unit IncomeObjectiveUnit = GetDyingUnit() // IncomeObject
-        local player IncomeObjectReceiever = GetOwningPlayer(GetKillingUnit()) // Who gets IncomeObject
         local unit IncomeObjectiveNewUnit // Replace IncomeObject
+        local player IncomeObjectReceiever = GetOwningPlayer(GetKillingUnit()) // Who gets IncomeObject
         local player IncomeObjectOwner = GetOwningPlayer(IncomeObjectiveUnit) // Who loses IncomeObject
         local boolean IsBigGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == bigMineRC)
         local boolean IsSmallGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == smallMineRC)
@@ -37,6 +37,8 @@ scope IncomeObjectsDeath initializer inc_colour
         call GroupAddUnit(IncomeObjects_group, IncomeObjectiveNewUnit)
         call SetUnitAnimation(IncomeObjectiveNewUnit, "work")
         call SetUnitVertexColor(IncomeObjectiveNewUnit, playerColor.red, playerColor.green, playerColor.blue, 255) // Adjusts color to match receiver's one
+
+        set pdb[IncomeObjectReceiever].curWaveIncomeObjectsCaptured = pdb[IncomeObjectReceiever].curWaveIncomeObjectsCaptured + 1
 
         set IncomeObjectiveUnit = null
         set IncomeObjectReceiever = null

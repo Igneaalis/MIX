@@ -22,7 +22,7 @@ library PlayerDBLib initializer Init  // Library by Nokladr special for MIX Comm
 
         real leaderCoeff = 1.00
         integer leaderWins = 0
-        integer arenaWins = 1
+        integer arenaWins = 0
         integer changeSet = 3
         integer incomeGold = 240
         integer incomeGems = 8
@@ -37,6 +37,8 @@ library PlayerDBLib initializer Init  // Library by Nokladr special for MIX Comm
         integer kills = 0
         integer upgrades = 0
         integer castlesDestroyed = 0
+        integer curWaveCastlesDestroyed = 0
+        integer curWaveIncomeObjectsCaptured = 0
         real points = 0
 
         static method create takes player p returns PlayerStruct
