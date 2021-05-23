@@ -39,9 +39,13 @@ scope FastArena initializer Init
     endfunction
 
     private function AddUnitInGroup takes nothing returns nothing
-        call GroupAddUnit(unitGroup[GetPlayerId(GetOwningPlayer(GetEnumUnit()))], GetEnumUnit())
-        set unitsInGroup[GetPlayerId(GetOwningPlayer(GetEnumUnit()))] = unitsInGroup[GetPlayerId(GetOwningPlayer(GetEnumUnit()))] + 1
+        local unit u = GetEnumUnit()
+
+        call GroupAddUnit(unitGroup[GetPlayerId(GetOwningPlayer(u))], u)
+        set unitsInGroup[GetPlayerId(GetOwningPlayer(u))] = unitsInGroup[GetPlayerId(GetOwningPlayer(u))] + 1
         // debug call Log(I2S(unitsInGroup[GetPlayerId(GetOwningPlayer(GetEnumUnit()))]) + " " + GetPlayerName(GetOwningPlayer(GetEnumUnit())) + " " + GetUnitName(GetEnumUnit()))
+
+        set u = null
     endfunction
 
     private function AddPlayersInForce takes nothing returns nothing
@@ -214,9 +218,7 @@ scope FastArena initializer Init
             set i = i + 1
         endloop
 
-        set i = 0
-        loop
-            exitwhen i == maxNumberOfPlayers
+        for i = 0 to maxNumberOfPlayers - 1
             static if not DEBUG_MODE then
                 if (pdb[Player(i)].info == true) then
                     call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "У вас есть " + GOLD + I2S(R2I(fastArenaTimerTime)) + "|r сек.")
@@ -224,8 +226,7 @@ scope FastArena initializer Init
                     call DisplayTimedTextToPlayer(Player(i), 0, 0, 15, "По истечении времени игрок, нанёсший наибольшее количество урона, получит бонусные очки арены.")
                 endif
             endif
-            set i = i + 1
-        endloop
+        endfor
         
         set g_tmp = GetUnitsInRectMatching(gg_rct_all, Condition(function Conditions))
         call ForGroup(g_tmp, function RemoveUnits)
@@ -253,7 +254,7 @@ scope FastArena initializer Init
         if winPlayerId != -1 then
             for i = 0 to maxNumberOfPlayers - 1
                 if (pdb[Player(i)].info == true) then
-                    call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, ("Нанеся " + GOLD + I2S(R2I(damageByPlayer[winPlayerId])) + "|r ед. урона на арене, победил игрок " + C_IntToColor(winPlayerId) + GetPlayerName(Player(winPlayerId)) + "|r"))
+                    call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, ("Нанеся " + GREEN + I2S(R2I(damageByPlayer[winPlayerId])) + "|r ед. урона на арене, побеждает игрок " + C_IntToColor(winPlayerId) + GetPlayerName(Player(winPlayerId)) + "|r и получает за это " + RED + I2S(50) + "|r очков арены!"))
                 endif
             endfor
             set pdb[Player(winPlayerId)].points = pdb[Player(winPlayerId)].points + 50
