@@ -25,24 +25,19 @@ scope Units initializer Init
         local player ownerOfKillerUnit = GetOwningPlayer(killerUnit)
         local integer dyingUnitTypeId = GetUnitTypeId(dyingUnit)
 
-        static if not DEBUG_MODE then
-            if ownerOfDyingUnit == ownerOfKillerUnit then
-                set dyingUnit = null
-                set killerUnit = null
-                set ownerOfDyingUnit = null
-                set ownerOfKillerUnit = null
-                return
-            endif
+        if ownerOfDyingUnit == ownerOfKillerUnit or dyingUnitTypeId == castleRC or dyingUnitTypeId == bigMineRC or dyingUnitTypeId == smallMineRC or dyingUnitTypeId == flagRC then
+            set dyingUnit = null
+            set killerUnit = null
+            set ownerOfDyingUnit = null
+            set ownerOfKillerUnit = null
+            return
         endif
 
         if IsPlayerInForce(ownerOfDyingUnit, players) then
-            if dyingUnitTypeId == castleRC then
-                call GroupRemoveUnit(castles, dyingUnit)
-                set pdb[ownerOfKillerUnit].castlesDestroyed = pdb[ownerOfKillerUnit].castlesDestroyed + 1
-            else
+            if IsUnitInGroup(dyingUnit, waveUnits) then
                 call GroupRemoveUnit(waveUnits, dyingUnit)
-                set pdb[ownerOfKillerUnit].kills = pdb[ownerOfKillerUnit].kills + 1
             endif
+            set pdb[ownerOfKillerUnit].kills = pdb[ownerOfKillerUnit].kills + 1
         endif
 
         set dyingUnit = null
