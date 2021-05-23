@@ -4,7 +4,21 @@ scope MinigameHorseRacing initializer Init
         private constant integer horseTypeId = 'hhdl'
         private integer curPlaceNumber = 0
         private player array raceWinners[maxNumberOfPlayers]
+        private timer t = CreateTimer()
     endglobals
+
+    private function ForPlayer_ResetCamera takes nothing returns nothing
+        local player p = GetEnumPlayer()
+
+        call ClearSelectionForPlayer(p)
+        call SetCameraTargetControllerNoZForPlayer(p, FirstOfGroup(GetUnitsOfPlayerAndTypeId(p, 'hhdl')), 0, 0, false)
+        
+        set p = null
+    endfunction
+
+    private function Timer_OnTick takes nothing returns nothing
+        call ForForce(minigameActingPlayers, function ForPlayer_ResetCamera)
+    endfunction
 
     private function Horse_OnEnterFinish takes nothing returns nothing
         local unit horse = GetEnteringUnit()
@@ -24,6 +38,8 @@ scope MinigameHorseRacing initializer Init
         set curPlaceNumber = curPlaceNumber + 1
         set raceWinners[curPlaceNumber - 1] = horseOwner
         call GroupRemoveUnit(udg_wave_units, horse)
+        call ForceRemovePlayer(minigameActingPlayers, horseOwner)
+        set minigameNumberOfActingPlayers = minigameNumberOfActingPlayers - 1
 
         for i = 0 to maxNumberOfPlayers - 1
             if pdb[Player(i)].info == true then
@@ -75,12 +91,15 @@ scope MinigameHorseRacing initializer Init
         real y = 0
 
         method Fire takes nothing returns nothing
+            call TimerStart(t, 0.033, true, function Timer_OnTick)
             call TriggerExecute(gg_trg_horse_ini_start)
             call MinigameWaves_RemoveMinigameTimer.execute()
         endmethod
 
         method Finish takes nothing returns nothing
             local integer i = 0
+            
+            call PauseTimer(t)
             
             set curPlaceNumber = 0
             for i = 0 to maxNumberOfPlayers
