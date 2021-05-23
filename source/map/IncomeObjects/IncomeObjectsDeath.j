@@ -14,21 +14,30 @@ Income Objects OnDestroy() event
 scope IncomeObjectsDeath initializer inc_colour
 
     function inc_colour_actions takes nothing returns nothing
-        local unit IncomeObjectiveUnit = GetDyingUnit() // IncomeObject
-        local unit IncomeObjectiveNewUnit // Replace IncomeObject
-        local player IncomeObjectReceiever = GetOwningPlayer(GetKillingUnit()) // Who gets IncomeObject
-        local player IncomeObjectOwner = GetOwningPlayer(IncomeObjectiveUnit) // Who loses IncomeObject
+        local unit IncomeObjectiveUnit = GetDyingUnit()  // IncomeObject
+        local unit IncomeObjectiveNewUnit  // Replace IncomeObject
+        local player IncomeObjectReceiever = GetOwningPlayer(GetKillingUnit())  // Who gets IncomeObject
+        local player IncomeObjectOwner = GetOwningPlayer(IncomeObjectiveUnit)  // Who loses IncomeObject
         local boolean IsBigGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == bigMineRC)
         local boolean IsSmallGoldMine = (GetUnitTypeId(IncomeObjectiveUnit) == smallMineRC)
         local boolean IsFlag = (GetUnitTypeId(IncomeObjectiveUnit) == flagRC)
         local boolean IsOwnerTheReceiver = (IncomeObjectOwner == IncomeObjectReceiever)
-        local real IncomeObjectiveUnitX = GetUnitX(IncomeObjectiveUnit)
-        local real IncomeObjectiveUnitY = GetUnitY(IncomeObjectiveUnit)
-        local Color playerColor = Color.create(IncomeObjectReceiever) // Color Struct from NokladrLib.j
+        local real IncomeObjectiveUnitX
+        local real IncomeObjectiveUnitY
+        local Color playerColor  // Color Struct from NokladrLib.j
 
         if not (IsBigGoldMine or IsSmallGoldMine or IsFlag) then
-            return // No actions
+            set IncomeObjectiveUnit = null
+            set IncomeObjectReceiever = null
+            set IncomeObjectiveNewUnit = null
+            set IncomeObjectOwner = null
+            call playerColor.destroy()
+            return
         endif
+
+        set IncomeObjectiveUnitX = GetUnitX(IncomeObjectiveUnit)
+        set IncomeObjectiveUnitY = GetUnitY(IncomeObjectiveUnit)
+        set playerColor = Color.create(IncomeObjectReceiever)
 
         call ShowUnit(IncomeObjectiveUnit, false)
         call GroupRemoveUnit(IncomeObjects_group, IncomeObjectiveUnit)

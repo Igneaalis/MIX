@@ -14,7 +14,7 @@
 scope Settings initializer Init
 
     globals
-        integer finalWave = 1
+        integer finalWave = 4
         
         constant integer baseGold = 755  // Кол-во золота в начале игры
         constant integer baseGems = 22   // Кол-во гемов в начале игры
