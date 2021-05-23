@@ -257,9 +257,6 @@ trigger gg_trg_Income_T_upgQ= null
 trigger gg_trg_income_effects= null
 trigger gg_trg_Untitled_Trigger_001= null
 trigger gg_trg_Weather= null
-trigger gg_trg_Blizzard= null
-trigger gg_trg_Storm= null
-trigger gg_trg_Storm_effect= null
 trigger gg_trg_Armageddon= null
 trigger gg_trg_Armageddon_effect= null
 trigger gg_trg_Armageddon_effect_2= null
@@ -1331,44 +1328,6 @@ endfunction
 function InitTrig_income_effects takes nothing returns nothing
     set gg_trg_income_effects=CreateTrigger()
     call TriggerAddAction(gg_trg_income_effects, function Trig_income_effects_Actions)
-endfunction
-
-//===========================================================================
-// Trigger: Storm effect
-//===========================================================================
-function Trig_Storm_effect_Func006001002001 takes nothing returns boolean
-    return ( IsUnitInGroup(GetFilterUnit(), udg_wave_units) == true )
-endfunction
-
-function Trig_Storm_effect_Func006001002002 takes nothing returns boolean
-    return ( IsUnitAliveBJ(GetFilterUnit()) == true )
-endfunction
-
-function Trig_Storm_effect_Func006001002 takes nothing returns boolean
-    return GetBooleanAnd((IsUnitInGroup(GetFilterUnit(), udg_wave_units) == true), (IsUnitAliveBJ(GetFilterUnit()) == true)) // INLINED!!
-endfunction
-
-function Trig_Storm_effect_Func006A takes nothing returns nothing
-    call UnitDamageTargetBJ(GroupPickRandomUnit(GetRandomSubGroup(1, GetUnitsInRectAll(gg_rct_all))), GetEnumUnit(), 500, ATTACK_TYPE_NORMAL, DAMAGE_TYPE_NORMAL)
-endfunction
-
-function Trig_Storm_effect_Actions takes nothing returns nothing
-    call MoveRectToLoc(gg_rct_stormeff, GetRandomLocInRect(gg_rct_all))
-    call AddSpecialEffectLocBJ(GetRectCenter(gg_rct_stormeff), "Doodads\\Cinematic\\Lightningbolt\\Lightningbolt.mdl")
-    set udg_stormeff_eff=GetLastCreatedEffectBJ()
-    call AddSpecialEffectLocBJ(GetRectCenter(gg_rct_stormeff), "Abilities\\Spells\\Human\\ThunderClap\\ThunderClapCaster.mdl")
-    call DestroyEffectBJ(GetLastCreatedEffectBJ())
-    call ForGroupBJ(GetUnitsInRectMatching(gg_rct_stormeff, Condition(function Trig_Storm_effect_Func006001002)), function Trig_Storm_effect_Func006A)
-    call TriggerSleepAction(0.35)
-    call DestroyEffectBJ(udg_stormeff_eff)
-endfunction
-
-//===========================================================================
-function InitTrig_Storm_effect takes nothing returns nothing
-    set gg_trg_Storm_effect=CreateTrigger()
-    call DisableTrigger(gg_trg_Storm_effect)
-    call TriggerRegisterTimerEventPeriodic(gg_trg_Storm_effect, 4.00)
-    call TriggerAddAction(gg_trg_Storm_effect, function Trig_Storm_effect_Actions)
 endfunction
 
 //===========================================================================
@@ -5176,7 +5135,6 @@ function InitCustomTriggers takes nothing returns nothing
     call InitTrig_unit_resources()
     call InitTrig_upgrade_def_and_dmg()
     call InitTrig_income_effects()
-    call InitTrig_Storm_effect()
     call InitTrig_Armageddon_effect()
     call InitTrig_Armageddon_effect_2()
     call InitTrig_faq()

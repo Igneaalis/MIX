@@ -14,13 +14,13 @@
 scope Arena initializer Init
 
     globals
-        private constant integer unitTypeIdOffset = 49 * 256 * 256 // https://xgm.guru/p/wc3/rawcode-to-string
+        private constant integer unitTypeIdOffset = 49 * 256 * 256  // https://xgm.guru/p/wc3/rawcode-to-string
         private rect array startRectForPlayer
         private rect array rectList[8]
         timerdialog Arena_TimerDialog
         
         real arenaTimerTime = 120.00
-        private constant real debugArenaTimerTime = 8.00
+        private constant real debugArenaTimerTime = 30.00
     endglobals
 
     private function Conditions takes nothing returns boolean
