@@ -71,14 +71,14 @@ scope NextWave initializer Init
         local integer i = 0
 
         if WasItMinigameWave == false then
-            if pdb[p].curWaveIncomeObjectsCaptured == 0 or pdb[p].curWaveCastlesDestroyed == 0 then
+            if pdb[p].curWaveIncomeObjectsCaptured == 0 and pdb[p].curWaveCastlesDestroyed == 0 then
                 for i = 0 to maxNumberOfPlayers - 1
                     if pdb[Player(i)].info == true then
                         call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, RED + "Штраф|r: игрок " + C_IntToColor(GetPlayerId(p)) + GetPlayerName(p) + "|r теряет " + RED + I2S(40) + "|r очков арены, т.к. не захватил ни одной контрольной точки и не разрушил ни одного замка.")
                     endif
                 endfor
+                set pdb[p].points = RMaxBJ(0, pdb[p].points - 40)
             endif
-            set pdb[p].points = RMaxBJ(0, pdb[p].points - 40)
             set pdb[p].curWaveIncomeObjectsCaptured = 0
             set pdb[p].curWaveCastlesDestroyed = 0
         endif
@@ -107,17 +107,6 @@ scope NextWave initializer Init
 
         call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль золота: " + GOLD + I2S(pdb[p].incomeGold) + "|r")
         call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль самоцветов: " + VIOLET + I2S(pdb[p].incomeGems) + "|r")
-
-        if pdb[p].curWaveIncomeObjectsCaptured == 0 or pdb[p].curWaveCastlesDestroyed == 0 then
-            for i = 0 to maxNumberOfPlayers - 1
-                if pdb[Player(i)].info == true then
-                    call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, RED + "Штраф|r: игрок " + C_IntToColor(GetPlayerId(p)) + GetPlayerName(p) + "|r теряет " + RED + I2S(40) + "|r очков арены, т.к. не захватил ни одной контрольной точки и не разрушил ни одного замка.")
-                endif
-            endfor
-        endif
-
-        set pdb[p].curWaveIncomeObjectsCaptured = 0
-        set pdb[p].curWaveCastlesDestroyed = 0
 
         set p = null
     endfunction
@@ -194,7 +183,7 @@ scope NextWave initializer Init
             call ForForce(players, function ForPlayer_FindWinner)
             call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 900, "Победил игрок " + C_IntToColor(GetPlayerId(curWinner)) + GetPlayerName(curWinner) + "|r со счётом " + RED + I2S(R2I(pdb[curWinner].result)) + "|r!")
             call PlaySoundBJ(gg_snd_ClanInvitation)
-            call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 900, "Спасибо за прохождение карты |cffff8c99M|cffffbf40I|r|cfffffe00X|r! Возвращайтесь снова!\nDiscord: " + GOLD + "https://discord.gg/kazvQVA2QN" + "|r")
+            call DisplayTimedTextToPlayer(GetLocalPlayer(), 0, 0, 900, "Спасибо за прохождение карты |cffff8c99M|cffffbf40I|r|cfffffe00X|r! Возвращайтесь снова!\nDiscord: " + GOLD + "https://discord.gg/kazvQVA2QN" + "|r\nПрисылайте туда свои реплеи!")
 
             set t = null
             return
