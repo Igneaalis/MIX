@@ -31,7 +31,7 @@ scope FastArena initializer Init
 
         private constant real firePitPercentDamage = 10.00
         private real fastArenaTimerTime = 60.00
-        private constant real debugFastArenaTimerTime = 5.00
+        private constant real debugFastArenaTimerTime = 10.00
     endglobals
 
     private function Conditions takes nothing returns boolean
@@ -182,7 +182,8 @@ scope FastArena initializer Init
         // call DisableTrigger(gg_trg_inc_per_second)
         
         call Flush.execute()
-        call PanCameraToTimed(GetRectCenterX(gg_rct_fastarena), GetRectCenterY(gg_rct_fastarena), 0)
+        call UnfadeMap()
+        call PanCameraToTimed(GetRectCenterX(gg_rct_fastarena), GetRectCenterY(gg_rct_fastarena), 0.5)
 
         set g_tmp = GetUnitsInRectMatching(gg_rct_all, Condition(function Conditions))
         call ForGroup(g_tmp, function AddUnitInGroup)

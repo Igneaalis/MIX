@@ -1,3 +1,16 @@
+/*
+
+=============================================
+= Файл создал:       Nokladr                =
+= Discord:           ! ! Nokladr#2205       =
+= E-Mail:            Nostaleal.ru@yandex.ru =
+= Дата создания:     23.05.2021 15:33       =
+=============================================
+
+Погода
+
+*/
+
 library Weather initializer Init requires NokladrLib, UnitRecycler, Logs
     
     globals

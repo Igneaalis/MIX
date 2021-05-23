@@ -36,9 +36,7 @@ scope MinigameHungryHungryKodos initializer Init
         local integer prizePointsTotal = prizePointsInitial + prizePointsPerWave * curWave
 
         for i = 0 to maxNumberOfPlayers - 1
-            if (pdb[Player(i)].info == true) then
-                call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, "Дольше всех смог прокормить своего кодоя игрок " + C_IntToColor(GetPlayerId(winner)) + GetPlayerName(winner) + "|r. Он получил за это " + GOLD + I2S(prizeGoldTotal) + "|r золота и " + RED + I2S(prizePointsTotal) + "|r очков!")
-            endif
+            call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, "Дольше всех смог прокормить своего кодоя игрок " + C_IntToColor(GetPlayerId(winner)) + GetPlayerName(winner) + "|r. Он получил за это " + GOLD + I2S(prizeGoldTotal) + "|r золота и " + RED + I2S(prizePointsTotal) + "|r очков!")
         endfor
         call AddGoldToPlayer(prizeGoldTotal, winner)
         set pdb[winner].points = pdb[winner].points + prizePointsTotal
@@ -65,9 +63,7 @@ scope MinigameHungryHungryKodos initializer Init
         call ForForce(minigameActingPlayers, function RewardAllRemainingPlayers_ForForce)
 
         for i = 0 to maxNumberOfPlayers - 1
-            if (pdb[Player(i)].info == true) then
-                call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, "Дольше всех смогли прокормить своего кодоя игроки: " + playerList +  "Они получили за это " + GOLD + I2S(prizeGoldTotal / minigameNumberOfActingPlayers) + "|r золота и " + RED + I2S(prizePointsTotal / minigameNumberOfActingPlayers) + "|r очков!")
-            endif
+            call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, "Дольше всех смогли прокормить своего кодоя игроки: " + playerList +  "Они получили за это " + GOLD + I2S(prizeGoldTotal / minigameNumberOfActingPlayers) + "|r золота и " + RED + I2S(prizePointsTotal / minigameNumberOfActingPlayers) + "|r очков!")
         endfor
     endfunction
 

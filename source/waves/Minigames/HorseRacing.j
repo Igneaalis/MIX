@@ -42,18 +42,14 @@ scope MinigameHorseRacing initializer Init
         set minigameNumberOfActingPlayers = minigameNumberOfActingPlayers - 1
 
         for i = 0 to maxNumberOfPlayers - 1
-            if pdb[Player(i)].info == true then
-                call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, "Игрок " + C_IntToColor(GetPlayerId(horseOwner)) + GetPlayerName(horseOwner) + "|r финишировал со скоростью " + GREEN + I2S(R2I(GetUnitMoveSpeed(horse))) + "|r!")
-            endif
+            call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, "Игрок " + C_IntToColor(GetPlayerId(horseOwner)) + GetPlayerName(horseOwner) + "|r финишировал со скоростью " + GREEN + I2S(R2I(GetUnitMoveSpeed(horse))) + "|r!")
         endfor
 
         if CountUnitsInGroup(udg_wave_units) == 0 then
             for i = 1 to curPlaceNumber
                 set curWinner = raceWinners[i - 1]
                 for j = 0 to maxNumberOfPlayers - 1
-                    if pdb[Player(j)].info == true then
-                        call DisplayTimedTextToPlayer(Player(j), 0, 0, 10, "Место #" + GREEN + I2S(i) + "|r занимает игрок " + C_IntToColor(GetPlayerId(curWinner)) + GetPlayerName(curWinner) + "|r.")
-                    endif
+                    call DisplayTimedTextToPlayer(Player(j), 0, 0, 10, "Место #" + GREEN + I2S(i) + "|r занимает игрок " + C_IntToColor(GetPlayerId(curWinner)) + GetPlayerName(curWinner) + "|r.")
                 endfor
                 set prize = 600 - (i-1)*80
                 call DisplayTimedTextToPlayer(curWinner, 0, 0, 10, "Вы получили " + GOLD + I2S(prize) + "|r золота за участие в скачках!")

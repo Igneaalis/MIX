@@ -155,6 +155,10 @@ scope NextWave initializer Init
         set t = null
     endfunction
 
+    private function IsLightning takes nothing returns boolean
+        return GetDestructableTypeId(GetFilterDestructable()) == 'B008'
+    endfunction
+
     public function Force takes nothing returns nothing
         local timer t = CreateTimer()
         local integer i = 0
@@ -170,6 +174,8 @@ scope NextWave initializer Init
 
         call ForGroup(IncomeObjects_group, function C_RemoveEnumUnits)
         call GroupClear(IncomeObjects_group)
+        
+        call EnumDestructablesInRect(gg_rct_all, function IsLightning, function C_RemoveEnumDestructable)
 
         // for i = 1 to IncomeObjects_MaxAmount
         //     if IncomeObjects_minimapicons[i] != null then

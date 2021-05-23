@@ -15,7 +15,7 @@ scope MinigameZombies initializer Init
 
     private function ForPlayer_AtStart takes nothing returns nothing
         local player p = GetEnumPlayer()
-        local unit peasant = CreateUnitEx(p, peasantTypeId, X + GetRandomInt(-550, 550), Y + GetRandomInt(-550, 550), bj_UNIT_FACING)
+        local unit peasant = CreateUnitEx(p, peasantTypeId, X + GetRandomInt(-450, 450), Y + GetRandomInt(-450, 450), bj_UNIT_FACING)
 
         call GroupAddUnit(minigameUnits, peasant)
         call GroupAddUnit(peasants, peasant)
@@ -164,9 +164,7 @@ scope MinigameZombies initializer Init
             call TriggerExecute(gg_trg_zombie_ini_finish)
 
             for i = 0 to maxNumberOfPlayers - 1
-                if pdb[Player(i)].info == true then
-                    call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, message)
-                endif
+                call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, message)
             endfor
 
             call GroupClear(peasants)

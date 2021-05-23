@@ -20,7 +20,7 @@ scope Arena initializer Init
         timerdialog Arena_TimerDialog
         
         real arenaTimerTime = 120.00
-        private constant real debugArenaTimerTime = 120.00
+        private constant real debugArenaTimerTime = 30.00
     endglobals
 
     private function Conditions takes nothing returns boolean

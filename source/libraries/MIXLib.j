@@ -18,7 +18,7 @@ library MIXLib initializer Init requires NokladrLib
     endglobals
 
     //! textmacro CreateCommand takes name
-    function Command_$name$_Init takes nothing returns nothing
+    private function Command_$name$_Init takes nothing returns nothing
         local trigger t = CreateTrigger()
         call TriggerRegisterPlayerChatEvent(t, Player(0x00), "-$name$", false)
         call TriggerRegisterPlayerChatEvent(t, Player(0x01), "-$name$", false)

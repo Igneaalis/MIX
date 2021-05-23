@@ -53,9 +53,7 @@ scope CastlesDeath initializer Init
         endif
 
         for i = 0 to maxNumberOfPlayers - 1
-            if pdb[Player(i)].info == true then
-                call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, message)
-            endif
+            call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, message)
         endfor
 
         set castleUnit = null

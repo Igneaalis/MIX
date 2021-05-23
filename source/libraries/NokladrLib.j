@@ -114,6 +114,11 @@ library NokladrLib uses Colors, Logs, optional UnitRecycler  // Library by Nokla
         endif
     endfunction
 
+    // Удаляет итерируемый разрушимый объект
+    function C_RemoveEnumDestructable takes nothing returns nothing
+        call RemoveDestructable(GetEnumDestructable())
+    endfunction
+
     // Добавляет золото игроку
     function AddGoldToPlayer takes integer value, player p returns nothing
         call SetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD, GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) + value)
