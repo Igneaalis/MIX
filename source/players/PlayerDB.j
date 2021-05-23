@@ -20,7 +20,7 @@ library PlayerDBLib initializer Init  // Library by Nokladr special for MIX Comm
     struct PlayerStruct
         private player p
 
-        real leaderCoeff = 1.00
+        real leaderCoeff = 1/3
         integer leaderWins = 0
         integer arenaWins = 0
         integer changeSet = 3
@@ -50,11 +50,11 @@ library PlayerDBLib initializer Init  // Library by Nokladr special for MIX Comm
         method operator result takes nothing returns real
             local real result = 0
             set result = result + GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) / 250
-            set result = result + GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER) / 5
-            set result = result + kills / 5 * (10 + GetPlayerTechCount(p, pointsForKillsRC, true))
+            set result = result + GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER) * 0.2
+            set result = result + kills * 0.2 * (10 + GetPlayerTechCount(p, pointsForKillsRC, true))
             set result = result + upgrades * 2
             set result = result + castlesDestroyed * 12.5
-            set result = result + points * 0.07 * leaderCoeff
+            set result = result + points * leaderCoeff * leaderWins
             return result
         endmethod
     endstruct
@@ -74,6 +74,7 @@ library PlayerDBLib initializer Init  // Library by Nokladr special for MIX Comm
         set pdb = Playerdb.create()
         for i = 0 to maxNumberOfPlayers - 1
             set playerStructs[i] = PlayerStruct.create(Player(i))
+            set udg_changeSet[i + 1] = pdb[Player(i)].changeSet
         endfor
     endfunction
 endlibrary

@@ -42,21 +42,23 @@ scope Arena initializer Init
 
     private function ForPlayer takes nothing returns nothing
         local player p = GetEnumPlayer()
-        local group g
+        local group g = null
         local real x = GetRectCenterX(startRectForPlayer[GetPlayerId(p)])
         local real y = GetRectCenterY(startRectForPlayer[GetPlayerId(p)])
+        local unit castle = CreateUnitEx(p, castleRC, x, y, 270)
 
-        // debug call Log("ForceArena_ForPlayer: player = " + GetPlayerName(p))
+        call GroupAddUnit(castles, castle)
 
-        call GroupAddUnit(castles, CreateUnitEx(p, castleRC, x, y, 270))
+        call weather.Force()
 
         set g = GetUnitsOfPlayerMatching(p, Condition(function Conditions))
         call ForGroup(g, function ForPlayerUnits)
 
-        call PanCameraToTimedForPlayer(p, x, y, 0)
+        call PanCameraToTimedForPlayer(p, x, y, 1)
         call CinematicFadeBJ(bj_CINEFADETYPE_FADEOUTIN, 2, "ReplaceableTextures\\CameraMasks\\White_mask.blp", 0, 0, 0, 0)
         
         set p = null
+        set castle = null
         call DestroyGroup(g)
         set g = null
     endfunction

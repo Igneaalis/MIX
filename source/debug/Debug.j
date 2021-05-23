@@ -13,6 +13,11 @@
 
 scope Debug initializer Init
 
+    // globals
+    //     private string debug_test_playerList = ""
+    //     private integer debug_test_numberOfPlayers = 0
+    // endglobals
+
     // private function debug_test_ForForce takes nothing returns nothing
     //     set debug_test_playerList = debug_test_playerList + GetPlayerName(GetEnumPlayer()) + " "
     //     set debug_test_numberOfPlayers = debug_test_numberOfPlayers + 1
@@ -61,6 +66,7 @@ scope Debug initializer Init
             // for i = 0 to 1
             //     call Log("i = : " + I2S(i)) - 0, 1
             // endfor
+
         endif
         
         debug set t = null

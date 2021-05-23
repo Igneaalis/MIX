@@ -66,15 +66,41 @@ scope NextWave initializer Init
         set p = null
     endfunction
 
+    private function FindLeaders takes nothing returns nothing
+        local integer i = 0
+        local player playerKillsLeader = null
+        local player playerPointsLeader = null
+        local player p = null
+        
+        for i = 0 to maxNumberOfPlayers - 1
+            set p = Player(i)
+            if pdb[p].kills > pdb[playerKillsLeader].kills then
+                set playerKillsLeader = p
+            endif
+            if pdb[p].points > pdb[playerPointsLeader].points then
+                set playerPointsLeader = p
+            endif
+        endfor
+
+        call ForceAddPlayer(leaders, playerKillsLeader)
+        set pdb[playerKillsLeader].leaderWins = pdb[playerKillsLeader].leaderWins + 1
+        call ForceAddPlayer(leaders, playerPointsLeader)
+        set pdb[playerPointsLeader].leaderWins = pdb[playerPointsLeader].leaderWins + 1
+
+        set p = null
+        set playerKillsLeader = null
+        set playerPointsLeader = null
+    endfunction
+
     private function ForPlayer_CheckPenalties takes nothing returns nothing
         local player p = GetEnumPlayer()
         local integer i = 0
 
         if WasItMinigameWave == false then
-            if pdb[p].curWaveIncomeObjectsCaptured == 0 and pdb[p].curWaveCastlesDestroyed == 0 then
+            if pdb[p].curWaveIncomeObjectsCaptured == 0 and pdb[p].curWaveCastlesDestroyed == 0 and pdb[p].leaderWins > 0 then
                 for i = 0 to maxNumberOfPlayers - 1
                     if pdb[Player(i)].info == true then
-                        call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, RED + "Штраф|r: игрок " + C_IntToColor(GetPlayerId(p)) + GetPlayerName(p) + "|r теряет " + RED + I2S(40) + "|r очков арены, т.к. не захватил ни одной контрольной точки и не разрушил ни одного замка.")
+                        call DisplayTimedTextToPlayer(Player(i), 0, 0, 10, RED + "Штраф|r: игрок " + C_IntToColor(GetPlayerId(p)) + GetPlayerName(p) + "|r теряет " + RED + I2S(40) + "|r очков арены, т.к. когда-то был лидером, не захватил ни одной контрольной точки и не разрушил ни одного замка.")
                     endif
                 endfor
                 set pdb[p].points = RMaxBJ(0, pdb[p].points - 40)
@@ -152,6 +178,11 @@ scope NextWave initializer Init
         //     endif
         // endfor
 
+        if WasItMinigameWave == false then
+            set weather.curWeather = weather.sunny
+        endif
+
+        call ForForce(players, function FindLeaders)
         call ForForce(players, function ForPlayer_PanCamera)
         if curWave == finalWave then
             call CinematicModeBJ(true, players)

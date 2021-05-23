@@ -258,6 +258,7 @@ scope FastArena initializer Init
                 endif
             endfor
             set pdb[Player(winPlayerId)].points = pdb[Player(winPlayerId)].points + 50
+            set pdb[Player(winPlayerId)].arenaWins = pdb[Player(winPlayerId)].arenaWins + 1
         else
             for i = 0 to maxNumberOfPlayers - 1
                 if (pdb[Player(i)].info == true) then

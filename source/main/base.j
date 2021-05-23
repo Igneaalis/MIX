@@ -255,6 +255,7 @@ trigger gg_trg_income_upgZ= null
 trigger gg_trg_income_upgX= null
 trigger gg_trg_Income_T_upgQ= null
 trigger gg_trg_income_effects= null
+trigger gg_trg_Untitled_Trigger_001= null
 trigger gg_trg_Weather= null
 trigger gg_trg_Blizzard= null
 trigger gg_trg_Storm= null
@@ -975,6 +976,64 @@ endfunction
 //***************************************************************************
 
 //===========================================================================
+// Trigger: cmd clear
+//===========================================================================
+function Trig_cmd_clear_Actions takes nothing returns nothing
+    call ClearTextMessagesBJ(GetForceOfPlayer(GetTriggerPlayer()))
+endfunction
+
+//===========================================================================
+function InitTrig_cmd_clear takes nothing returns nothing
+    set gg_trg_cmd_clear=CreateTrigger()
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(0), "-clear", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(0), "-c", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(0), "-с", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(1), "-clear", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(1), "-c", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(1), "-с", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(2), "-clear", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(2), "-c", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(2), "-с", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(3), "-clear", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(3), "-c", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(3), "-с", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(4), "-clear", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(4), "-c", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(4), "-с", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(5), "-clear", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(5), "-c", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(5), "-с", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(6), "-c", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(6), "-clear", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(6), "-с", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(7), "-c", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(7), "-clear", true)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(7), "-с", true)
+    call TriggerAddAction(gg_trg_cmd_clear, function Trig_cmd_clear_Actions)
+endfunction
+
+//===========================================================================
+// Trigger: cmd zoom
+//===========================================================================
+function Trig_cmd_zoom_Actions takes nothing returns nothing
+    call SetCameraField(CAMERA_FIELD_TARGET_DISTANCE, S2R(SubString(GetEventPlayerChatString(), 6, 13)), 1)
+endfunction
+
+//===========================================================================
+function InitTrig_cmd_zoom takes nothing returns nothing
+    set gg_trg_cmd_zoom=CreateTrigger()
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_zoom, Player(0), "-zoom", false)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_zoom, Player(1), "-zoom", false)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_zoom, Player(2), "-zoom", false)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_zoom, Player(3), "-zoom", false)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_zoom, Player(4), "-zoom", false)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_zoom, Player(5), "-zoom", false)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_zoom, Player(6), "-zoom", false)
+    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_zoom, Player(7), "-zoom", false)
+    call TriggerAddAction(gg_trg_cmd_zoom, function Trig_cmd_zoom_Actions)
+endfunction
+
+//===========================================================================
 // Trigger: unit resources
 //===========================================================================
 function Trig_unit_resources_Func001C takes nothing returns boolean
@@ -1275,115 +1334,6 @@ function InitTrig_income_effects takes nothing returns nothing
 endfunction
 
 //===========================================================================
-// Trigger: Weather
-//===========================================================================
-function Trig_Weather_Func007A takes nothing returns nothing
-    set udg_weather[GetConvertedPlayerId(GetEnumPlayer())]=0
-    call CreateNUnitsAtLoc(1, 'h029', GetEnumPlayer(), GetPlayerStartLocationLoc(GetEnumPlayer()), bj_UNIT_FACING)
-endfunction
-
-function Trig_Weather_Func008A takes nothing returns nothing
-    call RemoveUnit(GetEnumUnit())
-endfunction
-
-function Trig_Weather_Func010Func001C takes nothing returns boolean
-    if ( not ( GetDestructableTypeId(GetEnumDestructable()) == 'B008' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_Weather_Func010A takes nothing returns nothing
-    if ( Trig_Weather_Func010Func001C() ) then
-        call RemoveDestructable(GetEnumDestructable())
-    else
-    endif
-endfunction
-
-function Trig_Weather_Actions takes nothing returns nothing
-    call DisableTrigger(gg_trg_Storm_effect)
-    call DisableTrigger(gg_trg_Armageddon_effect)
-    call DisableTrigger(gg_trg_Armageddon_effect_2)
-    call ResetTerrainFogBJ()
-    call EnableWeatherEffect(GetLastCreatedWeatherEffect(), false)
-    call RemoveWeatherEffectBJ(GetLastCreatedWeatherEffect())
-    call ForForce(udg_players_group, function Trig_Weather_Func007A)
-    call ForGroupBJ(GetUnitsOfTypeIdAll('ninf'), function Trig_Weather_Func008A)
-    call SetDayNightModels("Environment\\DNC\\DNCLordaeron\\DNCLordaeronTerrain\\DNCLordaeronTerrain.mdl", "Environment\\DNC\\DNCLordaeron\\DNCLordaeronUnit\\DNCLordaeronUnit.mdl")
-    call EnumDestructablesInRectAll(GetPlayableMapRect(), function Trig_Weather_Func010A)
-endfunction
-
-//===========================================================================
-function InitTrig_Weather takes nothing returns nothing
-    set gg_trg_Weather=CreateTrigger()
-    call TriggerAddAction(gg_trg_Weather, function Trig_Weather_Actions)
-endfunction
-
-//===========================================================================
-// Trigger: Blizzard
-//===========================================================================
-function Trig_Blizzard_Conditions takes nothing returns boolean
-    if ( not ( GetResearched() == 'R02L' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_Blizzard_Func002A takes nothing returns nothing
-    call RemoveUnit(GetEnumUnit())
-endfunction
-
-function Trig_Blizzard_Func003A takes nothing returns nothing
-    set udg_weather[GetConvertedPlayerId(GetEnumPlayer())]=0
-endfunction
-
-function Trig_Blizzard_Actions takes nothing returns nothing
-    call ForGroupBJ(GetUnitsOfTypeIdAll('h029'), function Trig_Blizzard_Func002A)
-    call ForForce(udg_players_group, function Trig_Blizzard_Func003A)
-    set udg_weather[GetConvertedPlayerId(GetTriggerPlayer())]=1
-endfunction
-
-//===========================================================================
-function InitTrig_Blizzard takes nothing returns nothing
-    set gg_trg_Blizzard=CreateTrigger()
-    call TriggerRegisterAnyUnitEventBJ(gg_trg_Blizzard, EVENT_PLAYER_UNIT_RESEARCH_FINISH)
-    call TriggerAddCondition(gg_trg_Blizzard, Condition(function Trig_Blizzard_Conditions))
-    call TriggerAddAction(gg_trg_Blizzard, function Trig_Blizzard_Actions)
-endfunction
-
-//===========================================================================
-// Trigger: Storm
-//===========================================================================
-function Trig_Storm_Conditions takes nothing returns boolean
-    if ( not ( GetResearched() == 'R02M' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_Storm_Func002A takes nothing returns nothing
-    call RemoveUnit(GetEnumUnit())
-endfunction
-
-function Trig_Storm_Func003A takes nothing returns nothing
-    set udg_weather[GetConvertedPlayerId(GetEnumPlayer())]=0
-endfunction
-
-function Trig_Storm_Actions takes nothing returns nothing
-    call ForGroupBJ(GetUnitsOfTypeIdAll('h029'), function Trig_Storm_Func002A)
-    call ForForce(udg_players_group, function Trig_Storm_Func003A)
-    set udg_weather[GetConvertedPlayerId(GetTriggerPlayer())]=2
-endfunction
-
-//===========================================================================
-function InitTrig_Storm takes nothing returns nothing
-    set gg_trg_Storm=CreateTrigger()
-    call TriggerRegisterAnyUnitEventBJ(gg_trg_Storm, EVENT_PLAYER_UNIT_RESEARCH_FINISH)
-    call TriggerAddCondition(gg_trg_Storm, Condition(function Trig_Storm_Conditions))
-    call TriggerAddAction(gg_trg_Storm, function Trig_Storm_Actions)
-endfunction
-
-//===========================================================================
 // Trigger: Storm effect
 //===========================================================================
 function Trig_Storm_effect_Func006001002001 takes nothing returns boolean
@@ -1419,38 +1369,6 @@ function InitTrig_Storm_effect takes nothing returns nothing
     call DisableTrigger(gg_trg_Storm_effect)
     call TriggerRegisterTimerEventPeriodic(gg_trg_Storm_effect, 4.00)
     call TriggerAddAction(gg_trg_Storm_effect, function Trig_Storm_effect_Actions)
-endfunction
-
-//===========================================================================
-// Trigger: Armageddon
-//===========================================================================
-function Trig_Armageddon_Conditions takes nothing returns boolean
-    if ( not ( GetResearched() == 'R02N' ) ) then
-        return false
-    endif
-    return true
-endfunction
-
-function Trig_Armageddon_Func002A takes nothing returns nothing
-    call RemoveUnit(GetEnumUnit())
-endfunction
-
-function Trig_Armageddon_Func003A takes nothing returns nothing
-    set udg_weather[GetConvertedPlayerId(GetEnumPlayer())]=0
-endfunction
-
-function Trig_Armageddon_Actions takes nothing returns nothing
-    call ForGroupBJ(GetUnitsOfTypeIdAll('h029'), function Trig_Armageddon_Func002A)
-    call ForForce(udg_players_group, function Trig_Armageddon_Func003A)
-    set udg_weather[GetConvertedPlayerId(GetTriggerPlayer())]=3
-endfunction
-
-//===========================================================================
-function InitTrig_Armageddon takes nothing returns nothing
-    set gg_trg_Armageddon=CreateTrigger()
-    call TriggerRegisterAnyUnitEventBJ(gg_trg_Armageddon, EVENT_PLAYER_UNIT_RESEARCH_FINISH)
-    call TriggerAddCondition(gg_trg_Armageddon, Condition(function Trig_Armageddon_Conditions))
-    call TriggerAddAction(gg_trg_Armageddon, function Trig_Armageddon_Actions)
 endfunction
 
 //===========================================================================
@@ -5253,14 +5171,12 @@ endfunction
 
 //===========================================================================
 function InitCustomTriggers takes nothing returns nothing
+    call InitTrig_cmd_clear()
+    call InitTrig_cmd_zoom()
     call InitTrig_unit_resources()
     call InitTrig_upgrade_def_and_dmg()
     call InitTrig_income_effects()
-    call InitTrig_Weather()
-    call InitTrig_Blizzard()
-    call InitTrig_Storm()
     call InitTrig_Storm_effect()
-    call InitTrig_Armageddon()
     call InitTrig_Armageddon_effect()
     call InitTrig_Armageddon_effect_2()
     call InitTrig_faq()

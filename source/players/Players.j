@@ -15,6 +15,7 @@ scope Players
 
     globals
         force players = CreateForce()
+        force leaders = CreateForce()
         integer numberOfPlayers = 0
     endglobals
     
