@@ -16,6 +16,8 @@ scope Units initializer Init
     
     globals
         group waveUnits = CreateGroup()
+        group waveDummyUnits = CreateGroup()
+        constant integer dummyTypeId = 'eRez'
     endglobals
 
     private function OnDie takes nothing returns nothing

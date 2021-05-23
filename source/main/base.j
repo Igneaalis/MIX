@@ -237,7 +237,6 @@ trigger gg_trg_wave_notification= null
 trigger gg_trg_wave_end_timer= null
 trigger gg_trg_wave_end= null
 trigger gg_trg_wave_result_rotation= null
-trigger gg_trg_wave_castle_destr= null
 trigger gg_trg_inc_upg= null
 trigger gg_trg_income_upg= null
 trigger gg_trg_income_upgQ= null

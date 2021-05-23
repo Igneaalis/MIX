@@ -13,11 +13,16 @@ Castles OnDestroy() event
 
 scope CastlesDeath initializer Init
 
+    globals
+        private constant integer unitDebuffId = 'A02G'  // Потеря замка
+    endglobals
+
     private function Castle_OnDestroy takes nothing returns nothing
         local unit castleUnit = GetDyingUnit()  // Castle
         local player castleConqueror  // Who destroyed castle
         local player castleOwner  // Owner of castle
         local boolean IsCastle = (GetUnitTypeId(castleUnit) == castleRC)
+        local unit dummyUnit
         local real castleUnitX
         local real castleUnitY
         local integer i = 0
@@ -27,17 +32,22 @@ scope CastlesDeath initializer Init
             set castleUnit = null
             set castleConqueror = null
             set castleOwner = null
+            set dummyUnit = null
             return
         endif
 
         set castleConqueror = GetOwningPlayer(GetKillingUnit())
         set castleOwner = GetOwningPlayer(castleUnit)
+        call PlaySoundBJ(gg_snd_Warning)
 
         if castleOwner == castleConqueror then
             set message = "Игрок " + C_IntToColor(GetPlayerId(castleOwner)) + GetPlayerName(castleOwner) + "|r разрушил свой замок! Он теряет " + RED + I2S(5) + "%|r очков арены."
         else
             set message = "Замок игрока " + C_IntToColor(GetPlayerId(castleOwner)) + GetPlayerName(castleOwner) + "|r был разрушен! " + RED + I2S(10) + "%|r его очков арены достаются завоевателю замка, а все юниты " + C_IntToColor(GetPlayerId(castleOwner)) + GetPlayerName(castleOwner) + "|r теряют " + GREEN + I2S(15) + "%|r скорости боя и передвижения."
             call GroupRemoveUnit(castles, castleUnit)
+            set dummyUnit = CreateUnitEx(castleOwner, dummyTypeId, 0, 0, 0)
+            call GroupAddUnit(waveDummyUnits, dummyUnit)
+            call UnitAddAbility(dummyUnit, unitDebuffId)
             set pdb[castleConqueror].castlesDestroyed = pdb[castleConqueror].castlesDestroyed + 1
             set pdb[castleConqueror].curWaveCastlesDestroyed = pdb[castleConqueror].curWaveCastlesDestroyed + 1
         endif
@@ -51,6 +61,7 @@ scope CastlesDeath initializer Init
         set castleUnit = null
         set castleConqueror = null
         set castleOwner = null
+        set dummyUnit = null
     endfunction
 
     private function Init takes nothing returns nothing

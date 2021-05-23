@@ -136,6 +136,9 @@ scope NextWave initializer Init
         call ForGroup(waveUnits, function C_RemoveEnumUnits)
         call GroupClear(waveUnits)
 
+        call ForGroup(waveDummyUnits, function C_RemoveEnumUnits)
+        call GroupClear(waveDummyUnits)
+
         call ForGroup(castles, function C_RemoveEnumUnits)
         call GroupClear(castles)
 
