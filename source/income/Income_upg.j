@@ -109,20 +109,16 @@ scope IncomeUpgrade initializer Init
         local integer count_research = GetPlayerTechCount(p, contr_to_pl_rc, true)
         local integer gold = contr_to_pl_gold + (contr_to_pl_gold_mod * (count_research - 1))
         local integer lumber = contr_to_pl_lumber + (contr_to_pl_lumber_mod * (count_research - 1))
-        local string s1
-        local string s2
 
         set gold = R2I(contr_to_pl_multy * I2R(gold))
         set lumber = R2I(contr_to_pl_multy * I2R(lumber))
 
         call AddGoldToPlayer(gold, p)
-        call AddLumberToPlayer(lumber, p)
-
-        set s1 = "Доход с вложения в игрока: |cFFFFCD00" + I2S(gold)
-        set s2 = "Доход с вложения в игрока: |cFFB23AEE" + I2S(lumber)
+        call AddGemsToPlayer(lumber, p)
         
-        call DisplayTextToPlayer(p, 0, 0, s1)
-        call DisplayTextToPlayer(p, 0, 0, s2)
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, GREEN + "Вложение в игрока|r:")
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Доход золота: " + GOLD + I2S(gold) + "|r")
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Доход самоцветов: " + VIOLET + I2S(lumber) + "|r")
         // !!! Найти причину, зачем увеличивается лвл улучшения Подождите 5 минут
         call SetPlayerTechResearched(p, wait_five_minutes_rc, count_research)
         // ----------------------------------------------------------------------
@@ -139,7 +135,6 @@ scope IncomeUpgrade initializer Init
         local player rand_p
         local integer bonus_gold
         local integer bonus_lumber
-        local string mes
         local timer t
 
         set gr_p = CreateForce()
@@ -151,12 +146,11 @@ scope IncomeUpgrade initializer Init
         set bonus_lumber = contr_to_pl_lumber + (contr_to_pl_lumber_mod * (count_research - 1))
 
         call AddGoldToPlayer(bonus_gold, rand_p)
-        call AddLumberToPlayer(bonus_lumber, rand_p)
+        call AddGemsToPlayer(bonus_lumber, rand_p)
 
-        set mes = "В вас вложились: |cFFFFCD00" + I2S(bonus_gold)
-        call DisplayTimedTextToPlayer(rand_p, 0, 0, 10.00, mes)
-        set mes = "В вас вложились: |cFFB23AEE" + I2S(bonus_lumber)
-        call DisplayTimedTextToPlayer(rand_p, 0, 0, 10.00, mes)
+        call DisplayTimedTextToPlayer(rand_p, 0, 0, 10, GREEN + "В вас вложились|r:")
+        call DisplayTimedTextToPlayer(rand_p, 0, 0, 10, "Вы получили " + GOLD + I2S(bonus_gold) + "|r золота.")
+        call DisplayTimedTextToPlayer(rand_p, 0, 0, 10, ("Вы получили " + VIOLET + I2S(bonus_lumber) + "|r самоцветов."))
 
         set t = CreateTimer()
         set hash[StringHash("income")].player[GetHandleId(t)] = rand_p
@@ -195,20 +189,17 @@ scope IncomeUpgrade initializer Init
 
     // Действие улучшения Вклад
     function Trig_income_upg_actions_contr takes player p, integer count_research returns nothing
-        local string s1
-        local string s2 
         local integer gold = contr_gold + ((count_research - 1) * contr_gold_mod)
         local integer lumber = contr_lumber + ((count_research - 1) * contr_lumber_mod)
 
         set gold = gold * contr_percent / 100
         set lumber = lumber * contr_percent / 100
-        set s1 = "Доход с вклада: |cFFFFCD00" + I2S(gold)
-        set s2 = "Доход за вклад: |cFFB23AEE" + I2S(lumber)
         
         call AddGoldToPlayer(gold, p)
-        call AddLumberToPlayer(lumber, p)
-        call DisplayTextToPlayer(p, 0, 0, s1)
-        call DisplayTextToPlayer(p, 0, 0, s2)
+        call AddGemsToPlayer(lumber, p)
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, GREEN + "Вклад|r:")
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Доход золота: " + GOLD + I2S(gold) + "|r")
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Доход самоцветов: " + VIOLET + I2S(lumber) + "|r")
     endfunction
 
     // Поиск номера таймера
@@ -255,7 +246,7 @@ scope IncomeUpgrade initializer Init
         set p = Player(number_p - 1)
         set count_research = GetPlayerTechCount(p, stab_rc, true)
 
-        call AddLumberToPlayer(stabilityGems[count_research], p)
+        call AddGemsToPlayer(stabilityGems[count_research], p)
 
         set p = null
         set t = null
@@ -277,7 +268,7 @@ scope IncomeUpgrade initializer Init
         local unit u = GetEnumUnit()
         local integer u_rc = GetUnitTypeId(u)
 
-        if (u_rc == most_point_kill_last_round) or (u_rc == or_leadership_arena_last_round) then
+        if u_rc == most_point_kill_last_round then
             call RemoveUnitEx(u)
         endif
 
@@ -288,7 +279,6 @@ scope IncomeUpgrade initializer Init
     function Trig_income_upg_actions_leadership takes player p, integer number_p returns nothing
         local group gr = CreateGroup()
 
-        set udg_leader_kf[number_p] = udg_leader_kf[number_p] + leadership_bonus
         call GroupEnumUnitsOfPlayer(gr, p, null)
 
         // !!! Муторная система с группой, разобраться

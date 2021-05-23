@@ -16,6 +16,8 @@ scope NextWave initializer Init
     globals
         private timerdialog relaxWaveTimerDialog
         private player curWinner = null
+        group leadersDummyUnits = CreateGroup()
+        constant integer leadersDummyTypeId = 'h023'
 
         boolean WasItMinigameWave = false
         real relaxWaveTime = 30.00
@@ -82,10 +84,15 @@ scope NextWave initializer Init
             endif
         endfor
 
+        call ForGroup(leadersDummyUnits, function C_RemoveEnumUnits)
+        call GroupClear(leadersDummyUnits)
+
         call ForceAddPlayer(leaders, playerKillsLeader)
         set pdb[playerKillsLeader].leaderWins = pdb[playerKillsLeader].leaderWins + 1
+        call GroupAddUnit(leadersDummyUnits, CreateUnitEx(playerKillsLeader, leadersDummyTypeId, GetPlayerStartLocationX(playerKillsLeader), GetPlayerStartLocationY(playerKillsLeader), 0))
         call ForceAddPlayer(leaders, playerPointsLeader)
         set pdb[playerPointsLeader].leaderWins = pdb[playerPointsLeader].leaderWins + 1
+        call GroupAddUnit(leadersDummyUnits, CreateUnitEx(playerPointsLeader, leadersDummyTypeId, GetPlayerStartLocationX(playerPointsLeader), GetPlayerStartLocationY(playerPointsLeader), 0))
 
         set p = null
         set playerKillsLeader = null

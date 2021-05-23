@@ -20,7 +20,7 @@ library PlayerDBLib initializer Init  // Library by Nokladr special for MIX Comm
     struct PlayerStruct
         private player p
 
-        real leaderCoeff = 1/3
+        static real leaderWinsCoeff = 1/3
         integer leaderWins = 0
         integer arenaWins = 0
         integer changeSet = 3
@@ -39,6 +39,7 @@ library PlayerDBLib initializer Init  // Library by Nokladr special for MIX Comm
         integer castlesDestroyed = 0
         integer curWaveCastlesDestroyed = 0
         integer curWaveIncomeObjectsCaptured = 0
+        real incomeObjectsPoints = 0
         real points = 0
 
         static method create takes player p returns PlayerStruct
@@ -51,10 +52,11 @@ library PlayerDBLib initializer Init  // Library by Nokladr special for MIX Comm
             local real result = 0
             set result = result + GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) / 250
             set result = result + GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER) * 0.2
-            set result = result + kills * 0.2 * (10 + GetPlayerTechCount(p, pointsForKillsRC, true))
+            set result = result + kills * 0.2 * (1 + 0.1 * GetPlayerTechCount(p, pointsForKillsRC, true))
             set result = result + upgrades * 2
             set result = result + castlesDestroyed * 12.5
-            set result = result + points * leaderCoeff * leaderWins
+            set result = result + (points - incomeObjectsPoints) * leaderWinsCoeff * IMinBJ(1, leaderWins)
+            set result = result + incomeObjectsPoints * (1 + 0.2 * GetPlayerTechCountSimple('R029', p))  // Лидерство
             return result
         endmethod
     endstruct

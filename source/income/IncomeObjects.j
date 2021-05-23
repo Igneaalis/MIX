@@ -49,6 +49,7 @@ scope IncomeIncomeObjects initializer Init
 
         call AddGoldToPlayer(gold, p)
         set pdb[p].points = pdb[p].points + points
+        set pdb[p].incomeObjectsPoints = pdb[p].incomeObjectsPoints + points
         call CreateIncomeObjectText.execute(gold, points, u)
 
         set p = null
@@ -60,7 +61,7 @@ scope IncomeIncomeObjects initializer Init
         local real curPoints = pdb[p].points
 
         call ForGroup(IncomeObjects_group, function ForIncomeObject)
-        set pdb[p].incomePoints = pdb[p].points - curPoints
+        set pdb[p].incomePoints = pdb[p].points - curPoints  // For multiboard display
 
         set p = null
     endfunction
