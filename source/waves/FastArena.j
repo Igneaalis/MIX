@@ -101,11 +101,7 @@ scope FastArena initializer Init
 
     private function FirePitDoDamage takes nothing returns nothing
         // TODO: добавить негорящие типы
-        if GetUnitLifePercent(GetEnumUnit()) - firePitPercentDamage > 0 then
-            call SetUnitLifePercentBJ(GetEnumUnit(),(GetUnitLifePercent(GetEnumUnit()) - firePitPercentDamage))
-        else
-            call KillUnitEx(GetEnumUnit())
-        endif
+        call SetUnitLifePercentBJ(GetEnumUnit(),(GetUnitLifePercent(GetEnumUnit()) - firePitPercentDamage))
     endfunction
 
     private function SetWinPlayer takes nothing returns nothing
@@ -156,6 +152,7 @@ scope FastArena initializer Init
             call StartSound(gg_snd_BattleNetTick)
         endif
 
+        set g_tmp = GetUnitsInRectAll(gg_rct_fastarena)
         if timerTime <= 0 or CountUnitsInGroup(g_tmp) == 0 then
             call PauseTimer(t)
             call DestroyTimer(t)
