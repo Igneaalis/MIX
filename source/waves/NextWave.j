@@ -20,7 +20,8 @@ scope NextWave initializer Init
         constant integer leadersDummyTypeId = 'h023'
 
         boolean WasItMinigameWave = false
-        real relaxWaveTime = 30.00
+        real relaxArenaWaveTime = 30.00
+        real relaxMinigameWaveTime = 7.00
         private constant real debugRelaxWaveTime = 5.00
     endglobals
 
@@ -264,16 +265,24 @@ scope NextWave initializer Init
             endif
         endif
 
-        call TimerStart(t, relaxWaveTime, false, function Timer_OnExprie)
-        set relaxWaveTimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
-        call TimerDialogSetTitle(relaxWaveTimerDialog, "Следующая волна") // Title of timer dialog
-        call TimerDialogDisplay(relaxWaveTimerDialog, true) // Shows timer dialog
+        if minigameWave > 0 and ModuloInteger(curWaveWithMinigames, minigameWave) == minigameWave - 1 then
+            call TimerStart(t, relaxMinigameWaveTime, false, function Timer_OnExprie)
+            set relaxWaveTimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
+            call TimerDialogSetTitle(relaxWaveTimerDialog, "Миниигра") // Title of timer dialog
+            call TimerDialogDisplay(relaxWaveTimerDialog, true) // Shows timer dialog
+        else
+            call TimerStart(t, relaxArenaWaveTime, false, function Timer_OnExprie)
+            set relaxWaveTimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
+            call TimerDialogSetTitle(relaxWaveTimerDialog, "Арена") // Title of timer dialog
+            call TimerDialogDisplay(relaxWaveTimerDialog, true) // Shows timer dialog
+        endif
         
         set t = null
     endfunction
 
     private function Init takes nothing returns nothing
-        debug set relaxWaveTime = debugRelaxWaveTime
+        debug set relaxArenaWaveTime = debugRelaxWaveTime
+        debug set relaxMinigameWaveTime = debugRelaxWaveTime
     endfunction
 
 endscope
