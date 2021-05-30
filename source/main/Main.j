@@ -35,8 +35,8 @@ scope Main initializer Init
         call TriggerSleepAction(0)
         call building_selling.execute()
         
-        // Disable Damage Detection System until Fast Arena begins
-        call DisableTrigger(DDS)
+        // Disable Damage Detection System
+        // call DisableTrigger(DDS)
         
         call TriggerSleepAction(0)
         call Players_Init.execute()

@@ -41,7 +41,7 @@ scope GameSetOwner initializer Init
                 if (pdb[GameOwner].info == true) then // Checks Info flag of game owner
                     // Shows all available commands and settings
                     call DisplayTimedTextToPlayer(GameOwner, 0, 0, cmdDisplayTime, "Настройка карты доступна первые " + GREEN + I2S(R2I(settingsTimerTime)) + "|r сек.")
-                    call DisplayTimedTextToPlayer(GameOwner, 0, 0, cmdDisplayTime,  GOLD + "-time ##|r, где ## - время между раундами от 20 до 60 сек. " + "Текущий показатель: " + GREEN + I2S(R2I(relaxWaveTime)) + "|r сек.")
+                    call DisplayTimedTextToPlayer(GameOwner, 0, 0, cmdDisplayTime,  GOLD + "-time ##|r, где ## - время перед началом арены от 20 до 60 сек. " + "Текущий показатель: " + GREEN + I2S(R2I(relaxArenaWaveTime)) + "|r сек.")
                     call DisplayTimedTextToPlayer(GameOwner, 0, 0, cmdDisplayTime,  GOLD + "-arena ###|r, где ### - длительность арены от 60 сек. до 300 сек. " + "Текущий показатель: " + GREEN + I2S(R2I(arenaTimerTime)) + "|r сек.")
                     if (IsBuildingDuringWavesAllowed == true) then
                         call DisplayTimedTextToPlayer(GameOwner, 0, 0, cmdDisplayTime,  GOLD + "-build ###|r, при # = \"" + GREEN + "on|r" + "\" во время раунда можно строить и улучшать юнитов, при # = \"" + GREEN + "off|r" + "\" - нельзя. " + "Текущий показатель: " + GREEN + "on|r")

@@ -27,8 +27,8 @@ scope Commands initializer Init
             return
         endif
         if chatMessage >= 20 and chatMessage <= 60 then
-            set relaxWaveTime = chatMessage
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-time ##|r, где ## - время между раундами от 20 до 60 сек. " + "Текущий показатель: " + GREEN + I2S(R2I(relaxWaveTime)) + "|r сек.")
+            set relaxArenaWaveTime = chatMessage
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-time ##|r, где ## - время перед началом арены от 20 до 60 сек. " + "Текущий показатель: " + GREEN + I2S(R2I(relaxArenaWaveTime)) + "|r сек.")
         else
             call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает значения из следующего диапазона: " + GREEN + "20|r" + "-" + GREEN + "60|r")
         endif

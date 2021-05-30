@@ -32,6 +32,8 @@ scope FastArena initializer Init
         private constant real firePitPercentDamage = 10.00
         private real fastArenaTimerTime = 60.00
         private constant real debugFastArenaTimerTime = 10.00
+
+        boolean IsFastArena = false
     endglobals
 
     private function Conditions takes nothing returns boolean
@@ -240,7 +242,8 @@ scope FastArena initializer Init
         
         call TimerStart(CreateTimer(), 1, true, function Timer_OnTick)
         
-        call EnableTrigger(DDS)
+        set IsFastArena = true
+        // call EnableTrigger(DDS)
 
         set g_tmp = null
         set t = null
@@ -249,7 +252,8 @@ scope FastArena initializer Init
     public function Finish takes nothing returns nothing
         local integer i
 
-        call DisableTrigger(DDS)
+        set IsFastArena = false
+        // call DisableTrigger(DDS)
         call SetWinPlayer.execute()
 
         if winPlayerId != -1 then
@@ -282,7 +286,7 @@ scope FastArena initializer Init
             set unitGroup[i] = CreateGroup()
             set i = i + 1
         endloop
-        call AddDamageCondition(Condition(function OnDamage))
+        call AddDamageAction(function OnDamage)
     endfunction
 
 endscope

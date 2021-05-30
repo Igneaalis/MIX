@@ -422,8 +422,8 @@ library UnitRecycler initializer UnitRecyclerInit uses Colors, ArcingTextTag, Lo
     endfunction
     
     // Damage detection system functions...
-    function AddDamageCondition takes boolexpr b returns nothing
-        call TriggerAddCondition(DD.T, b)
+    function AddDamageAction takes code f returns nothing
+        call TriggerAddCondition(DD.T, Condition(f))
     endfunction
     
     function DoNonDetectableDamage takes unit u, widget t, real damage, boolean attack, boolean ranged, attacktype AT, damagetype DT, weapontype WT returns boolean
@@ -433,16 +433,18 @@ library UnitRecycler initializer UnitRecyclerInit uses Colors, ArcingTextTag, Lo
     endfunction
 
     private function ShowDamage takes nothing returns boolean
-        // This function is added with the AddDamageCondition() function in order to add a script that manages
+        // This function is added with the AddDamageAction() function in order to add a script that manages
         // the damaged units, in this case, it will show the damage received, just in the attack impact...
         // debug call Log((GOLD + I2S(R2I(GetEventDamage())) + "|r"))
-        call ArcingTextTag.create((GOLD + I2S(R2I(GetEventDamage())) + "|r"), GetTriggerUnit())
+        if IsFastArena then
+            call ArcingTextTag.create((GOLD + I2S(R2I(GetEventDamage())) + "|r"), GetTriggerUnit())
+        endif
         return false
     endfunction
 
     function UnitRecyclerInit takes nothing returns nothing
         set DDS = DD.T
-        call AddDamageCondition(Condition(function ShowDamage))
+        call AddDamageAction(function ShowDamage)
     endfunction
     
 endlibrary
