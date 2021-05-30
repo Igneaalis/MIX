@@ -245,7 +245,7 @@ library Weather initializer Init requires NokladrLib, UnitRecycler, Logs
             call curWeather.Init()
         endmethod
 
-        method Force takes nothing returns nothing
+        method ForceWeather takes nothing returns nothing
             call curWeather.Force()
         endmethod
     endstruct

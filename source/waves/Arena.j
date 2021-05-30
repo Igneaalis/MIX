@@ -153,7 +153,7 @@ scope Arena initializer Init
         endloop
 
         call ForForce(players, function ForPlayer)
-        call weather.Force()
+        call weather.ForceWeather()
         call TimerStart(t, arenaTimerTime, false, function Timer_OnExpire)
         set Arena_TimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
         call TimerDialogSetTitle(Arena_TimerDialog, "Арена") // Title of timer dialog
