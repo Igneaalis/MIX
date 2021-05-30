@@ -75,8 +75,7 @@ scope Arena initializer Init
         local unit castle = CreateUnitEx(p, castleRC, x, y, 270)
 
         call GroupAddUnit(castles, castle)
-
-        call weather.Force()
+        call SetPlayerState(p, PLAYER_STATE_GIVES_BOUNTY, 1)
 
         set g = GetUnitsOfPlayerMatching(p, Condition(function Conditions))
         call ForGroup(g, function ForPlayerUnits)
@@ -154,6 +153,7 @@ scope Arena initializer Init
         endloop
 
         call ForForce(players, function ForPlayer)
+        call weather.Force()
         call TimerStart(t, arenaTimerTime, false, function Timer_OnExpire)
         set Arena_TimerDialog = CreateTimerDialog(t) // Timer dialog in upper-left corner
         call TimerDialogSetTitle(Arena_TimerDialog, "Арена") // Title of timer dialog

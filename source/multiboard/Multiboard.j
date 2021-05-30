@@ -91,18 +91,21 @@ scope MIXMultiboard
         local player firstLeader = null
         local player secondLeader = null
         
-        if CountPlayersInForceBJ(leaders) == 0 then
-            set mbstruct.title = "Первое сражение за лидерство. Волна #" + I2S(curWave)
-        elseif CountPlayersInForceBJ(leaders) == 1 then
-            set firstLeader = ForcePickRandomPlayer(leaders)
-            set mbstruct.title = "Абсолютный лидер: " + C_IntToColor(GetPlayerId(firstLeader)) + GetPlayerName(firstLeader) + "|r Волна #" + I2S(curWave)
-        else
-            set firstLeader = ForcePickRandomPlayer(leaders)
-            set secondLeader = firstLeader
-            while firstLeader == secondLeader
-                set secondLeader = ForcePickRandomPlayer(leaders)
-            endwhile
-            set mbstruct.title = "Лидеры: " + C_IntToColor(GetPlayerId(firstLeader)) + GetPlayerName(firstLeader) + "|r и " + C_IntToColor(GetPlayerId(secondLeader)) + GetPlayerName(secondLeader) + "|r Волна #" + I2S(curWave)
+        if IsLeadersUpdateRequired then
+            if CountPlayersInForceBJ(leaders) == 0 then
+                set mbstruct.title = "Первое сражение за лидерство. Волна #" + I2S(curWave)
+            elseif CountPlayersInForceBJ(leaders) == 1 then
+                set firstLeader = ForcePickRandomPlayer(leaders)
+                set mbstruct.title = "Абсолютный лидер: " + C_IntToColor(GetPlayerId(firstLeader)) + GetPlayerName(firstLeader) + "|r Волна #" + I2S(curWave)
+            else
+                set firstLeader = ForcePickRandomPlayer(leaders)
+                set secondLeader = firstLeader
+                while firstLeader == secondLeader
+                    set secondLeader = ForcePickRandomPlayer(leaders)
+                endwhile
+                set mbstruct.title = "Лидеры: " + C_IntToColor(GetPlayerId(firstLeader)) + GetPlayerName(firstLeader) + "|r и " + C_IntToColor(GetPlayerId(secondLeader)) + GetPlayerName(secondLeader) + "|r Волна #" + I2S(curWave)
+            endif
+            set IsLeadersUpdateRequired = false
         endif
             
         set mb[p].kills = pdb[p].kills

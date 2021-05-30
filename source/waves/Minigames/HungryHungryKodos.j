@@ -128,14 +128,19 @@ scope MinigameHungryHungryKodos initializer Init
     endfunction
 
     private function Kodo_OnDeath takes nothing returns nothing
-        local unit kodo = GetTriggerUnit()
-        local player kodoOwner = GetOwningPlayer(kodo)
+        local unit u = GetTriggerUnit()
+        local unit kodo
+        local player kodoOwner
         local player winner
 
-        if GetUnitTypeId(kodo) != 'o000' then
+        if GetUnitTypeId(u) != kodoTypeId then
             set kodo = null
+            set u = null
             return
         endif
+
+        set kodo = u
+        set kodoOwner = GetOwningPlayer(kodo)
 
         if minigameNumberOfActingPlayers == 1 then  // If player is the last man standing
             set winner = kodoOwner
@@ -160,6 +165,7 @@ scope MinigameHungryHungryKodos initializer Init
             call MinigameWaves_FinishMinigame.execute()
         endif
 
+        set u = null
         set kodo = null
         set kodoOwner = null
         set winner = null
@@ -207,10 +213,12 @@ scope MinigameHungryHungryKodos initializer Init
             call ForForce(players, function ForPlayer)
             call TimerStart(t, 3., true, function Timer_OnTick)
             set IsMinigameFinished = false
+            call DisableTrigger(DDS)
         endmethod
 
         method Finish takes nothing returns nothing
             call PauseTimer(t)
+            call EnableTrigger(DDS)
             if IsMinigameFinished == false then
                 if minigameNumberOfActingPlayers > 1 then
                     call RewardAllRemainingPlayers()

@@ -74,14 +74,19 @@ scope FastArena initializer Init
     endfunction
 
     private function OnDamage takes nothing returns boolean
-        local player sourcePlayer = GetOwningPlayer(GetEventDamageSource())
-        local integer sourcePlayerId = GetPlayerId(sourcePlayer)
-        local player targetPlayer = GetOwningPlayer(BlzGetEventDamageTarget())
+        local player sourcePlayer
+        local integer sourcePlayerId
+        local player targetPlayer
 
-        if (sourcePlayer != targetPlayer and targetPlayer != Player(27) and sourcePlayer != Player(27)) then
-            set damageByPlayer[sourcePlayerId] = damageByPlayer[sourcePlayerId] + GetEventDamage()
-        else
-            debug set damageByPlayer[sourcePlayerId] = damageByPlayer[sourcePlayerId] + GetEventDamage()
+        if IsFastArena then
+            set sourcePlayer = GetOwningPlayer(GetEventDamageSource())
+            set sourcePlayerId = GetPlayerId(sourcePlayer)
+            set targetPlayer = GetOwningPlayer(BlzGetEventDamageTarget())
+            if (sourcePlayer != targetPlayer and targetPlayer != Player(27) and sourcePlayer != Player(27)) then
+                set damageByPlayer[sourcePlayerId] = damageByPlayer[sourcePlayerId] + GetEventDamage()
+            else
+                debug set damageByPlayer[sourcePlayerId] = damageByPlayer[sourcePlayerId] + GetEventDamage()
+            endif
         endif
 
         set sourcePlayer = null
@@ -97,7 +102,11 @@ scope FastArena initializer Init
     private function FirePitDoDamage takes nothing returns nothing
         // TODO: добавить негорящие типы
         if (GetUnitLifePercent(GetEnumUnit()) > firePitPercentDamage) then
-            call SetUnitLifePercentBJ(GetEnumUnit(),(GetUnitLifePercent(GetEnumUnit()) - firePitPercentDamage))
+            if GetUnitLifePercent(GetEnumUnit()) - firePitPercentDamage > 0 then
+                call SetUnitLifePercentBJ(GetEnumUnit(),(GetUnitLifePercent(GetEnumUnit()) - firePitPercentDamage))
+            else
+                call KillUnitEx(GetEnumUnit())
+            endif
         endif
     endfunction
 

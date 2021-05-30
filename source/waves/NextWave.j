@@ -22,6 +22,7 @@ scope NextWave initializer Init
         boolean WasItMinigameWave = false
         real relaxArenaWaveTime = 30.00
         real relaxMinigameWaveTime = 7.00
+        boolean IsLeadersUpdateRequired = true
         private constant real debugRelaxWaveTime = 5.00
     endglobals
 
@@ -94,6 +95,7 @@ scope NextWave initializer Init
         call ForceAddPlayer(leaders, playerPointsLeader)
         set pdb[playerPointsLeader].leaderWins = pdb[playerPointsLeader].leaderWins + 1
         call GroupAddUnit(leadersDummyUnits, CreateUnitEx(playerPointsLeader, leadersDummyTypeId, GetPlayerStartLocationX(playerPointsLeader), GetPlayerStartLocationY(playerPointsLeader), 0))
+        set IsLeadersUpdateRequired = true
 
         set p = null
         set playerKillsLeader = null
@@ -160,6 +162,8 @@ scope NextWave initializer Init
             call DisplayTimedTextToPlayer(ticket_list[i], 0, 0, 10, GREEN + "Билет|r:")
             call DisplayTimedTextToPlayer(ticket_list[i], 0, 0, 10, "Прибыль золота: " + GOLD + I2S(ticketGoldReward) + "|r")
             call DisplayTimedTextToPlayer(ticket_list[i], 0, 0, 10, "Прибыль самоцветов: " + VIOLET + I2S(ticketGemsReward) + "|r")
+
+            set ticket_list[i] = null
         endfor
     endfunction
 

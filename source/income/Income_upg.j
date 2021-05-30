@@ -187,6 +187,7 @@ scope IncomeUpgrade initializer Init
         endif
 
         if prevPlayerNumber > 0 then
+            set ticket_list[prevPlayerNumber] = null
             for i = prevPlayerNumber to max_ticket_list - 2
                 set ticket_list[i] = ticket_list[i + 1]
             endfor
@@ -198,6 +199,10 @@ scope IncomeUpgrade initializer Init
         endfor
 
         set ticket_list[0] = p
+
+        for i = 0 to max_ticket_list - 1
+            call Log(I2S(i) + " - " + GetPlayerName(ticket_list[i]))
+        endfor
     endfunction
 
     // Действие улучшения Драгоценные камни
