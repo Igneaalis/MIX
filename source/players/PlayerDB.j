@@ -50,13 +50,13 @@ library PlayerDBLib initializer Init  // Library by Nokladr special for MIX Comm
 
         method operator result takes nothing returns real
             local real result = 0
-            set result = result + GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) / 250
+            set result = result + GetPlayerState(p, PLAYER_STATE_RESOURCE_GOLD) / 25
             set result = result + GetPlayerState(p, PLAYER_STATE_RESOURCE_LUMBER) * 0.2
             set result = result + kills * 0.2 * (1 + 0.1 * GetPlayerTechCount(p, pointsForKillsRC, true))
             set result = result + upgrades * 2
-            set result = result + castlesDestroyed * 12.5
+            set result = result + castlesDestroyed * 25
             set result = result + (points - incomeObjectsPoints) * leaderWinsCoeff * IMinBJ(1, leaderWins)
-            set result = result + incomeObjectsPoints * (1 + 0.2 * GetPlayerTechCountSimple('R029', p))  // Лидерство
+            set result = result + incomeObjectsPoints * 0.2 * (1 + 0.2 * GetPlayerTechCountSimple('R029', p))  // Лидерство
             return result
         endmethod
     endstruct
