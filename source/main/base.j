@@ -256,6 +256,7 @@ trigger gg_trg_change_set= null
 trigger gg_trg_footman_activate= null
 trigger gg_trg_foorman_delete= null
 trigger gg_trg_footman_effect= null
+trigger gg_trg_Magic_Immunity= null
 trigger gg_trg_assassin= null
 trigger gg_trg_banshi= null
 trigger gg_trg_ghost= null
@@ -2220,6 +2221,27 @@ function InitTrig_change_set takes nothing returns nothing
     call TriggerRegisterAnyUnitEventBJ(gg_trg_change_set, EVENT_PLAYER_UNIT_SPELL_EFFECT)
     call TriggerAddCondition(gg_trg_change_set, Condition(function Trig_change_set_Conditions))
     call TriggerAddAction(gg_trg_change_set, function Trig_change_set_Actions)
+endfunction
+
+//===========================================================================
+// Trigger: Magic Immunity
+//===========================================================================
+function Trig_Magic_Immunity_Conditions takes nothing returns boolean
+    if ( not ( GetResearched() == 'R02X' ) ) then
+        return false
+    endif
+    return true
+endfunction
+
+function Trig_Magic_Immunity_Actions takes nothing returns nothing
+endfunction
+
+//===========================================================================
+function InitTrig_Magic_Immunity takes nothing returns nothing
+    set gg_trg_Magic_Immunity=CreateTrigger()
+    call TriggerRegisterAnyUnitEventBJ(gg_trg_Magic_Immunity, EVENT_PLAYER_UNIT_RESEARCH_FINISH)
+    call TriggerAddCondition(gg_trg_Magic_Immunity, Condition(function Trig_Magic_Immunity_Conditions))
+    call TriggerAddAction(gg_trg_Magic_Immunity, function Trig_Magic_Immunity_Actions)
 endfunction
 
 //===========================================================================
@@ -5118,6 +5140,7 @@ function InitCustomTriggers takes nothing returns nothing
     call InitTrig_builder_left()
     call InitTrig_mediv_select()
     call InitTrig_change_set()
+    call InitTrig_Magic_Immunity()
     call InitTrig_assassin()
     call InitTrig_banshi()
     call InitTrig_ghost()

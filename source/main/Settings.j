@@ -20,9 +20,10 @@ scope Settings initializer Init
         constant integer baseGems = 22   // Кол-во гемов в начале игры
 
         real settingsTimerTime = 60.00
-        private constant real debugSettingsTimerTime = 8.00
+        private constant real debugSettingsTimerTime = 30.00
 
         boolean IsBuildingDuringWavesAllowed = true
+        constant boolean debugUnitTest = false
     endglobals
 
     private function Init takes nothing returns nothing

@@ -23,15 +23,20 @@ function faq_start_timer_actions takes nothing returns nothing
 endfunction
 
 function faq_start takes nothing returns nothing
-    local timer t = CreateTimer()
+    local timer t
     
-    call TimerStart(t, settingsTimerTime, false, function faq_start_timer_actions) // After settings were set
+    static if debugUnitTest then
+        debug call Log("Debug unit test enabled!")
+    else
+        set t = CreateTimer()
+        call TimerStart(t, settingsTimerTime, false, function faq_start_timer_actions) // After settings were set
 
-    set faq_timerdialog = CreateTimerDialog(t) // Timer dialog in upper-left corner for commands and settings
-    call TimerDialogSetTitle(faq_timerdialog, "Настройка карты") // Title of timer dialog
-    call TimerDialogDisplay(faq_timerdialog, true) // Shows timer dialog
+        set faq_timerdialog = CreateTimerDialog(t) // Timer dialog in upper-left corner for commands and settings
+        call TimerDialogSetTitle(faq_timerdialog, "Настройка карты") // Title of timer dialog
+        call TimerDialogDisplay(faq_timerdialog, true) // Shows timer dialog
 
-    call GameSetOwner_SetOwner.execute() // Sets owner of game
+        call GameSetOwner_SetOwner.execute() // Sets owner of game
+    endif
 
     set t = null
 endfunction

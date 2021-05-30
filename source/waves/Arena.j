@@ -20,11 +20,35 @@ scope Arena initializer Init
         timerdialog Arena_TimerDialog
         
         real arenaTimerTime = 120.00
-        private constant real debugArenaTimerTime = 30.00
+        private constant real debugArenaTimerTime = 60.00
+
+        private constant integer dryadTypeId = 'ha1L'
+        private constant integer faerieTypeId = 'ha1M'
+        private constant integer wagon1TypeId = 'ha12'
+        private constant integer wagon2TypeId = 'ha13'
+        private constant integer wagon3TypeId = 'ha14'
+        private constant integer ballistaTypeId = 'ha1P'
+        private constant integer gyrocopter1TypeId = 'ha0U'
+        private constant integer gyrocopter2TypeId = 'ha0V'
+        private constant integer gyrocopter3TypeId = 'ha0W'
+        private constant integer magicImmunityTechId = 'R02X'
+        private constant integer magicImmunityAbilityIconTypeId = 'A041'
+        private constant integer magicImmunityAbilityTypeId = 'ACmi'
     endglobals
 
     private function Conditions takes nothing returns boolean
         return IsUnitInGroup(GetFilterUnit(), buildings)
+    endfunction
+
+    private function GiveMagicImmunity takes nothing returns nothing
+        local unit u = GetEnumUnit()
+        local integer unitTypeId = GetUnitTypeId(u)
+
+        if unitTypeId == dryadTypeId or unitTypeId == faerieTypeId or unitTypeId == wagon1TypeId or unitTypeId == wagon2TypeId or unitTypeId == wagon3TypeId or unitTypeId == ballistaTypeId or unitTypeId == gyrocopter1TypeId or unitTypeId == gyrocopter2TypeId or unitTypeId == gyrocopter3TypeId then
+            call UnitRemoveAbility(u, magicImmunityAbilityIconTypeId)
+            call UnitAddAbility(u, magicImmunityAbilityTypeId)
+        endif
+        set u = null
     endfunction
 
     private function ForPlayerUnits takes nothing returns nothing
@@ -32,12 +56,15 @@ scope Arena initializer Init
         local unit u = GetEnumUnit()
         local real x = GetRectCenterX(startRectForPlayer[GetPlayerId(p)])
         local real y = GetRectCenterY(startRectForPlayer[GetPlayerId(p)])
+        local integer curUnitTypeId = GetUnitTypeId(u) + unitTypeIdOffset
+        local unit createdUnit = CreateUnitEx(p, curUnitTypeId, x, y, 270)
         // debug call Log(I2S('h008') + " / " + I2S('ha08') + " / " + I2S('ha08' - 'h008') + " / " + I2S(offset))
-        call GroupAddUnit(waveUnits, CreateUnitEx(p, (GetUnitTypeId(u) + unitTypeIdOffset), x, y, 270))
+        call GroupAddUnit(waveUnits, createdUnit)
         // debug call Log("ForceArena_ForPlayerUnits: unit = " + GetUnitName(u))
 
         set p = null
         set u = null
+        set createdUnit = null
     endfunction
 
     private function ForPlayer takes nothing returns nothing
@@ -53,6 +80,9 @@ scope Arena initializer Init
 
         set g = GetUnitsOfPlayerMatching(p, Condition(function Conditions))
         call ForGroup(g, function ForPlayerUnits)
+        if GetPlayerTechCountSimple(magicImmunityTechId, p) > 0 then
+            call ForGroup(GetUnitsOfPlayerAll(p), function GiveMagicImmunity)
+        endif
 
         call PanCameraToTimedForPlayer(p, x, y, 1)
         call CinematicFadeBJ(bj_CINEFADETYPE_FADEOUTIN, 2, "ReplaceableTextures\\CameraMasks\\White_mask.blp", 0, 0, 0, 0)
