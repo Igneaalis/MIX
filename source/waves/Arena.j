@@ -20,7 +20,7 @@ scope Arena initializer Init
         timerdialog Arena_TimerDialog
         
         real arenaTimerTime = 120.00
-        private constant real debugArenaTimerTime = 60.00
+        private constant real debugArenaTimerTime = 10.00
 
         private constant integer dryadTypeId = 'ha1L'
         private constant integer faerieTypeId = 'ha1M'

@@ -121,6 +121,10 @@ scope Commands initializer Init
         set p = null
     endfunction
 
+    private function Command_uptime takes nothing returns nothing
+        call Log(I2S(GetTimeInSeconds()))
+    endfunction
+
     //! runtextmacro CreateCommand("info")
     //! runtextmacro CreateCommand("time")
     //! runtextmacro CreateCommand("arena")
@@ -128,6 +132,7 @@ scope Commands initializer Init
     //! runtextmacro CreateCommand("point")
     //! runtextmacro CreateCommand("mgw")
     //! runtextmacro CreateCommand("final")
+    //! runtextmacro CreateCommand("uptime")
     
     private function Init takes nothing returns nothing
         call Command_info_Init()
@@ -137,6 +142,7 @@ scope Commands initializer Init
         call Command_point_Init()
         call Command_mgw_Init()
         call Command_final_Init()
+        call Command_uptime_Init()
     endfunction
     
 endscope

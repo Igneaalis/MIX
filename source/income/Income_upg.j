@@ -117,8 +117,8 @@ scope IncomeUpgrade initializer Init
         call AddGemsToPlayer(lumber, p)
         
         call DisplayTimedTextToPlayer(p, 0, 0, 10, GREEN + "Вложение в игрока|r:")
-        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Доход золота: " + GOLD + I2S(gold) + "|r")
-        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Доход самоцветов: " + VIOLET + I2S(lumber) + "|r")
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль золота: " + GOLD + I2S(gold) + "|r")
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль самоцветов: " + VIOLET + I2S(lumber) + "|r")
         // !!! Найти причину, зачем увеличивается лвл улучшения Подождите 5 минут
         call SetPlayerTechResearched(p, wait_five_minutes_rc, count_research)
         // ----------------------------------------------------------------------
@@ -174,12 +174,30 @@ scope IncomeUpgrade initializer Init
     // Смещает все элементы массива на один вверх, последний пропадает, на первый слот ставится игрок p
     function Trig_income_upg_actions_ticket takes player p returns nothing
         local integer i = max_ticket_list - 1
-        loop
-            exitwhen i < 1
+        local integer prevPlayerNumber = -1
+
+        for i = 0 to max_ticket_list - 1
+            if ticket_list[i] == p then
+                set prevPlayerNumber = i
+            endif
+        endfor
+
+        if prevPlayerNumber == 0 then
+            return
+        endif
+
+        if prevPlayerNumber > 0 then
+            for i = prevPlayerNumber to max_ticket_list - 2
+                set ticket_list[i] = ticket_list[i + 1]
+            endfor
+            set ticket_list[max_ticket_list - 1] = null
+        endif
+
+        for i = max_ticket_list - 1 downto 1
             set ticket_list[i] = ticket_list[i - 1]
-            set i = i - 1
-        endloop
-        set  ticket_list[0] = p
+        endfor
+
+        set ticket_list[0] = p
     endfunction
 
     // Действие улучшения Драгоценные камни

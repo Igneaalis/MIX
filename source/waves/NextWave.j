@@ -132,6 +132,37 @@ scope NextWave initializer Init
         set p = null
     endfunction
 
+    private function ReceiveTicketRewards takes nothing returns nothing
+        local integer i = 0
+        local integer ticketGold = 0
+        local integer ticketGems = 0
+        local integer ticketTotalResources = 0
+        local integer curPlayerGold = 0
+        local integer curPlayerGems = 0
+        local integer ticketGoldReward = 0
+        local integer ticketGemsReward = 0
+
+        for i = 0 to 7
+            if (GetPlayerSlotState(Player(i)) == PLAYER_SLOT_STATE_PLAYING) then
+                set curPlayerGold = GetPlayerState(Player(i), PLAYER_STATE_RESOURCE_GOLD)
+                set curPlayerGems = GetPlayerState(Player(i), PLAYER_STATE_RESOURCE_LUMBER)
+                set ticketTotalResources = ticketTotalResources + curPlayerGold + curPlayerGems * 10
+            endif
+        endfor
+
+        for i = 0 to max_ticket_list - 1
+            set ticketGoldReward = R2I(ticketTotalResources * 0.9 * (0.05 - i*0.01))
+            set ticketGemsReward = R2I(ticketTotalResources * 0.01 * (0.05 - i*0.01))
+
+            call AddGoldToPlayer(ticketGoldReward, ticket_list[i])
+            call AddGemsToPlayer(ticketGemsReward, ticket_list[i])
+
+            call DisplayTimedTextToPlayer(ticket_list[i], 0, 0, 10, GREEN + "Билет|r:")
+            call DisplayTimedTextToPlayer(ticket_list[i], 0, 0, 10, "Прибыль золота: " + GOLD + I2S(ticketGoldReward) + "|r")
+            call DisplayTimedTextToPlayer(ticket_list[i], 0, 0, 10, "Прибыль самоцветов: " + VIOLET + I2S(ticketGemsReward) + "|r")
+        endfor
+    endfunction
+
     private function ForPlayer_AtArenaWaveEnd takes nothing returns nothing
         local player p = GetEnumPlayer()
         local integer i = 0
@@ -141,6 +172,8 @@ scope NextWave initializer Init
 
         call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль золота: " + GOLD + I2S(pdb[p].incomeGold) + "|r")
         call DisplayTimedTextToPlayer(p, 0, 0, 10, "Прибыль самоцветов: " + VIOLET + I2S(pdb[p].incomeGems) + "|r")
+
+        call ReceiveTicketRewards()
 
         set p = null
     endfunction

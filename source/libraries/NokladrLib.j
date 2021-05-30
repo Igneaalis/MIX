@@ -1,6 +1,7 @@
 library NokladrLib uses Colors, Logs, optional UnitRecycler  // Library by Nokladr https://github.com/Igneaalis/MIX
     globals
         integer array time[3] // time[0] - секунды, time[1] - минуты, time[2] - часы
+        timer Global_Timer = CreateTimer()
     endglobals
 
     // Отображает сообщение об ошибке
@@ -82,8 +83,7 @@ library NokladrLib uses Colors, Logs, optional UnitRecycler  // Library by Nokla
 
     // Инициализация счётчика времени
     function StartInitTimer takes nothing returns nothing
-        local timer t = CreateTimer()
-        call TimerStart(t, 1., true, function C_StartCount)
+        call TimerStart(Global_Timer, 1, true, function C_StartCount)
     endfunction
 
     // Возвращает состояние счётчика времени в секундах

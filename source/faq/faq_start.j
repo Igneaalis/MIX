@@ -25,6 +25,8 @@ endfunction
 function faq_start takes nothing returns nothing
     local timer t
     
+    call StartInitTimer.execute()
+    
     static if debugUnitTest then
         debug call Log("Debug unit test enabled!")
     else

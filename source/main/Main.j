@@ -28,9 +28,6 @@ scope Main initializer Init
         // NokladrLib.j
         call TriggerSleepAction(0)
         call C_SetComputers.execute()
-        
-        call TriggerSleepAction(0)
-        call StartInitTimer.execute()
 
         call TriggerSleepAction(0)
         call building_selling.execute()
