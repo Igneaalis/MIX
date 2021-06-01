@@ -963,64 +963,6 @@ endfunction
 //***************************************************************************
 
 //===========================================================================
-// Trigger: cmd clear
-//===========================================================================
-function Trig_cmd_clear_Actions takes nothing returns nothing
-    call ClearTextMessagesBJ(GetForceOfPlayer(GetTriggerPlayer()))
-endfunction
-
-//===========================================================================
-function InitTrig_cmd_clear takes nothing returns nothing
-    set gg_trg_cmd_clear=CreateTrigger()
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(0), "-clear", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(0), "-c", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(0), "-с", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(1), "-clear", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(1), "-c", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(1), "-с", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(2), "-clear", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(2), "-c", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(2), "-с", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(3), "-clear", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(3), "-c", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(3), "-с", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(4), "-clear", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(4), "-c", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(4), "-с", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(5), "-clear", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(5), "-c", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(5), "-с", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(6), "-c", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(6), "-clear", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(6), "-с", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(7), "-c", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(7), "-clear", true)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_clear, Player(7), "-с", true)
-    call TriggerAddAction(gg_trg_cmd_clear, function Trig_cmd_clear_Actions)
-endfunction
-
-//===========================================================================
-// Trigger: cmd zoom
-//===========================================================================
-function Trig_cmd_zoom_Actions takes nothing returns nothing
-    call SetCameraField(CAMERA_FIELD_TARGET_DISTANCE, S2R(SubString(GetEventPlayerChatString(), 6, 13)), 1)
-endfunction
-
-//===========================================================================
-function InitTrig_cmd_zoom takes nothing returns nothing
-    set gg_trg_cmd_zoom=CreateTrigger()
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_zoom, Player(0), "-zoom", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_zoom, Player(1), "-zoom", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_zoom, Player(2), "-zoom", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_zoom, Player(3), "-zoom", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_zoom, Player(4), "-zoom", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_zoom, Player(5), "-zoom", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_zoom, Player(6), "-zoom", false)
-    call TriggerRegisterPlayerChatEvent(gg_trg_cmd_zoom, Player(7), "-zoom", false)
-    call TriggerAddAction(gg_trg_cmd_zoom, function Trig_cmd_zoom_Actions)
-endfunction
-
-//===========================================================================
 // Trigger: unit resources
 //===========================================================================
 function Trig_unit_resources_Func001C takes nothing returns boolean
@@ -5130,8 +5072,6 @@ endfunction
 
 //===========================================================================
 function InitCustomTriggers takes nothing returns nothing
-    call InitTrig_cmd_clear()
-    call InitTrig_cmd_zoom()
     call InitTrig_unit_resources()
     call InitTrig_upgrade_def_and_dmg()
     call InitTrig_income_effects()

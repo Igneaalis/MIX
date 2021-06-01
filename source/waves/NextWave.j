@@ -64,7 +64,7 @@ scope NextWave initializer Init
     private function ForPlayer_PanCamera takes nothing returns nothing
         local player p = GetEnumPlayer()
 
-        call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, p, 0)
+        // call CameraSetupApplyForPlayer(true, gg_cam_Camera_003, p, 0)
         call PanCameraToTimedLocForPlayer(p, GetPlayerStartLocationLoc(p), 0) // Focuses camera at castle you own
 
         set p = null

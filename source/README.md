@@ -168,10 +168,9 @@ ___
 
 #### PlayerStruct fields
 
-- private player p
-- real leaderCoeff
+- static real leaderWinsCoeff = 1/3
 - integer leaderWins
-- integer arenaWins
+- integer fastArenaWins
 - integer changeSet
 - integer incomeGold
 - integer incomeGems
@@ -186,6 +185,9 @@ ___
 - integer kills
 - integer upgrades
 - integer castlesDestroyed
+- integer curWaveCastlesDestroyed
+- integer curWaveIncomeObjectsCaptured
+- real incomeObjectsPoints
 - real points
 
 #### PlayerStruct methods

@@ -22,7 +22,7 @@ library PlayerDBLib initializer Init  // Library by Nokladr special for MIX Comm
 
         static real leaderWinsCoeff = 1/3
         integer leaderWins = 0
-        integer arenaWins = 0
+        integer fastArenaWins = 0
         integer changeSet = 3
         integer incomeGold = 240
         integer incomeGems = 8
@@ -33,7 +33,7 @@ library PlayerDBLib initializer Init  // Library by Nokladr special for MIX Comm
         integer incomeFlagGold = 1
         integer incomeFlagPoints = 1
         real incomePoints = 0
-        boolean info = true // показывать команды/полезную инфу
+        boolean info = true  // показывать команды/полезную инфу
         integer kills = 0
         integer upgrades = 0
         integer castlesDestroyed = 0

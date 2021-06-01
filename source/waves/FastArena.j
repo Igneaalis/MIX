@@ -154,6 +154,7 @@ scope FastArena initializer Init
 
         set g_tmp = GetUnitsInRectAll(gg_rct_fastarena)
         if timerTime <= 0 or CountUnitsInGroup(g_tmp) == 0 then
+            call DestroyTimerDialog(td)
             call PauseTimer(t)
             call DestroyTimer(t)
             call FastArena_Finish.execute()
@@ -247,7 +248,7 @@ scope FastArena initializer Init
         call TimerStart(CreateTimer(), 1, true, function Timer_OnTick)
         
         set IsFastArena = true
-        // call EnableTrigger(DDS)
+        call EnableTrigger(DDS)
 
         set g_tmp = null
         set t = null
@@ -257,7 +258,7 @@ scope FastArena initializer Init
         local integer i
 
         set IsFastArena = false
-        // call DisableTrigger(DDS)
+        call DisableTrigger(DDS)
         call SetWinPlayer.execute()
 
         if winPlayerId != -1 then
@@ -267,7 +268,7 @@ scope FastArena initializer Init
                 endif
             endfor
             set pdb[Player(winPlayerId)].points = pdb[Player(winPlayerId)].points + 50
-            set pdb[Player(winPlayerId)].arenaWins = pdb[Player(winPlayerId)].arenaWins + 1
+            set pdb[Player(winPlayerId)].fastArenaWins = pdb[Player(winPlayerId)].fastArenaWins + 1
         else
             for i = 0 to maxNumberOfPlayers - 1
                 if (pdb[Player(i)].info == true) then

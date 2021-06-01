@@ -125,6 +125,44 @@ scope Commands initializer Init
         call Log(I2S(GetTimeInSeconds()))
     endfunction
 
+    private function Command_zoom takes nothing returns nothing
+        local integer chatMessage = S2I(SubString(GetEventPlayerChatString(), 6, 10))
+        local player p = GetTriggerPlayer()
+
+        call SetCameraFieldForPlayer(p, CAMERA_FIELD_TARGET_DISTANCE, chatMessage, 0.5)
+
+        set p = null
+    endfunction
+
+    private function Command_cam takes nothing returns nothing
+        local integer chatMessage = S2I(SubString(GetEventPlayerChatString(), 5, 9))
+        local player p = GetTriggerPlayer()
+
+        call SetCameraFieldForPlayer(p, CAMERA_FIELD_TARGET_DISTANCE, chatMessage, 0.5)
+
+        set p = null
+    endfunction
+
+    private function Command_c takes nothing returns nothing
+        local player p = GetTriggerPlayer()
+
+        if (GetLocalPlayer() == p) then
+            call ClearTextMessages()
+        endif
+
+        set p = null
+    endfunction
+
+    private function Command_clear takes nothing returns nothing
+        local player p = GetTriggerPlayer()
+
+        if (GetLocalPlayer() == p) then
+            call ClearTextMessages()
+        endif
+
+        set p = null
+    endfunction
+
     //! runtextmacro CreateCommand("info")
     //! runtextmacro CreateCommand("time")
     //! runtextmacro CreateCommand("arena")
@@ -133,6 +171,10 @@ scope Commands initializer Init
     //! runtextmacro CreateCommand("mgw")
     //! runtextmacro CreateCommand("final")
     //! runtextmacro CreateCommand("uptime")
+    //! runtextmacro CreateCommand("zoom")
+    //! runtextmacro CreateCommand("cam")
+    //! runtextmacro CreateCommand("c")
+    //! runtextmacro CreateCommand("clear")
     
     private function Init takes nothing returns nothing
         call Command_info_Init()
@@ -142,7 +184,10 @@ scope Commands initializer Init
         call Command_point_Init()
         call Command_mgw_Init()
         call Command_final_Init()
-        call Command_uptime_Init()
+        call Command_zoom_Init()
+        call Command_cam_Init()
+        call Command_c_Init()
+        call Command_clear_Init()
     endfunction
     
 endscope

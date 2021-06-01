@@ -109,6 +109,7 @@ scope Arena initializer Init
         call DestroyTimerDialog(Arena_TimerDialog)
         call PauseTimer(t)
         call DestroyTimer(t)
+        call DisableTrigger(DDS)
         call FastArena_Force.execute()
 
         set t = null
@@ -124,6 +125,7 @@ scope Arena initializer Init
         set curWaveWithMinigames = curWaveWithMinigames + 1
         call Flush.execute()
         call IncomeObjects_Shuffle.execute()
+        call EnableTrigger(DDS)
 
         set i = 0
         loop
