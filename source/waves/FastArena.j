@@ -139,21 +139,25 @@ scope FastArena initializer Init
         set timerTime = fastArenaTimerTime
     endfunction
 
+    private function ForUnit_IsUnitAlive takes nothing returns boolean
+        return IsUnitAliveBJ(GetFilterUnit())
+    endfunction
+
     private function Timer_OnTick takes nothing returns nothing
         local timer t = GetExpiredTimer()
-        local group g_tmp
+        local group g
 
         set timerTime = timerTime - 1
 
-        set g_tmp = GetUnitsInRectAll(gg_rct_fastarenaFIRE)
-        call ForGroup(g_tmp, function FirePitDoDamage)
+        set g = GetUnitsInRectAll(gg_rct_fastarenaFIRE)
+        call ForGroup(g, function FirePitDoDamage)
 
         if timerTime <= 5 and timerTime > 0 then
             call StartSound(gg_snd_BattleNetTick)
         endif
 
-        set g_tmp = GetUnitsInRectAll(gg_rct_fastarena)
-        if timerTime <= 0 or CountUnitsInGroup(g_tmp) == 0 then
+        set g = GetUnitsInRectMatching(gg_rct_fastarena, function ForUnit_IsUnitAlive)
+        if timerTime <= 0 or CountUnitsInGroup(g) == 0 then
             call DestroyTimerDialog(td)
             call PauseTimer(t)
             call DestroyTimer(t)
@@ -161,8 +165,8 @@ scope FastArena initializer Init
         endif
 
         set t = null
-        call DestroyGroup(g_tmp)
-        set g_tmp = null
+        call DestroyGroup(g)
+        set g = null
     endfunction
 
     private function Timer_OnExpire takes nothing returns nothing
