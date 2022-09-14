@@ -30,7 +30,7 @@ if ($Config.WarcraftPath -match "\b\w[:]((\\|\/)(\w|\d|[ ])*)*\b") {
     if ($debug) {
         $JassHelperArgs = "--debug" + " " + $JassHelperArgs
     }
-    Start-Process -FilePath "$pwd\tools\JassHelper1.32\clijasshelper.exe" -ArgumentList $JassHelperArgs -NoNewWindow -Wait
+    Start-Process -FilePath "$pwd\tools\Glowackos-Cohadar-JassHelper\clijasshelper.exe" -ArgumentList $JassHelperArgs -NoNewWindow -Wait
     if ($worldeditor) {
         if ($Config.WorldEditorPath -match "\b\w[:]((\\|\/)(\w|\d|[ ])*)*\b") {
             Start-Process -FilePath $Config.WorldEditorPath -ArgumentList "-launch", "-loadfile", "$pwd\output\MIX.w3x"
