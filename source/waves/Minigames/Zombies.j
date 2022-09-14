@@ -137,6 +137,8 @@ scope MinigameZombies initializer Init
         real y = 0
 
         method Fire takes nothing returns nothing
+            call TriggerExecute(gg_trg_wave_friends_on)
+            call FadeMap()
             call TriggerExecute(gg_trg_zombie_ini_start)
             call ForForce(players, function ForPlayer_AtStart)
             call TimerStart(CreateTimer(), 30, false, function StartZombieSpawn)
@@ -149,6 +151,8 @@ scope MinigameZombies initializer Init
             local integer i = 0
 
             call PauseTimer(t)
+            call UnfadeMap()
+            call TriggerExecute(gg_trg_wave_friends_off)
             call ForForce(players, function ForPlayer_SwitchAllianceOffTowardPlayer11)
             if CountUnitsInGroup(peasants) > 1 then
                 call ForForce(minigameActingPlayers, function RewardAllWinners)

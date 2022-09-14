@@ -7,7 +7,7 @@ $SourceFolder = "$pwd/source/*"
 $OutputFolder = "$pwd/output"
 $OutputFile = "$pwd/output/raw_war3map.j"
 $SourceFiles = Get-ChildItem -Path $SourceFolder -Recurse -Include *.j -Exclude Blizzard.j, common.j, war3map.j, base.j
-$JassHelperArgs = "$pwd\tools\common.j", "$pwd\tools\Blizzard.j", "$pwd\output\raw_war3map.j", "$pwd\output\MIX.w3x"
+$JassHelperArgs = "$pwd\tools\common1.33.j", "$pwd\tools\Blizzard1.33.j", "$pwd\output\raw_war3map.j", "$pwd\output\MIX.w3x"
 
 $ConfigData = Get-Content ".\config.ini"
 $ConfigData = $ConfigData -replace "\\+", "\\"
@@ -30,7 +30,7 @@ if ($Config.WarcraftPath -match "\b\w[:]((\\|\/)(\w|\d|[ ])*)*\b") {
     if ($debug) {
         $JassHelperArgs = "--debug" + " " + $JassHelperArgs
     }
-    Start-Process -FilePath "$pwd\tools\JassHelper\clijasshelper.exe" -ArgumentList $JassHelperArgs -NoNewWindow -Wait
+    Start-Process -FilePath "$pwd\tools\JassHelper1.32\clijasshelper.exe" -ArgumentList $JassHelperArgs -NoNewWindow -Wait
     if ($worldeditor) {
         if ($Config.WorldEditorPath -match "\b\w[:]((\\|\/)(\w|\d|[ ])*)*\b") {
             Start-Process -FilePath $Config.WorldEditorPath -ArgumentList "-launch", "-loadfile", "$pwd\output\MIX.w3x"
