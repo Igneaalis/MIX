@@ -8,8 +8,8 @@
     - [Картостроители](#картостроители)
     - [Балансеры](#балансеры)
       - [Что известно на данный момент](#что-известно-на-данный-момент)
-        - [T1](#t1)
-        - [T2](#t2)
+        - [Необходимо](#необходимо)
+        - [Прочее](#прочее)
     - [Геймдизайнеры](#геймдизайнеры)
     - [Кодеры](#кодеры)
       - [VS Code Extensions](#vs-code-extensions)
@@ -46,14 +46,14 @@
 
 #### Что известно на данный момент
 
-##### T1
+##### Необходимо
 
-- Ослабить воздух, особенно вертолёты
+- Ослабить воздух
 - Добавить пункт Air в таблице баланса
 - Усилить high-tier юнитов
 - Не хватает способов получения гемов
 
-##### T2
+##### Прочее
 
 - Можно попробовать добавить героев
 - Перебалансировка спеллов
@@ -70,8 +70,9 @@
 
 ### Кодеры
 
-- Warcraft 3 Reforged: 1.32.9 (latest release)
-- IDE: Visual Studio Code 1.53.2 (latest release)
+- Warcraft 3 Reforged: 1.33.0.19308 (latest release)
+- IDE: Visual Studio Code 1.70.2 (latest release)
+- JASS `.VSIX` extension fork: [Glowackos better looping fix by Igneaalis](./tools/VS%20Code%20Extensions/superjass-1.0.0.vsix) or [source](https://github.com/naichabaobao/jass)
 
 - Нужно реализовать миниигры. Внимательно ознакомьтесь с существующими структурами: [README](source/README.md).
 - Чтобы скомпилировать проект и запустить карту (или редактор карт), используйте [VS Code](.vscode/launch.json), **не забудьте** настроить [конфиг](config.ini)!
@@ -82,7 +83,6 @@
 
 - **superjass**
 - **PowerShell**
-- **GitHub**
 - **GitHub Pull Requests and Issues**
 - Explorer Exclude
 - Intellij IDEA Keybindings
