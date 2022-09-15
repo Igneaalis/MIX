@@ -1,15 +1,12 @@
-/*
+// =============================================
+// = Файл создал:       Nokladr                =
+// = Discord:           ! ! Nokladr#2205       =
+// = E-Mail:            Nostaleal.ru@yandex.ru =
+// = Дата создания:     01.11.2020 18:28       =
+// =============================================
+//
+// Главный и входной интерфейс карты.
 
-=============================================
-= Файл создал:       Nokladr                =
-= Discord:           ! ! Nokladr#2205       =
-= E-Mail:            Nostaleal.ru@yandex.ru =
-= Дата создания:     01.11.2020 18:28       =
-=============================================
-
-Главный и входной интерфейс карты.
-
-*/
 
 native GetUnitGoldCost takes integer unitid returns integer
 native GetUnitWoodCost takes integer unitid returns integer
@@ -21,11 +18,11 @@ scope Main initializer Init
     private function Init takes nothing returns nothing
         call TriggerSleepAction(0)
 
-        // Инициализируем хэш-таблицу
+         // Инициализируем хэш-таблицу
         set hash = HashTable.create()
         set table = Table.create()
 
-        // NokladrLib.j
+         // NokladrLib.j
         call TriggerSleepAction(0)
         call C_SetComputers.execute()
 
@@ -45,7 +42,6 @@ scope Main initializer Init
         call faq_ini.execute() // Starts voting for faq guide
 
         debug call Log("Debug mode enabled!")
-
     endfunction
 
 endscope
