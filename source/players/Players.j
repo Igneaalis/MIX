@@ -38,7 +38,7 @@ scope Players
             call CreateUnitEx(p, 'h029', x, y, bj_UNIT_FACING) // Юнит "Не более 1 погодного эффекта в раунде"
 
             call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_all, true, false)) // Поле битвы
-            call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_minersregion, true, false)) // Миниигра "Минёры"
+            // call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_minersregion, true, false)) // Миниигра "Минёры"
             call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_fastarena, true, false)) // Быстрая битва
             call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_horseregion, true, false)) // Миниигра "Конные скачки"
             call FogModifierStart(CreateFogModifierRect(p, FOG_OF_WAR_VISIBLE, gg_rct_roulette, true, false)) // Миниигра "Казино"
