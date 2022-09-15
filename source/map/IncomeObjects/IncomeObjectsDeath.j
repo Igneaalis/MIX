@@ -60,7 +60,7 @@ scope IncomeObjectsDeath initializer inc_colour
         local trigger t = CreateTrigger()
         local integer i
 
-        for i = 0 to maxNumberOfPlayers - 1
+        for i = 0 to bj_MAX_PLAYER_SLOTS
             call TriggerRegisterPlayerUnitEvent(t, Player(i), EVENT_PLAYER_UNIT_DEATH, null)
         endfor
         call TriggerAddAction(t, function inc_colour_actions)
