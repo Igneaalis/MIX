@@ -12,14 +12,12 @@ library NokladrLib uses Colors, Logs, optional UnitRecycler  // Library by Nokla
     // Устанавливает всем компьютерным игрокам соответствующее имя
     function C_SetComputers takes nothing returns nothing
         local integer i = 0
-        loop
-            exitwhen (i > 27)
+        for i = 0 to bj_MAX_PLAYER_SLOTS - 1
             if (GetPlayerController(Player(i)) == MAP_CONTROL_COMPUTER) then
                 call SetPlayerName(Player(i), "Компьютер")
                 call SetPlayerOnScoreScreen(Player(i), false)
             endif
-            set i = i + 1
-        endloop
+        endfor
     endfunction
 
     // Пересобирает таблицу лидеров. Если есть пустые строки, то удаляет их.
