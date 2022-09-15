@@ -139,26 +139,16 @@ scope MinigameCasino initializer Init
 
         call TriggerSleepAction(0)
 
-        call TriggerRegisterPlayerChatEvent(t, Player(0x00), "-gold", false)
-        call TriggerRegisterPlayerChatEvent(t, Player(0x01), "-gold", false)
-        call TriggerRegisterPlayerChatEvent(t, Player(0x02), "-gold", false)
-        call TriggerRegisterPlayerChatEvent(t, Player(0x03), "-gold", false)
-        call TriggerRegisterPlayerChatEvent(t, Player(0x04), "-gold", false)
-        call TriggerRegisterPlayerChatEvent(t, Player(0x05), "-gold", false)
-        call TriggerRegisterPlayerChatEvent(t, Player(0x06), "-gold", false)
-        call TriggerRegisterPlayerChatEvent(t, Player(0x07), "-gold", false)
+        for i = 0 to maxNumberOfPlayers - 1
+            call TriggerRegisterPlayerChatEvent(t, Player(i), "-gold", false)
+        endfor
         call TriggerAddAction(t, function Command_gold)
 
         set t = CreateTrigger()
 
-        call TriggerRegisterPlayerChatEvent(t, Player(0x00), "-gems", false)
-        call TriggerRegisterPlayerChatEvent(t, Player(0x01), "-gems", false)
-        call TriggerRegisterPlayerChatEvent(t, Player(0x02), "-gems", false)
-        call TriggerRegisterPlayerChatEvent(t, Player(0x03), "-gems", false)
-        call TriggerRegisterPlayerChatEvent(t, Player(0x04), "-gems", false)
-        call TriggerRegisterPlayerChatEvent(t, Player(0x05), "-gems", false)
-        call TriggerRegisterPlayerChatEvent(t, Player(0x06), "-gems", false)
-        call TriggerRegisterPlayerChatEvent(t, Player(0x07), "-gems", false)
+        for i = 0 to maxNumberOfPlayers - 1
+            call TriggerRegisterPlayerChatEvent(t, Player(i), "-gems", false)
+        endfor
         call TriggerAddAction(t, function Command_gems)
         set t = null
 

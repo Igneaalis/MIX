@@ -251,6 +251,7 @@ library Weather initializer Init requires NokladrLib, UnitRecycler, Logs
     endstruct
 
     private function Init takes nothing returns nothing
+        local integer i
         set weather = Weather.create()
         set weather.blizzard = Blizzard.create()
         set weather.storm = Storm.create()
@@ -258,14 +259,9 @@ library Weather initializer Init requires NokladrLib, UnitRecycler, Logs
         set weather.sunny = Sunny.create()
         set weather.curWeather = weather.sunny
 
-        call TriggerRegisterPlayerUnitEvent(onResearchTrigger, Player(0x00), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-        call TriggerRegisterPlayerUnitEvent(onResearchTrigger, Player(0x01), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-        call TriggerRegisterPlayerUnitEvent(onResearchTrigger, Player(0x02), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-        call TriggerRegisterPlayerUnitEvent(onResearchTrigger, Player(0x03), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-        call TriggerRegisterPlayerUnitEvent(onResearchTrigger, Player(0x04), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-        call TriggerRegisterPlayerUnitEvent(onResearchTrigger, Player(0x05), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-        call TriggerRegisterPlayerUnitEvent(onResearchTrigger, Player(0x06), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
-        call TriggerRegisterPlayerUnitEvent(onResearchTrigger, Player(0x07), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        for i = 0 to maxNumberOfPlayers - 1
+            call TriggerRegisterPlayerUnitEvent(onResearchTrigger, Player(i), EVENT_PLAYER_UNIT_RESEARCH_FINISH, null)
+        endfor
     endfunction
 
 endlibrary

@@ -20,14 +20,10 @@ library MIXLib initializer Init requires NokladrLib
     //! textmacro CreateCommand takes name
     private function Command_$name$_Init takes nothing returns nothing
         local trigger t = CreateTrigger()
-        call TriggerRegisterPlayerChatEvent(t, Player(0x00), "-$name$", false)
-        call TriggerRegisterPlayerChatEvent(t, Player(0x01), "-$name$", false)
-        call TriggerRegisterPlayerChatEvent(t, Player(0x02), "-$name$", false)
-        call TriggerRegisterPlayerChatEvent(t, Player(0x03), "-$name$", false)
-        call TriggerRegisterPlayerChatEvent(t, Player(0x04), "-$name$", false)
-        call TriggerRegisterPlayerChatEvent(t, Player(0x05), "-$name$", false)
-        call TriggerRegisterPlayerChatEvent(t, Player(0x06), "-$name$", false)
-        call TriggerRegisterPlayerChatEvent(t, Player(0x07), "-$name$", false)
+        local integer i
+        for i = 0 to maxNumberOfPlayers - 1
+            call TriggerRegisterPlayerChatEvent(t, Player(i), "-$name$", false)
+        endfor
         call TriggerAddAction(t, function Command_$name$)
         set t = null
     endfunction

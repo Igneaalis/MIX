@@ -111,15 +111,11 @@ scope Messages initializer Init
 
     private function Init takes nothing returns nothing
         local trigger t = CreateTrigger()
+        local integer i
 
-        call TriggerRegisterPlayerEvent(t, Player(0x00), EVENT_PLAYER_LEAVE)
-        call TriggerRegisterPlayerEvent(t, Player(0x01), EVENT_PLAYER_LEAVE)
-        call TriggerRegisterPlayerEvent(t, Player(0x02), EVENT_PLAYER_LEAVE)
-        call TriggerRegisterPlayerEvent(t, Player(0x03), EVENT_PLAYER_LEAVE)
-        call TriggerRegisterPlayerEvent(t, Player(0x04), EVENT_PLAYER_LEAVE)
-        call TriggerRegisterPlayerEvent(t, Player(0x05), EVENT_PLAYER_LEAVE)
-        call TriggerRegisterPlayerEvent(t, Player(0x06), EVENT_PLAYER_LEAVE)
-        call TriggerRegisterPlayerEvent(t, Player(0x07), EVENT_PLAYER_LEAVE)
+        for i = 0 to maxNumberOfPlayers - 1
+            call TriggerRegisterPlayerEvent(t, Player(i), EVENT_PLAYER_LEAVE)
+        endfor
         call TriggerAddAction(t, function OnLeave)
 
         call OnInit.execute()
