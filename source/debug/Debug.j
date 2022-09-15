@@ -45,26 +45,28 @@ scope Debug initializer Init
         static if DEBUG_MODE then
             // call Log("Hello world!")
             
-            // call Log(I2S(PLAYER_NEUTRAL_AGGRESSIVE)) - 24
-            // call Log(I2S(bj_PLAYER_NEUTRAL_VICTIM)) - 25
-            // call Log(I2S(bj_PLAYER_NEUTRAL_EXTRA)) - 26
-            // call Log(I2S(PLAYER_NEUTRAL_PASSIVE)) - 27
+            // Lines below are True in 1.33
 
-            // call Log(I2S(bj_MAX_PLAYERS)) - 24
-            // call Log(I2S(bj_MAX_PLAYER_SLOTS)) - 28
+            // call Log(I2S(PLAYER_NEUTRAL_AGGRESSIVE))  // Prints 24
+            // call Log(I2S(bj_PLAYER_NEUTRAL_VICTIM))  // Prints 25
+            // call Log(I2S(bj_PLAYER_NEUTRAL_EXTRA))  // Prints 26
+            // call Log(I2S(PLAYER_NEUTRAL_PASSIVE))  // Prints 27
 
-            // for i = 1 to 15
-            //     call Log(I2S(GetRandomInt(0, 2))) - 0, 1, 2
+            // call Log(I2S(bj_MAX_PLAYERS))  // Prints 24
+            // call Log(I2S(bj_MAX_PLAYER_SLOTS))  // Prints 28
+
+            // for i = 1 to 100
+            //     call Log(I2S(GetRandomInt(0, 2)))  Prints 0 or 1 or 2
             // endfor
 
             // for i = 0 to 0
-            //     call Log("i = : " + I2S(i)) - 0
+            //     call Log("i = : " + I2S(i))  // Prints 0
             // endfor
 
             // call Log("-------")
 
             // for i = 0 to 1
-            //     call Log("i = : " + I2S(i)) - 0, 1
+            //     call Log("i = : " + I2S(i))  // Prints 0, 1
             // endfor
 
         endif
