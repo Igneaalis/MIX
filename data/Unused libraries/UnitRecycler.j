@@ -68,7 +68,7 @@ library UnitRecycler /* v1.4.1 https://www.hiveworkshop.com/threads/286701/
     globals
     /*
         The owner of the stocked/recycled units                                         */
-        private constant player OWNER               = Player(15)
+        private constant player OWNER               = PLAYER_NEUTRAL_PASSIVE
     /*
         Determines if dead units will be automatically recycled
         after a delay designated by the <constant function
@@ -442,7 +442,7 @@ library UnitRecycler /* v1.4.1 https://www.hiveworkshop.com/threads/286701/
                     else
                         local trigger t = CreateTrigger()
                         local code c = function thistype.onDeath
-                        local integer i = 16
+                        local integer i = bj_MAX_PLAYER_SLOTS
                         loop
                             set i = i - 1
                             call TriggerRegisterPlayerUnitEvent(t, Player(i), EVENT_PLAYER_UNIT_DEATH, null)
