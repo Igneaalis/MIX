@@ -90,9 +90,9 @@ library Colors
     endfunction
 
     struct Color
-        integer red
-        integer blue
-        integer green
+        integer red = 0
+        integer blue = 0
+        integer green = 0
 
         // Takes player and returns Color struct with red, green, blue integer fields in 0-255 range
         static method create takes player p returns Color
