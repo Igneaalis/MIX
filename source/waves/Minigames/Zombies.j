@@ -114,15 +114,11 @@ scope MinigameZombies initializer Init
 
     private function Init takes nothing returns nothing
         local trigger t = CreateTrigger()
+        local integer i
         
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x00), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x01), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x02), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x03), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x04), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x05), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x06), EVENT_PLAYER_UNIT_DEATH, null)
-        call TriggerRegisterPlayerUnitEvent(t, Player(0x07), EVENT_PLAYER_UNIT_DEATH, null)
+        for i = 0 to maxNumberOfPlayers - 1
+            call TriggerRegisterPlayerUnitEvent(t, Player(i), EVENT_PLAYER_UNIT_DEATH, null)
+        endfor
         call TriggerAddAction(t, function Peasant_OnDeath)
         
         set t = null
@@ -156,14 +152,14 @@ scope MinigameZombies initializer Init
             call ForForce(players, function ForPlayer_SwitchAllianceOffTowardPlayer11)
             if CountUnitsInGroup(peasants) > 1 then
                 call ForForce(minigameActingPlayers, function RewardAllWinners)
-                set message = GREEN + "ВЫЖИЛИ!|r\nВсе выжившие получили " + GOLD + I2S(235 + curWave * 30) + "|r золота!"
+                set message = GREEN + "Люди спаслись!|r\nВсе выжившие получили " + GOLD + I2S(235 + curWave * 30) + "|r золота!"
             elseif CountUnitsInGroup(peasants) == 1 then
                 set winner = GetOwningPlayer(FirstOfGroup(peasants))
                 call RewardWinner(winner)
-                set message = GREEN + "ВЫЖИЛ!|r\nОставшись последним выжившим человеком, " + C_IntToColor(GetPlayerId(winner)) + GetPlayerName(winner) + "|r получает " + GOLD + I2S(325 + curWave * 35) + "|r золота!"
+                set message = GREEN + "Он ЖИВ!|r\nОставшись последним выжившим человеком, " + C_IntToColor(GetPlayerId(winner)) + GetPlayerName(winner) + "|r получает " + GOLD + I2S(325 + curWave * 35) + "|r золота!"
             else
                 call ForForce(players, function RewardAllPlayers)
-                set message = RED + "ЗОМБИ-АПОКАЛИПСИС!|r\nВсе игроки получили " + GOLD + I2S(150 + curWave * 25) + "|r золота!"
+                set message = RED + "Зомби всех СОЖРАЛИ!|r\nВсе игроки получили " + GOLD + I2S(150 + curWave * 25) + "|r золота!"
             endif
             call TriggerExecute(gg_trg_zombie_ini_finish)
 
