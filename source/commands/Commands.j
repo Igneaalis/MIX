@@ -174,19 +174,39 @@ library Commands initializer Init requires String, NokladrLib, Logs
     endfunction
 
     private function Command_mgw takes nothing returns nothing
-        local integer chatMessage = S2I(SubString(GetEventPlayerChatString(), 5, 7))
         local player p = GetTriggerPlayer()
+        local string strValue = null
+        local integer value = -1
 
-        if GetTimeInSeconds() >= R2I(settingsTimerTime) or p != GameOwner then
+        if GetTimeInSeconds() >= R2I(settingsTimerTime) then
             set p = null
             return
         endif
-        if chatMessage >= 0 and chatMessage < 100 then
-            set minigameWave = chatMessage
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-mgw ##|r, при ## = 1 миниигры будут каждую волну, при ## = 2 мини-игры будут каждые 2 волны, при ## = 0 миниигр не будет совсем. " + "Текущий показатель: " + GREEN + I2S(minigameWave) + "|r")
-        else
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает значения из следующего диапазона: " + GREEN + "0|r" + "-" + GREEN + "99|r")
+
+        if p != GameOwner then
+            set p = null
+            return
         endif
+
+        set strValue = SubString(GetEventPlayerChatString(), 5, StringLength(GetEventPlayerChatString()))
+        if not String.IsRealNumber(strValue) then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: формат команды неверный. Используйте следующий формат: (" + GREEN + "0|r" + "-" + GREEN + "99|r)")
+            set strValue = null
+            set p = null
+            return
+        endif
+
+        set value = S2I(strValue)
+        set strValue = null
+        
+        if value < 0 or value > 99 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает значения из следующего диапазона: (" + GREEN + "0|r" + "-" + GREEN + "99|r)")
+            set p = null
+            return
+        endif
+
+        set minigameWave = value
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-mgw ##|r, при ## = 1 миниигры будут каждую волну, при ## = 2 мини-игры будут каждые 2 волны, при ## = 0 миниигр не будет совсем. " + "Текущий показатель: " + GREEN + I2S(minigameWave) + "|r")
 
         set p = null
     endfunction
