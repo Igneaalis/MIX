@@ -1,4 +1,4 @@
-scope Commands initializer Init
+library Commands initializer Init requires String, NokladrLib, Logs
     
     globals
         
@@ -7,6 +7,7 @@ scope Commands initializer Init
     private function Command_info takes nothing returns nothing
         local string chatMessage = SubString(GetEventPlayerChatString(), 6, 9)
         local player p = GetTriggerPlayer()
+
         if chatMessage == "on" then
             set pdb[p].info = true
             call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-info on|r показывает сообщения о минииграх, штрафах и быстрой битве.")
@@ -16,12 +17,14 @@ scope Commands initializer Init
         else
             call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает следующие значения: " + GREEN + "on|r" + " и " + GREEN + "off|r")
         endif
+
         set p = null
     endfunction
 
     private function Command_time takes nothing returns nothing
         local integer chatMessage = S2I(SubString(GetEventPlayerChatString(), 6, 8))
         local player p = GetTriggerPlayer()
+
         if GetTimeInSeconds() >= R2I(settingsTimerTime) or p != GameOwner then
             set p = null
             return
@@ -32,12 +35,14 @@ scope Commands initializer Init
         else
             call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает значения из следующего диапазона: " + GREEN + "20|r" + "-" + GREEN + "60|r")
         endif
+
         set p = null
     endfunction
 
     private function Command_arena takes nothing returns nothing
         local integer chatMessage = S2I(SubString(GetEventPlayerChatString(), 7, 10))
         local player p = GetTriggerPlayer()
+
         if GetTimeInSeconds() >= R2I(settingsTimerTime) or p != GameOwner then
             set p = null
             return
@@ -48,12 +53,14 @@ scope Commands initializer Init
         else
             call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает значения из следующего диапазона: " + GREEN + "60|r" + "-" + GREEN + "300|r")
         endif
+
         set p = null
     endfunction
 
     private function Command_build takes nothing returns nothing
         local string chatMessage = SubString(GetEventPlayerChatString(), 7, 10)
         local player p = GetTriggerPlayer()
+
         if GetTimeInSeconds() >= R2I(settingsTimerTime) or p != GameOwner then
             set p = null
             return
@@ -67,31 +74,109 @@ scope Commands initializer Init
         else
             call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает следующие значения: " + GREEN + "on|r" + " и " + GREEN + "off|r")
         endif
+
         set p = null
     endfunction
 
     private function Command_point takes nothing returns nothing
-        local string chatMessage = SubString(GetEventPlayerChatString(), 7, 10)
-        local integer startAmount = S2I(SubString(chatMessage, 0, 1))
-        local integer endAmount = S2I(SubString(chatMessage, 2, 3))
         local player p = GetTriggerPlayer()
-        if GetTimeInSeconds() >= R2I(settingsTimerTime) or p != GameOwner then
+        local integer dashIndex = -1
+        local string strStartAmount = null
+        local string strEndAmount = null
+        local integer startAmount = -1
+        local integer endAmount = -1
+
+        if StringLength(GetEventPlayerChatString()) == 6 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-point #-#|r, влияет на число контрольных точек. " + "Текущий показатель: " + GREEN + I2S(IncomeObjects_StartAmount) + "-" + I2S(IncomeObjects_EndAmount) + "|r")
             set p = null
             return
         endif
-        if startAmount <= endAmount and startAmount >= 0 and startAmount <= IncomeObjects_MaxAmount and endAmount >= 0 and endAmount <= IncomeObjects_MaxAmount then
-            set IncomeObjects_StartAmount = startAmount
-            set IncomeObjects_EndAmount = endAmount
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-point #-#|r, влияет на число контрольных точек. " + "Текущий показатель: " + GREEN + I2S(IncomeObjects_StartAmount) + "-" + I2S(IncomeObjects_EndAmount) + "|r")
-        else
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает значения из следующего диапазона: " + GREEN + "(0-" + I2S(IncomeObjects_MaxAmount) + ")|r" + "-" + GREEN + "(0-" + I2S(IncomeObjects_MaxAmount) + ")|r")
+        if p != GameOwner then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: эта команда доступна только хосту.")
+            set p = null
+            return
         endif
+        if GetTimeInSeconds() >= R2I(settingsTimerTime) then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: эта команда доступна только во время настройки игры.")
+            set p = null
+            return
+        endif
+        if String.count(GetEventPlayerChatString(), "-") == 1 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: формат команды неверный. Используйте следующий формат: " + GOLD + "-point|r " + GREEN + "#|r-" + GREEN + "#|r\nГде " + GREEN + "#|r - число.")
+            set p = null
+            return
+        endif
+        if String.count(GetEventPlayerChatString(), "-") > 4 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: формат команды неверный. Используйте следующий формат: " + GOLD + "-point|r " + GREEN + "#|r-" + GREEN + "#|r\nГде " + GREEN + "#|r - число.")
+            set p = null
+            return
+        endif
+        if String.count(GetEventPlayerChatString(), " ") != 1 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: формат команды неверный. Используйте следующий формат: " + GOLD + "-point|r " + GREEN + "#|r-" + GREEN + "#|r\nГде " + GREEN + "#|r - число.")
+            set p = null
+            return
+        endif
+
+        set dashIndex = String.findIndexFrom(GetEventPlayerChatString(), "-", 1)
+        if String.IsSpace(SubString(GetEventPlayerChatString(), dashIndex - 1, dashIndex)) then
+            set dashIndex = String.findIndexFrom(GetEventPlayerChatString(), "-", dashIndex + 1)
+        endif
+        set strStartAmount = SubString(GetEventPlayerChatString(), 7, dashIndex)
+        set strEndAmount = SubString(GetEventPlayerChatString(), dashIndex + 1, StringLength(GetEventPlayerChatString()))
+        if not String.IsRealNumber(strStartAmount) or not String.IsRealNumber(strEndAmount) then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: формат команды неверный. Используйте следующий формат: " + GOLD + "-point|r " + GREEN + "#|r-" + GREEN + "#|r\nГде " + GREEN + "#|r - число.")
+            set strStartAmount = null
+            set strEndAmount = null
+            set p = null
+            return
+        endif
+
+        set startAmount = S2I(strStartAmount)
+        set endAmount = S2I(strEndAmount)
+        set strStartAmount = null
+        set strEndAmount = null
+
+        if startAmount < 0 and endAmount < 0 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: формат команды неверный. Первое число и второе число должны быть не меньше 0.")
+            set p = null
+            return
+        endif
+
+        if startAmount < 0 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: формат команды неверный. Первое число должно быть не меньше 0.")
+            set p = null
+            return
+        endif
+
+        if endAmount < 0 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: формат команды неверный. Второе число должно быть не меньше 0.")
+            set p = null
+            return
+        endif
+
+        if startAmount > endAmount then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: формат команды неверный. Первое число должно быть не больше второго.")
+            set p = null
+            return
+        endif
+
+        if startAmount > IncomeObjects_MaxAmount or endAmount > IncomeObjects_MaxAmount then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает значения из следующего диапазона: " + GREEN + "(0-" + I2S(IncomeObjects_MaxAmount) + ")|r" + "-" + GREEN + "(0-" + I2S(IncomeObjects_MaxAmount) + ")|r")
+            set p = null
+            return
+        endif
+
+        set IncomeObjects_StartAmount = startAmount
+        set IncomeObjects_EndAmount = endAmount
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-point #-#|r, влияет на число контрольных точек. " + "Текущий показатель: " + GREEN + I2S(IncomeObjects_StartAmount) + "-" + I2S(IncomeObjects_EndAmount) + "|r")
+
         set p = null
     endfunction
 
     private function Command_mgw takes nothing returns nothing
         local integer chatMessage = S2I(SubString(GetEventPlayerChatString(), 5, 7))
         local player p = GetTriggerPlayer()
+
         if GetTimeInSeconds() >= R2I(settingsTimerTime) or p != GameOwner then
             set p = null
             return
@@ -102,13 +187,26 @@ scope Commands initializer Init
         else
             call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает значения из следующего диапазона: " + GREEN + "0|r" + "-" + GREEN + "99|r")
         endif
+
         set p = null
     endfunction
 
     private function Command_final takes nothing returns nothing
         local integer chatMessage = S2I(SubString(GetEventPlayerChatString(), 7, 9))
         local player p = GetTriggerPlayer()
-        if GetTimeInSeconds() >= R2I(settingsTimerTime) or p != GameOwner then
+
+        if StringLength(GetEventPlayerChatString()) == 6 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-final ##|r, где ## - волна, после которой закончится игра. " + "Текущий показатель: " + GREEN + I2S(finalWave) + "|r")
+            set p = null
+            return
+        endif
+        if GetTimeInSeconds() >= R2I(settingsTimerTime) then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: эта команда доступна только во время настройки игры.")
+            set p = null
+            return
+        endif
+        if p != GameOwner then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: эта команда доступна только хосту.")
             set p = null
             return
         endif
@@ -118,11 +216,30 @@ scope Commands initializer Init
         else
             call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает значения из следующего диапазона: " + GREEN + "1|r" + "-" + GREEN + "99|r")
         endif
+
         set p = null
     endfunction
 
     private function Command_uptime takes nothing returns nothing
-        call Log(I2S(GetTimeInSeconds()))
+        local integer chatMessage = S2I(SubString(GetEventPlayerChatString(), 6, 10))
+        local player p = GetTriggerPlayer()
+        local string hours = I2S(time[2])
+        local string minutes = I2S(time[1])
+        local string seconds = I2S(time[0])
+
+        if time[1] < 10 then
+            set minutes = "0" + minutes
+        endif
+        if time[0] < 10 then
+            set seconds = "0" + seconds
+        endif
+
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, hours + ":" + minutes + ":" + seconds)
+
+        set hours = null
+        set minutes = null
+        set seconds = null
+        set p = null
     endfunction
 
     private function Command_zoom takes nothing returns nothing
@@ -184,10 +301,11 @@ scope Commands initializer Init
         call Command_point_Init()
         call Command_mgw_Init()
         call Command_final_Init()
+        call Command_uptime_Init()
         call Command_zoom_Init()
         call Command_cam_Init()
         call Command_c_Init()
         call Command_clear_Init()
     endfunction
     
-endscope
+endlibrary
