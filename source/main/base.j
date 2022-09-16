@@ -233,6 +233,13 @@ globals
     sound                   gg_snd_BloodElfMagePissed1 = null
     sound                   gg_snd_BattleNetTick01     = null
     sound                   gg_snd_ClanInvitation      = null
+    sound                   gg_snd_FAQ_1               = null
+    sound                   gg_snd_FAQ_2               = null
+    sound                   gg_snd_FAQ_3               = null
+    sound                   gg_snd_FAQ_4               = null
+    sound                   gg_snd_FAQ_5               = null
+    sound                   gg_snd_FAQ_6               = null
+    sound                   gg_snd_FAQ_7               = null
     trigger                 gg_trg_initialization      = null
     trigger                 gg_trg_ini_id              = null
     trigger                 gg_trg_cmd_clear           = null
@@ -729,6 +736,41 @@ function InitSounds takes nothing returns nothing
     call SetSoundChannel( gg_snd_ClanInvitation, 0 )
     call SetSoundVolume( gg_snd_ClanInvitation, -1 )
     call SetSoundPitch( gg_snd_ClanInvitation, 1.0 )
+    set gg_snd_FAQ_1 = CreateSound( "war3mapImported/FAQ 1.mp3", false, false, false, 0, 0, "DefaultEAXON" )
+    call SetSoundDuration( gg_snd_FAQ_1, 5256 )
+    call SetSoundChannel( gg_snd_FAQ_1, 0 )
+    call SetSoundVolume( gg_snd_FAQ_1, 127 )
+    call SetSoundPitch( gg_snd_FAQ_1, 1.0 )
+    set gg_snd_FAQ_2 = CreateSound( "war3mapImported/FAQ 2.mp3", false, false, false, 0, 0, "DefaultEAXON" )
+    call SetSoundDuration( gg_snd_FAQ_2, 8376 )
+    call SetSoundChannel( gg_snd_FAQ_2, 0 )
+    call SetSoundVolume( gg_snd_FAQ_2, 127 )
+    call SetSoundPitch( gg_snd_FAQ_2, 1.0 )
+    set gg_snd_FAQ_3 = CreateSound( "war3mapImported/FAQ 3.mp3", false, false, false, 0, 0, "DefaultEAXON" )
+    call SetSoundDuration( gg_snd_FAQ_3, 9912 )
+    call SetSoundChannel( gg_snd_FAQ_3, 0 )
+    call SetSoundVolume( gg_snd_FAQ_3, 127 )
+    call SetSoundPitch( gg_snd_FAQ_3, 1.0 )
+    set gg_snd_FAQ_4 = CreateSound( "war3mapImported/FAQ 4.mp3", false, false, false, 0, 0, "DefaultEAXON" )
+    call SetSoundDuration( gg_snd_FAQ_4, 9240 )
+    call SetSoundChannel( gg_snd_FAQ_4, 0 )
+    call SetSoundVolume( gg_snd_FAQ_4, 127 )
+    call SetSoundPitch( gg_snd_FAQ_4, 1.0 )
+    set gg_snd_FAQ_5 = CreateSound( "war3mapImported/FAQ 5.mp3", false, false, false, 0, 0, "DefaultEAXON" )
+    call SetSoundDuration( gg_snd_FAQ_5, 6288 )
+    call SetSoundChannel( gg_snd_FAQ_5, 0 )
+    call SetSoundVolume( gg_snd_FAQ_5, 127 )
+    call SetSoundPitch( gg_snd_FAQ_5, 1.0 )
+    set gg_snd_FAQ_6 = CreateSound( "war3mapImported/FAQ 6.mp3", false, false, false, 0, 0, "DefaultEAXON" )
+    call SetSoundDuration( gg_snd_FAQ_6, 5928 )
+    call SetSoundChannel( gg_snd_FAQ_6, 0 )
+    call SetSoundVolume( gg_snd_FAQ_6, 127 )
+    call SetSoundPitch( gg_snd_FAQ_6, 1.0 )
+    set gg_snd_FAQ_7 = CreateSound( "war3mapImported/FAQ 7.mp3", false, false, false, 0, 0, "DefaultEAXON" )
+    call SetSoundDuration( gg_snd_FAQ_7, 9768 )
+    call SetSoundChannel( gg_snd_FAQ_7, 0 )
+    call SetSoundVolume( gg_snd_FAQ_7, 127 )
+    call SetSoundPitch( gg_snd_FAQ_7, 1.0 )
 endfunction
 
 //***************************************************************************
@@ -1318,20 +1360,28 @@ endfunction
 //===========================================================================
 // Trigger: faq
 //===========================================================================
-function Trig_faq_Func002A takes nothing returns nothing
+function Trig_faq_Func003A takes nothing returns nothing
     call CameraSetupApplyForPlayer( true, gg_cam_Camera_003, GetEnumPlayer(), 0 )
 endfunction
 
-function Trig_faq_Func018A takes nothing returns nothing
+function Trig_faq_Func015A takes nothing returns nothing
     call PanCameraToTimedLocForPlayer( GetEnumPlayer(), GetRectCenter(gg_rct_centreCENTRE), 1.00 )
 endfunction
 
-function Trig_faq_Func019A takes nothing returns nothing
+function Trig_faq_Func016A takes nothing returns nothing
     call RemoveUnit( GetEnumUnit() )
 endfunction
 
-function Trig_faq_Func032A takes nothing returns nothing
+function Trig_faq_Func028A takes nothing returns nothing
     call PanCameraToTimedLocForPlayer( GetEnumPlayer(), GetRectCenter(gg_rct_downleft), 1.00 )
+endfunction
+
+function Trig_faq_Func030A takes nothing returns nothing
+    call RemoveUnit( GetEnumUnit() )
+endfunction
+
+function Trig_faq_Func031A takes nothing returns nothing
+    call RemoveUnit( GetEnumUnit() )
 endfunction
 
 function Trig_faq_Func034A takes nothing returns nothing
@@ -1339,28 +1389,19 @@ function Trig_faq_Func034A takes nothing returns nothing
 endfunction
 
 function Trig_faq_Func035A takes nothing returns nothing
-    call RemoveUnit( GetEnumUnit() )
-endfunction
-
-function Trig_faq_Func042A takes nothing returns nothing
-    call RemoveUnit( GetEnumUnit() )
-endfunction
-
-function Trig_faq_Func043A takes nothing returns nothing
     call PanCameraToTimedLocForPlayer( GetEnumPlayer(), GetRectCenter(gg_rct_start3), 1.00 )
 endfunction
 
-function Trig_faq_Func051A takes nothing returns nothing
+function Trig_faq_Func041A takes nothing returns nothing
     call RemoveUnit( GetEnumUnit() )
 endfunction
 
 function Trig_faq_Actions takes nothing returns nothing
     call CinematicModeBJ( true, GetPlayersAll() )
-    call ForForce( GetPlayersAll(), function Trig_faq_Func002A )
+    call ShowInterfaceForceOff( GetPlayersAll(), 0.00 )
+    call ForForce( GetPlayersAll(), function Trig_faq_Func003A )
     call CreateNUnitsAtLoc( 1, 'h01O', Player(0), GetRectCenter(gg_rct________________075), bj_UNIT_FACING )
-    call DisplayTimedTextToForce( GetPlayersAll(), 12.00, "TRIGSTR_2638" )
-    call TransmissionFromUnitWithNameBJ( GetPlayersAll(), GetLastCreatedUnit(), "TRIGSTR_2630", null, "TRIGSTR_2631", bj_TIMETYPE_ADD, 6.00, false )
-    call TriggerSleepAction( 6.00 )
+    call TransmissionFromUnitWithNameBJ( GetPlayersAll(), GetLastCreatedUnit(), "TRIGSTR_4420", gg_snd_FAQ_1, "TRIGSTR_4419", bj_TIMETYPE_ADD, 1.00, true )
     call CreateNUnitsAtLoc( 1, 'h01S', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct________________075_____________________u), bj_UNIT_FACING )
     call SetUnitColor( GetLastCreatedUnit(), PLAYER_COLOR_RED )
     call CreateNUnitsAtLoc( 1, 'h01T', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct________________075______________________2), bj_UNIT_FACING )
@@ -1369,43 +1410,36 @@ function Trig_faq_Actions takes nothing returns nothing
     call SetUnitColor( GetLastCreatedUnit(), PLAYER_COLOR_RED )
     call CreateNUnitsAtLoc( 1, 'h01W', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct________________075______________________4), bj_UNIT_FACING )
     call SetUnitColor( GetLastCreatedUnit(), PLAYER_COLOR_RED )
-    call DisplayTimedTextToForce( GetPlayersAll(), 14.00, "TRIGSTR_2639" )
-    call TransmissionFromUnitWithNameBJ( GetPlayersAll(), GetLastCreatedUnit(), "TRIGSTR_2645", null, "TRIGSTR_2633", bj_TIMETYPE_ADD, 7.00, false )
-    call TriggerSleepAction( 7.00 )
-    call ForForce( GetPlayersAll(), function Trig_faq_Func018A )
-    call ForGroupBJ( GetUnitsInRectAll(gg_rct________________075), function Trig_faq_Func019A )
+    call TransmissionFromUnitWithNameBJ( GetPlayersAll(), GetLastCreatedUnit(), "TRIGSTR_2645", gg_snd_FAQ_2, "TRIGSTR_2633", bj_TIMETYPE_ADD, 1.00, true )
+    call ForForce( GetPlayersAll(), function Trig_faq_Func015A )
+    call ForGroupBJ( GetUnitsInRectAll(gg_rct________________075), function Trig_faq_Func016A )
     call CreateNUnitsAtLoc( 1, 'n003', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_centreCENTRE), bj_UNIT_FACING )
     set udg_faq_unit[1] = GetLastCreatedUnit()
     call SetUnitLifePercentBJ( GetLastCreatedUnit(), 10.00 )
     call CreateNUnitsAtLocFacingLocBJ( 1, 'ha1P', Player(0), GetRectCenter(gg_rct_centreUP), GetUnitLoc(GetLastCreatedUnit()) )
     set udg_faq_unit[0] = GetLastCreatedUnit()
     call SetUnitColor( GetLastCreatedUnit(), PLAYER_COLOR_RED )
-    call DisplayTimedTextToForce( GetPlayersAll(), 20.00, "TRIGSTR_2640" )
-    call TransmissionFromUnitWithNameBJ( GetPlayersAll(), GetLastCreatedUnit(), "TRIGSTR_2646", null, "TRIGSTR_2632", bj_TIMETYPE_ADD, 10.00, false )
+    call TransmissionFromUnitWithNameBJ( GetPlayersAll(), GetLastCreatedUnit(), "TRIGSTR_2646", gg_snd_FAQ_3, "TRIGSTR_2632", bj_TIMETYPE_SET, 9.00, false )
     call TriggerSleepAction( 2.00 )
     call IssueTargetOrderBJ( udg_faq_unit[0], "attack", udg_faq_unit[1] )
     call TriggerSleepAction( 7.00 )
     call CreateNUnitsAtLoc( 1, 'n004', Player(PLAYER_NEUTRAL_PASSIVE), GetRectCenter(gg_rct_downleft), bj_UNIT_FACING )
-    call ForForce( GetPlayersAll(), function Trig_faq_Func032A )
+    call ForForce( GetPlayersAll(), function Trig_faq_Func028A )
     call TriggerSleepAction( 1.00 )
-    call ForGroupBJ( GetUnitsOfTypeIdAll('n003'), function Trig_faq_Func034A )
-    call ForGroupBJ( GetUnitsOfTypeIdAll('ha1P'), function Trig_faq_Func035A )
-    call DisplayTimedTextToForce( GetPlayersAll(), 16.00, "TRIGSTR_2641" )
-    call TransmissionFromUnitWithNameBJ( GetPlayersAll(), GetLastCreatedUnit(), "TRIGSTR_2647", null, "TRIGSTR_2634", bj_TIMETYPE_ADD, 8.00, false )
-    call TriggerSleepAction( 8.00 )
-    call DisplayTimedTextToForce( GetPlayersAll(), 10.00, "TRIGSTR_2642" )
-    call TransmissionFromUnitWithNameBJ( GetPlayersAll(), GetLastCreatedUnit(), "TRIGSTR_2648", null, "TRIGSTR_2635", bj_TIMETYPE_ADD, 5.00, false )
-    call TriggerSleepAction( 5.00 )
-    call ForGroupBJ( GetUnitsOfTypeIdAll('n004'), function Trig_faq_Func042A )
-    call ForForce( GetPlayersAll(), function Trig_faq_Func043A )
+    call ForGroupBJ( GetUnitsOfTypeIdAll('n003'), function Trig_faq_Func030A )
+    call ForGroupBJ( GetUnitsOfTypeIdAll('ha1P'), function Trig_faq_Func031A )
+    call TransmissionFromUnitWithNameBJ( GetPlayersAll(), GetLastCreatedUnit(), "TRIGSTR_2647", gg_snd_FAQ_4, "TRIGSTR_2634", bj_TIMETYPE_ADD, 1.00, true )
+    call TransmissionFromUnitWithNameBJ( GetPlayersAll(), GetLastCreatedUnit(), "TRIGSTR_2648", gg_snd_FAQ_5, "TRIGSTR_2635", bj_TIMETYPE_ADD, 1.00, true )
+    call ForGroupBJ( GetUnitsOfTypeIdAll('n004'), function Trig_faq_Func034A )
+    call ForForce( GetPlayersAll(), function Trig_faq_Func035A )
     call CreateNUnitsAtLoc( 1, 'h01O', Player(0), GetRectCenter(gg_rct_start3), bj_UNIT_FACING )
-    call DisplayTimedTextToForce( GetPlayersAll(), 12.00, "TRIGSTR_2643" )
-    call TransmissionFromUnitWithNameBJ( GetPlayersAll(), GetLastCreatedUnit(), "TRIGSTR_2649", null, "TRIGSTR_2636", bj_TIMETYPE_ADD, 6.00, false )
-    call TriggerSleepAction( 6.00 )
-    call DisplayTimedTextToForce( GetPlayersAll(), 16.00, "TRIGSTR_2644" )
-    call TransmissionFromUnitWithNameBJ( GetPlayersAll(), GetLastCreatedUnit(), "TRIGSTR_2650", null, "TRIGSTR_2637", bj_TIMETYPE_SET, 8.00, false )
-    call TriggerSleepAction( 8.00 )
-    call ForGroupBJ( GetUnitsOfTypeIdAll('h01O'), function Trig_faq_Func051A )
+    call TransmissionFromUnitWithNameBJ( GetPlayersAll(), GetLastCreatedUnit(), "TRIGSTR_2649", gg_snd_FAQ_6, "TRIGSTR_2636", bj_TIMETYPE_ADD, 1.00, true )
+    call TransmissionFromUnitTypeWithNameBJ( GetPlayersAll(), Player(0), 'h01O', "TRIGSTR_4422", GetUnitLoc(GetLastCreatedUnit()), gg_snd_FAQ_7, "TRIGSTR_4423", bj_TIMETYPE_ADD, 0, true )
+    call CinematicFadeBJ( bj_CINEFADETYPE_FADEOUT, 2, "ReplaceableTextures\\CameraMasks\\White_mask.blp", 0, 0, 0, 0 )
+    call TriggerSleepAction( 2 )
+    call ForGroupBJ( GetUnitsOfTypeIdAll('h01O'), function Trig_faq_Func041A )
+    call CinematicFadeBJ( bj_CINEFADETYPE_FADEIN, 2, "ReplaceableTextures\\CameraMasks\\White_mask.blp", 0, 0, 0, 0 )
+    call ShowInterfaceForceOn( GetPlayersAll(), 2 )
     call CinematicModeBJ( false, GetPlayersAll() )
 endfunction
 
@@ -5192,18 +5226,10 @@ function InitCustomPlayerSlots takes nothing returns nothing
     call SetPlayerRaceSelectable( Player(7), false )
     call SetPlayerController( Player(7), MAP_CONTROL_USER )
 
-    // Player 11
-    call SetPlayerStartLocation( Player(11), 8 )
-    call ForcePlayerStartLocation( Player(11), 8 )
-    call SetPlayerColor( Player(11), ConvertPlayerColor(11) )
-    call SetPlayerRacePreference( Player(11), RACE_PREF_UNDEAD )
-    call SetPlayerRaceSelectable( Player(11), false )
-    call SetPlayerController( Player(11), MAP_CONTROL_COMPUTER )
-
 endfunction
 
 function InitCustomTeams takes nothing returns nothing
-    // Force: TRIGSTR_399
+    // Force: TRIGSTR_4418
     call SetPlayerTeam( Player(0), 0 )
     call SetPlayerTeam( Player(1), 0 )
     call SetPlayerTeam( Player(2), 0 )
@@ -5212,9 +5238,6 @@ function InitCustomTeams takes nothing returns nothing
     call SetPlayerTeam( Player(5), 0 )
     call SetPlayerTeam( Player(6), 0 )
     call SetPlayerTeam( Player(7), 0 )
-
-    // Force: TRIGSTR_400
-    call SetPlayerTeam( Player(11), 1 )
 
 endfunction
 
@@ -5285,8 +5308,8 @@ endfunction
 function config takes nothing returns nothing
     call SetMapName( "TRIGSTR_019" )
     call SetMapDescription( "" )
-    call SetPlayers( 9 )
-    call SetTeams( 9 )
+    call SetPlayers( 8 )
+    call SetTeams( 8 )
     call SetGamePlacement( MAP_PLACEMENT_TEAMS_TOGETHER )
 
     call DefineStartLocation( 0, -6656.0, 7168.0 )
@@ -5297,7 +5320,6 @@ function config takes nothing returns nothing
     call DefineStartLocation( 5, -6656.0, -3072.0 )
     call DefineStartLocation( 6, -6656.0, -5120.0 )
     call DefineStartLocation( 7, -6656.0, -7168.0 )
-    call DefineStartLocation( 8, 0.0, 0.0 )
 
     // Player setup
     call InitCustomPlayerSlots(  )
