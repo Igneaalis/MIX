@@ -1,79 +1,99 @@
-library Commands initializer Init requires String, NokladrLib, Logs
-    
+library Commands initializer Init requires String, NokladrLib, Logs, Table
+
     globals
-        
+        private real cmdDisplayTime = 10.00
     endglobals
 
-    private function Command_info takes nothing returns nothing
-        local string chatMessage = SubString(GetEventPlayerChatString(), 6, 9)
-        local player p = GetTriggerPlayer()
-
-        if chatMessage == "on" then
-            set pdb[p].info = true
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-info on|r показывает сообщения о минииграх, штрафах и быстрой битве.")
-        elseif chatMessage == "off" then
-            set pdb[p].info = false
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-info off|r скрывает сообщения о минииграх, штрафах и быстрой битве.")
-        else
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает следующие значения: " + GREEN + "on|r" + " и " + GREEN + "off|r")
-        endif
-
-        set p = null
-    endfunction
-
     private function Command_time takes nothing returns nothing
-        local integer chatMessage = S2I(SubString(GetEventPlayerChatString(), 6, 8))
         local player p = GetTriggerPlayer()
+        local string strValue = null
+        local integer value = -1
 
-        if GetTimeInSeconds() >= R2I(settingsTimerTime) or p != GameOwner then
+        if StringLength(GetEventPlayerChatString()) == 5 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-time|r " + GREEN + "#|r, где " + GREEN + "#|r - время перед началом арены. " + "Текущий показатель: " + GREEN + I2S(R2I(relaxArenaWaveTime)) + "|r сек.")
             set p = null
             return
         endif
-        if chatMessage >= 20 and chatMessage <= 60 then
-            set relaxArenaWaveTime = chatMessage
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-time ##|r, где ## - время перед началом арены от 20 до 60 сек. " + "Текущий показатель: " + GREEN + I2S(R2I(relaxArenaWaveTime)) + "|r сек.")
-        else
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает значения из следующего диапазона: " + GREEN + "20|r" + "-" + GREEN + "60|r")
+        if GetTimeInSeconds() >= R2I(settingsTimerTime) then
+            set p = null
+            return
         endif
+        if p != GameOwner then
+            set p = null
+            return
+        endif
+        if String.count(GetEventPlayerChatString(), " ") != 1 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: формат команды неверный. Используйте следующий формат: " + GOLD + "-time|r " + GREEN + "#|r\nГде " + GREEN + "#|r - это число в диапазоне от 20 до 60 сек.")
+            set p = null
+            return
+        endif
+
+        set strValue = SubString(GetEventPlayerChatString(), 6, StringLength(GetEventPlayerChatString()))
+        if not String.IsRealNumber(strValue) then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: формат команды неверный. Используйте следующий формат: " + GOLD + "-time|r " + GREEN + "#|r\nГде " + GREEN + "#|r - это число в диапазоне от 20 до 60 сек.")
+            set strValue = null
+            set p = null
+            return
+        endif
+
+        set value = S2I(strValue)
+        set strValue = null
+        
+        if value < 20 or value > 60 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает число в диапазоне от 20 до 60 сек.")
+            set p = null
+            return
+        endif
+
+        set relaxArenaWaveTime = value
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-time|r " + GREEN + "#|r, где " + GREEN + "#|r - время перед началом арены. " + "Текущий показатель: " + GREEN + I2S(R2I(relaxArenaWaveTime)) + "|r сек.")
 
         set p = null
     endfunction
 
     private function Command_arena takes nothing returns nothing
-        local integer chatMessage = S2I(SubString(GetEventPlayerChatString(), 7, 10))
         local player p = GetTriggerPlayer()
+        local string strValue = null
+        local integer value = -1
 
-        if GetTimeInSeconds() >= R2I(settingsTimerTime) or p != GameOwner then
+        if StringLength(GetEventPlayerChatString()) == 6 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-arena|r " + GREEN + "#|r, где " + GREEN + "#|r - длительность арены. " + "Текущий показатель: " + GREEN + I2S(R2I(arenaTimerTime)) + "|r сек.")
             set p = null
             return
         endif
-        if chatMessage >= 60 and chatMessage <= 300 then
-            set arenaTimerTime = chatMessage
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-arena ###|r, где ### - длительность арены от 60 сек. до 300 сек. " + "Текущий показатель: " + GREEN + I2S(R2I(arenaTimerTime)) + "|r сек.")
-        else
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает значения из следующего диапазона: " + GREEN + "60|r" + "-" + GREEN + "300|r")
-        endif
-
-        set p = null
-    endfunction
-
-    private function Command_build takes nothing returns nothing
-        local string chatMessage = SubString(GetEventPlayerChatString(), 7, 10)
-        local player p = GetTriggerPlayer()
-
-        if GetTimeInSeconds() >= R2I(settingsTimerTime) or p != GameOwner then
+        if GetTimeInSeconds() >= R2I(settingsTimerTime) then
             set p = null
             return
         endif
-        if chatMessage == "on" then
-            set IsBuildingDuringWavesAllowed = true
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-build ###|r, при # = \"" + GREEN + "on|r" + "\" во время раунда можно строить и улучшать юнитов, при # = \"" + GREEN + "off|r" + "\" - нельзя. " + "Текущий показатель: " + GREEN + "on|r")
-        elseif chatMessage == "off" then
-            set IsBuildingDuringWavesAllowed = false
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-build ###|r, при # = \"" + GREEN + "on|r" + "\" во время раунда можно строить и улучшать юнитов, при # = \"" + GREEN + "off|r" + "\" - нельзя. " + "Текущий показатель: " + GREEN + "off|r")
-        else
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает следующие значения: " + GREEN + "on|r" + " и " + GREEN + "off|r")
+        if p != GameOwner then
+            set p = null
+            return
         endif
+        if String.count(GetEventPlayerChatString(), " ") != 1 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: формат команды неверный. Используйте следующий формат: " + GOLD + "-arena|r " + GREEN + "#|r\nГде " + GREEN + "#|r - это число в диапазоне от 30 до 600 сек.")
+            set p = null
+            return
+        endif
+
+        set strValue = SubString(GetEventPlayerChatString(), 7, StringLength(GetEventPlayerChatString()))
+        if not String.IsRealNumber(strValue) then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: формат команды неверный. Используйте следующий формат: " + GOLD + "-arena|r " + GREEN + "#|r\nГде " + GREEN + "#|r - это число в диапазоне от 30 до 600 сек.")
+            set strValue = null
+            set p = null
+            return
+        endif
+
+        set value = S2I(strValue)
+        set strValue = null
+        
+        if value < 30 or value > 600 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает число в диапазоне от 30 до 600 сек.")
+            set p = null
+            return
+        endif
+
+        set arenaTimerTime = value
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-arena|r " + GREEN + "#|r, где " + GREEN + "#|r - длительность арены. " + "Текущий показатель: " + GREEN + I2S(R2I(arenaTimerTime)) + "|r сек.")
 
         set p = null
     endfunction
@@ -87,7 +107,7 @@ library Commands initializer Init requires String, NokladrLib, Logs
         local integer endAmount = -1
 
         if StringLength(GetEventPlayerChatString()) == 6 then
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-point #-#|r, влияет на число контрольных точек. " + "Текущий показатель: " + GREEN + I2S(IncomeObjects_StartAmount) + "-" + I2S(IncomeObjects_EndAmount) + "|r")
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-point|r " + GREEN + "#|r-" + GREEN +"#|r, где " + GREEN + "#|r-" + GREEN + "#|r - число контрольных точек. " + "Текущий показатель: " + GREEN + I2S(IncomeObjects_StartAmount) + "|r-" + GREEN + I2S(IncomeObjects_EndAmount) + "|r.")
             set p = null
             return
         endif
@@ -161,14 +181,14 @@ library Commands initializer Init requires String, NokladrLib, Logs
         endif
 
         if startAmount > IncomeObjects_MaxAmount or endAmount > IncomeObjects_MaxAmount then
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает значения из следующего диапазона: " + GREEN + "(0-" + I2S(IncomeObjects_MaxAmount) + ")|r" + "-" + GREEN + "(0-" + I2S(IncomeObjects_MaxAmount) + ")|r")
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает значения из следующего диапазона: " + GREEN + "0-" + I2S(IncomeObjects_MaxAmount) + "|r" + "-" + GREEN + "0-" + I2S(IncomeObjects_MaxAmount) + "|r.")
             set p = null
             return
         endif
 
         set IncomeObjects_StartAmount = startAmount
         set IncomeObjects_EndAmount = endAmount
-        call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-point #-#|r, влияет на число контрольных точек. " + "Текущий показатель: " + GREEN + I2S(IncomeObjects_StartAmount) + "-" + I2S(IncomeObjects_EndAmount) + "|r")
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-point|r " + GREEN + "#|r-" + GREEN +"#|r, где " + GREEN + "#|r-" + GREEN + "#|r - число контрольных точек. " + "Текущий показатель: " + GREEN + I2S(IncomeObjects_StartAmount) + "|r-" + GREEN + I2S(IncomeObjects_EndAmount) + "|r.")
 
         set p = null
     endfunction
@@ -178,19 +198,28 @@ library Commands initializer Init requires String, NokladrLib, Logs
         local string strValue = null
         local integer value = -1
 
+        if StringLength(GetEventPlayerChatString()) == 4 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-mgw|r " + GREEN + "#|r, при " + GREEN + "#|r = 1 миниигры будут каждую волну, при " + GREEN + "#|r = 2 миниигры будут каждые 2 волны, при " + GREEN + "#|r = 0 миниигр не будет совсем. " + "Текущий показатель: " + GREEN + I2S(minigameWave) + "|r.")
+            set p = null
+            return
+        endif
         if GetTimeInSeconds() >= R2I(settingsTimerTime) then
             set p = null
             return
         endif
-
         if p != GameOwner then
+            set p = null
+            return
+        endif
+        if String.count(GetEventPlayerChatString(), " ") != 1 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: формат команды неверный. Используйте следующий формат: " + GOLD + "-mgw|r" + GREEN + "#|r\nГде " + GREEN + "#|r - это число в диапазоне от 0 до 100.")
             set p = null
             return
         endif
 
         set strValue = SubString(GetEventPlayerChatString(), 5, StringLength(GetEventPlayerChatString()))
         if not String.IsRealNumber(strValue) then
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: формат команды неверный. Используйте следующий формат: (" + GREEN + "0|r" + "-" + GREEN + "99|r)")
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: формат команды неверный. Используйте следующий формат: " + GOLD + "-mgw|r" + GREEN + "#|r\nГде " + GREEN + "#|r - это число в диапазоне от 0 до 100.")
             set strValue = null
             set p = null
             return
@@ -199,43 +228,61 @@ library Commands initializer Init requires String, NokladrLib, Logs
         set value = S2I(strValue)
         set strValue = null
         
-        if value < 0 or value > 99 then
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает значения из следующего диапазона: (" + GREEN + "0|r" + "-" + GREEN + "99|r)")
+        if value < 0 or value > 100 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает число в диапазоне от 0 до 100.")
             set p = null
             return
         endif
 
         set minigameWave = value
-        call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-mgw ##|r, при ## = 1 миниигры будут каждую волну, при ## = 2 мини-игры будут каждые 2 волны, при ## = 0 миниигр не будет совсем. " + "Текущий показатель: " + GREEN + I2S(minigameWave) + "|r")
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-mgw|r " + GREEN + "#|r, при " + GREEN + "#|r = 1 миниигры будут каждую волну, при " + GREEN + "#|r = 2 миниигры будут каждые 2 волны, при " + GREEN + "#|r = 0 миниигр не будет совсем. " + "Текущий показатель: " + GREEN + I2S(minigameWave) + "|r.")
 
         set p = null
     endfunction
 
     private function Command_final takes nothing returns nothing
-        local integer chatMessage = S2I(SubString(GetEventPlayerChatString(), 7, 9))
         local player p = GetTriggerPlayer()
+        local string strValue = null
+        local integer value = -1
 
         if StringLength(GetEventPlayerChatString()) == 6 then
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-final ##|r, где ## - волна, после которой закончится игра. " + "Текущий показатель: " + GREEN + I2S(finalWave) + "|r")
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-final|r " + GREEN + "#|r, где " + GREEN + "#|r - волна, после которой закончится игра. " + "Текущий показатель: " + GREEN + I2S(finalWave) + "|r.")
             set p = null
             return
         endif
         if GetTimeInSeconds() >= R2I(settingsTimerTime) then
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: эта команда доступна только во время настройки игры.")
             set p = null
             return
         endif
         if p != GameOwner then
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: эта команда доступна только хосту.")
             set p = null
             return
         endif
-        if chatMessage > 0 and chatMessage < 100 then
-            set finalWave = chatMessage
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-final ##|r, где ## - волна, после которой закончится игра. " + "Текущий показатель: " + GREEN + I2S(finalWave) + "|r")
-        else
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает значения из следующего диапазона: " + GREEN + "1|r" + "-" + GREEN + "99|r")
+        if String.count(GetEventPlayerChatString(), " ") != 1 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: формат команды неверный. Используйте следующий формат: " + GOLD + "-final|r" + GREEN + "#|r\nГде " + GREEN + "#|r - это число в диапазоне от 1 до 100.")
+            set p = null
+            return
         endif
+
+        set strValue = SubString(GetEventPlayerChatString(), 7, StringLength(GetEventPlayerChatString()))
+        if not String.IsRealNumber(strValue) then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает число в диапазоне от 1 до 100.")
+            set strValue = null
+            set p = null
+            return
+        endif
+
+        set value = S2I(strValue)
+        set strValue = null
+        
+        if value < 1 or value > 99 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает число в диапазоне от 1 до 100.")
+            set p = null
+            return
+        endif
+
+        set finalWave = value
+        call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-final|r " + GREEN + "#|r, где " + GREEN + "#|r - волна, после которой закончится игра. " + "Текущий показатель: " + GREEN + I2S(finalWave) + "|r.")
 
         set p = null
     endfunction
@@ -263,19 +310,67 @@ library Commands initializer Init requires String, NokladrLib, Logs
     endfunction
 
     private function Command_zoom takes nothing returns nothing
-        local integer chatMessage = S2I(SubString(GetEventPlayerChatString(), 6, 10))
         local player p = GetTriggerPlayer()
+        local string strValue = null
+        local integer value = -1
 
-        call SetCameraFieldForPlayer(p, CAMERA_FIELD_TARGET_DISTANCE, chatMessage, 0.5)
+        if String.count(GetEventPlayerChatString(), " ") != 1 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: формат команды неверный. Используйте следующий формат: " + GOLD + "-zoom|r" + GREEN + "#|r\nГде " + GREEN + "#|r - это число в диапазоне от 300 до 15000")
+            set p = null
+            return
+        endif
+
+        set strValue = SubString(GetEventPlayerChatString(), 6, StringLength(GetEventPlayerChatString()))
+        if not String.IsRealNumber(strValue) then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает значения из следующего диапазона: от 300 до 15000")
+            set strValue = null
+            set p = null
+            return
+        endif
+
+        set value = S2I(strValue)
+        set strValue = null
+
+        if value < 300 or value > 15000 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает значения из следующего диапазона: от 300 до 15000")
+            set p = null
+            return
+        endif
+
+        call SetCameraFieldForPlayer(p, CAMERA_FIELD_TARGET_DISTANCE, value, 0.5)
 
         set p = null
     endfunction
 
     private function Command_cam takes nothing returns nothing
-        local integer chatMessage = S2I(SubString(GetEventPlayerChatString(), 5, 9))
         local player p = GetTriggerPlayer()
+        local string strValue = null
+        local integer value = -1
 
-        call SetCameraFieldForPlayer(p, CAMERA_FIELD_TARGET_DISTANCE, chatMessage, 0.5)
+        if String.count(GetEventPlayerChatString(), " ") != 1 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: формат команды неверный. Используйте следующий формат: " + GOLD + "-zoom|r" + GREEN + "#|r\nГде " + GREEN + "#|r - это число в диапазоне от 300 до 15000")
+            set p = null
+            return
+        endif
+
+        set strValue = SubString(GetEventPlayerChatString(), 5, StringLength(GetEventPlayerChatString()))
+        if not String.IsRealNumber(strValue) then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает значения из следующего диапазона: от 300 до 15000")
+            set strValue = null
+            set p = null
+            return
+        endif
+
+        set value = S2I(strValue)
+        set strValue = null
+
+        if value < 300 or value > 15000 then
+            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает значения из следующего диапазона: от 300 до 15000")
+            set p = null
+            return
+        endif
+
+        call SetCameraFieldForPlayer(p, CAMERA_FIELD_TARGET_DISTANCE, value, 0.5)
 
         set p = null
     endfunction
@@ -300,32 +395,52 @@ library Commands initializer Init requires String, NokladrLib, Logs
         set p = null
     endfunction
 
-    //! runtextmacro CreateCommand("info")
-    //! runtextmacro CreateCommand("time")
-    //! runtextmacro CreateCommand("arena")
-    //! runtextmacro CreateCommand("build")
-    //! runtextmacro CreateCommand("point")
-    //! runtextmacro CreateCommand("mgw")
-    //! runtextmacro CreateCommand("final")
-    //! runtextmacro CreateCommand("uptime")
-    //! runtextmacro CreateCommand("zoom")
-    //! runtextmacro CreateCommand("cam")
-    //! runtextmacro CreateCommand("c")
-    //! runtextmacro CreateCommand("clear")
+    private function Command_runtestcases takes player p, string eventString returns nothing
+        local Debugging debugging = Debugging.create()
+
+        call DebugInfoCommand.runTestCases(debugging, p)
+        call DebugBuildCommand.runTestCases(debugging, p)
+        
+        call debugging.getResults()
+        call debugging.getFailedResults()
+
+        set p = null
+    endfunction
+
+    struct Commands
+        static method setCmdDisplayTime takes real time returns nothing
+            set cmdDisplayTime = time
+        endmethod
+
+        static method getCmdDisplayTime takes nothing returns real
+            return cmdDisplayTime
+        endmethod
+    endstruct
+
+    // //! runtextmacro CreateCommand("time")
+    // //! runtextmacro CreateCommand("arena")
+    // //! runtextmacro CreateCommand("point")
+    // //! runtextmacro CreateCommand("mgw")
+    // //! runtextmacro CreateCommand("final")
+    // //! runtextmacro CreateCommand("uptime")
+    // //! runtextmacro CreateCommand("zoom")
+    // //! runtextmacro CreateCommand("cam")
+    // //! runtextmacro CreateCommand("c")
+    // //! runtextmacro CreateCommand("clear")
+    //! runtextmacro CreateCommand("runtestcases")
     
     private function Init takes nothing returns nothing
-        call Command_info_Init()
-        call Command_time_Init()
-        call Command_arena_Init()
-        call Command_build_Init()
-        call Command_point_Init()
-        call Command_mgw_Init()
-        call Command_final_Init()
-        call Command_uptime_Init()
-        call Command_zoom_Init()
-        call Command_cam_Init()
-        call Command_c_Init()
-        call Command_clear_Init()
+        // call Command_time_Init()
+        // call Command_arena_Init()
+        // call Command_point_Init()
+        // call Command_mgw_Init()
+        // call Command_final_Init()
+        // call Command_uptime_Init()
+        // call Command_zoom_Init()
+        // call Command_cam_Init()
+        // call Command_c_Init()
+        // call Command_clear_Init()
+        call Command_runtestcases_Init()
     endfunction
     
 endlibrary

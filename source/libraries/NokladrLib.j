@@ -200,4 +200,9 @@ library NokladrLib uses Colors, Logs, optional UnitRecycler  // Library by Nokla
         call SetDayNightModels("", "")
     endfunction
 
+    function C_DisplayTimedTextToPlayer takes player toPlayer, real x, real y, real duration, string message returns string
+        call DisplayTimedTextToPlayer(toPlayer, x, y, duration, message)
+        return message
+    endfunction
+
 endlibrary

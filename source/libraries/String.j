@@ -1,10 +1,32 @@
-library String initializer Init  // String functions v1.04 by MaskedPoptart https://www.hiveworkshop.com/threads/133059/
+library String initializer Init requires Logs  // String functions v1.04 by MaskedPoptart https://www.hiveworkshop.com/threads/133059/
 
     globals
-        
+        private Table table
     endglobals
 
-    struct String
+    struct String extends IAssertable
+        string str
+        string strToAssert
+
+        method assert takes nothing returns boolean
+            if str != strToAssert then
+                call Log(RED + "AssertionError|r:\n" + GOLD + "str|r = \"" + str + "\"" + "\n" + GOLD + "strToAssert|r = \"" + strToAssert + "\"")
+            endif
+            return str == strToAssert
+        endmethod
+
+        static method quickAssert takes string str1, string str2 returns boolean
+            if str1 != str2 then
+                call Log(RED + "AssertionError|r:\n" + GOLD + "str1|r = \"" + str1 + "\"" + "\n" + GOLD + "str2|r = \"" + str2 + "\"")
+            endif
+            return str1 == str2
+        endmethod
+
+        method getTable takes nothing returns Table
+            set table.string[0] = str
+            set table.string[1] = strToAssert
+            return table
+        endmethod
 
         static method count takes string str, string subString returns integer
             local integer count = 0
@@ -124,7 +146,7 @@ library String initializer Init  // String functions v1.04 by MaskedPoptart http
     endstruct
 
     private function Init takes nothing returns nothing
-        
+        set table = Table.create()
     endfunction
 
 endlibrary
