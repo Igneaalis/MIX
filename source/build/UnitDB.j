@@ -11,11 +11,13 @@
 
 */
 
-scope UnitDatabase
+library UnitDatabase initializer Init requires Table
+    
     globals
         UnitDB udb
         private UnitStruct array usarr[128]
         private integer usarrcounter = 1
+        private Table table
     endglobals
 
     struct UnitStruct
@@ -67,4 +69,10 @@ scope UnitDatabase
         endmethod
     endstruct
 
-endscope
+    private function Init takes nothing returns nothing
+        
+        set table = Table.create()
+
+    endfunction
+
+endlibrary

@@ -11,7 +11,7 @@
 
 */
 
-scope MinigameCasino initializer Init
+library MinigameCasino initializer Init requires Table, NokladrLib
 
     globals
         private constant integer circleTypeId = 'n001'
@@ -25,6 +25,7 @@ scope MinigameCasino initializer Init
         private unit array playerGemsBetSelectedCircle[maxNumberOfPlayers]
         private integer array playerGoldBetSelectedCircleNumber[maxNumberOfPlayers]
         private integer array playerGemsBetSelectedCircleNumber[maxNumberOfPlayers]
+        private Table table
     endglobals
 
     private function Command_gold takes nothing returns nothing
@@ -67,7 +68,7 @@ scope MinigameCasino initializer Init
             set playerGoldBet[GetPlayerId(p)] = differenceGold
             set playerGoldBetSelectedCircle[GetPlayerId(p)] = selectedUnit
             set i = 1
-            while selectedUnit != table[StringHash("Casino")].unit[i]
+            while selectedUnit != table.unit[i]
                 set i = i + 1
             endwhile
             set playerGoldBetSelectedCircleNumber[GetPlayerId(p)] = i
@@ -118,7 +119,7 @@ scope MinigameCasino initializer Init
             set playerGemsBet[GetPlayerId(p)] = differenceGems
             set playerGemsBetSelectedCircle[GetPlayerId(p)] = selectedUnit
             set i = 1
-            while selectedUnit != table[StringHash("Casino")].unit[i]
+            while selectedUnit != table.unit[i]
                 set i = i + 1
             endwhile
             set playerGemsBetSelectedCircleNumber[GetPlayerId(p)] = i
@@ -136,6 +137,7 @@ scope MinigameCasino initializer Init
         local unit circle
         local texttag tt
         local trigger t = CreateTrigger()
+        set table = Table.create()
 
         call TriggerSleepAction(0)
 
@@ -160,7 +162,7 @@ scope MinigameCasino initializer Init
             for j = 0 to 4
                 set circle = CreateUnit(Player(PLAYER_NEUTRAL_PASSIVE), circleTypeId, startPointX + 256 * j, startPointY - 256 * i, 270)
                 set count = count + 1
-                set table[StringHash("Casino")].unit[count] = circle
+                set table.unit[count] = circle
                 if (ModuloInteger(count, 2) == 0) then
                     // Z offset = 0
                     // Font size = 11.00
@@ -214,7 +216,7 @@ scope MinigameCasino initializer Init
             
             for i = 0 to maxNumberOfPlayers - 1
                 if playerGoldBet[i] > 0 then
-                    if table[StringHash("Casino")].unit[winNumber1] == playerGoldBetSelectedCircle[i] or table[StringHash("Casino")].unit[winNumber2] == playerGoldBetSelectedCircle[i] then
+                    if table.unit[winNumber1] == playerGoldBetSelectedCircle[i] or table.unit[winNumber2] == playerGoldBetSelectedCircle[i] then
                         if playerGoldBet[i] <= 200 then
                             set winGold = R2I(playerGoldBet[i] * 0.20)
                             set differenceGold = playerGoldBet[i] + winGold
@@ -254,7 +256,7 @@ scope MinigameCasino initializer Init
                 endif
 
                 if playerGemsBet[i] > 0 then
-                    if table[StringHash("Casino")].unit[winNumber1] == playerGemsBetSelectedCircle[i] or table[StringHash("Casino")].unit[winNumber2] == playerGemsBetSelectedCircle[i] then
+                    if table.unit[winNumber1] == playerGemsBetSelectedCircle[i] or table.unit[winNumber2] == playerGemsBetSelectedCircle[i] then
                         if playerGemsBet[i] <= 10 then
                             set winGems = R2I(playerGemsBet[i] * 0.20)
                             set differenceGems = playerGemsBet[i] + winGems
@@ -295,4 +297,4 @@ scope MinigameCasino initializer Init
         endmethod
     endstruct
 
-endscope
+endlibrary

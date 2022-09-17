@@ -12,7 +12,11 @@
 
 */
 
-scope IncomeUpgradeTQ initializer Init_income_upgTQ
+library IncomeUpgradeTQ initializer Init_income_upgTQ requires Table, NokladrLib
+
+    globals
+        private Table table
+    endglobals
 
     function Trig_income_upgTQ_Conditions takes nothing returns boolean
         local boolean IsIncomeObjective = false
@@ -49,9 +53,9 @@ scope IncomeUpgradeTQ initializer Init_income_upgTQ
         local boolean b1
         local boolean b2
         local player p = GetOwningPlayer(u) // владелец юнита
-        local player p_k = hash[StringHash("income")].player[StringHash("player_killer")] // владелец убийцы
-        local player p_v = hash[StringHash("income")].player[StringHash("player_victim")] // владелец рудника(жертвы)
-        local unit damage_u = hash[StringHash("income")].unit[StringHash("victim")]       // рудник
+        local player p_k = table.player[StringHash("player_killer")] // владелец убийцы
+        local player p_v = table.player[StringHash("player_victim")] // владелец рудника(жертвы)
+        local unit damage_u = table.unit[StringHash("victim")]       // рудник
         local real damage
 
         set b1 = IsUnitInGroup(u, waveUnits)
@@ -102,9 +106,9 @@ scope IncomeUpgradeTQ initializer Init_income_upgTQ
 
         call GroupEnumUnitsInRange(gr, x, y, cursed_mine_range_damage, null)
 
-        set hash[StringHash("income")].player[StringHash("player_killer")] = p_k
-        set hash[StringHash("income")].player[StringHash("player_victim")] = p_v
-        set hash[StringHash("income")].unit[StringHash("victim")] = victim
+        set table.player[StringHash("player_killer")] = p_k
+        set table.player[StringHash("player_victim")] = p_v
+        set table.unit[StringHash("victim")] = victim
 
         call ForGroup(gr, function Trig_income_upgTQ_Actions_group)
 
@@ -133,6 +137,7 @@ scope IncomeUpgradeTQ initializer Init_income_upgTQ
     function Init_income_upgTQ takes nothing returns nothing
         local trigger t = CreateTrigger()
         local integer i
+        set table = Table.create()
 
         for i = 0 to maxNumberOfPlayers - 1
             call TriggerRegisterPlayerUnitEvent(t, Player(i), EVENT_PLAYER_UNIT_DEATH, null)
@@ -143,4 +148,4 @@ scope IncomeUpgradeTQ initializer Init_income_upgTQ
         set t = null
     endfunction
 
-endscope
+endlibrary

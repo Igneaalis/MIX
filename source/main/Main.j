@@ -18,11 +18,12 @@ scope Main initializer Init
     private function Init takes nothing returns nothing
         call TriggerSleepAction(0)
 
-         // Инициализируем хэш-таблицу
-        set hash = HashTable.create()
-        set table = Table.create()
+        // Инициализируем хэш-таблицу
+        // set hash = HashTable.create()
+        // set TABLE = Table.create()
+        // set TABLE_ARRAY = TableArray[0x1024]
 
-         // NokladrLib.j
+        // NokladrLib.j
         call TriggerSleepAction(0)
         call C_SetComputers.execute()
 

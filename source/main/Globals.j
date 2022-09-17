@@ -13,8 +13,9 @@
 
 globals
     boolean IsDevInGame = false                                                                 // Условие: один из разработчиков в игре?
-    Table table                                                                                 // Инициализация таблицы
-    HashTable hash                                                                              // Инициализация хэш-таблицы
+    // Table TABLE                                                                                 // Инициализация таблицы
+    // TableArray TABLE_ARRAY                                                                      // Инициализация 2-D таблицы
+    // HashTable hash                                                                              // Инициализация хэш-таблицы
     constant string strVersion = "0.0.3"                                                        // Версия карты, семантическое версионирование: (Major, Minor, Patch)
     constant string Version = "Test"                                                            // Тип версии {Test, Release}
     constant string strEmail = (LB + "Nostaleal.ru|r" + GOLD + "@|r" + LB + "yandex.ru|r")      // E-Mail адрес

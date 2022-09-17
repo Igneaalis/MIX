@@ -25,6 +25,7 @@ scope IncomeUpgrade initializer Init
         private integer array goldmining_main_mine
         private integer array goldmining_extra_mine
         private integer array goldmining_income
+        private Table table
     endglobals
 
     public function Conditions takes nothing returns boolean
@@ -105,7 +106,7 @@ scope IncomeUpgrade initializer Init
     // Работа таймера Вклад в игрока
     function Timer_contr_to_pl_actions takes nothing returns nothing
         local timer t = GetExpiredTimer()
-        local player p = hash[StringHash("income")].player[GetHandleId(t)]
+        local player p = table.player[GetHandleId(t)]
         local integer count_research = GetPlayerTechCount(p, contr_to_pl_rc, true)
         local integer gold = contr_to_pl_gold + (contr_to_pl_gold_mod * (count_research - 1))
         local integer lumber = contr_to_pl_lumber + (contr_to_pl_lumber_mod * (count_research - 1))
@@ -153,7 +154,7 @@ scope IncomeUpgrade initializer Init
         call DisplayTimedTextToPlayer(rand_p, 0, 0, 10, ("Вы получили " + VIOLET + I2S(bonus_lumber) + "|r самоцветов."))
 
         set t = CreateTimer()
-        set hash[StringHash("income")].player[GetHandleId(t)] = rand_p
+        set table.player[GetHandleId(t)] = rand_p
         call TimerStart(t, contr_to_pl_time, false, function Timer_contr_to_pl_actions)
 
         call DestroyForce(gr_p)
@@ -404,6 +405,7 @@ scope IncomeUpgrade initializer Init
     private function Init takes nothing returns nothing
         local trigger t = CreateTrigger()
         local integer i
+        set table = Table.create()
 
         // Заполнение массива incSpellrc равкодами инкам способностей
         set incSpellRC[0] = 'R00F'
