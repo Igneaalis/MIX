@@ -21,6 +21,7 @@ library Debugging initializer Init requires Commands, Table, Logs, Integer, Stri
         private static string INT = "INT"
         private static string BOOLEAN = "BOOLEAN"
         private static string STRING = "STRING"
+        private static string REAL = "REAL"
 
         method addCase takes IAssertable var, string str returns nothing
             local Table varTable = Table.create()
@@ -42,7 +43,12 @@ library Debugging initializer Init requires Commands, Table, Logs, Integer, Stri
                 set tableArray[index].boolean[indexArray + 1] = varTable.boolean[0]
                 set tableArray[index].boolean[indexArray + 2] = varTable.boolean[1]
             endif
-            set indexArray = indexArray + 3
+            if var.getType() == Real.typeid then
+                set tableArray[index].string[indexArray] = REAL
+                set tableArray[index].real[indexArray + 1] = varTable.real[0]
+                set tableArray[index].real[indexArray + 2] = varTable.real[1]
+            endif
+            set indexArray = indexArray + 4
             set index = index + 1
         endmethod
 
@@ -82,6 +88,9 @@ library Debugging initializer Init requires Commands, Table, Logs, Integer, Stri
                     endif
                     if tableArray[i].string[k] == BOOLEAN then
                         call Log(RED + "AssertionError|r:\n" + GOLD + "bool|r = \"" + Boolean.toString(tableArray[i].boolean[k + 1]) + "\"" + "\n" + GOLD + "boolToAssert|r = \"" + Boolean.toString(tableArray[i].boolean[k + 2]) + "\"")
+                    endif
+                    if tableArray[i].string[k] == REAL then
+                        call Log(RED + "AssertionError|r:\n" + GOLD + "real|r = \"" + Real.toString(tableArray[i].real[k + 1]) + "\"" + "\n" + GOLD + "realToAssert|r = \"" + Real.toString(tableArray[i].real[k + 2]) + "\"")
                     endif
                 endif
                 set k = k + 3

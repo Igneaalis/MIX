@@ -28,7 +28,7 @@ scope Settings initializer Init
 
     private function Init takes nothing returns nothing
         debug set settingsTimerTime = debugSettingsTimerTime
-        call Commands.setCmdDisplayTime.evaluate(10.00)
+        call Commands.SetCmdDisplayTime.evaluate(10.00)
     endfunction
 
 endscope

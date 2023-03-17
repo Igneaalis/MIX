@@ -33,6 +33,6 @@ struct InfoCommand
             set strResult = RED + "Внимание, ошибка|r: данная команда принимает следующие значения: " + GREEN + "on|r" + " и " + RED + "off|r."
         endif
         
-        return C_DisplayTimedTextToPlayer(p, 0, 0, Commands.getCmdDisplayTime.evaluate(), strResult)
+        return C_DisplayTimedTextToPlayer(p, 0, 0, Commands.GetCmdDisplayTime.evaluate(), strResult)
     endmethod
 endstruct

@@ -15,12 +15,12 @@ struct BuildCommand
             endif
             set flag = false
         endif
-        if flag and String.count(str, " ") != 1 then
-            set strResult = RED + "Внимание, ошибка|r: формат команды неверный. Используйте следующий формат: " + GOLD + "-build|r " + GREEN + "#|r\nГде " + GREEN + "#|r - это " + GREEN + "on|r или " + RED + "off|r."
-            set flag = false
-        endif
         if flag and p != GameOwner then
             set strResult = RED + "Внимание, ошибка|r: эта команда доступна только хосту."
+            set flag = false
+        endif
+        if flag and String.count(str, " ") != 1 then
+            set strResult = RED + "Внимание, ошибка|r: формат команды неверный. Используйте следующий формат: " + GOLD + "-build|r " + GREEN + "#|r\nГде " + GREEN + "#|r - это " + GREEN + "on|r или " + RED + "off|r."
             set flag = false
         endif
         if flag and GetTimeInSeconds() >= R2I(settingsTimerTime) then
@@ -41,6 +41,6 @@ struct BuildCommand
             set strResult = RED + "Внимание, ошибка|r: данная команда принимает следующие значения: " + GOLD + "-build|r " + GREEN + "on|r" + " и " + RED + "off|r."
         endif
 
-        return C_DisplayTimedTextToPlayer(p, 0, 0, Commands.getCmdDisplayTime.evaluate(), strResult)
+        return C_DisplayTimedTextToPlayer(p, 0, 0, Commands.GetCmdDisplayTime.evaluate(), strResult)
     endmethod
 endstruct
