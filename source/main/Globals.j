@@ -13,14 +13,14 @@
 
 globals
     boolean IsDevInGame = false                                                                 // Условие: один из разработчиков в игре?
-    // Table TABLE                                                                                 // Инициализация таблицы
-    // TableArray TABLE_ARRAY                                                                      // Инициализация 2-D таблицы
-    // HashTable hash                                                                              // Инициализация хэш-таблицы
-    constant string strVersion = "0.0.3"                                                        // Версия карты, семантическое версионирование: (Major, Minor, Patch)
+    // Table TABLE                                                                              // Инициализация таблицы
+    // TableArray TABLE_ARRAY                                                                   // Инициализация 2-D таблицы
+    // HashTable hash                                                                           // Инициализация хэш-таблицы
+    constant string strVersion = "0.0.4"                                                        // Версия карты, семантическое версионирование: (Major, Minor, Patch)
     constant string Version = "Test"                                                            // Тип версии {Test, Release}
     constant string strEmail = (LB + "Nostaleal.ru|r" + GOLD + "@|r" + LB + "yandex.ru|r")      // E-Mail адрес
-    constant string strDiscord = (LB + "! ! Nokladr|r" + GOLD + "#|r" + LB + "2205|r")          // Discord тэг
-    constant string strBuild_Time = "30 May 2021"                                               // Время создания билда карты
+    constant string strDiscord = (LB + "Pilgrim|r" + GOLD + "#|r" + LB + "0458|r")              // Discord тэг
+    constant string strBuild_Time = "18 March 2023"                                             // Время создания билда карты
 
     constant integer maxNumberOfPlayers = 8
 

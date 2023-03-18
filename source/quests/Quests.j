@@ -6,7 +6,7 @@ scope Quests initializer Init
     
     private function Init takes nothing returns nothing
         local quest q = CreateQuest()
-        local string s = GOLD + "Версия карты|r: " + GREEN + strVersion + " " + Version + "|r " + RED + strBuild_Time +"|r\n" + GOLD + "Создатель|r: " + ORANGE + "[Battle.net]|r Nokladr#2429, " + ORANGE + "[Discord]|r ! ! Nokladr#2205\n" + GOLD + "E-Mail:|r " + strEmail
+        local string s = GOLD + "Версия карты|r: " + GREEN + strVersion + " " + Version + "|r " + RED + strBuild_Time +"|r\n" + GOLD + "Создатель|r: " + ORANGE + "[Battle.net]|r Nokladr#2429, " + ORANGE + "[Discord]|r " + strDiscord + "\n" + GOLD + "E-Mail:|r " + strEmail
         call QuestSetTitle(q, "Описание")
         call QuestSetDescription(q, s)
         call QuestSetIconPath(q, "ReplaceableTextures\\CommandButtons\\BTNNecromancerAdept.blp")

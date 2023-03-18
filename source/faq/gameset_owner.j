@@ -39,13 +39,13 @@ scope GameSetOwner initializer Init
             static if not DEBUG_MODE then
                 if (pdb[GameOwner].info == true) then // Checks Info flag of game owner
                     // Shows all available commands and settings
-                    call DisplayTimedTextToPlayer(GameOwner, 0, 0, settingsTimerTime, "Настройка карты доступна первые " + GREEN + I2S(R2I(settingsTimerTime)) + "|r сек.")
                     call TimeCommand.run.evaluate(GameOwner, "-time")
                     call ArenaCommand.run.evaluate(GameOwner, "-arena")
                     call BuildCommand.run.evaluate(GameOwner, "-build")
-                    call DisplayTimedTextToPlayer(GameOwner, 0, 0, settingsTimerTime,  GOLD + "-point #-#|r, влияет на число контрольных точек. " + "Текущий показатель: " + GREEN + I2S(IncomeObjects_StartAmount) + "-" + I2S(IncomeObjects_EndAmount) + "|r")
-                    call DisplayTimedTextToPlayer(GameOwner, 0, 0, settingsTimerTime,  GOLD + "-mgw ##|r, при ## = 1 миниигры будут каждую волну, при ## = 2 миниигры будут каждые 2 волны, при ## = 0 миниигр не будет совсем. " + "Текущий показатель: " + GREEN + I2S(minigameWave) + "|r")
-                    call DisplayTimedTextToPlayer(GameOwner, 0, 0, settingsTimerTime,  GOLD + "-final ##|r, где ## - волна, после которой закончится игра. " + "Текущий показатель: " + GREEN + I2S(finalWave) + "|r")
+                    call DisplayTimedTextToPlayer(GameOwner, 0, 0, Commands.GetCmdDisplayTime.evaluate(),  GOLD + "-point|r " + GREEN + "#|r-" + GREEN +"#|r, где " + GREEN + "#|r-" + GREEN + "#|r - число контрольных точек. " + "Текущий показатель: " + GREEN + I2S(IncomeObjects_StartAmount) + "|r-" + GREEN + I2S(IncomeObjects_EndAmount) + "|r.")
+                    call DisplayTimedTextToPlayer(GameOwner, 0, 0, Commands.GetCmdDisplayTime.evaluate(),  GOLD + "-mgw|r " + GREEN + "#|r, при " + GREEN + "#|r = 1 миниигры будут каждую волну, при " + GREEN + "#|r = 2 миниигры будут каждые 2 волны, при " + GREEN + "#|r = 0 миниигр не будет совсем. " + "Текущий показатель: " + GREEN + I2S(minigameWave) + "|r.")
+                    call DisplayTimedTextToPlayer(GameOwner, 0, 0, Commands.GetCmdDisplayTime.evaluate(),  GOLD + "-final|r " + GREEN + "#|r, где " + GREEN + "#|r - волна, после которой закончится игра. " + "Текущий показатель: " + GREEN + I2S(finalWave) + "|r.")
+                    call DisplayTimedTextToPlayer(GameOwner, 0, 0, settingsTimerTime, "Настройка карты доступна первые " + GREEN + I2S(R2I(settingsTimerTime)) + "|r сек.")
                 endif
             endif
         endif
