@@ -3,7 +3,7 @@ struct InfoCommand
     implement CommandModule
 
     static method run takes player p, string str returns string
-        local string chatMessage = SubString(str, 6, StringLength(str))
+        local string strValue = SubString(str, 6, StringLength(str))
         local string strResult = null
         local boolean flag = true
 
@@ -15,20 +15,24 @@ struct InfoCommand
             endif
             set flag = false
         endif
+
         if flag and String.count(str, " ") != 1 then
             set strResult = RED + "Внимание, ошибка|r: формат команды неверный. Используйте следующий формат: " + GOLD + "-info|r " + GREEN + "#|r\nГде " + GREEN + "#|r - это " + GREEN + "on|r или " + RED + "off|r."
             set flag = false
         endif
-        if flag and chatMessage == "on" then
+
+        if flag and strValue == "on" then
             set pdb[p].info = true
             set strResult = GOLD + "-info " + GREEN + "#|r, где " + GREEN + "#|r - это " + GREEN + "on|r или " + RED + "off|r. Показывает или скрывает сообщения о минииграх, штрафах и быстрой битве. " + GOLD + "Текущее значение: -info " + GREEN + "on|r."
             set flag = false
         endif
-        if flag and chatMessage == "off" then
+        
+        if flag and strValue == "off" then
             set pdb[p].info = false
             set strResult = GOLD + "-info " + GREEN + "#|r, где " + GREEN + "#|r - это " + GREEN + "on|r или " + RED + "off|r. Показывает или скрывает сообщения о минииграх, штрафах и быстрой битве. " + GOLD + "Текущее значение: -info " + RED + "off|r."
             set flag = false
         endif
+
         if flag then
             set strResult = RED + "Внимание, ошибка|r: данная команда принимает следующие значения: " + GREEN + "on|r" + " и " + RED + "off|r."
         endif

@@ -48,7 +48,7 @@ library Debugging initializer Init requires Commands, Table, Logs, Integer, Stri
                 set tableArray[index].real[indexArray + 1] = varTable.real[0]
                 set tableArray[index].real[indexArray + 2] = varTable.real[1]
             endif
-            set indexArray = indexArray + 4
+            set indexArray = indexArray + 3
             set index = index + 1
         endmethod
 

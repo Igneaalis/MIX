@@ -4,53 +4,6 @@ library Commands initializer Init requires String, NokladrLib, Logs, Table
         private real cmdDisplayTime = 10
     endglobals
 
-    private function Command_arena takes nothing returns nothing
-        local player p = GetTriggerPlayer()
-        local string strValue = null
-        local integer value = -1
-
-        if StringLength(GetEventPlayerChatString()) == 6 then
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-arena|r " + GREEN + "#|r, где " + GREEN + "#|r - длительность арены. " + "Текущий показатель: " + GREEN + I2S(R2I(arenaTimerTime)) + "|r сек.")
-            set p = null
-            return
-        endif
-        if GetTimeInSeconds() >= R2I(settingsTimerTime) then
-            set p = null
-            return
-        endif
-        if p != GameOwner then
-            set p = null
-            return
-        endif
-        if String.count(GetEventPlayerChatString(), " ") != 1 then
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: формат команды неверный. Используйте следующий формат: " + GOLD + "-arena|r " + GREEN + "#|r\nГде " + GREEN + "#|r - это число в диапазоне от 30 до 600 сек.")
-            set p = null
-            return
-        endif
-
-        set strValue = SubString(GetEventPlayerChatString(), 7, StringLength(GetEventPlayerChatString()))
-        if not String.IsRealNumber(strValue) then
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: формат команды неверный. Используйте следующий формат: " + GOLD + "-arena|r " + GREEN + "#|r\nГде " + GREEN + "#|r - это число в диапазоне от 30 до 600 сек.")
-            set strValue = null
-            set p = null
-            return
-        endif
-
-        set value = S2I(strValue)
-        set strValue = null
-        
-        if value < 30 or value > 600 then
-            call DisplayTimedTextToPlayer(p, 0, 0, 10, RED + "Внимание, ошибка|r: данная команда принимает число в диапазоне от 30 до 600 сек.")
-            set p = null
-            return
-        endif
-
-        set arenaTimerTime = value
-        call DisplayTimedTextToPlayer(p, 0, 0, 10, GOLD + "-arena|r " + GREEN + "#|r, где " + GREEN + "#|r - длительность арены. " + "Текущий показатель: " + GREEN + I2S(R2I(arenaTimerTime)) + "|r сек.")
-
-        set p = null
-    endfunction
-
     private function Command_point takes nothing returns nothing
         local player p = GetTriggerPlayer()
         local integer dashIndex = -1
@@ -354,6 +307,7 @@ library Commands initializer Init requires String, NokladrLib, Logs, Table
         call DebugInfoCommand.runTestCases(debugging, p)
         call DebugBuildCommand.runTestCases(debugging, p)
         call DebugTimeCommand.runTestCases(debugging, p)
+        call DebugArenaCommand.runTestCases(debugging, p)
         
         call debugging.getResults()
         call debugging.getFailedResults()
@@ -371,8 +325,6 @@ library Commands initializer Init requires String, NokladrLib, Logs, Table
         endmethod
     endstruct
 
-    // //! runtextmacro CreateCommand("time")
-    // //! runtextmacro CreateCommand("arena")
     // //! runtextmacro CreateCommand("point")
     // //! runtextmacro CreateCommand("mgw")
     // //! runtextmacro CreateCommand("final")
@@ -384,8 +336,6 @@ library Commands initializer Init requires String, NokladrLib, Logs, Table
     //! runtextmacro CreateCommand("runtestcases")
     
     private function Init takes nothing returns nothing
-        // call Command_time_Init()
-        // call Command_arena_Init()
         // call Command_point_Init()
         // call Command_mgw_Init()
         // call Command_final_Init()
